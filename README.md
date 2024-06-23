@@ -8,3 +8,5 @@
  SwingExtended: https://github.com/WALLE1Doctor1Who/SwingExtended
 
  FilesExtended: https://github.com/WALLE1Doctor1Who/FilesExtended
+
+ Special thanks to AnimalWave on Discord for providing some of the equations.
