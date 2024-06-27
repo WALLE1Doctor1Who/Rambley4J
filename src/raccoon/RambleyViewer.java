@@ -6,9 +6,11 @@ package raccoon;
 
 import files.extensions.ImageExtensions;
 import icons.DebuggingIcon;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.DoubleUnaryOperator;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.event.ChangeEvent;
@@ -38,6 +40,8 @@ public class RambleyViewer extends javax.swing.JFrame {
         jSpinner4.setValue(rambleyIcon.getTestDouble4()*100);
         jSpinner5.setValue(rambleyIcon.getTestDouble5()*100);
         jSpinner6.setValue(rambleyIcon.getTestDouble6());
+//        jComboBox1.setSelectedIndex(rambleyIcon.getEarTest());
+//        jSpinner7.setValue(rambleyIcon.getEarSplits());
         viewLabel.setIcon(debugIcon);
         rambleyIcon.addChangeListener(new IconHandler());
     }
@@ -69,6 +73,9 @@ public class RambleyViewer extends javax.swing.JFrame {
         jSpinner4 = new javax.swing.JSpinner();
         jSpinner5 = new javax.swing.JSpinner();
         jSpinner6 = new javax.swing.JSpinner();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jSpinner7 = new javax.swing.JSpinner();
+        jButton1 = new javax.swing.JButton();
 
         fc.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         fc.setFileFilter(ImageExtensions.PNG_FILTER);
@@ -149,6 +156,7 @@ public class RambleyViewer extends javax.swing.JFrame {
         });
 
         jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+        jSpinner1.setEnabled(false);
         jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSpinner1StateChanged(evt);
@@ -156,6 +164,7 @@ public class RambleyViewer extends javax.swing.JFrame {
         });
 
         jSpinner2.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+        jSpinner2.setEnabled(false);
         jSpinner2.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSpinner2StateChanged(evt);
@@ -163,6 +172,7 @@ public class RambleyViewer extends javax.swing.JFrame {
         });
 
         jSpinner3.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+        jSpinner3.setEnabled(false);
         jSpinner3.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSpinner3StateChanged(evt);
@@ -170,6 +180,7 @@ public class RambleyViewer extends javax.swing.JFrame {
         });
 
         jSpinner4.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+        jSpinner4.setEnabled(false);
         jSpinner4.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSpinner4StateChanged(evt);
@@ -177,16 +188,42 @@ public class RambleyViewer extends javax.swing.JFrame {
         });
 
         jSpinner5.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+        jSpinner5.setEnabled(false);
         jSpinner5.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSpinner5StateChanged(evt);
             }
         });
 
-        jSpinner6.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 0.01d));
+        jSpinner6.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        jSpinner6.setEnabled(false);
         jSpinner6.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSpinner6StateChanged(evt);
+            }
+        });
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Upper", "Lower", "Tip" }));
+        jComboBox1.setEnabled(false);
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jSpinner7.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        jSpinner7.setEnabled(false);
+        jSpinner7.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSpinner7StateChanged(evt);
+            }
+        });
+
+        jButton1.setText("jButton1");
+        jButton1.setEnabled(false);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -211,7 +248,9 @@ public class RambleyViewer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(saveButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(scaleToggle))
+                                .addComponent(scaleToggle)
+                                .addGap(18, 18, 18)
+                                .addComponent(jSpinner7, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(backgroundToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -219,8 +258,12 @@ public class RambleyViewer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(evilToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ratioToggle)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                                .addComponent(ratioToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jSpinner1)
                             .addComponent(jSpinner4, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE))
@@ -238,7 +281,7 @@ public class RambleyViewer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backgroundToggle)
@@ -247,7 +290,9 @@ public class RambleyViewer extends javax.swing.JFrame {
                     .addComponent(ratioToggle)
                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -260,7 +305,8 @@ public class RambleyViewer extends javax.swing.JFrame {
                         .addComponent(jSpinner6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jSpinner7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -365,6 +411,139 @@ public class RambleyViewer extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jSpinner6StateChanged
 
+    private void jSpinner7StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner7StateChanged
+//        rambleyIcon.setEarSplits((Integer)jSpinner7.getValue());
+    }//GEN-LAST:event_jSpinner7StateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        //        double earX = 0;
+        //        double earY = 0;
+        //        ArrayList<Point2D> upperPts = new ArrayList<>();
+        //        ArrayList<Point2D> lowerPts = new ArrayList<>();
+        //        ArrayList<Point2D> tipPts = new ArrayList<>();
+        //        ArrayList<Point2D> ctrlPts1U = new ArrayList<>();
+        //        ArrayList<Point2D> ctrlPts2U = new ArrayList<>();
+        //        ArrayList<Point2D> ctrlPts1L = new ArrayList<>();
+        //        ArrayList<Point2D> ctrlPts2L = new ArrayList<>();
+        //        ArrayList<Point2D> ctrlPts1T = new ArrayList<>();
+        //        ArrayList<Point2D> ctrlPts2T = new ArrayList<>();
+        //        DoubleUnaryOperator upperX = rambleyIcon.getRambleyEarX(0);
+        //        DoubleUnaryOperator upperY = rambleyIcon.getRambleyEarY(0);
+        //        DoubleUnaryOperator lowerX = rambleyIcon.getRambleyEarX(1);
+        //        DoubleUnaryOperator lowerY = rambleyIcon.getRambleyEarY(1);
+        //        DoubleUnaryOperator tipX = rambleyIcon.getRambleyEarX(2);
+        //        DoubleUnaryOperator tipY = rambleyIcon.getRambleyEarY(2);
+        //        rambleyIcon.calculateSplinePoints(earX, earY, 4, upperX, upperY,
+            //                upperPts, ctrlPts1U, ctrlPts2U);
+        //        rambleyIcon.calculateSplinePoints(earX, earY, 4, lowerX, lowerY,
+            //                lowerPts, ctrlPts1L, ctrlPts2L);
+        //        rambleyIcon.calculateSplinePoints(earX, earY, 7, tipX, tipY,
+            //                tipPts, ctrlPts1T, ctrlPts2T);
+        //        System.out.println(upperPts);
+        //        System.out.println(lowerPts);
+        //        System.out.println(tipPts);
+        //        Line2D upper1 = new Line2D.Double(upperPts.get(0),upperPts.get(1));
+        //        int tipOff = 0;
+        //        Line2D tip1 = new Line2D.Double(tipPts.get(tipOff+1),tipPts.get(tipOff));
+        //        while (!upper1.intersectsLine(tip1)){
+            //            tipOff ++;
+            //            tip1.setLine(tipPts.get(tipOff+1),tipPts.get(tipOff));
+            //        }
+        //        System.out.printf("Upper To Tip?: (%12.8f, %12.8f)%n",earX+15.5,earY+upperY.applyAsDouble(15.5));
+        //
+        //        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f))%n",
+            //                upper1.getX1(),upper1.getY1(),upper1.getX2(),upper1.getY2(),
+            //                tip1.getX1(),tip1.getY1(),tip1.getX2(),tip1.getY2());
+        //
+        ////        for (int i = 0; i < 25; i++){
+            ////            if (upper1.getP1().distance(upper1.getP2()) <= tip1.getP1().distance(tip1.getP2())){
+                ////                getIntersectingLine(tip1,upper1,earX,earY,tipY);
+                ////            } else {
+                ////                getIntersectingLine(upper1,tip1,earX,earY,upperY);
+                ////            }
+            ////        }
+        ////        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f))%n",
+            ////                upper1.getX1(),upper1.getY1(),upper1.getX2(),upper1.getY2(),
+            ////                tip1.getX1(),tip1.getY1(),tip1.getX2(),tip1.getY2());
+        ////        double tempX = (upper1.getX1()+upper1.getX2()+tip1.getX1()+tip1.getX2())/4.0;
+        ////        double tempY = (upperY.applyAsDouble(tempX-earX)+tipY.applyAsDouble(tempX-earX))/2.0+earY;
+        ////        System.out.printf("Upper To Tip:  (%9.5f, %9.5f)%n",tempX,tempY);
+        //
+        //        Point2D uTT = getLineIntersection(earX, earY, tip1, upper1, tipY, upperY);
+        //        System.out.printf("Upper To Tip:  (%12.8f, %12.8f)%n",uTT.getX(),uTT.getY());
+        //        uTT = rambleyIcon.getRambleyEarUpperTip(earX, earY, null);
+        //        System.out.printf("Upper To Tip:  (%12.8f, %12.8f)%n",uTT.getX(),uTT.getY());
+        //
+        //        tipOff = 0;
+        //        Line2D tip2 = new Line2D.Double();
+        //        Line2D lower1 = new Line2D.Double();
+        //        int lowerOff = 0;
+        //        do{
+            //            tip2.setLine(tipPts.get(tipPts.size()-2-tipOff),tipPts.get(tipPts.size()-1-tipOff));
+            //            lower1.setLine(lowerPts.get(0),lowerPts.get(1));
+            //            for (int off = 0; off < lowerPts.size()-1 && !tip2.intersectsLine(lower1); off++){
+                //                lower1.setLine(lowerPts.get(off+0),lowerPts.get(off+1));
+                //                lowerOff = off;
+                //            }
+            //            tipOff++;
+            //        }
+        //        while (!tip2.intersectsLine(lower1));
+        //
+        //        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f)) %2d %2d%n",
+            //                lower1.getX1(),lower1.getY1(),lower1.getX2(),lower1.getY2(),
+            //                tip2.getX1(),tip2.getY1(),tip2.getX2(),tip2.getY2(), tipOff-1, lowerOff);
+        //
+        ////        for (int i = 0; i < 25; i++){
+            ////            if (lower1.getP1().distance(lower1.getP2()) <= tip2.getP1().distance(tip2.getP2())){
+                ////                getIntersectingLine(tip2,lower1,earX,earY,tipY);
+                ////            } else {
+                ////                getIntersectingLine(lower1,tip2,earX,earY,lowerY);
+                ////            }
+            ////        }
+        ////
+        ////        double tempX1 = (lower1.getX1()+lower1.getX2()+tip2.getX1()+tip2.getX2())/4.0;
+        ////        double tempY1 = (lowerY.applyAsDouble(tempX1-earX)+tipY.applyAsDouble(tempX1-earX))/2.0+earY;
+        ////        System.out.printf("Lower To Tip:  (%9.5f, %9.5f)%n",tempX1,tempY1);
+        //
+        //        Point2D lTT = getLineIntersection(earX, earY, tip2, lower1, tipY, lowerY);
+        //        System.out.printf("Lower To Tip:  (%12.8f, %12.8f)%n",lTT.getX(),lTT.getY());
+        //        lTT = rambleyIcon.getRambleyEarLowerTip(earX, earY, null);
+        //        System.out.printf("Lower To Tip:  (%12.8f, %12.8f)%n",lTT.getX(),lTT.getY());
+
+        //        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f))%n",
+            //                lower1.getX1(),lower1.getY1(),lower1.getX2(),lower1.getY2(),
+            //                tip2.getX1(),tip2.getY1(),tip2.getX2(),tip2.getY2());
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+//        rambleyIcon.setEarTest(jComboBox1.getSelectedIndex());
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+    
+    private void getIntersectingLine(Line2D line1, Line2D line2, double x, double y, DoubleUnaryOperator getY){
+        double x1 = (line1.getX1()+line1.getX2()) / 2.0;
+        double y1 = getY.applyAsDouble(x1 - x) + y;
+        Line2D l1 = new Line2D.Double(line1.getX1(), line1.getY1(), x1, y1);
+        Line2D l2 = new Line2D.Double(x1, y1, line1.getX2(), line1.getY2());
+        if (l1.intersectsLine(line2))
+            line1.setLine(l1);
+        else
+            line1.setLine(l2);
+    }
+    
+    private Point2D getLineIntersection(double x, double y, Line2D line1, Line2D line2, 
+            DoubleUnaryOperator getY1, DoubleUnaryOperator getY2){
+        for (int i = 0; i < 25; i++){
+            if (line1.getP1().distance(line1.getP2()) >= line2.getP1().distance(line2.getP2())){
+                getIntersectingLine(line1,line2,x,y,getY1);
+            } else {
+                getIntersectingLine(line2,line1,x,y,getY2);
+            }
+        }
+        double tempX = (line1.getX1()+line1.getX2()+line2.getX1()+line2.getX2())/4.0;
+        double temp = tempX - x;
+        return new Point2D.Double(tempX, (getY1.applyAsDouble(temp)+getY2.applyAsDouble(temp))/2.0+y);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -408,14 +587,17 @@ public class RambleyViewer extends javax.swing.JFrame {
     private javax.swing.JCheckBox evilToggle;
     private javax.swing.JFileChooser fc;
     private javax.swing.JCheckBox gridToggle;
+    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;
     private javax.swing.JSpinner jSpinner3;
     private javax.swing.JSpinner jSpinner4;
     private javax.swing.JSpinner jSpinner5;
     private javax.swing.JSpinner jSpinner6;
+    private javax.swing.JSpinner jSpinner7;
     private javax.swing.JButton printButton;
     private javax.swing.JCheckBox ratioToggle;
     private javax.swing.JButton saveButton;

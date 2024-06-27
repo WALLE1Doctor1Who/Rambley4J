@@ -278,7 +278,9 @@ public class RambleyPainter implements Painter<Component>{
     
     private static final double RAMBLEY_EAR_TIP_Y_OFFSET = 1.0;
     
+    private static final double RAMBLEY_EAR_TIP_ROUNDING = 2.0;
     
+    private static final double RAMBLEY_INNER_EAR_SCALE = 2/3.0;
     /**
      * This converts the given y-coordinate in the graphics coordinate system 
      * @param y
@@ -664,6 +666,10 @@ public class RambleyPainter implements Painter<Component>{
             // Prioritize color rendering quality over speed
         g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, 
                 RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            // Set the stroke normalization to be pure, i.e. geometry should be 
+            // left unmodified
+        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
+                RenderingHints.VALUE_STROKE_PURE);
         return g;
     }
     
@@ -853,35 +859,6 @@ public class RambleyPainter implements Painter<Component>{
             return earEquToGraphicsX(0);
         return earEquToGraphicsX(Math.max((0.01/y)+1.5, 0));
     }
-    
-    private static final double RAMBLEY_EAR_Y_OFFSET_2 = 1.5;
-    
-    private void addRambleyEarPoint(double y, Path2D upper, Path2D lower, Path2D tip, double xOff, double yOff){
-        double y2 = y + yOff;
-        if (upper != null){
-            double upperX = getRambleyEarUpperX(y) + xOff;
-            if (upper.getCurrentPoint() == null)
-                upper.moveTo(upperX, y2);
-            else
-                upper.lineTo(upperX, y2);
-        }
-        if (lower != null){
-            double lowerX = getRambleyEarLowerX(y) + xOff;
-            if (lower.getCurrentPoint() == null)
-                lower.moveTo(lowerX, y2);
-            else
-                lower.lineTo(lowerX, y2);
-        }
-        if (tip != null){
-            double tipX = getRambleyEarTipX(y) + xOff;
-            if (tip.getCurrentPoint() == null)
-                tip.moveTo(tipX, y2);
-            else
-                tip.lineTo(tipX, y2);
-        }
-    }
-    }
-    
     /**
      * (0.01/(x-1.5)) + 2.4
      * 
@@ -925,72 +902,75 @@ public class RambleyPainter implements Painter<Component>{
                 getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
     }
     
-    private Path2D getRambleyEarPath(double x, double y, double t1, double t2, 
-            double t3, double t4, double t5, Path2D path, DoubleUnaryOperator getX){
+    private void addQuadBezierCurve(Point2D p0, Point2D p1, Point2D p2, Point2D pC, Path2D path){
+        pC = getQuadBezierControlPoint(p0,p1,p2,pC);
+        path.quadTo(pC.getX(), pC.getY(), p2.getX(), p2.getY());
+    }
+    
+    protected Area getRambleyEar(double x, double y, Path2D path){
         if (path == null)
             path = new Path2D.Double();
         else
             path.reset();
-        point1.setLocation(getX.applyAsDouble(0)+x,y);
-        double tempY = RAMBLEY_EAR_HEIGHT*t1;
-        point2.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
-        tempY = RAMBLEY_EAR_HEIGHT*t2;
-        point3.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
-        tempY = RAMBLEY_EAR_HEIGHT*t3;
-        point4.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
-        point5.setLocation(getX.applyAsDouble(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y);
-        point6 = getBezierControlPoint(point1,point2,point3,t4,point6);
-        point7 = getBezierControlPoint(point3,point4,point5,t5,point7);
-        path.moveTo(point1.getX(),point1.getY());
-        path.quadTo(point6.getX(),point6.getY(), point3.getX(),point3.getY());
-        path.quadTo(point7.getX(), point7.getY(), point5.getX(),point5.getY());
-        return path;
+        double y1 = RAMBLEY_EAR_HEIGHT+y;
+        double x1 = Math.max(getRambleyUpperEarX(RAMBLEY_EAR_HEIGHT), 
+                getRambleyLowerEarX(RAMBLEY_EAR_HEIGHT))+x;
+        
+            // The point of intersection between the upper portion of the ear 
+            // and the tip of the ear
+        point7 = getRambleyEarUpperTip(x,y,point7);
+            // The point of intersection between the tip of the ear and the 
+            // lower portion of the ear
+        point8 = getRambleyEarLowerTip(x,y,point8);
+        
+            // Upper component of the ear
+        point1.setLocation(x1,y+RAMBLEY_EAR_HEIGHT/2.0);
+        path.moveTo(point1.getX(), point1.getY());
+        
+        double tempY = RAMBLEY_EAR_HEIGHT * 0.26;
+        point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+        tempY = RAMBLEY_EAR_HEIGHT * 0.17;
+        point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+        addQuadBezierCurve(point1,point2,point3,point4,path);
+        tempY = RAMBLEY_EAR_HEIGHT * 0.1;
+        point2.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
+        double tempX = point7.getX()+RAMBLEY_EAR_TIP_ROUNDING;
+        point5.setLocation(tempX, getRambleyUpperEarY(tempX-x)+y);
+        addQuadBezierCurve(point3,point2,point5,point4,path);
+        
+            // Curve to smooth the transition between the upper portion and the 
+            // tip of the ear
+        tempX = point7.getX()-RAMBLEY_EAR_TIP_ROUNDING;
+        point6.setLocation(tempX, getRambleyEarTipY(tempX-x)+y);
+        path.quadTo(point7.getX(), point7.getY(), point6.getX(), point6.getY());
+        
+            // Tip of the ear
+        double dxTip = Math.abs(point8.getX()-point6.getX());
+        tempX = dxTip - (dxTip * 0.4);
+        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+        tempX = dxTip - (dxTip * 0.75);
+        point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+        addQuadBezierCurve(point6,point1,point2,point4,path);
+        tempX = dxTip - (dxTip * 0.9);
+        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+        addQuadBezierCurve(point2,point1,point8,point4,path);
+        
+            // Lower component of the ear
+        tempY = RAMBLEY_EAR_HEIGHT*0.76;
+        point1.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+        tempY = RAMBLEY_EAR_HEIGHT*0.88;
+        point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+        addQuadBezierCurve(point8,point1,point2,point4,path);
+        tempY = RAMBLEY_EAR_HEIGHT*0.93;
+        point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+        point1.setLocation(x1,y1);
+        addQuadBezierCurve(point2,point3,point1,point4,path);
+        path.closePath();
+        
+        return new Area(path);
     }
     
-    private Area getRambleyEar(double x, double y, Path2D upper, Path2D lower, Path2D tip){
-        y -= RAMBLEY_EAR_Y_OFFSET_2;
-        upper = getRambleyEarPath(x,y,0.08,0.22,0.35,0.49,1/3.0,upper, 
-                (double operand) -> getRambleyEarUpperX(operand));
-        lower = getRambleyEarPath(x,y,0.39,0.71,0.84,0.39,1/3.0,lower, 
-                (double operand) -> getRambleyEarLowerX(operand));
-        
-        if (getABTesting()){
-            tip = getRambleyEarPath(x,y,getTestDouble1(),getTestDouble2(),getTestDouble3(),
-                    getTestDouble4(),getTestDouble5(),tip, 
-                    (double operand) -> getRambleyEarTipX(operand));
-        } else {
-            if (tip == null)
-                tip = new Path2D.Double();
-            else
-                tip.reset();
-            for (double y2 = 0; y2 <= RAMBLEY_EAR_HEIGHT; y2+=0.5){
-                addRambleyEarPoint(y2,null,null,tip, x, y);
-            }
-            addRambleyEarPoint(RAMBLEY_EAR_HEIGHT,null,null,tip, x, y);
-        }
-        
-        Point2D upperP = upper.getCurrentPoint();
-        Point2D lowerP = lower.getCurrentPoint();
-        Point2D tipP = tip.getCurrentPoint();
-        upper.lineTo(upperP.getX(), y+RAMBLEY_EAR_HEIGHT);
-        upper.lineTo(x, y+RAMBLEY_EAR_HEIGHT);
-        upper.closePath();
-        x = Math.max(upperP.getX(), lowerP.getX());
-        lower.lineTo(x, lowerP.getY());
-        lower.lineTo(x, y);
-        lower.closePath();
-        tip.lineTo(x, tipP.getY());
-        tip.lineTo(x, y);
-        tip.closePath();
-        
-        Area ear = new Area(upper);
-        ear.intersect(new Area(lower));
-        ear.intersect(new Area(tip));
-        
-        return ear;
-    }
-    
-    private Area getRambleyInnerEar(Area ear, double scale, Area head){
+    protected Area getRambleyInnerEar(Area ear, double scale, Area head){
         double scaleInv = 1/scale;
         Rectangle2D temp = ear.getBounds2D();
         AffineTransform inEarTx = AffineTransform.getScaleInstance(scale, scale);
@@ -1072,41 +1052,13 @@ public class RambleyPainter implements Painter<Component>{
         
         // Ear/body outline interaction should be more like the original
         
-        Path2D earUpper = new Path2D.Double();
-        Path2D earLower = new Path2D.Double();
-        Path2D earTip = new Path2D.Double();
-        double earX = headBounds.getCenterX()-84;
-        double earY = head2.getMinY()-30;
+        Path2D earPath = new Path2D.Double();
         
-        // Left Ear Calculations in desmos from AnimalWave:
-        // Outer: x = -2^(-8y+5.2) + 2
-        //        x = 2^(10y-23) + 0.5
-        //        y = (0.01/(x-2)) + 2.4
-        //        x = (0.01/(y-2.4)) + 2
-        // Outer Bounds: (0.5, 0.5769), (1.9999, 2.3585)
-        // Outer Top Curve: (1.9893, 1.4678), (1.8301, 2.3412)
-        // Outer Attaches to Head: (0.5147, 1.3699, 0.7333)
-        // Inner: x = (-2^(-10y+9.4) + 2)/1.15
-        //        x = (2^(14y-30) + 0.5)*1.7
-        //        y = (0.01/(x-1.8)) + 2.1
-        // Inner Bounds: (0.85, 0.9368), (1.7388, 2.076)
-        // Inner Top Curve: (1.5765, 2.0553), (1.7383, 1.938)
-        // Inner Attaches to Head: (0.8528, 1.4808), (1.2365, 1.0191)
-        
-        getRambleyEarPath(earX,earY-RAMBLEY_EAR_Y_OFFSET_2,
-                getTestDouble1(),getTestDouble2(),getTestDouble3(),
-                getTestDouble4(),getTestDouble5(),path, 
-                (double operand) -> getRambleyEarTipX(operand));
-        System.out.println(point1 + " " + point2 + " " + point3);
-        System.out.println(point3 + " " + point4 + " " + point5);
-        System.out.println(point6 + " " + point7);
-        
-        Area earR = getRambleyEar(earX,earY,earUpper,earLower,earTip);
+        Area earR = getRambleyEar(headBounds.getCenterX()-84,head2.getMinY()-31.5,earPath);
         Area earL = earR.createTransformedArea(horizFlip);
         
-        double earScale = 2/3.0;
-        Area earInR = getRambleyInnerEar(earR,earScale,headShape);
-        Area earInL = getRambleyInnerEar(earL,earScale,headShape);
+        Area earInR = getRambleyInnerEar(earR,RAMBLEY_INNER_EAR_SCALE,headShape);
+        Area earInL = getRambleyInnerEar(earL,RAMBLEY_INNER_EAR_SCALE,headShape);
         
         headShape.add(earR);
         headShape.add(earL);
@@ -1132,27 +1084,19 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(head1a);
             g.setColor(Color.DARK_GRAY);
             g.draw(head2);
+            g.setColor(Color.MAGENTA);
+            g.draw(earPath);
             g.setColor(Color.GRAY);
             g.draw(ellipse);
             g.draw(earInR);
             g.draw(earInL);
+            g.setColor(Color.WHITE);
+            g.draw(earR);
+            g.draw(earL);
             g.setColor(Color.RED);
             g.draw(headShape);
             g.setColor(Color.ORANGE);
             g.draw(headBounds);
-            g.setColor(Color.WHITE);
-            g.draw(earR);
-            g.draw(earL);
-            g.setColor(Color.MAGENTA);
-            g.draw(earUpper);
-            g.setColor(Color.GREEN);
-            g.draw(earLower);
-            g.setColor(Color.BLUE);
-            g.draw(earTip);
-            if (!getABTesting()){
-                g.setColor(RAMBLEY_CONDUCTOR_HAT_COLOR);
-                g.draw(path);
-            }
         }
         
             // Create shape for the face markings around his eyes
