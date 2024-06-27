@@ -236,6 +236,25 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected static final double RAMBLEY_Y_OFFSET = 60;
     /**
+     * This is the width and height of Rambley's irises.
+     */
+    protected static final double RAMBLEY_IRIS_SIZE = 24;
+    /**
+     * This contains half of the {@link RAMBLEY_IRIS_SIZE size} of Rambley's 
+     * irises. This is used for calculating the location of Rambley's irises 
+     * when using their center coordinates to position them.
+     */
+    private static final double RAMBLEY_IRIS_HALF_SIZE = RAMBLEY_IRIS_SIZE/2.0;
+    /**
+     * This is the width and height of Rambley's pupils.
+     */
+    protected static final double RAMBLEY_PUPIL_SIZE = RAMBLEY_IRIS_SIZE-14;
+    /**
+     * This contains half of the {@link RAMBLEY_PUPIL_SIZE size} of Rambley's 
+     * pupils. Rambley's pupils are centered in Rambley's irises.
+     */
+    private static final double RAMBLEY_PUPIL_HALF_SIZE = RAMBLEY_PUPIL_SIZE/2.0;
+    /**
      * 
      */
     private static final double RAMBLEY_EAR_X_OFFSET = 1.5;
@@ -562,6 +581,11 @@ public class RambleyPainter implements Painter<Component>{
             pixelGrid = new Path2D.Double();
         return getPixelGrid(x,y,w,h,pixelGrid);
     }
+    /**
+     * This constructs a stroke to use while rendering Rambley
+     * @param width
+     * @return 
+     */
     protected BasicStroke getRambleyStroke(float width){
         return new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
     }
@@ -799,22 +823,29 @@ public class RambleyPainter implements Painter<Component>{
     protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h){
         paintPixelGrid(g,x,y,w,h,null);
     }
-    
+    /**
+     * 
+     * @param x The x-coordinate of the center of Rambley's eye.
+     * @param y The y-coordinate of the center of Rambley's eye.
+     * @param iris An Ellipse2D object to get the iris
+     * @param pupil An Ellipse2D object to get the pupil
+     */
     protected void setRambleyEyeLocation(double x, double y, Ellipse2D iris, 
             Ellipse2D pupil){
-        iris.setFrameFromCenter(x,y,x+12,y+12);
-        pupil.setFrameFromCenter(iris.getCenterX(), iris.getCenterY(), 
-                iris.getCenterX()+5, iris.getCenterY()+5);
+        iris.setFrameFromCenter(x,y,
+                x+RAMBLEY_IRIS_HALF_SIZE,y+RAMBLEY_IRIS_HALF_SIZE);
+        x = iris.getCenterX();
+        y = iris.getCenterY();
+        pupil.setFrameFromCenter(x, y, 
+                x+RAMBLEY_PUPIL_HALF_SIZE, y+RAMBLEY_PUPIL_HALF_SIZE);
     }
-    
-    protected void setRambleyEyeLocation(double x, double y){
-        if (iris == null)
-            iris = new Ellipse2D.Double();
-        if (pupil == null)
-            pupil = new Ellipse2D.Double();
-        setRambleyEyeLocation(x,y,iris,pupil);
-    }
-    
+    /**
+     * 
+     * @param g
+     * @param eyeWhite The shape to use to paint the eye white
+     * @param iris The iris 
+     * @param pupil The pupil
+     */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,Ellipse2D iris,Ellipse2D pupil){
         Graphics2D tempG = (Graphics2D) g.create();
         tempG.clip(eyeWhite);
@@ -836,9 +867,22 @@ public class RambleyPainter implements Painter<Component>{
         g.draw(eyeWhite);
         g.setStroke(s);
     }
-    
-    protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, double y){
-        setRambleyEyeLocation(x,y);
+    /**
+     * 
+     * @param g
+     * @param eyeWhite The shape to use to paint the eye white
+     * @param x The x-coordinate of the center of Rambley's iris and pupil.
+     * @param y The y-coordinate of the center of Rambley's iris and pupil.
+     * @param iris The iris
+     * @param pupil The pupil
+     */
+    protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, 
+            double y,Ellipse2D iris,Ellipse2D pupil){
+        if (iris == null)
+            iris = new Ellipse2D.Double();
+        if (pupil == null)
+            pupil = new Ellipse2D.Double();
+        setRambleyEyeLocation(x,y,iris,pupil);
         paintRambleyEye(g,eyeWhite,iris,pupil);
     }
     
@@ -861,6 +905,12 @@ public class RambleyPainter implements Painter<Component>{
     private double getRambleyEarAdjustX2(double x){
         x /= RAMBLEY_EAR_MULTIPLIER;
         return RAMBLEY_EAR_X_OFFSET-x;
+    private void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, double y){
+        if (iris == null)
+            iris = new Ellipse2D.Double();
+        if (pupil == null)
+            pupil = new Ellipse2D.Double();
+        paintRambleyEye(g,eyeWhite,x,y,iris,pupil);
     }
     
     private static double getRambleyEarUpperY1(double x){
