@@ -7,6 +7,7 @@ package raccoon;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.EventListener;
+import java.util.HashMap;
 import java.util.function.DoubleUnaryOperator;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -202,6 +203,16 @@ public class RambleyPainter implements Painter<Component>{
      * method of {@code RambleyPainter}.
      */
     protected static final double INTERNAL_RENDER_HEIGHT = 256;
+    /**
+     * This is the default resolution for the {@link #getLineIntersection(
+     * double, double, double, double, DoubleUnaryOperator, DoubleUnaryOperator, 
+     * Point2D) getLineIntersection} method when a resolution is not specified.
+     * @see getLineIntersection(double, double, double, double, 
+     * DoubleUnaryOperator, DoubleUnaryOperator, int, Point2D)
+     * @see getLineIntersection(double, double, double, double, 
+     * DoubleUnaryOperator, DoubleUnaryOperator, Point2D)
+     */
+    protected static final int DEFAULT_LINE_INTERSECTION_RESOLUTION = 25;
     /**
      * This is the width and height of the background dots.
      */
@@ -461,26 +472,6 @@ public class RambleyPainter implements Painter<Component>{
         return fireFlagChange(old);
     }
     
-    
-    
-    protected boolean getShowsLines(){
-        return getFlag(SHOW_LINES_FLAG);
-    }
-    
-    protected void setShowsLines(boolean value){
-        setFlag(SHOW_LINES_FLAG,value);
-    }
-    
-    protected boolean getABTesting(){
-        return getFlag(A_B_TESTING_FLAG);
-    }
-    
-    protected void setABTesting(boolean value){
-        setFlag(A_B_TESTING_FLAG,value);
-    }
-    
-    
-    
     public boolean isBackgroundPainted(){
         return getFlag(PAINT_BACKGROUND_FLAG);
     }
@@ -608,122 +599,7 @@ public class RambleyPainter implements Painter<Component>{
         return outlineStroke;
     }
     
-    protected double getRadius(Ellipse2D c){
-        return (c.getWidth() + c.getHeight()) / 4.0;
-    }
     
-    protected boolean getCircleIntersections(Ellipse2D c0, Ellipse2D c1, Point2D p0, Point2D p1){
-        p0.setLocation(c0.getCenterX(), c0.getCenterY());
-        p1.setLocation(c1.getCenterX(), c1.getCenterY());
-        double r0 = getRadius(c0);
-        double r1 = getRadius(c1);
-        double d = p0.distance(p1);
-        if (d > (r0 + r1) || d < Math.abs(r0 - r1) || (d == 0 && r0 == r1)){
-            p0.setLocation(-1, -1);
-            p1.setLocation(p0);
-            return false;
-        }
-        double r0s = Math.pow(r0, 2);
-        double a = (r0s - Math.pow(r1, 2) + p0.distanceSq(p1)) / (2 * d);
-        double h = Math.sqrt(r0s - Math.pow(a, 2));
-        double dx = p1.getX() - p0.getX();
-        double dy = p1.getY() - p0.getY();
-        double x2 = p0.getX() + (a * dx) / d;
-        double y2 = p0.getY() + (a * dy) / d;
-        double rx = (h * dy) / d;
-        double ry = (h * dx) / d;
-        p0.setLocation(x2 + rx, y2 - ry);
-        p1.setLocation(x2 - rx, y2 + ry);
-        return true;
-    }
-    
-    protected void getCircleIntersections(Ellipse2D e, double x1, double y1, 
-            double x2, double y2, Point2D point1, Point2D point2){
-            // Function breaks for vertical lines
-        if (x1 == x2){
-            if (y1 == y2)
-                return;
-                // Rotate everything by 90 degrees.
-                // Bam! The vertical line is now a horizontal line
-            e.setFrame(e.getY(),e.getX(),e.getHeight(),e.getWidth());
-                // Calculate the points of intersection for the horizontal line
-            getCircleIntersections(e,y1,x1,y2,x2,point1,point2);
-                // Rotate everything back
-            point1.setLocation(point1.getY(), point1.getX());
-            point2.setLocation(point2.getY(), point2.getX());
-            e.setFrame(e.getY(),e.getX(),e.getHeight(),e.getWidth());
-            return;
-        }
-        double r1 = y2 - y1;
-        double r2 = x2 - x1; 
-        double k = r1 / r2;
-        double m = y2 - k * x2;
-        double a = Math.pow(e.getWidth()/2, 2);
-        double b = Math.pow(e.getHeight()/2, 2);
-        double A1 = 1/a + Math.pow(k, 2)/b;
-        double B1 = (2*k*(m-e.getCenterY()))/b - (2*e.getCenterX())/a;
-        double C1 = Math.pow(m-e.getCenterY(), 2)/b - 1 + Math.pow(e.getCenterX(), 2)/a;
-        double D = Math.sqrt(Math.pow(B1, 2) - 4*A1*C1);
-        A1 *= 2;
-        double q1 = (-B1 - D)/A1;
-        double q2 = (-B1 + D)/A1;
-        point1.setLocation(q1, k*q1+m);
-        point2.setLocation(q2, k*q2+m);
-    }
-    
-    protected void getCircleIntersections(Ellipse2D e, Point2D p1, Point2D p2, 
-            Point2D point1, Point2D point2){
-        getCircleIntersections(e,p1.getX(),p1.getY(),p2.getX(),p2.getY(),point1,point2);
-    }
-    
-    protected double getBezierPoint(double x0, double x1, double x2, double t){
-        return (Math.pow(1-t, 2) * x0) + (2 * t * (1-t)*x1) + (Math.pow(t, 2)*x2);
-    }
-    
-    protected Point2D getBezierPoint(Point2D p0, Point2D p1, Point2D p2, double t, Point2D point){
-        if (point == null)
-            point = new Point2D.Double();
-        point.setLocation(getBezierPoint(p0.getX(),p1.getX(),p2.getX(),t),
-                getBezierPoint(p0.getY(),p1.getY(),p2.getY(),t));
-        return point;
-    }
-    
-    protected Point2D getBezierPoint(Point2D p0, Point2D p1, Point2D p2, double t){
-        return getBezierPoint(p0,p1,p2,t,null);
-    }
-    
-    protected double[] getBezierT(double x0, double x1, double x2, double x){
-        double a = x0 - (2 * x1) + x2;
-        double b = (-2 * x0) + (2 * x1);
-        double c = x0 - x;
-        double d = Math.sqrt(Math.pow(b, 2) - (4 * a * c));
-        double a2 = 2 * a;
-        double t0 = (-b + d)/a2;
-        double t1 = (-b - d)/a2;
-        if (t0 >= 0 && t0 <= 1 && t1 >= 0 && t1 <= 1){
-            return new double[]{t0,t1};
-        } else if (t0 >= 0 && t0 <= 1){
-            return new double[]{t0};
-        } else if (t1 >= 0 && t1 <= 1){
-            return new double[]{t1};
-        }
-        return new double[]{};
-    }
-    
-    protected double getBezierControlPoint(double x0, double x1, double x2, double t){
-        x0 = Math.pow(1-t, 2) * x0;
-        x2 = Math.pow(t, 2)*x2;
-        double b = 2 * t * (1-t);
-        return (x1 - x0 - x2) / b;
-    }
-    
-    protected Point2D getBezierControlPoint(Point2D p0, Point2D p1, Point2D p2, double t, Point2D point){
-        if (point == null)
-            point = new Point2D.Double();
-        point.setLocation(getBezierControlPoint(p0.getX(),p1.getX(),p2.getX(),t),
-                getBezierControlPoint(p0.getY(),p1.getY(),p2.getY(),t));
-        return point;
-    }
 
     @Override
     public void paint(Graphics2D g, Component c, int width, int height) {
@@ -992,71 +868,18 @@ public class RambleyPainter implements Painter<Component>{
                 tip.lineTo(tipX, y2);
         }
     }
-    
-    private double testDouble1 = 0.025;
-    
-    protected double getTestDouble1(){
-        return testDouble1;
     }
     
-    protected void setTestDouble1(double value){
-        testDouble1 = value;
-        fireStateChanged();
     }
     
-    private double testDouble2 = 0.055;
-    
-    protected double getTestDouble2(){
-        return testDouble2;
     }
     
-    protected void setTestDouble2(double value){
-        testDouble2 = value;
-        fireStateChanged();
     }
     
-    private double testDouble3 = 0.29;
-    
-    protected double getTestDouble3(){
-        return testDouble3;
     }
     
-    protected void setTestDouble3(double value){
-        testDouble3 = value;
-        fireStateChanged();
     }
     
-    private double testDouble4 = 0.72;
-    
-    protected double getTestDouble4(){
-        return testDouble4;
-    }
-    
-    protected void setTestDouble4(double value){
-        testDouble4 = value;
-        fireStateChanged();
-    }
-    
-    private double testDouble5 = 0.5;
-    
-    protected double getTestDouble5(){
-        return testDouble5;
-    }
-    
-    protected void setTestDouble5(double value){
-        testDouble5 = value;
-        fireStateChanged();
-    }
-    
-    private double testDouble6 = 1;
-    
-    protected double getTestDouble6(){
-        return testDouble6;
-    }
-    
-    protected void setTestDouble6(double value){
-        testDouble6 = value;
-        fireStateChanged();
     }
     
     private Path2D getRambleyEarPath(double x, double y, double t1, double t2, 
@@ -1425,11 +1248,11 @@ public class RambleyPainter implements Painter<Component>{
         Path2D eye6 = new Path2D.Double();
         eye6.moveTo(eye4.getCenterX(), eye4.getMinY());
         eye6.lineTo((eye4.getCenterX()+eye5.getCenterX())/2, eye4.getMinY());
-        double[] tArr = getBezierT(point1.getX(),point3.getX(),point2.getX(),eye5.getMinX()-4);
+        double[] tArr = getQuadBezierT(point1.getX(),point3.getX(),point2.getX(),eye5.getMinX()-4);
         double t = 1;
         for (double tempT : tArr)
             t = Math.min(tempT, t);
-        point4 = getBezierPoint(point1,point3,point2,t, point4);
+        point4 = getQuadBezierPoint(point1,point3,point2,t, point4);
         eye6.quadTo(eye5.getMinX(),eye4.getMinY(),point4.getX(),point4.getY());
         eye6.quadTo(eye2.getMinX()+5, (eye4.getMaxY()+eye5.getMaxY())/2, 
                 eye5.getCenterX(), eye5.getMaxY());
@@ -1618,4 +1441,513 @@ public class RambleyPainter implements Painter<Component>{
     public String toString(){
         return getClass().getName()+"["+paramString()+"]";
     }
+    /**
+     * This function gets the radius of the circle represented by the given 
+     * ellipse. If the given ellipse is not a circle (i.e. the width and height 
+     * are not the same), then this will take the average of the width and 
+     * height of the given ellipse, and treat that as the diameter, dividing it 
+     * by two to get the radius. While non-circle ellipses do not actually have 
+     * a proper radius, this will at least give an approximate radius.
+     * @param c The circle to get the radius of.
+     * @return The radius of the given circle.
+     */
+    protected static double getRadius(Ellipse2D c){
+        return (c.getWidth() + c.getHeight()) / 4.0;
+    }
+    /**
+     * This calculates the two points of intersection for two circles.
+     * 
+     * This uses the algorithm described by Paul Bourke 
+     * (<a href="https://paulbourke.net/geometry/circlesphere/">Circles and 
+     * spheres</a>)
+     * 
+     * 
+     * 
+     * @param c0 
+     * @param c1
+     * @param p0 The first point of intersection 
+     * @param p1 The second point of intersection 
+     * @return {@code true} if the two circles intersect, {@code false} if 
+     * either the circles are separate, one circle is fully contained within the 
+     * other, or the circles are coincident and there are an infinite number of 
+     * solutions.
+     */
+    protected static boolean getCircleIntersections(Ellipse2D c0, Ellipse2D c1, 
+            Point2D p0, Point2D p1){
+            // Store the location of the center of the first circle in the 
+            // first point
+        p0.setLocation(c0.getCenterX(), c0.getCenterY());
+            // Store the location of the center of the second circle in the 
+            // second point
+        p1.setLocation(c1.getCenterX(), c1.getCenterY());
+            // Get the radius of the first circle
+        double r0 = getRadius(c0);
+            // Get the radius of the second circle
+        double r1 = getRadius(c1);
+            // Get the distance between the centers of the two circles
+        double d = p0.distance(p1);
+            // If the distance is greater than the sum of the radiuses (the 
+            // circles are separate), the distance is smaller than the 
+            // difference between the radiuses (one circle is contained within 
+            // the other), or the distance is zero and the radiuses are the 
+            // same (the circles are coincident, and thus intersect everywhere)
+        if (d > (r0 + r1) || d < Math.abs(r0 - r1) || (d == 0 && r0 == r1)){
+                // Set the points to return to NaN
+            p0.setLocation(Double.NaN, Double.NaN);
+            p1.setLocation(p0);
+            return false;
+        }
+        /*
+        Let P3 be one of the two points of intersection, and P2 be the point 
+        where the line between the centers of the circles and the line between 
+        the two points of intersection cross.
+        
+        Consider the two right triangles P0P2P3 and P1P2P3, we can write 
+        a^2+h^2=r0^2 and b^2+h^2=r1^2, with a being the length of triangle 
+        P0P2P3 (the distance between P0 and P2), b being the length of triangle 
+        P1P2P3 (the distance between P1 and P2), and h being the shared height 
+        of the triangles (the distance between P2 and P3). As such, d = a + b.
+        */
+            // Get the radius of the first circle, squared
+        double r0s = Math.pow(r0, 2);
+            // Solve for a in the equation d = a + b, plugging in b^2 = r1^2-h^2
+        double a = (r0s - Math.pow(r1, 2) + p0.distanceSq(p1)) / (2 * d);
+            // Solve for h, using the equation h^2 = r0^2-a^2
+        double h = Math.sqrt(r0s - Math.pow(a, 2));
+            // Get the difference between the x-coordinates of the centers
+        double dx = p1.getX() - p0.getX();
+            // Get the difference between the y-coordinates of the centers
+        double dy = p1.getY() - p0.getY();
+            // Calculate the x-coordinate for P2
+        double x2 = p0.getX() + (a * dx) / d;
+            // Calculate the y-coordinate for P2
+        double y2 = p0.getY() + (a * dy) / d;
+            // Get the offset for the x-coordinate for the points of intersection 
+        double rx = (h * dy) / d;
+            // Get the offset for the y-coordinate for the points of intersection 
+        double ry = (h * dx) / d;
+            // Get the first point of intersection
+        p0.setLocation(x2 + rx, y2 - ry);
+            // Get the second point of intersection
+        p1.setLocation(x2 - rx, y2 + ry);
+        return true;
+    }
+    
+    private static double[] solveQuadraticEquation(double a, double b, double c){
+            // This will get the roots of the quadratic equation
+        double[] roots = new double[2];
+            // Solve the quadratic equation and get the number of roots
+        int rootNum = QuadCurve2D.solveQuadratic(new double[]{c,b,a}, roots);
+            // If there are no roots or the quadratic equation was a constant
+        if (rootNum <= 0)
+            return null;
+            // If there was only 1 root
+        else if (rootNum == 1)
+                // Use the same root for both
+            roots[1] = roots[0];
+        else {
+                // Temporarily store the first root.
+            double temp = roots[0];
+                // Make sure the first root is the lower of the two
+            roots[0] = Math.min(roots[0], roots[1]);
+                // Make sure the second root is the higher of the two
+            roots[1] = Math.max(temp, roots[1]);
+        }
+        return roots;
+    }
+    /**
+     * This gets the points at which the given line intersects with the given 
+     * ellipse.
+     * @param e
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param point1 The first point of intersection 
+     * @param point2 The second point of intersection 
+     * @return 
+     */
+    protected static boolean getCircleIntersections(Ellipse2D e, double x1, double y1, 
+            double x2, double y2, Point2D point1, Point2D point2){
+            // Function breaks for vertical lines
+        if (x1 == x2){
+                // If the line is a point
+            if (y1 == y2){
+                    // Set the points to return to NaN
+                point1.setLocation(Double.NaN, Double.NaN);
+                point2.setLocation(point1);
+                return false;
+            }
+                // Rotate everything by 90 degrees.
+                // Bam! The vertical line is now a horizontal line
+            e.setFrame(e.getY(),e.getX(),e.getHeight(),e.getWidth());
+                // Calculate the points of intersection for the horizontal line
+            boolean value = getCircleIntersections(e,y1,x1,y2,x2,point1,point2);
+                // Rotate everything back
+            point1.setLocation(point1.getY(), point1.getX());
+            point2.setLocation(point2.getY(), point2.getX());
+            e.setFrame(e.getY(),e.getX(),e.getHeight(),e.getWidth());
+            return value;
+        }   // Get the slope of the line
+        double k = (y2 - y1) / (x2 - x1);
+            // Get the coefficient for the line
+        double m = y2 - k * x2;
+            // Get half of the ellipse's width, squared
+        double w = Math.pow(e.getWidth()/2, 2);
+            // Get half of the ellipse's height, squared
+        double h = Math.pow(e.getHeight()/2, 2);
+            // Get the a coefficient for the quadratic equation
+        double a = 1/w + Math.pow(k, 2)/h;
+            // Get the b coefficient for the quadratic equation
+        double b = (2*k*(m-e.getCenterY()))/h - (2*e.getCenterX())/w;
+            // Get the c coefficient for the quadratic equation
+        double c = Math.pow(m-e.getCenterY(), 2)/h - 1 + Math.pow(e.getCenterX(), 2)/w;
+            // Get the roots of the quadratic equation
+        double[] roots = solveQuadraticEquation(a,b,c);
+            // If there are no roots or the quadratic equation was a constant
+        if (roots == null){
+                // Set the points to return to NaN
+            point1.setLocation(Double.NaN, Double.NaN);
+            point2.setLocation(point1);
+            return false;
+        }
+        point1.setLocation(roots[0], k*roots[0]+m);
+        point2.setLocation(roots[1], k*roots[1]+m);
+        return true;
+    }
+    
+    protected static void getCircleIntersections(Ellipse2D e, Point2D p1, 
+            Point2D p2, Point2D point1, Point2D point2){
+        getCircleIntersections(e,p1.getX(),p1.getY(),p2.getX(),p2.getY(),
+                point1,point2);
+    }
+    /**
+     * 
+     * @param p0 The starting point of the curve
+     * @param p1 The control point for the curve.
+     * @param p2 The end point of the curve
+     * @param t
+     * @return 
+     */
+    protected static double getQuadBezierPoint(double p0, double p1, double p2, double t){
+        return (Math.pow(1-t, 2) * p0) + (2 * t * (1-t)*p1) + (Math.pow(t, 2)*p2);
+    }
+    /**
+     * 
+     * @param p0 The starting point of the curve
+     * @param p1 The control point for the curve.
+     * @param p2 The end point of the curve
+     * @param t
+     * @param point
+     * @return 
+     */
+    protected static Point2D getQuadBezierPoint(Point2D p0, Point2D p1, 
+            Point2D p2, double t, Point2D point){
+        if (point == null)
+            point = new Point2D.Double();
+        point.setLocation(getQuadBezierPoint(p0.getX(),p1.getX(),p2.getX(),t),
+                getQuadBezierPoint(p0.getY(),p1.getY(),p2.getY(),t));
+        return point;
+    }
+    /**
+     * 
+     * @param p0 The starting point of the curve
+     * @param p1 The control point for the curve
+     * @param p2 The end point of the curve
+     * @param p The point to get the value of t for
+     * @return 
+     */
+    protected static double[] getQuadBezierT(double p0, double p1, double p2, double p){
+            // Get the a coefficient for the quadratic equation
+        double a = p0 - (2 * p1) + p2;
+            // Get the b coefficient for the quadratic equation
+        double b = (-2 * p0) + (2 * p1);
+            // Get the c coefficient for the quadratic equation
+        double c = p0 - p;
+            // Get the roots of the quadratic equation
+        double[] roots = solveQuadraticEquation(a,b,c);
+            // If there are any roots from the quadratic equation
+        if (roots != null){
+                // Get the first root
+            double r0 = roots[0];
+                // Get the second root
+            double r1 = roots[1];
+                // If both roots are between 0 and 1, inclusive
+            if (r0 >= 0 && r0 <= 1 && r1 >= 0 && r1 <= 1){
+                    // If both roots are the same
+                if (r0 == r1)
+                    return new double[]{r0};
+                return roots;
+                // If only the first root is between 0 and 1, inclusive
+            } else if (r0 >= 0 && r0 <= 1){
+                return new double[]{r0};
+                // If only the second root is between 0 and 1, inclusive
+            } else if (r1 >= 0 && r1 <= 1){
+                return new double[]{r1};
+            }
+        }
+        return new double[]{};
+    }
+    /**
+     * 
+     * https://microbians.com/math/Gabriel_Suchowolski_Quadratic_bezier_through_three_points_and_the_-equivalent_quadratic_bezier_(theorem)-.pdf
+     * 
+     * @param p0 The starting point of the curve
+     * @param p1 The point on the curve to pass through
+     * @param p2 The end point of the curve
+     * @param point 
+     * @return 
+     */
+    protected static Point2D getQuadBezierControlPoint(Point2D p0, Point2D p1, 
+            Point2D p2, Point2D point){
+        if (point == null)
+            point = new Point2D.Double();
+        double tx1 = p0.getX() - p1.getX();
+        double ty1 = p0.getY() - p1.getY();
+        double tx2 = p2.getX() - p1.getX();
+        double ty2 = p2.getY() - p1.getY();
+        double d1 = p0.distance(p1);
+        double d2 = p2.distance(p1);
+        double d3 = Math.sqrt(d1*d2);
+        point.setLocation(p1.getX()-(d3*(tx1/d1+tx2/d2))/2,
+                p1.getY()-(d3*(ty1/d1+ty2/d2))/2);
+        return point;
+    }
+    
+    protected static void getCubicBezierControlPoints(Point2D p0, Point2D p1, 
+            Point2D p2, Point2D p3, Point2D controlP1, Point2D controlP2){
+//        double dx = p3.getX() - p0.getX();
+        double y1 = (-5*p0.getY()+18*p1.getY()-9*p2.getY()+2*p3.getY())/6;
+        double y2 = (2*p0.getY()-9*p1.getY()+18*p2.getY()-5*p3.getY())/6;
+        
+        controlP1.setLocation(p1.getX(),y1);
+        controlP2.setLocation(p2.getX(),y2);
+    }
+    /**
+     * https://www.codeproject.com/Articles/31859/Draw-a-Smooth-Curve-through-a-Set-of-2D-Points-wit
+     * @param knots
+     * @param ctrlPts1
+     * @param ctrlPts2
+     */
+    protected static void getCubicBezierSplineControlPoints(java.util.List<Point2D> knots,
+            java.util.List<Point2D> ctrlPts1, java.util.List<Point2D> ctrlPts2){
+        if (knots == null || knots.size() < 2)
+            throw new IllegalArgumentException("There must be at least 2 knots");
+        ctrlPts1.clear();
+        ctrlPts2.clear();
+        int n = knots.size()-1;
+            // Only 2 points, straight line.
+        if (n == 1){
+                // 3P1 = 2P0 + P3
+            Point2D ctrlPt1 = new Point2D.Double(
+                    (2*knots.get(0).getX()+knots.get(1).getX())/3,
+                    (2*knots.get(0).getY()+knots.get(1).getY())/3);
+            ctrlPts1.add(ctrlPt1);
+                // P2 = 2P1 - P0
+            ctrlPts2.add(new Point2D.Double(
+                    2*ctrlPt1.getX()-knots.get(0).getX(),
+                    2*ctrlPt1.getY()-knots.get(0).getY()));
+            return;
+        }
+        
+        double[][] coords = getSplineFirstCtrlPoints(knots,n);
+        
+            // Populate the control point arrays
+        for (int i = 0; i < n; i++){
+                // First control point
+            ctrlPts1.add(new Point2D.Double(coords[0][i],coords[1][i]));
+                // Second control point
+            double x, y;
+            if (i < n-1){
+                x = 2*knots.get(i+1).getX()-coords[0][i+1];
+                y = 2*knots.get(i+1).getY()-coords[1][i+1];
+            } else {
+                x = (knots.get(n).getX()+coords[0][n-1])/2;
+                y = (knots.get(n).getY()+coords[1][n-1])/2;
+            }
+             ctrlPts2.add(new Point2D.Double(x,y));
+        }
+    }
+    
+    private static double[][] getSplineFirstCtrlPoints(java.util.List<Point2D> knots, int n){
+            // Right hand side vector
+        double[][] rhs = new double[2][n];
+        
+            // Set right hand side values
+        rhs[0][0] = knots.get(0).getX()+2*knots.get(1).getX();
+        rhs[1][0] = knots.get(0).getY()+2*knots.get(1).getY();
+        for (int i = 1; i < n-1; i++){
+            rhs[0][i] = 4*knots.get(i).getX()+2*knots.get(i+1).getX();
+            rhs[1][i] = 4*knots.get(i).getY()+2*knots.get(i+1).getY();
+        }
+        rhs[0][n-1] = (8*knots.get(n-1).getX()+knots.get(n).getX())/2.0;
+        rhs[1][n-1] = (8*knots.get(n-1).getY()+knots.get(n).getY())/2.0;
+        
+            // Solve a tridiagonal system for the coordinates of the first 
+            // Bezier control points
+        
+            // Temporary workspace 
+        double[] tmp = new double[n];
+        double b = 2.0;
+            // The coordinates
+        double[][] p = new double[2][n];
+        p[0][0] = rhs[0][0] / b;
+        p[1][0] = rhs[1][0] / b;
+            // Decomposition and forward substitution
+        for (int i = 1; i < n; i++){
+            tmp[i] = 1 / b;
+            b = ((i < n-1)?4.0:3.5)-tmp[i];
+            p[0][i] = (rhs[0][i] - p[0][i-1]) / b;
+            p[1][i] = (rhs[1][i] - p[1][i-1]) / b;
+        }
+            // Backsubstitution
+        for (double[] coords : p){
+            for (int i = 1; i < n; i++){
+                coords[n-i-1] -= tmp[n-i] * coords[n-i];
+            }
+        }
+        return p;
+    }
+    
+    private static void getIntersectingLine(double x, double y, Line2D line1, 
+            Line2D line2, DoubleUnaryOperator getY){
+        double x1 = (line1.getX1()+line1.getX2()) / 2.0;
+        double y1 = getY.applyAsDouble(x1 - x) + y;
+        Line2D l1 = new Line2D.Double(line1.getX1(), line1.getY1(), x1, y1);
+        Line2D l2 = new Line2D.Double(x1, y1, line1.getX2(), line1.getY2());
+        if (l1.intersectsLine(line2))
+            line1.setLine(l1);
+        else
+            line1.setLine(l2);
+    }
+    
+    protected static Point2D getLineIntersection(double x, double y, double x1, 
+            double x2, DoubleUnaryOperator getY1, DoubleUnaryOperator getY2, 
+            int resolution, Point2D point){
+        if (point == null)
+            point = new Point2D.Double();
+        Line2D line1 = new Line2D.Double(x1+x, getY1.applyAsDouble(x1)+y, 
+                x2+x, getY1.applyAsDouble(x2)+y);
+        Line2D line2 = new Line2D.Double(x1+x, getY2.applyAsDouble(x1)+y, 
+                x2+x, getY2.applyAsDouble(x2)+y);
+        for (int i = 0; i < resolution; i++){
+            if (line1.getP1().distance(line1.getP2()) >= line2.getP1().distance(line2.getP2()))
+                getIntersectingLine(x,y,line1,line2,getY1);
+             else 
+                getIntersectingLine(x,y,line2,line1,getY2);
+        }
+        double tempX = (line1.getX1()+line1.getX2()+line2.getX1()+line2.getX2())/4.0;
+        double temp = tempX - x;
+        point.setLocation(tempX, (getY1.applyAsDouble(temp)+getY2.applyAsDouble(temp))/2.0+y);
+        return point;
+    }
+    
+    protected static Point2D getLineIntersection(double x, double y, double x1, 
+            double x2, DoubleUnaryOperator getY1, DoubleUnaryOperator getY2, 
+            Point2D point){
+        return getLineIntersection(x,y,x1,x2,getY1,getY2,
+                DEFAULT_LINE_INTERSECTION_RESOLUTION,point);
+    }
+    
+    
+    
+    
+    
+    
+        // Some debug settings that will be removed when finished
+    protected boolean getShowsLines(){
+        return getFlag(SHOW_LINES_FLAG);
+    }
+    
+    protected void setShowsLines(boolean value){
+        setFlag(SHOW_LINES_FLAG,value);
+    }
+    
+    protected boolean getABTesting(){
+        return getFlag(A_B_TESTING_FLAG);
+    }
+    
+    protected void setABTesting(boolean value){
+        setFlag(A_B_TESTING_FLAG,value);
+    }
+    
+    private double testDouble1 = 0.26;
+    private double testDouble2 = 0.5;
+    private double testDouble3 = 0.85;
+    private double testDouble4 = 1.0;
+    private double testDouble5 = 0.50;
+    private double testDouble6 = 2;
+    
+    protected double getTestDouble1(){
+        return testDouble1;
+    }
+    
+    protected void setTestDouble1(double value){
+        testDouble1 = value;
+        fireStateChanged();
+    }
+    
+    protected double getTestDouble2(){
+        return testDouble2;
+    }
+    
+    protected void setTestDouble2(double value){
+        testDouble2 = value;
+        fireStateChanged();
+    }
+    
+    protected double getTestDouble3(){
+        return testDouble3;
+    }
+    
+    protected void setTestDouble3(double value){
+        testDouble3 = value;
+        fireStateChanged();
+    }
+    
+    protected double getTestDouble4(){
+        return testDouble4;
+    }
+    
+    protected void setTestDouble4(double value){
+        testDouble4 = value;
+        fireStateChanged();
+    }
+    
+    protected double getTestDouble5(){
+        return testDouble5;
+    }
+    
+    protected void setTestDouble5(double value){
+        testDouble5 = value;
+        fireStateChanged();
+    }
+    
+    protected double getTestDouble6(){
+        return testDouble6;
+    }
+    
+    protected void setTestDouble6(double value){
+        testDouble6 = value;
+        fireStateChanged();
+    }
+    
+    protected static void printPathIterator(PathIterator pathItr){
+        HashMap<Integer,String> segTypes = new HashMap<>();
+        segTypes.put(PathIterator.SEG_MOVETO, "SEG_MOVETO");
+        segTypes.put(PathIterator.SEG_LINETO, "SEG_LINETO");
+        segTypes.put(PathIterator.SEG_QUADTO, "SEG_QUADTO");
+        segTypes.put(PathIterator.SEG_CUBICTO,"SEG_CUBICTO");
+        segTypes.put(PathIterator.SEG_CLOSE,  "SEG_CLOSE");
+        while(!pathItr.isDone()){
+            double[] coords = new double[6];
+            int type = pathItr.currentSegment(coords);
+            System.out.printf("%11s: (%9.5f, %9.5f), (%9.5f, %9.5f), (%9.5f, %9.5f)%n",
+                    segTypes.get(type),coords[0],coords[1],coords[2],coords[3],coords[4],coords[5]);
+            pathItr.next();
+        }
+        System.out.println();
+    }
+    
+    protected static void printPathIterator(Shape shape){
 }
