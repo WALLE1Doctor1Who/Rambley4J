@@ -24,12 +24,12 @@ public class RambleyIcon extends RambleyPainter implements Icon2D {
     }
     @Override
     public int getIconWidth() {
-        return INTERNAL_RENDER_WIDTH;
+        return (int)Math.ceil(INTERNAL_RENDER_WIDTH);
     }
 
     @Override
     public int getIconHeight() {
-        return INTERNAL_RENDER_HEIGHT;
+        return (int)Math.ceil(INTERNAL_RENDER_HEIGHT);
     }
     /**
      * This returns a String representation of this {@code RambleyIcon}. 

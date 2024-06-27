@@ -11,7 +11,16 @@ import java.util.function.DoubleUnaryOperator;
 import javax.swing.*;
 import javax.swing.event.*;
 
+/*
+I'm thinking that RambleyIcon should be 256x256, with Rambley himself being 
+about 240 pixels tall with an 8 pixel gap above and below him. The background 
+should be the one from his screens, and it should be toggleable. The pixel 
+effect should be toggleable. The icon MAY have different states that Rambley 
+can be in.
+*/
+
 /**
+ * This is a Painter that paints Rambley the Raccoon from Indigo Park. 
  * 
  * Special thanks to AnimalWave on Discord for help with the equations that the 
  * code is based off of.
@@ -20,22 +29,18 @@ import javax.swing.event.*;
  * @author AnimalWave on Discord
  */
 public class RambleyPainter implements Painter<Component>{
-    /*
-    I'm thinking that RambleyIcon should be 256x256, with Rambley himself being 
-    about 240 pixels tall with an 8 pixel gap above and below him. The background 
-    should be the one from his screens, and it should be toggleable. The pixel 
-    effect should be toggleable. The icon MAY have different states that Rambley 
-    can be in.
-    */
-    
-    protected static final int INTERNAL_RENDER_WIDTH = 256;
-    
-    protected static final int INTERNAL_RENDER_HEIGHT = 256;
-    
+    /**
+     * This is the main color for the background.
+     */
     public static final Color BACKGROUND_COLOR = new Color(0x2CDFFF);
-    
+    /**
+     * This is the color for the dots in the background.
+     */
     public static final Color BACKGROUND_DOT_COLOR = new Color(0x1A73C9);
-    
+    /**
+     * This is the color for the background gradient. The background gradient 
+     * fades from this color to transparency.
+     */
     public static final Color BACKGROUND_GRADIENT_COLOR = new Color(0x0068FF);
     
     protected static final int BACKGROUND_DOT_SIZE = 8;
@@ -47,122 +52,250 @@ public class RambleyPainter implements Painter<Component>{
     
     protected static final int BACKGROUND_DOT_POINTS = 4;
     /**
-     * 
+     * This is the color which the background gradient fades into. This is a 
+     * transparent color.
+     */
+    public static final Color BACKGROUND_GRADIENT_COLOR_2 = 
+            new Color(BACKGROUND_GRADIENT_COLOR.getRGB()&0x00FFFFFF,true);
+    /**
+     * This is the color used to render the pixel grid effect that goes over 
+     * Rambley. This color is a translucent black.
      */
     public static final Color PIXEL_GRID_COLOR = new Color(0x60000000,true);
     
     protected static final int PIXEL_GRID_SPACING = 5;
-    
-    
-    
+    /**
+     * This is the main color of Rambley the Raccoon. That is to say, this is 
+     * the color which most of Rambley's body is comprised of.
+     */
     public static final Color RAMBLEY_MAIN_BODY_COLOR = new Color(0xA591AE);
-    
+    /**
+     * This is the secondary color of Rambley the Raccoon. That is to say, this 
+     * is the color for many of Rambley's patches of fur and markings.
+     */
     public static final Color RAMBLEY_SECONDARY_BODY_COLOR = new Color(0xEBDEE0);
-    
-    public static final Color RAMBLEY_STRIPE_COLOR = Color.BLACK;
-    
-    public static final Color RAMBLEY_FACE_MARKINGS_COLOR = RAMBLEY_STRIPE_COLOR;
-    
+    /**
+     * This is the main color that is used to outline Rambley the Raccoon. That 
+     * is to say, this is the color which most of the outline for Rambley is 
+     * comprised of.
+     */
     public static final Color RAMBLEY_OUTLINE_COLOR = new Color(0x624361);
-    
+    /**
+     * This is the color for the stripes on Rambley the Raccoon's tail.
+     */
+    public static final Color RAMBLEY_STRIPE_COLOR = Color.BLACK;
+    /**
+     * This is the color for Rambley the Raccoon's paws. That is to say, this is 
+     * the color for Rambley's hands and feet.
+     */
     public static final Color RAMBLEY_PAW_COLOR = new Color(0x161311);
-    
+    /**
+     * This is the color for the outline of Rambley the Raccoon's paws. That is 
+     * to say, this is the color for the outline of Rambley's hands and feet.
+     */
     public static final Color RAMBLEY_PAW_OUTLINE_COLOR = RAMBLEY_OUTLINE_COLOR;
-    
-    public static final Color RAMBLEY_NOSE_COLOR = RAMBLEY_PAW_COLOR;
-    
-    public static final Color RAMBLEY_NOSE_OUTLINE_COLOR = RAMBLEY_OUTLINE_COLOR;
-    
-    public static final Color RAMBLEY_EYE_WHITE_COLOR = Color.WHITE;
-    
-    public static final Color RAMBLEY_EYE_OUTLINE_COLOR = Color.BLACK;
-    
-    public static final Color RAMBLEY_IRIS_COLOR = new Color(0x883EC1);
-    
-    public static final Color RAMBLEY_IRIS_OUTLINE_COLOR = Color.BLACK;//new Color(0x23163F);
-    
-    public static final Color EVIL_RAMBLEY_IRIS_COLOR = Color.RED;
-    
-    public static final Color EVIL_RAMBLEY_IRIS_OUTLINE_COLOR = RAMBLEY_IRIS_OUTLINE_COLOR;
-    
-    public static final Color RAMBLEY_PUPIL_COLOR = Color.WHITE;
-    
+    /**
+     * This is the color for the mask-like markings on Rambley the Raccoon's 
+     * face.
+     */
+    public static final Color RAMBLEY_FACE_MARKINGS_COLOR = RAMBLEY_STRIPE_COLOR;
+    /**
+     * This is the color for Rambley the Raccoon's eyebrows.
+     */
     public static final Color RAMBLEY_EYEBROW_COLOR = new Color(0x60325D);
-    
+    /**
+     * This is the color for Rambley the Raccoon's eye whites.
+     */
+    public static final Color RAMBLEY_EYE_WHITE_COLOR = Color.WHITE;
+    /**
+     * This is the color for the outline of Rambley the Raccoon's eyes.
+     */
+    public static final Color RAMBLEY_EYE_OUTLINE_COLOR = Color.BLACK;
+    /**
+     * This is the color for Rambley the Raccoon's irises.
+     */
+    public static final Color RAMBLEY_IRIS_COLOR = new Color(0x883EC1);
+    /**
+     * This is the color for the outline of Rambley the Raccoon's irises and 
+     * pupils.
+     */
+    public static final Color RAMBLEY_IRIS_OUTLINE_COLOR = Color.BLACK;//new Color(0x23163F);
+    /**
+     * This is the color for evil Rambley's irisis. Evil Rambley is a version of 
+     * Rambley the Raccoon with red eyes that first appeared on thumbnails of 
+     * videos from the YouTube channel GameTheory on the topic of Indigo Park.
+     */
+    public static final Color EVIL_RAMBLEY_IRIS_COLOR = Color.RED;
+    /**
+     * This is the color for the outline of evil Rambley's irises and pupils. 
+     * Evil Rambley is a version of Rambley the Raccoon with red eyes that first 
+     * appeared on thumbnails of videos from the YouTube channel GameTheory on 
+     * the topic of Indigo Park.
+     */
+    public static final Color EVIL_RAMBLEY_IRIS_OUTLINE_COLOR = 
+            RAMBLEY_IRIS_OUTLINE_COLOR;
+    /**
+     * This is the color for Rambley the Raccoon's pupils.
+     */
+    public static final Color RAMBLEY_PUPIL_COLOR = Color.WHITE;
+    /**
+     * This is the color for Rambley the Raccoon's nose.
+     */
+    public static final Color RAMBLEY_NOSE_COLOR = RAMBLEY_PAW_COLOR;
+    /**
+     * This is the color for the outline of Rambley the Raccoon's nose.
+     */
+    public static final Color RAMBLEY_NOSE_OUTLINE_COLOR = RAMBLEY_OUTLINE_COLOR;
+    /**
+     * This is the color for the inside of Rambley the Raccoon's mouth.
+     */
     public static final Color RAMBLEY_MOUTH_COLOR = new Color(0x3D0D2F);
-    
-    public static final Color RAMBLEY_TEETH_COLOR = Color.WHITE;
-    
+    /**
+     * This is the color for the outline of Rambley the Raccoon's mouth.
+     */
     public static final Color RAMBLEY_MOUTH_OUTLINE_COLOR = RAMBLEY_OUTLINE_COLOR;
-    
+    /**
+     * This is the color for Rambley the Raccoon's teeth.
+     */
+    public static final Color RAMBLEY_TEETH_COLOR = Color.WHITE;
+    /**
+     * This is the color for the outline of Rambley the Raccoon's teeth.
+     */
+    public static final Color RAMBLEY_TEETH_OUTLINE_COLOR = RAMBLEY_MOUTH_OUTLINE_COLOR;
+    /**
+     * This is the color for Rambley the Raccoon's tongue.
+     */
     public static final Color RAMBLEY_TONGUE_COLOR = new Color(0x724794);
-    
+    /**
+     * This is the color for the outline of Rambley the Raccoon's tongue.
+     */
     public static final Color RAMBLEY_TONGUE_OUTLINE_COLOR = RAMBLEY_TONGUE_COLOR;
-    
-    
-    
+    /**
+     * This is the color for Rambley the Raccoon's red scarf.
+     */
     public static final Color RAMBLEY_SCARF_COLOR = new Color(0xC64C57);
-    
+    /**
+     * This is the color for the outline of Rambley the Raccoon's red scarf.
+     */
     public static final Color RAMBLEY_SCARF_OUTLINE_COLOR = new Color(0xA63442);
-    
-    
-    
+    /**
+     * This is the color for Rambley the Raccoon's train conductor hat which he 
+     * wears during the Rambley's Railroad ride.
+     */
     public static final Color RAMBLEY_CONDUCTOR_HAT_COLOR = new Color(0x431188);
-    
+    /**
+     * This is the color for the stripes on Rambley the Raccoon's train 
+     * conductor hat which he wears during the Rambley's Railroad ride.
+     */
     public static final Color RAMBLEY_CONDUCTOR_HAT_STRIPE_COLOR = new Color(0xF3E5FE);
-    
+    /**
+     * This is the color for the outline of Rambley the Raccoon's train 
+     * conductor hat which he wears during the Rambley's Railroad ride.
+     */
     public static final Color RAMBLEY_CONDUCTOR_HAT_OUTLINE_COLOR = Color.BLACK;
-    
-    
-    
+    /**
+     * This is the color for the border that goes around Rambley the Raccoon.
+     */
     public static final Color RAMBLEY_BORDER_COLOR = Color.WHITE;
-    
+    /**
+     * This is the color for Rambley the Raccoon's drop shadow.
+     */
     public static final Color RAMBLEY_DROP_SHADOW_COLOR = Color.BLACK;
+    /**
+     * This is the width at which Rambley is rendered at internally. Rambley is 
+     * scaled up or down to fill the area provided to the {@link #paint paint} 
+     * method of {@code RambleyPainter}.
+     */
+    protected static final double INTERNAL_RENDER_WIDTH = 256;
+    /**
+     * This is the height at which Rambley is rendered at internally. Rambley is 
+     * scaled up or down to fill the area provided to the {@link #paint paint} 
+     * method of {@code RambleyPainter}.
+     */
+    protected static final double INTERNAL_RENDER_HEIGHT = 256;
+    /**
+     * 
+     */
+    private static final double RAMBLEY_EAR_X_OFFSET = 1.5;
+    
+    private static final double RAMBLEY_EAR_Y_OFFSET = getRambleyEarOffset(0);
+    
+    private static final double RAMBLEY_EAR_MULTIPLIER = 42;
+    
+    private static final double RAMBLEY_EAR_HEIGHT = 1.8 * RAMBLEY_EAR_MULTIPLIER;
     
     
     
-    public static final int PAINT_BACKGROUND_FLAG = 0x00000001;
-    
-    public static final int PAINT_PIXEL_GRID_FLAG = 0x00000002;
-    
-    public static final int EVIL_RAMBLEY_FLAG = 0x00000004;
-    
-    public static final int IGNORE_ASPECT_RATIO_FLAG = 0x00000008;
     
     
     
     
     
     
-    public static final int A_B_TESTING_FLAG = 0x40000000;
     
-    public static final int SHOW_LINES_FLAG = 0x80000000;
+    /**
+     * The flag for painting the background.
+     */
+    public static final int PAINT_BACKGROUND_FLAG =         0x00000001;
+    /**
+     * The flag for painting the pixel grid.
+     */
+    public static final int PAINT_PIXEL_GRID_FLAG =         0x00000002;
     
+    // Will be public when name is finalized
+    protected static final int PAINT_BORDER_AND_SHADOW_FLAG =  0x00000004;
+    /**
+     * The flag for ignoring the aspect ratio for Rambley.
+     */
+    public static final int IGNORE_ASPECT_RATIO_FLAG =      0x00000008;
+    /**
+     * The flag for enabling evil Rambley. Evil Rambley is a version of 
+     * Rambley the Raccoon with red eyes that first appeared on thumbnails of 
+     * videos from the YouTube channel GameTheory on the topic of Indigo Park.
+     */
+    public static final int EVIL_RAMBLEY_FLAG =             0x00000010;
+    
+    
+    
+    
+    
+    // Some debug flags that will be removed when finished
+    protected static final int A_B_TESTING_FLAG = 0x40000000;
+    
+    protected static final int SHOW_LINES_FLAG = 0x80000000;
     
     
     
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG;// | PAINT_PIXEL_GRID_FLAG;
-    
-    
-    
-    
-    
-    
-    private int flags;
-    
+    /**
+     * This is an EventListenerList to store the listeners for this class.
+     */
     protected EventListenerList listenerList = new EventListenerList();
-    
+    /**
+     * This stores the flags used to store the settings for this painter.
+     */
+    private int flags;
+    /**
+     * A Path2D object used to render the pixel grid. This is initially null and 
+     * is initialized the first time it is used.
+     */
     private Path2D pixelGrid = null;
+    /**
+     * An Ellipse2D object used to render Rambley's irises. This is initially 
+     * null and is initialized the first time it is used.
+     */
+    private Ellipse2D iris = null;
+    /**
+     * An Ellipse2D object used to render Rambley's pupils. This is initially 
+     * null and is initialized the first time it is used.
+     */
+    private Ellipse2D pupil = null;
     
     private BasicStroke normalStroke = null;
     
     private BasicStroke eyeStroke = null;
     
     private BasicStroke outlineStroke = null;
-    
-    private Ellipse2D iris = null;
-    
-    private Ellipse2D pupil = null;
     /**
      * A scratch Rectangle2D object used for rendering Rambley. This is 
      * initialized the first time it is used.
@@ -226,65 +359,36 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This returns an integer storing the flags used to store the settings for 
-     * this snake and control its state.
-     * @return An integer containing the flags for this snake.
+     * this painter and control its state.
+     * @return An integer containing the flags for this painter.
      * @see #getFlag
      * @see #setFlag
      * @see #toggleFlag
-     * @see #APPLE_CONSUMED_FLAG
-     * @see #APPLE_CONSUMPTION_ENABLED_FLAG
-     * @see #APPLE_GROWTH_ENABLED_FLAG
-     * @see #WRAP_AROUND_ENABLED_FLAG
-     * @see #PLAYER_TYPE_FLAG
-     * @see #FLIPPED_FLAG
-     * @see #CRASHED_FLAG
-     * @see #DEFAULT_ACTION_ENABLED_FLAG
-     * @see #SKIPS_REPEATED_ACTIONS_FLAG
      */
     public int getFlags(){
         return flags;
     }
     /**
-     * This gets whether the given flag is set for this snake.
+     * This gets whether the given flag is set for this painter.
      * @param flag The flag to check for.
      * @return Whether the flag is set.
      * @see #getFlags
      * @see #setFlag
      * @see #toggleFlag
-     * @see SnakeUtilities#getFlag 
-     * @see #APPLE_CONSUMED_FLAG
-     * @see #APPLE_CONSUMPTION_ENABLED_FLAG
-     * @see #APPLE_GROWTH_ENABLED_FLAG
-     * @see #WRAP_AROUND_ENABLED_FLAG
-     * @see #PLAYER_TYPE_FLAG
-     * @see #FLIPPED_FLAG
-     * @see #CRASHED_FLAG
-     * @see #DEFAULT_ACTION_ENABLED_FLAG
-     * @see #SKIPS_REPEATED_ACTIONS_FLAG
      */
     public boolean getFlag(int flag){
         return (flags & flag) == flag;
     }
     /**
-     * This sets whether the given flag is set for this snake based off the 
-     * given value. This returns {@code true} if this snake changed as a result 
+     * This sets whether the given flag is set for this painter based off the 
+     * given value. This returns {@code true} if this painter changed as a result 
      * of the call, and {@code false} if no change is made.
      * @param flag The flag to be set or cleared based off {@code value}.
      * @param value Whether the flag should be set or cleared.
-     * @return Whether this snake changed as a result of the call.
+     * @return Whether this painter changed as a result of the call.
      * @see #getFlags 
      * @see #getFlag 
      * @see #toggleFlag 
-     * @see SnakeUtilities#setFlag 
-     * @see #APPLE_CONSUMED_FLAG
-     * @see #APPLE_CONSUMPTION_ENABLED_FLAG
-     * @see #APPLE_GROWTH_ENABLED_FLAG
-     * @see #WRAP_AROUND_ENABLED_FLAG
-     * @see #PLAYER_TYPE_FLAG
-     * @see #FLIPPED_FLAG
-     * @see #CRASHED_FLAG
-     * @see #DEFAULT_ACTION_ENABLED_FLAG
-     * @see #SKIPS_REPEATED_ACTIONS_FLAG
      */
     public boolean setFlag(int flag, boolean value){
         int old = flags;    // Get the old value for the flags
@@ -301,24 +405,14 @@ public class RambleyPainter implements Painter<Component>{
         return change;
     }
     /**
-     * This toggles whether the given flag is set for this snake. This returns 
-     * {@code true} if this snake changed as a result of the call, and {@code 
+     * This toggles whether the given flag is set for this painter. This returns 
+     * {@code true} if this painter changed as a result of the call, and {@code 
      * false} if no change is made. 
      * @param flag The flag to be toggled.
-     * @return Whether this snake changed as a result of the call.
+     * @return Whether this painter changed as a result of the call.
      * @see #getFlags 
      * @see #getFlag 
      * @see #setFlag 
-     * @see SnakeUtilities#toggleFlag 
-     * @see #APPLE_CONSUMED_FLAG
-     * @see #APPLE_CONSUMPTION_ENABLED_FLAG
-     * @see #APPLE_GROWTH_ENABLED_FLAG
-     * @see #WRAP_AROUND_ENABLED_FLAG
-     * @see #PLAYER_TYPE_FLAG
-     * @see #FLIPPED_FLAG
-     * @see #CRASHED_FLAG
-     * @see #DEFAULT_ACTION_ENABLED_FLAG
-     * @see #SKIPS_REPEATED_ACTIONS_FLAG
      */
     public boolean toggleFlag(int flag){
         int old = flags;    // Get the old value for the flags
@@ -378,6 +472,15 @@ public class RambleyPainter implements Painter<Component>{
         setFlag(IGNORE_ASPECT_RATIO_FLAG,enabled);
     }
     
+        // Will be public when name is finalized
+    protected boolean isBorderAndShadowPainted(){
+        return getFlag(PAINT_BORDER_AND_SHADOW_FLAG);
+    }
+    
+    protected void setBorderAndShadowPainted(boolean enabled){
+        setFlag(PAINT_BORDER_AND_SHADOW_FLAG,enabled);
+    }
+    
     
     
     protected Paint getBackgroundGradient(double x, double y, double w, double h){
@@ -387,8 +490,7 @@ public class RambleyPainter implements Painter<Component>{
 //                    new Color[]{BACKGROUND_GRADIENT_TOP_COLOR,
 //                        BACKGROUND_GRADIENT_BOTTOM_COLOR});
         return new GradientPaint(x1,(float)y,BACKGROUND_GRADIENT_COLOR,
-                x1,(float)(y+h-1),
-                new Color(BACKGROUND_GRADIENT_COLOR.getRGB()&0x00FFFFFF,true));
+                x1,(float)(y+h-1),BACKGROUND_GRADIENT_COLOR_2);
     }
     
     protected int getBackgroundDotOffset(int iconSize){
@@ -762,22 +864,7 @@ public class RambleyPainter implements Painter<Component>{
         return getRambleyEarAdjustX1((0.01/y)+1.5);
     }
     
-    private static final double RAMBLEY_EAR_X_OFFSET = 1.5;
-    
-    private static final double RAMBLEY_EAR_Y_OFFSET = getRambleyEarUpperY1(0);
-    
     private static final double RAMBLEY_EAR_Y_OFFSET_2 = 1.5;
-    
-    private static final double RAMBLEY_EAR_MULTIPLIER = 42;
-//    
-//    private static final double RAMBLEY_EAR_WIDTH = RAMBLEY_EAR_X_OFFSET * RAMBLEY_EAR_MULTIPLIER;
-//    
-    private static final double RAMBLEY_EAR_HEIGHT = 1.8 * RAMBLEY_EAR_MULTIPLIER;
-    
-//    private static final double RAMBLEY_EAR_HEIGHT = 75;
-//    
-//    private static final double RAMBLEY_EAR_MULTIPLIER = RAMBLEY_EAR_HEIGHT / 1.2;
-    
     
     private void addRambleyEarPoint(double y, Path2D upper, Path2D lower, Path2D tip, double xOff, double yOff){
         double y2 = y + yOff;
@@ -1355,11 +1442,6 @@ public class RambleyPainter implements Painter<Component>{
         
         
     }
-    
-    
-    
-    
-    
     /**
      * This returns an array of all the objects currently registered as 
      * <code><em>Foo</em>Listener</code>s on this icon. 
