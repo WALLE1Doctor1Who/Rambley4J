@@ -42,15 +42,6 @@ public class RambleyPainter implements Painter<Component>{
      * fades from this color to transparency.
      */
     public static final Color BACKGROUND_GRADIENT_COLOR = new Color(0x0068FF);
-    
-    protected static final int BACKGROUND_DOT_SIZE = 8;
-    
-    protected static final int BACKGROUND_DOT_HALF_SIZE = 
-            Math.floorDiv(BACKGROUND_DOT_SIZE,2);
-    
-    protected static final int BACKGROUND_DOT_SPACING = 12;
-    
-    protected static final int BACKGROUND_DOT_POINTS = 4;
     /**
      * This is the color which the background gradient fades into. This is a 
      * transparent color.
@@ -62,8 +53,6 @@ public class RambleyPainter implements Painter<Component>{
      * Rambley. This color is a translucent black.
      */
     public static final Color PIXEL_GRID_COLOR = new Color(0x60000000,true);
-    
-    protected static final int PIXEL_GRID_SPACING = 5;
     /**
      * This is the main color of Rambley the Raccoon. That is to say, this is 
      * the color which most of Rambley's body is comprised of.
@@ -213,6 +202,39 @@ public class RambleyPainter implements Painter<Component>{
      * method of {@code RambleyPainter}.
      */
     protected static final double INTERNAL_RENDER_HEIGHT = 256;
+    /**
+     * This is the width and height of the background dots.
+     */
+    protected static final double BACKGROUND_DOT_SIZE = 8;
+    /**
+     * This contains half of the {@link BACKGROUND_DOT_SIZE size} of the 
+     * background dots. This is used for calculating the location of the 
+     * background dots when using their center coordinates to position them.
+     */
+    private static final double BACKGROUND_DOT_HALF_SIZE = 
+            BACKGROUND_DOT_SIZE/2.0;
+    /**
+     * This is the diagonal spacing between the centers of the background dots. 
+     * That is to say, the center of each background dot is {@code 
+     * BACKGROUND_DOT_SPACING} pixels to the left and {@code 
+     * BACKGROUND_DOT_SPACING} pixels below the center of another background 
+     * dot.
+     */
+    protected static final double BACKGROUND_DOT_SPACING = 12;
+    /**
+     * This is the spacing between the lines in the pixel grid. For the vertical 
+     * lines, this is the horizontal spacing. For the horizontal lines, this is 
+     * the vertical spacing.
+     */
+    protected static final double PIXEL_GRID_SPACING = 5;
+    /**
+     * The offset for the x-coordinate of the top left corner of Rambley;
+     */
+    protected static final double RAMBLEY_X_OFFSET = 27;
+    /**
+     * The offset for the y-coordinate of the top left corner of Rambley;
+     */
+    protected static final double RAMBLEY_Y_OFFSET = 60;
     /**
      * 
      */
@@ -483,6 +505,14 @@ public class RambleyPainter implements Painter<Component>{
     
     
     
+    /**
+     * This returns the gradient to use to paint the background gradient.
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @return 
+     */
     protected Paint getBackgroundGradient(double x, double y, double w, double h){
         float x1 = (float)((w / 2.0)+x);
 //            return new LinearGradientPaint(x1,y,x1,y+h-1,
@@ -493,40 +523,45 @@ public class RambleyPainter implements Painter<Component>{
                 x1,(float)(y+h-1),BACKGROUND_GRADIENT_COLOR_2);
     }
     
-    protected int getBackgroundDotOffset(int iconSize){
-        return Math.floorDiv((iconSize%BACKGROUND_DOT_SPACING), 2);
+    protected double getBackgroundDotOffset(double size){
+        return (size%BACKGROUND_DOT_SPACING)/2.0;
     }
     
-    protected int getBackgroundDotOffsetX(int width){
+    protected double getBackgroundDotOffsetX(double width){
         return getBackgroundDotOffset(width);
     }
     
-    protected int getBackgroundDotOffsetY(int height){
+    protected double getBackgroundDotOffsetY(double height){
         return getBackgroundDotOffset(height);
     }
     
-    protected double getPixelGridOffset(double iconSize){
-        return ((iconSize-1)%PIXEL_GRID_SPACING)/2.0;
+    protected double getPixelGridOffset(double size){
+        return ((size-1)%PIXEL_GRID_SPACING)/2.0;
     }
     
-    protected Path2D getPixelGrid(double x, double y, double w, double h){
-        if (pixelGrid == null)
-            pixelGrid = new Path2D.Double();
+    protected Path2D getPixelGrid(double x, double y, double w, double h, Path2D path){
+        if (path == null)
+            path = new Path2D.Double();
         else
-            pixelGrid.reset();
+            path.reset();
         double x2 = x+w;
         double y2 = y+h;
         for (double y1 = getPixelGridOffset(h); y1 <= h; y1+=PIXEL_GRID_SPACING){
-            pixelGrid.moveTo(x, y1+y);
-            pixelGrid.lineTo(x2, y1+y);
+            path.moveTo(x, y1+y);
+            path.lineTo(x2, y1+y);
         }
         for (double x1 = getPixelGridOffset(w); x1 <= w; x1+=PIXEL_GRID_SPACING){
-            pixelGrid.moveTo(x1+x, y);
-            pixelGrid.lineTo(x1+x, y2);
+            path.moveTo(x1+x, y);
+            path.lineTo(x1+x, y2);
         }
-        return pixelGrid;
+        return path;
     }
     
+    private Path2D getPixelGrid(double x, double y, double w, double h){
+        if (pixelGrid == null)
+            pixelGrid = new Path2D.Double();
+        return getPixelGrid(x,y,w,h,pixelGrid);
+    }
     protected BasicStroke getRambleyStroke(float width){
         return new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
     }
@@ -703,34 +738,51 @@ public class RambleyPainter implements Painter<Component>{
         return g;
     }
     
-    protected void paintBackgroundDot(Graphics2D g, int x, int y, int xOff, int yOff){
-        int[] xPoints = new int[BACKGROUND_DOT_POINTS];
-        int[] yPoints = new int[BACKGROUND_DOT_POINTS];
-        xPoints[0] = xPoints[1] = xPoints[2] = x + xOff;
-        yPoints[0] = yPoints[1] = yPoints[3] = y + yOff;
-        xPoints[1] -= BACKGROUND_DOT_HALF_SIZE;
-        yPoints[0] -= BACKGROUND_DOT_HALF_SIZE;
-        xPoints[3] = xPoints[1] + BACKGROUND_DOT_SIZE;
-        yPoints[2] = yPoints[0] + BACKGROUND_DOT_SIZE;
-        g.fillPolygon(xPoints, yPoints, BACKGROUND_DOT_POINTS);
+    protected Path2D getBackgroundDot(RectangularShape rect, Path2D path){
+        if (path == null)
+            path = new Path2D.Double();
+        else
+            path.reset();
+        path.moveTo(rect.getCenterX(), rect.getMinY());
+        path.lineTo(rect.getMinX(), rect.getCenterY());
+        path.lineTo(rect.getCenterX(), rect.getMaxY());
+        path.lineTo(rect.getMaxX(), rect.getCenterY());
+        path.closePath();
+        return path;
+    }
+    
+    protected Path2D getBackgroundDot(double x, double y, Path2D path, Rectangle2D rect){
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+        rect.setFrameFromCenter(x, y, x-BACKGROUND_DOT_HALF_SIZE, y-BACKGROUND_DOT_HALF_SIZE);
+        return getBackgroundDot(rect,path);
     }
     
     protected void paintBackground(Graphics2D g, int x, int y, int w, int h){
         g.setColor(BACKGROUND_COLOR);
         g.fillRect(x, y, w, h);
-        Graphics2D tempG = (Graphics2D) g.create(x, y, w, h);
-        tempG.setColor(BACKGROUND_DOT_COLOR);
-        for (int i = 0; (i * BACKGROUND_DOT_SPACING) <= h; i++){
-            int yDot = (i * BACKGROUND_DOT_SPACING);
-            for (int xDot = BACKGROUND_DOT_SPACING * (i % 2); xDot <= w; 
-                    xDot+=BACKGROUND_DOT_SPACING+BACKGROUND_DOT_SPACING){
-                paintBackgroundDot(tempG,xDot,yDot,getBackgroundDotOffsetX(w),
-                        getBackgroundDotOffsetY(h));
-            }
-        }
+        Graphics2D tempG = (Graphics2D) g.create();
+        paintBackgroundDots(tempG,x,y,w,h);
         tempG.dispose();
         g.setPaint(getBackgroundGradient(x,y,w,h));
         g.fillRect(x, y, w, h);
+    }
+    
+    protected void paintBackgroundDots(Graphics2D g, int x, int y, int w, int h){
+        g.clipRect(x, y, w, h);
+        g.setColor(BACKGROUND_DOT_COLOR);
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+        double x1 = getBackgroundDotOffsetX(w)+x;
+        double y1 = getBackgroundDotOffsetY(h)+y;
+        for (int i = 0; (i * BACKGROUND_DOT_SPACING) <= h; i++){
+            double yDot = (i * BACKGROUND_DOT_SPACING)+y1;
+            for (double xDot = BACKGROUND_DOT_SPACING * (i % 2); xDot <= w; 
+                    xDot+=BACKGROUND_DOT_SPACING+BACKGROUND_DOT_SPACING){
+                path = getBackgroundDot(xDot+x1,yDot,path,rect);
+                g.fill(path);
+            }
+        }
     }
     
     protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h, Shape mask){
@@ -1035,8 +1087,8 @@ public class RambleyPainter implements Painter<Component>{
     }
     
     protected void paintRambley(Graphics2D g, int x, int y, int w, int h){
-        double scaleX = ((double)w)/INTERNAL_RENDER_WIDTH;
-        double scaleY = ((double)h)/INTERNAL_RENDER_HEIGHT;
+        double scaleX = w/INTERNAL_RENDER_WIDTH;
+        double scaleY = h/INTERNAL_RENDER_HEIGHT;
         if (isAspectRatioIgnored()){
             g.translate(x, y);
             g.scale(scaleX, scaleY);
@@ -1047,8 +1099,6 @@ public class RambleyPainter implements Painter<Component>{
             g.translate((w-width)/2.0+x, (h-height)/2.0+y);
             g.scale(scale,scale);
         }
-        double x1 = 27;
-        double y1 = 60;
         g.setStroke(getRambleyNormalStroke());
         AffineTransform horizFlip = AffineTransform.getScaleInstance(-1, 1);
         horizFlip.translate(-(INTERNAL_RENDER_HEIGHT-2), 0);
@@ -1080,7 +1130,7 @@ public class RambleyPainter implements Painter<Component>{
             // Create the shape for Rambley's head
         
             // Might also be useable for the location of the nose
-        Rectangle2D head1 = new Rectangle2D.Double(x1, y1+84, 200, 92);
+        Rectangle2D head1 = new Rectangle2D.Double(RAMBLEY_X_OFFSET, RAMBLEY_Y_OFFSET+84, 200, 92);
         Path2D head1a = new Path2D.Double(head1);
         head1a.lineTo(head1.getMinX(), head1.getMinY());
         double a1 = Math.toRadians(26.57);
@@ -1088,7 +1138,7 @@ public class RambleyPainter implements Painter<Component>{
         head1a.lineTo(head1.getMaxX(), head1.getMinY());
         head1a.closePath();
             // Might also be usable for the location of his scarf
-        Ellipse2D head2 = new Ellipse2D.Double(head1.getMinX()+24, y1, 152, 176);
+        Ellipse2D head2 = new Ellipse2D.Double(head1.getMinX()+24, RAMBLEY_Y_OFFSET, 152, 176);
             // Create the area for the upper part of his head
         Area temp = new Area(head2);
         temp.subtract(new Area(head1));
