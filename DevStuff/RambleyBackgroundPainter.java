@@ -12,13 +12,22 @@ import javax.swing.*;
  * @author Milo Steier
  */
 public class RambleyBackgroundPainter implements Painter<Object>{
-    
+    /**
+     * This is the main color for the background.
+     */
     public static final Color BACKGROUND_COLOR = new Color(0x2CDFFF);
-    
+    /**
+     * This is the color for the dots in the background.
+     */
     public static final Color BACKGROUND_DOT_COLOR = new Color(0x1A73C9);
-    
+    /**
+     * This is the color for the background gradient. This transitions to a 
+     * transparent version of this color.
+     */
     public static final Color BACKGROUND_GRADIENT_COLOR = new Color(0x0068FF);
-    
+    /**
+     * This is the width and height of the background dots.
+     */
     protected static final int BACKGROUND_DOT_SIZE = 8;
     
     protected static final int BACKGROUND_DOT_HALF_SIZE = 
