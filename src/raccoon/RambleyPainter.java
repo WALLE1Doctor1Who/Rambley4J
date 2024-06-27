@@ -276,11 +276,34 @@ public class RambleyPainter implements Painter<Component>{
     
     private static final double RAMBLEY_EAR_HEIGHT = 1.8 * RAMBLEY_EAR_MULTIPLIER;
     
+    private static final double RAMBLEY_EAR_TIP_Y_OFFSET = 1.0;
     
     
+    /**
+     * This converts the given y-coordinate in the graphics coordinate system 
+     * @param y
+     * @return 
+     */
+    private static double graphicsToEarEquY(double y){
+        y = RAMBLEY_EAR_HEIGHT - y;
+        y /= RAMBLEY_EAR_MULTIPLIER;
+        return y + RAMBLEY_EAR_Y_OFFSET;
+    }
     
+    private static double graphicsToEarEquX(double x){
+        x /= RAMBLEY_EAR_MULTIPLIER;
+        return RAMBLEY_EAR_X_OFFSET-x;
+    }
     
+    private static double earEquToGraphicsY(double y){
+        y -= RAMBLEY_EAR_Y_OFFSET;
+        y *= RAMBLEY_EAR_MULTIPLIER;
+        return (RAMBLEY_EAR_HEIGHT-y);
+    }
     
+    private static double earEquToGraphicsX(double x){
+        return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_EAR_MULTIPLIER;
+    }
     
     
     
@@ -403,6 +426,12 @@ public class RambleyPainter implements Painter<Component>{
      * initialized the first time it is used.
      */
     private Point2D point8 = null;
+    
+    private DoubleUnaryOperator earEquationU = null;
+    
+    private DoubleUnaryOperator earEquationL = null;
+    
+    private DoubleUnaryOperator earEquationT = null;
     
     
     
@@ -762,25 +791,6 @@ public class RambleyPainter implements Painter<Component>{
         paintRambleyEye(g,eyeWhite,iris,pupil);
     }
     
-    private double getRambleyEarAdjustY1(double y){
-        y = RAMBLEY_EAR_HEIGHT - y;
-        y /= RAMBLEY_EAR_MULTIPLIER;
-        return y + RAMBLEY_EAR_Y_OFFSET;
-    }
-    
-    private double getRambleyEarAdjustY2(double y){
-        y -= RAMBLEY_EAR_Y_OFFSET;
-        y *= RAMBLEY_EAR_MULTIPLIER;
-        return (RAMBLEY_EAR_HEIGHT-y);
-    }
-    
-    private double getRambleyEarAdjustX1(double x){
-        return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_EAR_MULTIPLIER;
-    }
-    
-    private double getRambleyEarAdjustX2(double x){
-        x /= RAMBLEY_EAR_MULTIPLIER;
-        return RAMBLEY_EAR_X_OFFSET-x;
     private void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, double y){
         if (iris == null)
             iris = new Ellipse2D.Double();
@@ -789,13 +799,15 @@ public class RambleyPainter implements Painter<Component>{
         paintRambleyEye(g,eyeWhite,x,y,iris,pupil);
     }
     
-    private static double getRambleyEarUpperY1(double x){
+    private static double getRambleyEarOffset(double x){
         return -((Math.log(1.5-x)/Math.log(2))-5.2)/8;
     }
     
-    private double getRambleyEarUpperY(double x){
-        x = getRambleyEarAdjustX2(x);
-        return getRambleyEarAdjustY2(getRambleyEarUpperY1(x));
+    protected double getRambleyUpperEarY(double x){
+        x = graphicsToEarEquX(x);
+        if (x <= 0)
+            return earEquToGraphicsY(0);
+        return earEquToGraphicsY((Math.log(x)/(10*Math.log(2)))+2.3);
     }
     /**
      * 2^(10y-23)
@@ -805,14 +817,14 @@ public class RambleyPainter implements Painter<Component>{
      * @param y
      * @return 
      */
-    private double getRambleyEarUpperX(double y){
-        y = getRambleyEarAdjustY1(y);
-        return getRambleyEarAdjustX1(Math.pow(2, 10*y-23));
+    protected double getRambleyUpperEarX(double y){
+        y = graphicsToEarEquY(y);
+        return earEquToGraphicsX(Math.pow(2, 10*y-23));
     }
     
-    private double getRambleyEarLowerY(double x){
-        x = getRambleyEarAdjustX2(x);
-        return getRambleyEarAdjustY2((Math.log(x)/(10*Math.log(2)))+2.3);
+    protected double getRambleyLowerEarY(double x){
+         x = graphicsToEarEquX(x);
+        return earEquToGraphicsY(getRambleyEarOffset(x));
     }
     /**
      * -2^(-8y+5.2) + 1.5
@@ -822,9 +834,9 @@ public class RambleyPainter implements Painter<Component>{
      * @param y
      * @return 
      */
-    private double getRambleyEarLowerX(double y){
-        y = getRambleyEarAdjustY1(y);
-        return getRambleyEarAdjustX1(-Math.pow(2, -8*y+5.2)+1.5);
+    protected double getRambleyLowerEarX(double y){
+        y = graphicsToEarEquY(y);
+        return earEquToGraphicsX(-Math.pow(2, -8*y+5.2)+1.5);
     }
     /**
      * (0.01/(y-2.4)) + 1.5
@@ -834,12 +846,12 @@ public class RambleyPainter implements Painter<Component>{
      * @param y
      * @return 
      */
-    private double getRambleyEarTipX(double y){
-        y -= getTestDouble6();
-        y = getRambleyEarAdjustY1(y) - 2.4;
+    protected double getRambleyEarTipX(double y){
+        y -= RAMBLEY_EAR_TIP_Y_OFFSET;
+        y = graphicsToEarEquY(y) - 2.4;
         if (y >= 0)
-            return getRambleyEarAdjustX1(0);
-        return getRambleyEarAdjustX1((0.01/y)+1.5);
+            return earEquToGraphicsX(0);
+        return earEquToGraphicsX(Math.max((0.01/y)+1.5, 0));
     }
     
     private static final double RAMBLEY_EAR_Y_OFFSET_2 = 1.5;
@@ -870,16 +882,47 @@ public class RambleyPainter implements Painter<Component>{
     }
     }
     
+    /**
+     * (0.01/(x-1.5)) + 2.4
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param x
+     * @return 
+     */
+    protected double getRambleyEarTipY(double x){
+        x = graphicsToEarEquX(x)-1.5;
+        double y = (x >= 0) ? 0 : (0.01/x);
+        return Math.min(earEquToGraphicsY(y + 2.4) + RAMBLEY_EAR_TIP_Y_OFFSET, 
+                RAMBLEY_EAR_HEIGHT);
     }
     
+    private DoubleUnaryOperator getRambleyUpperEarEquation(){
+        if (earEquationU == null)
+            earEquationU = (double operand) -> getRambleyUpperEarY(operand);
+        return earEquationU;
     }
     
+    private DoubleUnaryOperator getRambleyLowerEarEquation(){
+        if (earEquationL == null)
+            earEquationL = (double operand) -> getRambleyLowerEarY(operand);
+        return earEquationL;
     }
     
+    private DoubleUnaryOperator getRambleyEarTipEquation(){
+        if (earEquationT == null)
+            earEquationT = (double operand) -> getRambleyEarTipY(operand);
+        return earEquationT;
     }
     
+    protected Point2D getRambleyEarUpperTip(double x, double y, Point2D point){
+        return getLineIntersection(x,y,9,10.5,
+                getRambleyUpperEarEquation(),getRambleyEarTipEquation(),point);
     }
     
+    protected Point2D getRambleyEarLowerTip(double x, double y, Point2D point){
+        return getLineIntersection(x,y,getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
+                getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
     }
     
     private Path2D getRambleyEarPath(double x, double y, double t1, double t2, 
@@ -1950,4 +1993,6 @@ public class RambleyPainter implements Painter<Component>{
     }
     
     protected static void printPathIterator(Shape shape){
+        printPathIterator(shape.getPathIterator(null));
+    }
 }
