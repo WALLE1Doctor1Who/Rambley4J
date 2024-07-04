@@ -593,53 +593,187 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This returns whether the background will be painted by this {@code 
      * RambleyPainter}. If this is {@code true}, then a background reminiscent 
-     * of the one seen in Indigo Park will be painted behind Rambley. The 
-     * background will consist of {@link BACKGROUND_DOT_COLOR dark blue} 
-     * diamond-shaped polka dots over a gradient going from {@link 
-     * BACKGROUND_GRADIENT_COLOR dark blue} at the top to {@link 
-     * BACKGROUND_COLOR light blue} at the bottom. The default value for this is 
-     * {@code true}.
+     * of the one seen on Rambley's screens in Indigo Park will be painted 
+     * behind Rambley. The background will consist of {@link 
+     * BACKGROUND_DOT_COLOR dark blue} diamond-shaped polka dots over a gradient 
+     * going from {@link BACKGROUND_GRADIENT_COLOR dark blue} at the top to 
+     * {@link BACKGROUND_COLOR light blue} at the bottom. The default value for 
+     * this is {@code true}.
      * 
      * @todo Add references to other related methods.
      * 
      * @return Whether the background will be painted.
+     * @see #PAINT_BACKGROUND_FLAG
+     * @see #getFlag 
+     * @see #setBackgroundPainted
      */
     public boolean isBackgroundPainted(){
         return getFlag(PAINT_BACKGROUND_FLAG);
     }
+    /**
+     * This sets whether the background will be painted by this {@code 
+     * RambleyPainter}. If this is {@code true}, then a background reminiscent 
+     * of the one seen on Rambley's screens in Indigo Park will be painted 
+     * behind Rambley. The default value for this is {@code true}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param enabled Whether the background should be painted.
+     * @return This {@code RambleyPainter}.
+     * @see #PAINT_BACKGROUND_FLAG
+     * @see #setFlag 
+     * @see #isBackgroundPainted
+     */
     public RambleyPainter setBackgroundPainted(boolean enabled){
         return setFlag(PAINT_BACKGROUND_FLAG,enabled);
     }
-    
+    /**
+     * This returns whether the pixel grid effect will be painted by this {@code 
+     * RambleyPainter}. If this is {@code true}, then an overlay reminiscent of 
+     * the pixel grid effect seen on Rambley's screens in Indigo Park will be 
+     * painted over Rambley. The default value for this is {@code true}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @return Whether the pixel grid effect will be painted.
+     * @see #PAINT_PIXEL_GRID_FLAG
+     * @see #getFlag 
+     * @see #setPixelGridPainted 
+     */
     public boolean isPixelGridPainted(){
         return getFlag(PAINT_PIXEL_GRID_FLAG);
     }
-    
+    /**
+     * This sets whether the pixel grid effect will be painted by this {@code 
+     * RambleyPainter}. If this is {@code true}, then an overlay reminiscent of 
+     * the pixel grid effect seen on Rambley's screens in Indigo Park will be 
+     * painted over Rambley. The default value for this is {@code true}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param enabled Whether the pixel grid effect should be painted.
+     * @return This {@code RambleyPainter}.
+     * @see #PAINT_PIXEL_GRID_FLAG
+     * @see #setFlag 
+     * @see #isPixelGridPainted 
+     */
     public RambleyPainter setPixelGridPainted(boolean enabled){
         return setFlag(PAINT_PIXEL_GRID_FLAG,enabled);
     }
-    
+    /**
+     * This returns whether this {@code RambleyPainter} will paint evil Rambley 
+     * instead of normal Rambley. Evil Rambley is a version of Rambley the 
+     * Raccoon with red eyes that first appeared on thumbnails of videos from 
+     * the YouTube channel GameTheory on the topic of Indigo Park. If this is 
+     * {@code true}, then Rambley's irises will be red instead of indigo, and if 
+     * his mouth is open, then he will have two fangs (one on either side of his 
+     * mouth) instead of one. The default value for this is {@code false}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @return Whether this will paint evil Rambley ({@code true} for evil 
+     * Rambley, {@code false} for normal Rambley).
+     * @see #EVIL_RAMBLEY_FLAG
+     * @see #getFlag 
+     * @see #setRambleyEvil 
+     */
     public boolean isRambleyEvil(){
         return getFlag(EVIL_RAMBLEY_FLAG);
     }
-    
-    public RambleyPainter setRambleyEvil(boolean enabled){
-        return setFlag(EVIL_RAMBLEY_FLAG,enabled);
+    /**
+     * This sets whether this {@code RambleyPainter} will paint evil Rambley 
+     * instead of normal Rambley. Evil Rambley is a version of Rambley the 
+     * Raccoon with red eyes that first appeared on thumbnails of videos from 
+     * the YouTube channel GameTheory on the topic of Indigo Park. If this is 
+     * {@code true}, then Rambley's irises will be red instead of indigo, and if 
+     * his mouth is open, then he will have two fangs (one on either side of his 
+     * mouth) instead of one. The default value for this is {@code false}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param value Whether this should paint evil Rambley ({@code true} for 
+     * evil Rambley, {@code false} for normal Rambley).
+     * @return This {@code RambleyPainter}.
+     * @see #EVIL_RAMBLEY_FLAG
+     * @see #setFlag 
+     * @see #isRambleyEvil 
+     */
+    public RambleyPainter setRambleyEvil(boolean value){
+        return setFlag(EVIL_RAMBLEY_FLAG,value);
     }
-    
+    /**
+     * This returns whether Rambley's aspect ratio will be ignored when this 
+     * {@code RambleyPainter} is painting Rambley. If this is {@code true}, then 
+     * Rambley will be stretched to fill the area to be painted by the {@link 
+     * #paint paint} method. In other words, if this is {@code true}, then 
+     * Rambley will be rendered in the aspect ratio of the area to be painted. 
+     * If this is {@code false}, then Rambley will be rendered in the 
+     * appropriate aspect ratio and centered within the area to be painted. The 
+     * default value for this is {@code false}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @return Whether Rambley's aspect ratio will be ignored.
+     * @see IGNORE_ASPECT_RATIO_FLAG
+     * @see #getFlag 
+     * @see #setAspectRatioIgnored
+     */
     public boolean isAspectRatioIgnored(){
         return getFlag(IGNORE_ASPECT_RATIO_FLAG);
     }
-    
-    public RambleyPainter setAspectRatioIgnored(boolean enabled){
-        return setFlag(IGNORE_ASPECT_RATIO_FLAG,enabled);
+    /**
+     * This sets whether Rambley's aspect ratio will be ignored when this {@code 
+     * RambleyPainter} is painting Rambley. If this is {@code true}, then 
+     * Rambley will be stretched to fill the area to be painted by the {@link 
+     * #paint paint} method. In other words, if this is {@code true}, then 
+     * Rambley will be rendered in the aspect ratio of the area to be painted. 
+     * If this is {@code false}, then Rambley will be rendered in the 
+     * appropriate aspect ratio and centered within the area to be painted. The 
+     * default value for this is {@code false}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param value Whether Rambley's aspect ratio should be ignored.
+     * @return This {@code RambleyPainter}.
+     * @see IGNORE_ASPECT_RATIO_FLAG
+     * @see #setFlag 
+     * @see #isAspectRatioIgnored
+     */
+    public RambleyPainter setAspectRatioIgnored(boolean value){
+        return setFlag(IGNORE_ASPECT_RATIO_FLAG,value);
     }
-    
-        // Will be public when name is finalized
+    /**
+     * This returns whether the border around Rambley and Rambley's shadow will 
+     * be painted by this {@code RambleyPainter}. The default value for this is 
+     * {@code true}.
+     * 
+     * @todo Finalize the name for the flag and make it public instead of 
+     * protected. Add references to other related methods.
+     * 
+     * @return Whether the border around Rambley and Rambley's shadow will be 
+     * painted.
+     * @see PAINT_BORDER_AND_SHADOW_FLAG
+     * @see #getFlag 
+     * @see setBorderAndShadowPainted
+     */
     protected boolean isBorderAndShadowPainted(){
         return getFlag(PAINT_BORDER_AND_SHADOW_FLAG);
     }
-    
+    /**
+     * This sets whether the border around Rambley and Rambley's shadow will be 
+     * painted by this {@code RambleyPainter}. The default value for this is 
+     * {@code true}.
+     * 
+     * @todo Finalize the name for the flag and make it public instead of 
+     * protected. Add references to other related methods.
+     * 
+     * @param enabled Whether the border around Rambley and Rambley's shadow 
+     * should be painted.
+     * @return This {@code RambleyPainter}.
+     * @see PAINT_BORDER_AND_SHADOW_FLAG
+     * @see #setFlag 
+     * @see isBorderAndShadowPainted
+     */
     protected RambleyPainter setBorderAndShadowPainted(boolean enabled){
         return setFlag(PAINT_BORDER_AND_SHADOW_FLAG,enabled);
     }
