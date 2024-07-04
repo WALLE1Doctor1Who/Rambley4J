@@ -356,7 +356,7 @@ public class RambleyPainter implements Painter<Component>{
      * This is the PropertyChangeSupport used to handle changes to the 
      * properties of this painter.
      */
-    private PropertyChangeSupport changeSupport;
+    private final PropertyChangeSupport changeSupport;
     /**
      * This stores the flags used to store the settings for this painter.
      */
@@ -481,6 +481,11 @@ public class RambleyPainter implements Painter<Component>{
     public RambleyPainter(){
         flags = DEFAULT_FLAG_SETTINGS;
         changeSupport = new PropertyChangeSupport(this);
+    }
+    
+    public RambleyPainter(int flags){
+        this();
+        RambleyPainter.this.setFlags(flags);
     }
     /**
      * This returns an integer storing the flags used to store the settings for 
