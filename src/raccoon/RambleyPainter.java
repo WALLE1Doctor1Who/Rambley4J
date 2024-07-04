@@ -792,6 +792,8 @@ public class RambleyPainter implements Painter<Component>{
     protected Paint getBackgroundGradient(double x,double y,double w,double h){
             // Get the center x-coordinate
         float x1 = (float)((w / 2.0)+x);
+            // Create a vertical gradient that fades from the background 
+            // gradient color to transparency over the area to fill
         return new GradientPaint(x1,(float)y,BACKGROUND_GRADIENT_COLOR,
                 x1,(float)(y+h-1),BACKGROUND_GRADIENT_COLOR_2);
     }
@@ -845,7 +847,10 @@ public class RambleyPainter implements Painter<Component>{
             // If the given Rectangle2D object is null
         if (rect == null)
             rect = new Rectangle2D.Double();
-        rect.setFrameFromCenter(x, y, x-BACKGROUND_DOT_HALF_SIZE, y-BACKGROUND_DOT_HALF_SIZE);
+            // Set the frame of the rectangle from the center to be the size of 
+            // a background polka dot.
+        rect.setFrameFromCenter(x, y, x-BACKGROUND_DOT_HALF_SIZE, 
+                y-BACKGROUND_DOT_HALF_SIZE);
         return getBackgroundDot(rect,path);
     }
     
@@ -1108,56 +1113,79 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @param x The x-coordinate of the center of Rambley's eye.
      * @param y The y-coordinate of the center of Rambley's eye.
-     * @param iris An Ellipse2D object to get the iris
-     * @param pupil An Ellipse2D object to get the pupil
+     * @param iris An Ellipse2D object to store Rambley's iris in.
+     * @param pupil An Ellipse2D object to store Rambley's pupil in.
      */
     protected void setRambleyEyeLocation(double x, double y, Ellipse2D iris, 
             Ellipse2D pupil){
+            // Set the frame of the iris ellipse from the center to be the 
+            // correct size for Rambley's iris
         iris.setFrameFromCenter(x,y,
                 x+RAMBLEY_IRIS_HALF_SIZE,y+RAMBLEY_IRIS_HALF_SIZE);
+            // Ensure that the coordinates are the center of the iris
         x = iris.getCenterX();
         y = iris.getCenterY();
+            // Set the frame of the pupil ellipse from the center to be the 
+            // correct size for Rambley's pupil
         pupil.setFrameFromCenter(x, y, 
                 x+RAMBLEY_PUPIL_HALF_SIZE, y+RAMBLEY_PUPIL_HALF_SIZE);
     }
     /**
      * 
-     * @param g
-     * @param eyeWhite The shape to use to paint the eye white
-     * @param iris The iris 
-     * @param pupil The pupil
+     * @param g The graphics context to render to.
+     * @param eyeWhite The shape to use to paint the eye white for Rambley's 
+     * eye.
+     * @param iris The Ellipse2D object representing Rambley's iris.
+     * @param pupil The Ellipse2D object representing Rambley's pupil.
      */
-    protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,Ellipse2D iris,Ellipse2D pupil){
+    protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,Ellipse2D iris,
+            Ellipse2D pupil){
             // Create a copy of the given graphics context
         Graphics2D tempG = (Graphics2D) g.create();
+            // Clip the copy to the shape of the eye white
         tempG.clip(eyeWhite);
+            // Fill the eye white
         tempG.setColor(RAMBLEY_EYE_WHITE_COLOR);
         tempG.fill(eyeWhite);
+            // Set the color for Rambley's iris. If Rambley is evil, use the 
+            // evil Rambley iris color. Otherwise, use the normal Rambley iris 
+            // color
         tempG.setColor((isRambleyEvil())?EVIL_RAMBLEY_IRIS_COLOR:RAMBLEY_IRIS_COLOR);
+            // Fill Rambley's iris
         tempG.fill(iris);
+            // Fill Rambley's pupil
         tempG.setColor(RAMBLEY_PUPIL_COLOR);
         tempG.fill(pupil);
+            // Set the color for the outline of Rambley's iris. If Rambley is 
+            // evil, use the evil Rambley iris outline color. Otherwise, use the 
+            // normal Rambley iris outline color
         tempG.setColor((isRambleyEvil())?EVIL_RAMBLEY_IRIS_OUTLINE_COLOR:
                 RAMBLEY_IRIS_OUTLINE_COLOR);
+            // Set the stroke to use to the detail stroke
         tempG.setStroke(getRambleyDetailStroke());
+            // Draw the outline of the iris
         tempG.draw(iris);
+            // Draw the outline of the pupil
         tempG.draw(pupil);
         tempG.dispose();
             // Create another copy of the given graphics context
         g = (Graphics2D) g.create();
+            // Set the stroke to use to the outline stroke
         g.setStroke(getRambleyOutlineStroke());
+            // Draw the outline for Rambley's eye
         g.setColor(RAMBLEY_EYE_OUTLINE_COLOR);
         g.draw(eyeWhite);
         g.dispose();
     }
     /**
      * 
-     * @param g
-     * @param eyeWhite The shape to use to paint the eye white
+     * @param g The graphics context to render to.
+     * @param eyeWhite The shape to use to paint the eye white for Rambley's 
+     * eye.
      * @param x The x-coordinate of the center of Rambley's iris and pupil.
      * @param y The y-coordinate of the center of Rambley's iris and pupil.
-     * @param iris The iris
-     * @param pupil The pupil
+     * @param iris The Ellipse2D object representing Rambley's iris.
+     * @param pupil The Ellipse2D object representing Rambley's pupil.
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, 
             double y,Ellipse2D iris,Ellipse2D pupil){
@@ -1341,35 +1369,81 @@ public class RambleyPainter implements Painter<Component>{
         
         return new Area(path);
     }
-    
+    /**
+     * This gets the Area to use to render the inner portion of Rambley's ear, 
+     * based off the Area of the given ear and the given scale factor for the 
+     * inner ear. The inner ear will be scaled by the given scale factor and 
+     * centered within the given Area for the outer ear. The given Area for the 
+     * head is used to subtract the head shape from the inner ear.
+     * @param ear The Area representing the outer ear to derive the inner ear 
+     * from.
+     * @param scale The scale factor for the inner ear. 
+     * @param head The Area for the shape of Rambley's head to use to subtrack 
+     * from the inner ear, or null.
+     * @return The Area for the inner portion of Rambley's ear.
+     */
     protected Area getRambleyInnerEar(Area ear, double scale, Area head){
+            // Get the inverse of the given scale.
         double scaleInv = 1/scale;
+            // Get the bounds of the given ear
         Rectangle2D temp = ear.getBounds2D();
+            // Create a scale transform to scale down the inner ear
         AffineTransform inEarTx = AffineTransform.getScaleInstance(scale, scale);
+            // Translate the transform to be at the origin
         inEarTx.translate(-temp.getMinX(), -temp.getMinY());
+            // Translate the transform to be at the center of the outer portion 
+            // of the ear (accounting for the earler scale transform)
         inEarTx.translate(temp.getCenterX()*scaleInv, temp.getCenterY()*scaleInv);
+            // Translate the transform left by half the ear's width, and up by 
+            // half the ear's height. When combined with the earlier scale 
+            // transform and translations, this will result in the inner ear 
+            // being centered within the outer ear
         inEarTx.translate(-temp.getWidth()/2, -temp.getHeight()/2);
+            // Transform the outer ear to get the inner ear
         Area earIn = ear.createTransformedArea(inEarTx);
-        earIn.subtract(head);
+            // If the area of the head was given
+        if (head != null)
+                // Remove the area of the head from the inner ear
+            earIn.subtract(head);
         return earIn;
     }
-    
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param x The x-coordinate of the top-left corner of the area to fill.
+     * @param y The y-coordinate of the top-left corner of the area to fill.
+     * @param w The width of the area to fill.
+     * @param h The height of the area to fill.
+     */
     protected void paintRambley(Graphics2D g, int x, int y, int w, int h){
             // Create a copy of the given graphics context
         g = (Graphics2D) g.create();
+            // Get the scale factor for the x axis
         double scaleX = w/INTERNAL_RENDER_WIDTH;
+            // Get the scale factor for the y axis
         double scaleY = h/INTERNAL_RENDER_HEIGHT;
+            // If we are to ignore Rambley's aspect ratio
         if (isAspectRatioIgnored()){
+                // Translate to the given x and y coordinates
             g.translate(x, y);
+                // Scale it to fit the internal rendering size
             g.scale(scaleX, scaleY);
         } else {
+                // Get the smaller of the two scale factors (this will be what 
+                // we use to scale the x and y coordinates)
             double scale = Math.min(scaleX, scaleY);
+                // Get the width of the area that will actually be rendered
             double width = Math.min(w, w*(scaleY/scaleX));
+                // Get the height of the area that will actually be rendered
             double height = Math.min(h, h*(scaleX/scaleY));
+                // Translate to center the image that will be rendered
             g.translate((w-width)/2.0+x, (h-height)/2.0+y);
+                // Scale it, preserving the aspect ratio
             g.scale(scale,scale);
         }
+            // Set the stroke to use to the normal stroke
         g.setStroke(getRambleyNormalStroke());
+            // Get a transform that will flip things horizontally
         AffineTransform horizFlip = AffineTransform.getScaleInstance(-1, 1);
         horizFlip.translate(-(INTERNAL_RENDER_HEIGHT-2), 0);
         if (rect == null)
