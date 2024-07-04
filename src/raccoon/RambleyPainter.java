@@ -345,15 +345,6 @@ public class RambleyPainter implements Painter<Component>{
      * GameTheory on the topic of Indigo Park.
      */
     public static final int EVIL_RAMBLEY_FLAG =             0x00000010;
-    
-    
-    
-    
-    
-    // Some debug flags that will be removed when finished
-    protected static final int A_B_TESTING_FLAG = 0x40000000;
-    
-    protected static final int SHOW_LINES_FLAG = 0x80000000;
     /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
@@ -2152,7 +2143,11 @@ public class RambleyPainter implements Painter<Component>{
     
     
     
-        // Some debug settings that will be removed when finished
+        // Some debug flags and settings that will be removed when finished
+    protected static final int A_B_TESTING_FLAG = 0x40000000;
+    
+    protected static final int SHOW_LINES_FLAG = 0x80000000;
+    
     boolean getShowsLines(){
         return getFlag(SHOW_LINES_FLAG);
     }
