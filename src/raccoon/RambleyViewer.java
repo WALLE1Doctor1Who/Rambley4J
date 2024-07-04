@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
+import java.util.prefs.Preferences;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.event.ChangeEvent;
@@ -24,7 +25,29 @@ import javax.swing.event.ChangeListener;
  * @author Milo Steier
  */
 public class RambleyViewer extends javax.swing.JFrame {
-
+    /**
+     * This is the name of the preference node used to store the settings for 
+     * this program.
+     */
+    private static final String PREFERENCE_NODE_NAME = 
+            "milo/Rambley4J/raccoon/test";
+    
+    private static final String RAMBLEY_PAINTER_FLAGS_KEY = "RambleyPainterFlags";
+    
+    private static final String DEBUG_ELEMENTS_KEY = "DebugElements";
+    
+    private static final String ALWAYS_SCALE_KEY = "AlwaysScale";
+    
+    private static final String PRINT_LISTENERS_KEY = "PrintListeners";
+    
+    private static final String LINK_PAINTER_SIZE_KEY = "LinkPainterSize";
+    
+    private static final String PAINTER_WIDTH_KEY = "PainterWidth";
+    
+    private static final String PAINTER_HEIGHT_KEY = "PainterHeight";
+    
+    private static final String SELECTED_SAVE_FILE_KEY = "SelectedSaveFile";
+    
     /**
      * Creates new form RambleyViewer
      */
@@ -32,15 +55,41 @@ public class RambleyViewer extends javax.swing.JFrame {
         rambleyIcon = new RambleyTestIcon();
         debugIcon = new DebuggingIcon(rambleyIcon,false);
         initComponents();
+        try{    // Try to load the settings from the preference node
+            config = Preferences.userRoot().node(PREFERENCE_NODE_NAME);
+            rambleyIcon.setFlags(config.getInt(RAMBLEY_PAINTER_FLAGS_KEY, 
+                    rambleyIcon.getFlags()));
+            debugIcon.setDebugEnabled(config.getBoolean(DEBUG_ELEMENTS_KEY, 
+                    debugIcon.isDebugEnabled()));
+            viewLabel.setImageAlwaysScaled(config.getBoolean(ALWAYS_SCALE_KEY, 
+                    viewLabel.isImageAlwaysScaled()));
+            listenerToggle.setSelected(config.getBoolean(PRINT_LISTENERS_KEY, 
+                    listenerToggle.isSelected()));
+            widthSpinner.setValue(config.getInt(PAINTER_WIDTH_KEY, 
+                    (int)Math.ceil(RambleyPainter.INTERNAL_RENDER_WIDTH)));
+            heightSpinner.setValue(config.getInt(PAINTER_HEIGHT_KEY, 
+                    (int)Math.ceil(RambleyPainter.INTERNAL_RENDER_HEIGHT)));
+            linkSizeToggle.setSelected(config.getBoolean(LINK_PAINTER_SIZE_KEY, 
+                    Objects.equals(widthSpinner.getValue(), heightSpinner.getValue())));
+            String selFile = config.get(SELECTED_SAVE_FILE_KEY, null);
+            if (selFile != null)
+                fc.setSelectedFile(new File(selFile));
+        } catch (SecurityException | IllegalStateException ex){
+            config = null;
+            System.out.println("Unable to load settings: " +ex);
+        } catch (IllegalArgumentException ex){
+            System.out.println("Invalid setting: " + ex);
+        }
         backgroundToggle.setSelected(rambleyIcon.isBackgroundPainted());
         gridToggle.setSelected(rambleyIcon.isPixelGridPainted());
         evilToggle.setSelected(rambleyIcon.isRambleyEvil());
         ratioToggle.setSelected(!rambleyIcon.isAspectRatioIgnored());
+        abTestingToggle.setSelected(rambleyIcon.getABTesting());
+        linesToggle.setSelected(rambleyIcon.getShowsLines());
         debugToggle.setSelected(debugIcon.isDebugEnabled());
-        widthSpinner.setValue((int)Math.ceil(RambleyPainter.INTERNAL_RENDER_WIDTH));
-        heightSpinner.setValue((int)Math.ceil(RambleyPainter.INTERNAL_RENDER_HEIGHT));
-        linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), heightSpinner.getValue()));
+        scaleToggle.setSelected(viewLabel.isImageAlwaysScaled());
         heightSpinner.setEnabled(!linkSizeToggle.isSelected());
+        
         jSpinner1.setValue(rambleyIcon.getTestDouble1()*100);
         jSpinner2.setValue(rambleyIcon.getTestDouble2()*100);
         jSpinner3.setValue(rambleyIcon.getTestDouble3()*100);
@@ -49,6 +98,7 @@ public class RambleyViewer extends javax.swing.JFrame {
         jSpinner6.setValue(rambleyIcon.getTestDouble6());
 //        jComboBox1.setSelectedIndex(rambleyIcon.getEarTest());
 //        jSpinner7.setValue(rambleyIcon.getEarSplits());
+        
         viewLabel.setIcon(debugIcon);
         IconHandler handler = new IconHandler();
         rambleyIcon.addChangeListener(handler);
@@ -166,7 +216,6 @@ public class RambleyViewer extends javax.swing.JFrame {
             }
         });
 
-        scaleToggle.setSelected(viewLabel.isImageAlwaysScaled());
         scaleToggle.setText("Scale");
         scaleToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -197,6 +246,11 @@ public class RambleyViewer extends javax.swing.JFrame {
 
         listenerToggle.setSelected(true);
         listenerToggle.setText("Print Listeners");
+        listenerToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listenerToggleActionPerformed(evt);
+            }
+        });
 
         linkSizeToggle.setText("Link Width and Height");
         linkSizeToggle.addActionListener(new java.awt.event.ActionListener() {
@@ -369,24 +423,37 @@ public class RambleyViewer extends javax.swing.JFrame {
     private void debugToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugToggleActionPerformed
         debugIcon.setDebugEnabled(debugToggle.isSelected());
         viewLabel.repaint();
+        if (config != null)
+            config.putBoolean(DEBUG_ELEMENTS_KEY, debugToggle.isSelected());
     }//GEN-LAST:event_debugToggleActionPerformed
-
+    
+    private void updateConfigFlags(){
+        if (config != null)
+            config.putInt(RAMBLEY_PAINTER_FLAGS_KEY, rambleyIcon.getFlags());
+    }
+    
     private void backgroundToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backgroundToggleActionPerformed
         rambleyIcon.setBackgroundPainted(backgroundToggle.isSelected());
+        updateConfigFlags();
     }//GEN-LAST:event_backgroundToggleActionPerformed
 
     private void gridToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gridToggleActionPerformed
         rambleyIcon.setPixelGridPainted(gridToggle.isSelected());
+        updateConfigFlags();
     }//GEN-LAST:event_gridToggleActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
             File file = fc.getSelectedFile();
+            if (file == null)
+                return;
             if (ImageExtensions.PNG_FILTER.equals(fc.getFileFilter()) && 
                     !ImageExtensions.PNG_FILTER.accept(file)){
                 file = new File(file.toString()+"."+ImageExtensions.PNG);
                 fc.setSelectedFile(file);
             }
+            if (config != null)
+                config.put(SELECTED_SAVE_FILE_KEY, file.toString());
             BufferedImage image = debugIcon.toImage(viewLabel);
             try {
                 ImageIO.write(image, "png", file);
@@ -399,22 +466,28 @@ public class RambleyViewer extends javax.swing.JFrame {
 
     private void linesToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linesToggleActionPerformed
         rambleyIcon.setShowsLines(linesToggle.isSelected());
+        updateConfigFlags();
     }//GEN-LAST:event_linesToggleActionPerformed
 
     private void scaleToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scaleToggleActionPerformed
         viewLabel.setImageAlwaysScaled(scaleToggle.isSelected());
+        if (config != null)
+            config.putBoolean(ALWAYS_SCALE_KEY, viewLabel.isImageAlwaysScaled());
     }//GEN-LAST:event_scaleToggleActionPerformed
 
     private void abTestingToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abTestingToggleActionPerformed
         rambleyIcon.setABTesting(abTestingToggle.isSelected());
+        updateConfigFlags();
     }//GEN-LAST:event_abTestingToggleActionPerformed
 
     private void evilToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evilToggleActionPerformed
         rambleyIcon.setRambleyEvil(evilToggle.isSelected());
+        updateConfigFlags();
     }//GEN-LAST:event_evilToggleActionPerformed
 
     private void ratioToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ratioToggleActionPerformed
         rambleyIcon.setAspectRatioIgnored(!ratioToggle.isSelected());
+        updateConfigFlags();
     }//GEN-LAST:event_ratioToggleActionPerformed
 
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
@@ -571,11 +644,15 @@ public class RambleyViewer extends javax.swing.JFrame {
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
         viewLabel.repaint();
+        if (config != null)
+            config.putInt(PAINTER_WIDTH_KEY, (int)widthSpinner.getValue());
     }//GEN-LAST:event_widthSpinnerStateChanged
 
     private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
         if (!linkSizeToggle.isSelected())
             viewLabel.repaint();
+        if (config != null)
+            config.putInt(PAINTER_HEIGHT_KEY, (int)heightSpinner.getValue());
     }//GEN-LAST:event_heightSpinnerStateChanged
 
     private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
@@ -583,7 +660,14 @@ public class RambleyViewer extends javax.swing.JFrame {
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
         viewLabel.repaint();
+        if (config != null)
+            config.putBoolean(LINK_PAINTER_SIZE_KEY, linkSizeToggle.isSelected());
     }//GEN-LAST:event_linkSizeToggleActionPerformed
+
+    private void listenerToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listenerToggleActionPerformed
+        if (config != null)
+            config.putBoolean(PRINT_LISTENERS_KEY, listenerToggle.isSelected());
+    }//GEN-LAST:event_listenerToggleActionPerformed
     
     private void getIntersectingLine(Line2D line1, Line2D line2, double x, double y, DoubleUnaryOperator getY){
         double x1 = (line1.getX1()+line1.getX2()) / 2.0;
@@ -647,6 +731,10 @@ public class RambleyViewer extends javax.swing.JFrame {
     
     private DebuggingIcon debugIcon;
     private RambleyIcon rambleyIcon;
+    /**
+     * This is a preference node to store the settings for this program.
+     */
+    private Preferences config;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox abTestingToggle;
     private javax.swing.JCheckBox backgroundToggle;
