@@ -252,6 +252,17 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected static final double RAMBLEY_Y_OFFSET = 60;
     /**
+     * This is the angle of elevation for Rambley's cheeks.
+     */
+    protected static final double RAMBLEY_CHEEK_ANGLE = 26.57;
+    /**
+     * This is the height of the triangle that is used to create Rambley's 
+     * cheeks. This is equal to {@code tan(}{@link RAMBLEY_CHEEK_ANGLE}{@code ) 
+     * * 100}.
+     */
+    protected static final double RAMBLEY_CHEEK_TRIANGLE_HEIGHT = 
+            Math.tan(Math.toRadians(RAMBLEY_CHEEK_ANGLE))*100;
+    /**
      * This is the width and height of Rambley's irises.
      */
     protected static final double RAMBLEY_IRIS_SIZE = 24;
@@ -1141,6 +1152,85 @@ public class RambleyPainter implements Painter<Component>{
         paintPixelGrid(g,x,y,w,h,null);
     }
     /**
+     * This creates and returns an Area that forms the base shape of Rambley's 
+     * head without his ears.
+     * @param rect A Rectangle2D object to use to store the mask for the lower 
+     * half of the cheeks, or null.
+     * @param path A Path2D object to use to store the mask for the cheeks, or 
+     * null.
+     * @param ellipse1 An Ellipse2D object to use to store the top of Rambley's 
+     * head, or null.
+     * @param ellipse2 An Ellipse2D object to use to store Rambley's cheeks, or 
+     * null.
+     * @return The area of Rambley's head without his ears.
+     */
+    private Area createRambleyHeadArea(Rectangle2D rect, Path2D path, 
+            Ellipse2D ellipse1, Ellipse2D ellipse2){
+            // If the given Rectangle is null
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // If the first of the two ellipses are null
+        if (ellipse1 == null)
+            ellipse1 = new Ellipse2D.Double();
+            // If the second of the two ellipses are null
+        if (ellipse2 == null)
+            ellipse2 = new Ellipse2D.Double();
+            // Set the frame of the rectangle temporarily to be the entire width 
+            // of the area being rendered, and with the right y-coordinate and 
+            // height
+        rect.setFrame(0, RAMBLEY_Y_OFFSET+84, INTERNAL_RENDER_WIDTH, 92);
+            // Set the frame of the rectangle again, this time from the center, 
+            // to set the x-coordinate and width. This produces a horizontally 
+            // centered rectangle that is 84 pixels below the y offset with a 
+            // width of 200 and a height of 92. This will form the lower half 
+            // of the mask for the cheeks
+        rect.setFrameFromCenter(rect.getCenterX(), rect.getCenterY(), 
+                rect.getCenterX()-100, rect.getMinY());
+            // Append the rectangle to the path
+        path.append(rect, false);
+            // Line to the top-left corner of the rectangle
+        path.lineTo(rect.getMinX(), rect.getMinY());
+            // Line to the center x, and to the top of the triangle that forms 
+            // the cheeks
+        path.lineTo(rect.getCenterX(), rect.getMinY()-RAMBLEY_CHEEK_TRIANGLE_HEIGHT);
+            // Line to the top-right corner of the rectangle
+        path.lineTo(rect.getMaxX(), rect.getMinY());
+            // Close the path to form the mask for the cheeks
+        path.closePath();
+            // Set the frame of the first ellipse from the center to get a 
+            // horizontally centered ellipse with a y-coordinate at the 
+            // y-offset,and that is 152 x 176. This will form the top of 
+            // Rambley's head
+        ellipse1.setFrameFromCenter(rect.getCenterX(), RAMBLEY_Y_OFFSET+88, 
+                rect.getMinX()+24, RAMBLEY_Y_OFFSET);
+            // Set the frame of the second ellipse from the center to get a 
+            // horizontally centered ellipse that is 18 pixels below the first 
+            // ellipse, and that is 200 x 116. This will form Rambley's cheeks 
+            // when masked using the path.
+        ellipse2.setFrameFromCenter(rect.getCenterX(), ellipse1.getCenterY()-12, 
+                rect.getMinX(), ellipse1.getMinY()+18);
+            // Create the area for the upper part of Rambley head
+        Area temp = new Area(ellipse1);
+            // Remove the lower half of the ellipse, since it's not needed
+        temp.subtract(new Area(rect));
+            // Create the shape of Rambley's head, starting with the cheek area
+        Area headShape = new Area(ellipse2);
+            // Mask off the unused parts of the cheek area using the path
+        headShape.intersect(new Area(path));
+            // Add the upper part of his head to the lower part
+        headShape.add(temp);
+        return headShape;
+    }
+    
+    
+    
+    
+    /**
      * 
      * @param x The x-coordinate of the center of Rambley's eye.
      * @param y The y-coordinate of the center of Rambley's eye.
@@ -1530,39 +1620,41 @@ public class RambleyPainter implements Painter<Component>{
         if (point8 == null)
             point8 = new Point2D.Double();
         
-            // Create the shape for Rambley's head
-        
-        rect.setFrame(0, 0, INTERNAL_RENDER_WIDTH, INTERNAL_RENDER_HEIGHT);
-            // Might also be useable for the location of the nose
+            // A rectangle to use to calculate the shape of Rambley's head
         Rectangle2D head1 = new Rectangle2D.Double();
-        head1.setFrameFromCenter(rect.getCenterX(), RAMBLEY_Y_OFFSET+130, rect.getCenterX()-100, RAMBLEY_Y_OFFSET+84);
-        Path2D head1a = new Path2D.Double(head1);
-        head1a.lineTo(head1.getMinX(), head1.getMinY());
-        double a1 = Math.toRadians(26.57);
-        head1a.lineTo(head1.getCenterX(), head1.getMinY()-(Math.tan(a1)*100));
-        head1a.lineTo(head1.getMaxX(), head1.getMinY());
-        head1a.closePath();
-            // Might also be usable for the location of his scarf
+            // An ellipse to use to calculate the upper part of Rambley's head
+            // (Might also be usable for the location of his scarf)
         Ellipse2D head2 = new Ellipse2D.Double();
-        head2.setFrameFromCenter(head1.getCenterX(), RAMBLEY_Y_OFFSET+88, head1.getMinX()+24, RAMBLEY_Y_OFFSET);
-            // Create the area for the upper part of his head
-        Area temp = new Area(head2);
-        temp.subtract(new Area(head1));
-            // The cheek area
-        ellipse.setFrameFromCenter(head1.getCenterX(), head2.getCenterY()-12, 
-                head1.getMinX(), head2.getMinY()+18);
-            // Create the shape of Rambley's head
-        Area headShape = new Area(ellipse);
-        headShape.intersect(new Area(head1a));
-        headShape.add(temp);
-        
+            // Create the shape for Rambley's head (without his ears for now)
+        Area headShape = createRambleyHeadArea(head1,path,head2,ellipse);
+            // Get the minimum y-component for the path, to be used when 
+            // creating the markings on Rambley's face. This will be the 
+            // y-coordinate of the top of the triangle used as a mask to create 
+            // the cheeks.
+        double cheekTriagY = Math.ceil(path.getBounds2D().getMinY());
             // Get the bounds for the head, so that we can base the facial 
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
         
+            // DEBUG: If we are showing the lines that make up Rambley
+        if (getShowsLines()){
+            System.out.println("Head: " + headBounds);
+            System.out.println("Head Minimum: (" + headBounds.getMinX() + ", " + headBounds.getMinY()+")");
+            System.out.println("Head Center: (" + headBounds.getCenterX() + ", " + headBounds.getCenterY()+")");
+            System.out.println("Head Maximum: (" + headBounds.getMaxX() + ", " + headBounds.getMaxY()+")");
+//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+//                    RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setColor(Color.BLACK);
+            g.draw(path);
+            g.setColor(Color.DARK_GRAY);
+            g.draw(head2);
+            g.setColor(Color.GRAY);
+            g.draw(ellipse);
+        }
+        
         Path2D earPath = new Path2D.Double();
         
-        Area earR = getRambleyEar(headBounds.getCenterX()-84,head2.getMinY()-31.5,earPath);
+        Area earR = getRambleyEar(headBounds.getCenterX()-84,headBounds.getMinY()-31.5,earPath);
         Area earL = createHorizontallyFlippedArea(earR);
         
         Area earInR = getRambleyInnerEar(earR,RAMBLEY_INNER_EAR_SCALE,headShape);
@@ -1585,17 +1677,9 @@ public class RambleyPainter implements Painter<Component>{
             g.fill(headShape);
             
         } else {
-            System.out.println("Head: " + headBounds);
-//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-//                    RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setColor(Color.BLACK);
-            g.draw(head1a);
-            g.setColor(Color.DARK_GRAY);
-            g.draw(head2);
             g.setColor(Color.MAGENTA);
             g.draw(earPath);
             g.setColor(Color.GRAY);
-            g.draw(ellipse);
             g.draw(earInR);
             g.draw(earInL);
             g.setColor(Color.WHITE);
@@ -1615,7 +1699,7 @@ public class RambleyPainter implements Painter<Component>{
                 headBounds.getMinX()+34, headBounds.getMinY()+58);
             // Might be used later for calculating eye location
         Ellipse2D head4 = new Ellipse2D.Double(head3.getMinX(),head3.getMinY()+17,56,32);
-        temp = new Area(head4);
+        Area temp = new Area(head4);
         Area temp2 = createHorizontallyFlippedArea(temp);
         Rectangle2D temp3 = temp2.getBounds2D();
             // Might be usable for the mouth area location, and for the eye location
@@ -1631,9 +1715,8 @@ public class RambleyPainter implements Painter<Component>{
         faceMarkings.intersect(temp);
             // Possible Eyebrow mask?
         Ellipse2D head6 = new Ellipse2D.Double();
-        double head6Y = Math.ceil(head1a.getBounds2D().getMinY());
-        head6.setFrameFromCenter(head3.getCenterX(), head6Y+18, 
-                head3.getCenterX()+14, head6Y);
+        head6.setFrameFromCenter(head3.getCenterX(), cheekTriagY+18, 
+                head3.getCenterX()+14, cheekTriagY);
         Area head6a = new Area(head6);
         faceMarkings.subtract(head6a);
         
