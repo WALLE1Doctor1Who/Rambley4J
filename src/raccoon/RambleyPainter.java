@@ -36,7 +36,7 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color BACKGROUND_COLOR = new Color(0x2CDFFF);
     /**
-     * This is the color for the dots in the background.
+     * This is the color for the polka dots in the background.
      */
     public static final Color BACKGROUND_DOT_COLOR = new Color(0x1A73C9);
     /**
@@ -215,22 +215,25 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected static final int DEFAULT_LINE_INTERSECTION_RESOLUTION = 25;
     /**
-     * This is the width and height of the background dots.
+     * This is the width and height of the background polka dots.
      */
     protected static final double BACKGROUND_DOT_SIZE = 8;
     /**
      * This contains half of the {@link BACKGROUND_DOT_SIZE size} of the 
-     * background dots. This is used for calculating the location of the 
-     * background dots when using their center coordinates to position them.
+     * background polka dots. This is used for calculating the location of the 
+     * background polka dots when using their center coordinates to position 
+     * them.
      */
     private static final double BACKGROUND_DOT_HALF_SIZE = 
             BACKGROUND_DOT_SIZE/2.0;
     /**
-     * This is the diagonal spacing between the centers of the background dots. 
-     * That is to say, the center of each background dot is {@code 
+     * This is the diagonal spacing between the centers of the background polka 
+     * dots. That is to say, the center of each background polka dot is {@code 
      * BACKGROUND_DOT_SPACING} pixels to the left and {@code 
      * BACKGROUND_DOT_SPACING} pixels below the center of another background 
-     * dot.
+     * polka dot.
+     * 
+     * @todo Rework the documentation for this constant.
      */
     protected static final double BACKGROUND_DOT_SPACING = 12;
     /**
@@ -240,11 +243,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected static final double PIXEL_GRID_SPACING = 5;
     /**
-     * The offset for the x-coordinate of the top left corner of Rambley;
+     * The offset for the x-coordinate of the top-left corner of Rambley.
      */
     protected static final double RAMBLEY_X_OFFSET = 27;
     /**
-     * The offset for the y-coordinate of the top left corner of Rambley;
+     * The offset for the y-coordinate of the top-left corner of Rambley.
      */
     protected static final double RAMBLEY_Y_OFFSET = 60;
     /**
@@ -280,7 +283,10 @@ public class RambleyPainter implements Painter<Component>{
     private static final double RAMBLEY_EAR_TIP_Y_OFFSET = 1.0;
     
     private static final double RAMBLEY_EAR_TIP_ROUNDING = 2.0;
-    
+    /**
+     * This the value to use when scaling the shapes that make up Rambley's ears 
+     * in order to get the inner portion of his ears.
+     */
     private static final double RAMBLEY_INNER_EAR_SCALE = 2/3.0;
     /**
      * This converts the given y-coordinate in the graphics coordinate system 
@@ -312,24 +318,31 @@ public class RambleyPainter implements Painter<Component>{
     
     
     /**
-     * The flag for painting the background.
+     * This is the flag for whether the background will be painted.
      */
     public static final int PAINT_BACKGROUND_FLAG =         0x00000001;
     /**
-     * The flag for painting the pixel grid.
+     * This is the flag for whether the pixel grid effect will be painted.
      */
     public static final int PAINT_PIXEL_GRID_FLAG =         0x00000002;
-    
-    // Will be public when name is finalized
+    /**
+     * This is the flag for whether the border around Rambley and Rambley's 
+     * shadow will be painted.
+     * 
+     * @todo Finalize the name for this flag and make it public instead of 
+     * protected.
+     */
     protected static final int PAINT_BORDER_AND_SHADOW_FLAG =  0x00000004;
     /**
-     * The flag for ignoring the aspect ratio for Rambley.
+     * This is the flag for ignoring Rambley's aspect ratio when rendering 
+     * Rambley.
      */
     public static final int IGNORE_ASPECT_RATIO_FLAG =      0x00000008;
     /**
-     * The flag for enabling evil Rambley. Evil Rambley is a version of 
-     * Rambley the Raccoon with red eyes that first appeared on thumbnails of 
-     * videos from the YouTube channel GameTheory on the topic of Indigo Park.
+     * This is the flag for whether evil Rambley will be painted instead of 
+     * normal Rambley. Evil Rambley is a version of Rambley the Raccoon with red 
+     * eyes that first appeared on thumbnails of videos from the YouTube channel 
+     * GameTheory on the topic of Indigo Park.
      */
     public static final int EVIL_RAMBLEY_FLAG =             0x00000010;
     
@@ -341,10 +354,21 @@ public class RambleyPainter implements Painter<Component>{
     protected static final int A_B_TESTING_FLAG = 0x40000000;
     
     protected static final int SHOW_LINES_FLAG = 0x80000000;
+    /**
+     * This stores the flags that are set initially when a RambleyPainter is 
+     * first constructed.
+     */
+    private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG | 
+            PAINT_PIXEL_GRID_FLAG;
+    // Insert property names for the properties represented by the flags here
+//    /**
+//     * This identifies that a change has been made to whether the background 
+//     * should be painted.
+//     */
+//    public static final String BACKGROUND_PAINTED_PROPERTY_CHANGED = 
+//            "BackgroundPaintedPropertyChanged";
     
     
-    
-    private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG;// | PAINT_PIXEL_GRID_FLAG;
     
     // Settings and listeners
     
@@ -525,17 +549,23 @@ public class RambleyPainter implements Painter<Component>{
     public int getFlags(){
         return flags;
     }
-    
-    public void setFlags(int flags){
-        if (flags == this.flags)
-            return;
-        this.flags = flags;
-        fireStateChanged();
+    /**
+     * 
+     * @param flags
+     * @return This {@code RambleyPainter}.
+     */
+    public RambleyPainter setFlags(int flags){
+            // If the flags would change
+        if (flags != this.flags){
+            this.flags = flags;
+            fireStateChanged();
+        }
+        return this;
     }
     /**
-     * This gets whether the given flag is set for this painter.
+     * This returns whether the given flag is set for this painter.
      * @param flag The flag to check for.
-     * @return Whether the flag is set.
+     * @return Whether the given flag is set.
      * @see #getFlags
      * @see #setFlag
      * @see #toggleFlag
@@ -545,68 +575,73 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This sets whether the given flag is set for this painter based off the 
-     * given value. This returns {@code true} if this painter changed as a result 
-     * of the call, and {@code false} if no change is made.
+     * given value.
      * @param flag The flag to be set or cleared based off {@code value}.
      * @param value Whether the flag should be set or cleared.
-     * @return Whether this painter changed as a result of the call.
+     * @return This {@code RambleyPainter}.
      * @see #getFlags 
      * @see #getFlag 
      * @see #toggleFlag 
      */
-    public boolean setFlag(int flag, boolean value){
-        int old = flags;    // Get the old value for the flags
+    public RambleyPainter setFlag(int flag, boolean value){
             // If the flag is to be set, OR the flags with the flag. Otherwise, 
             // AND the flags with the inverse of the flag.
-        setFlags((value) ? flags | flag : flags & ~flag);
-        return flags != old;
+        return setFlags((value) ? flags | flag : flags & ~flag);
     }
     /**
-     * This toggles whether the given flag is set for this painter. This returns 
-     * {@code true} if this painter changed as a result of the call, and {@code 
-     * false} if no change is made. 
+     * This toggles whether the given flag is set for this painter.
      * @param flag The flag to be toggled.
-     * @return Whether this painter changed as a result of the call.
+     * @return This {@code RambleyPainter}.
      * @see #getFlags 
      * @see #getFlag 
      * @see #setFlag 
      */
-    public boolean toggleFlag(int flag){
-        int old = flags;    // Get the old value for the flags
-        setFlags(flags ^ flag);
-        return flags != old;
+    public RambleyPainter toggleFlag(int flag){
+        return setFlags(flags ^ flag);
     }
-    
+    /**
+     * This returns whether the background will be painted by this {@code 
+     * RambleyPainter}. If this is {@code true}, then a background reminiscent 
+     * of the one seen in Indigo Park will be painted behind Rambley. The 
+     * background will consist of {@link BACKGROUND_DOT_COLOR dark blue} 
+     * diamond-shaped polka dots over a gradient going from {@link 
+     * BACKGROUND_GRADIENT_COLOR dark blue} at the top to {@link 
+     * BACKGROUND_COLOR light blue} at the bottom. The default value for this is 
+     * {@code true}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @return Whether the background will be painted.
+     */
     public boolean isBackgroundPainted(){
         return getFlag(PAINT_BACKGROUND_FLAG);
     }
-    
-    public void setBackgroundPainted(boolean enabled){
-        setFlag(PAINT_BACKGROUND_FLAG,enabled);
+    public RambleyPainter setBackgroundPainted(boolean enabled){
+        return setFlag(PAINT_BACKGROUND_FLAG,enabled);
     }
     
     public boolean isPixelGridPainted(){
         return getFlag(PAINT_PIXEL_GRID_FLAG);
     }
     
-    public void setPixelGridPainted(boolean enabled){
-        setFlag(PAINT_PIXEL_GRID_FLAG,enabled);
+    public RambleyPainter setPixelGridPainted(boolean enabled){
+        return setFlag(PAINT_PIXEL_GRID_FLAG,enabled);
     }
     
     public boolean isRambleyEvil(){
         return getFlag(EVIL_RAMBLEY_FLAG);
     }
     
-    public void setRambleyEvil(boolean enabled){
-        setFlag(EVIL_RAMBLEY_FLAG,enabled);
+    public RambleyPainter setRambleyEvil(boolean enabled){
+        return setFlag(EVIL_RAMBLEY_FLAG,enabled);
     }
     
     public boolean isAspectRatioIgnored(){
         return getFlag(IGNORE_ASPECT_RATIO_FLAG);
     }
     
-    public void setAspectRatioIgnored(boolean enabled){
-        setFlag(IGNORE_ASPECT_RATIO_FLAG,enabled);
+    public RambleyPainter setAspectRatioIgnored(boolean enabled){
+        return setFlag(IGNORE_ASPECT_RATIO_FLAG,enabled);
     }
     
         // Will be public when name is finalized
@@ -614,8 +649,8 @@ public class RambleyPainter implements Painter<Component>{
         return getFlag(PAINT_BORDER_AND_SHADOW_FLAG);
     }
     
-    protected void setBorderAndShadowPainted(boolean enabled){
-        setFlag(PAINT_BORDER_AND_SHADOW_FLAG,enabled);
+    protected RambleyPainter setBorderAndShadowPainted(boolean enabled){
+        return setFlag(PAINT_BORDER_AND_SHADOW_FLAG,enabled);
     }
     
     
@@ -678,8 +713,8 @@ public class RambleyPainter implements Painter<Component>{
         return getPixelGrid(x,y,w,h,pixelGrid);
     }
     /**
-     * This constructs a stroke to use while rendering Rambley
-     * @param width
+     * This constructs a stroke to use when rendering Rambley
+     * @param width The line width
      * @return 
      */
     protected BasicStroke getRambleyStroke(float width){
