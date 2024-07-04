@@ -361,6 +361,32 @@ public class RambleyPainter implements Painter<Component>{
      * This stores the flags used to store the settings for this painter.
      */
     private int flags;
+    /**
+     * The x component for the location of the center of Rambley's right iris and 
+     * pupil. 0.5 is center, 0.0 is the left-most bounds for Rambley's right eye 
+     * (screen's left, Rambley's right), 1.0 is the right-most bounds for 
+     * Rambley's right eye (screen's right, Rambley's left).
+     */
+    private double eyeRightX;
+    /**
+     * The y component for the location of the center of Rambley's right iris and 
+     * pupil. 0.5 is center, 0.0 is the top-most bounds for Rambley's right eye, 
+     * 1.0 is the bottom-most bounds for Rambley's right eye.
+     */
+    private double eyeRightY;
+    /**
+     * The x component for the location of the center of Rambley's left iris and 
+     * pupil. 0.5 is center, 0.0 is the left-most bounds for Rambley's left eye 
+     * (screen's left, Rambley's right), 1.0 is the right-most bounds for 
+     * Rambley's left eye (screen's right, Rambley's left).
+     */
+    private double eyeLeftX;
+    /**
+     * The y component for the location of the center of Rambley's left iris and 
+     * pupil. 0.5 is center, 0.0 is the top-most bounds for Rambley's left eye, 
+     * 1.0 is the bottom-most bounds for Rambley's left eye.
+     */
+    private double eyeLeftY;
     
     // Commonly used objects for the rendering process
     
@@ -480,6 +506,7 @@ public class RambleyPainter implements Painter<Component>{
     
     public RambleyPainter(){
         flags = DEFAULT_FLAG_SETTINGS;
+        eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.5;
         changeSupport = new PropertyChangeSupport(this);
     }
     
