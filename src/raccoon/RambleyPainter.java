@@ -350,7 +350,7 @@ public class RambleyPainter implements Painter<Component>{
      * first constructed.
      */
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG | 
-            PAINT_PIXEL_GRID_FLAG;
+            PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG;
     // Insert property names for the properties represented by the flags here
 //    /**
 //     * This identifies that a change has been made to whether the background 
@@ -825,7 +825,7 @@ public class RambleyPainter implements Painter<Component>{
     protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h, Shape mask){
         g.clipRect(x, y, w, h);
         g.setColor(PIXEL_GRID_COLOR);
-            // Turn off gntialiasing for the pixel grid
+            // Turn off antialiasing for the pixel grid
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_OFF);
 //        if (mask != null)
