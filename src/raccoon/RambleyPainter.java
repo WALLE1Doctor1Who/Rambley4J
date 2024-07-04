@@ -9,6 +9,7 @@ import java.awt.geom.*;
 import java.beans.*;
 import java.util.EventListener;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -784,7 +785,7 @@ public class RambleyPainter implements Painter<Component>{
      * This returns the gradient to use to paint the background gradient.
      * @param x The x-coordinate of the top-left corner of the area to fill.
      * @param y The y-coordinate of the top-left corner of the area to fill.
-     * @param w The width ofthe area to fill.
+     * @param w The width of the area to fill.
      * @param h The height of the area to fill.
      * @return The gradient to use to paint the background gradient.
      */
@@ -810,9 +811,8 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @param rect A rectangle outlining the bounds for the background polka 
      * dot to return.
-     * @param path A Path2D object to use to create the path for the background 
-     * polka dot, or null.
-     * @return 
+     * @param path A Path2D object to store the results in, or null.
+     * @return The Path2D object to use to draw a background polka dot.
      */
     protected Path2D getBackgroundDot(RectangularShape rect, Path2D path){
             // If the given Path2D object is null
@@ -836,11 +836,10 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @param x The x-coordinate for the center of the background polka dot.
      * @param y The y-coordinate for the center of the background polka dot.
-     * @param path A Path2D object to use to create the path for the background 
-     * polka dot, or null.
-     * @param rect A Rectangle2D object to use to calculate the bounds for the 
-     * background polka dot, or null.
-     * @return 
+     * @param path A Path2D object to store the results in, or null.
+     * @param rect A Rectangle2D object to temporarily store the bounds for the 
+     * background polka dot in, or null.
+     * @return The Path2D object to use to draw a background polka dot.
      */
     protected Path2D getBackgroundDot(double x, double y, Path2D path, Rectangle2D rect){
             // If the given Rectangle2D object is null
@@ -853,7 +852,17 @@ public class RambleyPainter implements Painter<Component>{
     protected double getPixelGridOffset(double size){
         return ((size-1)%PIXEL_GRID_SPACING)/2.0;
     }
-    
+    /**
+     * 
+     * @param x The x-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param y The y-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param w The width of the area to fill with the pixel grid effect.
+     * @param h The height of the area to fill with the pixel grid effect.
+     * @param path A Path2D object to store the results in, or null.
+     * @return The Path2D object to use to render the pixel grid effect.
+     */
     protected Path2D getPixelGrid(double x, double y, double w, double h, 
             Path2D path){
             // If the given Path2D object is null
@@ -881,12 +890,6 @@ public class RambleyPainter implements Painter<Component>{
         }
         return path;
     }
-    
-    private Path2D getPixelGrid(double x, double y, double w, double h){
-            // Generate the pixel grid
-        pixelGrid = getPixelGrid(x,y,w,h,pixelGrid);
-        return pixelGrid;
-    }
     /**
      * This constructs a stroke to use when rendering Rambley
      * @param width The line width
@@ -895,21 +898,43 @@ public class RambleyPainter implements Painter<Component>{
     protected BasicStroke getRambleyStroke(float width){
         return new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
     }
-    
+    /**
+     * This returns a BasicStroke to use for rendering most of Rambley. This 
+     * stroke is mainly used when filling in shapes. This stroke has a line 
+     * width of 1.0.
+     * @return The normal stroke used for drawing Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyDetailStroke
+     * @see getRambleyOutlineStroke
+     */
     protected BasicStroke getRambleyNormalStroke(){
             // If the normal stroke for Rambley has not been initialized yet
         if (normalStroke == null)
             normalStroke = getRambleyStroke(1.0f);
         return normalStroke;
     }
-    
+    /**
+     * This returns a BasicStroke to use for rendering the details and finer 
+     * outlines for Rambley. This stroke has a line width of 2.0.
+     * @return The details stroke used for drawing Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyNormalStroke
+     * @see getRambleyOutlineStroke
+     */
     protected BasicStroke getRambleyDetailStroke(){
             // If the detail stroke for Rambley has not been initialized yet
         if (detailStroke == null)
             detailStroke = getRambleyStroke(2.0f);
         return detailStroke;
     }
-    
+    /**
+     * This returns a BasicStroke to use for rendering most of the outlines for 
+     * Rambley. This stroke has a line width of 3.0.
+     * @return The outline stroke used for drawing Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyNormalStroke
+     * @see getRambleyDetailStroke
+     */
     protected BasicStroke getRambleyOutlineStroke(){
             // If the outline stroke for Rambley has not been initialized yet
         if (outlineStroke == null)
@@ -921,24 +946,38 @@ public class RambleyPainter implements Painter<Component>{
 
     @Override
     public void paint(Graphics2D g, Component c, int width, int height) {
-        if (g == null || width <= 0 || height <= 0)
+            // Check if the graphics context is null
+        Objects.requireNonNull(g);
+            // If either the width or height are less than or equal to zero 
+            // (nothing would be rendered anyway)
+        if (width <= 0 || height <= 0)
             return;
+            // Create a copy of the given graphics context and configure it to 
+            // render Rambley and the other stuff
         g = configureGraphics((Graphics2D)g.create());
-        Graphics2D tempG = (Graphics2D) g.create();
+            // If the background is to be painted
         if (isBackgroundPainted()){
-            paintBackground(tempG,0,0,width,height);
-            tempG.dispose();
-            tempG = (Graphics2D) g.create();
+                // Paint the background
+            paintBackground(g,0,0,width,height);
         }
-        paintRambley(tempG,0,0,width,height);
-        tempG.dispose();
+            // Paint Rambley
+        paintRambley(g,0,0,width,height);
+            // If the pixel grid effect is to be painted
         if (isPixelGridPainted()){
-            tempG = (Graphics2D) g.create();
-            paintPixelGrid(tempG,0,0,width,height);
-            tempG.dispose();
+                // Paint the pixel grid effect
+            paintPixelGrid(g,0,0,width,height);
         }
+        g.dispose();
     }
-    
+    /**
+     * This is used to configure the graphics context used to render Rambley. 
+     * It's assumed that the returned graphics context is the same as the given 
+     * graphics context, or at least that the returned graphics context 
+     * references the given graphics context in some way. 
+     * @param g The graphics context to render to.
+     * @return The given graphics context, now configured for rendering Rambley.
+     * @see #paint 
+     */
     protected Graphics2D configureGraphics(Graphics2D g){
             // Enable antialiasing
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
@@ -961,45 +1000,107 @@ public class RambleyPainter implements Painter<Component>{
                 RenderingHints.VALUE_STROKE_PURE);
         return g;
     }
-    
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param x The x-coordinate of the top-left corner of the area to fill.
+     * @param y The y-coordinate of the top-left corner of the area to fill.
+     * @param w The width of the area to fill.
+     * @param h The height of the area to fill.
+     */
     protected void paintBackground(Graphics2D g, int x, int y, int w, int h){
+            // Create a copy of the given graphics context
+        g = (Graphics2D) g.create();
+            // Start by rendering a solid color background
         g.setColor(BACKGROUND_COLOR);
         g.fillRect(x, y, w, h);
-        Graphics2D tempG = (Graphics2D) g.create();
-        paintBackgroundDots(tempG,x,y,w,h);
-        tempG.dispose();
+            // Paint the background dots
+        paintBackgroundDots(g,x,y,w,h);
+            // Render the background gradient
         g.setPaint(getBackgroundGradient(x,y,w,h));
         g.fillRect(x, y, w, h);
+        g.dispose();
     }
-    
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param x The x-coordinate of the top-left corner of the area to fill.
+     * @param y The y-coordinate of the top-left corner of the area to fill.
+     * @param w The width of the area to fill.
+     * @param h The height of the area to fill.
+     */
     protected void paintBackgroundDots(Graphics2D g, int x, int y, int w, int h){
-        g.clipRect(x, y, w, h);
+            // Create a copy of the given graphics context over the given area
+        g = (Graphics2D) g.create(x, y, w, h);
+            // Set the color to the background polka dot color
         g.setColor(BACKGROUND_DOT_COLOR);
+            // If the scratch Rectangle2D object has not been initialized yet
         if (rect == null)
             rect = new Rectangle2D.Double();
-        double x1 = getBackgroundDotOffsetX(w)+x;
-        double y1 = getBackgroundDotOffsetY(h)+y;
+            // Get the x offset for the background polka dots
+        double x1 = getBackgroundDotOffsetX(w);
+            // Get the y offset for the background polka dots
+        double y1 = getBackgroundDotOffsetY(h);
+            // Go through the multipliers for the y-coordinates for the centers 
+            // of the background polka dots (to create the polka dot pattern, 
+            // we need to know what row number we are on, so we can offset the 
+            // x-coordinates accordingly)
         for (int i = 0; (i * BACKGROUND_DOT_SPACING) <= h; i++){
+                // Get the y-coordinate for the centers of the polka dots on 
+                // this row
             double yDot = (i * BACKGROUND_DOT_SPACING)+y1;
+                // Go through the x-coordinates for the centers of the 
+                // background polka dots (polka dots on odd rows are offset 
+                // compared to the polka dots on even rows)
             for (double xDot = BACKGROUND_DOT_SPACING * (i % 2); xDot <= w; 
                     xDot+=BACKGROUND_DOT_SPACING+BACKGROUND_DOT_SPACING){
+                    // Get the background polka dot to render
                 path = getBackgroundDot(xDot+x1,yDot,path,rect);
+                    // Fill the current background polka dot
                 g.fill(path);
             }
         }
+        g.dispose();
     }
-    
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param x The x-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param y The y-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param w The width of the area to fill with the pixel grid effect.
+     * @param h The height of the area to fill with the pixel grid effect.
+     * @param mask An optional mask for the pixel grid effect, or null.
+     */
     protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h, Shape mask){
-        g.clipRect(x, y, w, h);
+            // Create a copy of the given graphics context over the given area
+        g = (Graphics2D) g.create(x, y, w, h);
+            // Set the color to the pixel grid color
         g.setColor(PIXEL_GRID_COLOR);
             // Turn off antialiasing for the pixel grid
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_OFF);
+            // If a mask has been provided for the pixel grid
 //        if (mask != null)
+//                // Clip the graphics context to only render within the given mask
 //            g.clip(mask);
-        g.draw(getPixelGrid(0,0,w,h));
+            // Generate the pixel grid
+        pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
+            // Render the pixel grid
+        g.draw(pixelGrid);
+        g.dispose();
     }
-    
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param x The x-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param y The y-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param w The width of the area to fill with the pixel grid effect.
+     * @param h The height of the area to fill with the pixel grid effect.
+     */
     protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h){
         paintPixelGrid(g,x,y,w,h,null);
     }
@@ -1027,6 +1128,7 @@ public class RambleyPainter implements Painter<Component>{
      * @param pupil The pupil
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,Ellipse2D iris,Ellipse2D pupil){
+            // Create a copy of the given graphics context
         Graphics2D tempG = (Graphics2D) g.create();
         tempG.clip(eyeWhite);
         tempG.setColor(RAMBLEY_EYE_WHITE_COLOR);
@@ -1041,11 +1143,12 @@ public class RambleyPainter implements Painter<Component>{
         tempG.draw(iris);
         tempG.draw(pupil);
         tempG.dispose();
-        Stroke s = g.getStroke();
+            // Create another copy of the given graphics context
+        g = (Graphics2D) g.create();
         g.setStroke(getRambleyOutlineStroke());
         g.setColor(RAMBLEY_EYE_OUTLINE_COLOR);
         g.draw(eyeWhite);
-        g.setStroke(s);
+        g.dispose();
     }
     /**
      * 
@@ -1252,6 +1355,8 @@ public class RambleyPainter implements Painter<Component>{
     }
     
     protected void paintRambley(Graphics2D g, int x, int y, int w, int h){
+            // Create a copy of the given graphics context
+        g = (Graphics2D) g.create();
         double scaleX = w/INTERNAL_RENDER_WIDTH;
         double scaleY = h/INTERNAL_RENDER_HEIGHT;
         if (isAspectRatioIgnored()){
@@ -1617,7 +1722,7 @@ public class RambleyPainter implements Painter<Component>{
         }
         
         
-        
+        g.dispose();
     }
     /**
      * This returns a String representation of this {@code RambleyIcon}. 
