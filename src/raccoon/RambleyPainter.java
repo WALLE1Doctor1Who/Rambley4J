@@ -345,6 +345,9 @@ public class RambleyPainter implements Painter<Component>{
     
     
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG;// | PAINT_PIXEL_GRID_FLAG;
+    
+    // Settings and listeners
+    
     /**
      * This is an EventListenerList to store the listeners for this class.
      */
@@ -358,9 +361,50 @@ public class RambleyPainter implements Painter<Component>{
      * This stores the flags used to store the settings for this painter.
      */
     private int flags;
+    
+    // Commonly used objects for the rendering process
+    
     /**
-     * A Path2D object used to render the pixel grid. This is initially null and 
-     * is initialized the first time it is used.
+     * A BasicStroke object used to render most of Rambley. This is initially 
+     * null and is initialized the first time it is used.
+     */
+    private BasicStroke normalStroke = null;
+    /**
+     * A BasicStroke object used to render some of the details and finer 
+     * outlines of Rambley. This is initially null and is initialized the first 
+     * time it is used.
+     */
+    private BasicStroke detailStroke = null;
+    /**
+     * A BasicStroke object used to render most of the outlines of Rambley. This 
+     * is initially null and is initialized the first time it is used.
+     */
+    private BasicStroke outlineStroke = null;
+    /**
+     * This is the function to get the y-coordinate for a given x-coordinate for 
+     * a point on the line that produces the upper curve on Rambley's right ear. 
+     * This is initially null and is initialized the first time it is used.
+     */
+    private DoubleUnaryOperator earEquationU = null;
+    /**
+     * This is the function to get the y-coordinate for a given x-coordinate for 
+     * a point on the line that produces the lower curve on Rambley's right ear. 
+     * This is initially null and is initialized the first time it is used.
+     */
+    private DoubleUnaryOperator earEquationL = null;
+    /**
+     * This is the function to get the y-coordinate for a given x-coordinate for 
+     * a point on the line that produces the curve that forms the tip for 
+     * Rambley's right ear. This is initially null and is initialized the first 
+     * time it is used.
+     */
+    private DoubleUnaryOperator earEquationT = null;
+    
+    // Dedicated scratch shape objects
+    
+    /**
+     * A Path2D object used to render the pixel grid effect. This is initially 
+     * null and is initialized the first time it is used.
      */
     private Path2D pixelGrid = null;
     /**
@@ -374,11 +418,8 @@ public class RambleyPainter implements Painter<Component>{
      */
     private Ellipse2D pupil = null;
     
-    private BasicStroke normalStroke = null;
+    // Generic scratch shape objects
     
-    private BasicStroke eyeStroke = null;
-    
-    private BasicStroke outlineStroke = null;
     /**
      * A scratch Rectangle2D object used for rendering Rambley. This is 
      * initialized the first time it is used.
@@ -434,12 +475,6 @@ public class RambleyPainter implements Painter<Component>{
      * initialized the first time it is used.
      */
     private Point2D point8 = null;
-    
-    private DoubleUnaryOperator earEquationU = null;
-    
-    private DoubleUnaryOperator earEquationL = null;
-    
-    private DoubleUnaryOperator earEquationT = null;
     
     
     
@@ -625,10 +660,10 @@ public class RambleyPainter implements Painter<Component>{
         return normalStroke;
     }
     
-    protected BasicStroke getRambleyEyeStroke(){
-        if (eyeStroke == null)
-            eyeStroke = getRambleyStroke(2.0f);
-        return eyeStroke;
+    protected BasicStroke getRambleyDetailStroke(){
+        if (detailStroke == null)
+            detailStroke = getRambleyStroke(2.0f);
+        return detailStroke;
     }
     
     protected BasicStroke getRambleyOutlineStroke(){
@@ -641,6 +676,8 @@ public class RambleyPainter implements Painter<Component>{
 
     @Override
     public void paint(Graphics2D g, Component c, int width, int height) {
+        if (g == null || width <= 0 || height <= 0)
+            return;
         g = configureGraphics((Graphics2D)g.create());
         Graphics2D tempG = (Graphics2D) g.create();
         if (isBackgroundPainted()){
@@ -775,7 +812,7 @@ public class RambleyPainter implements Painter<Component>{
         tempG.fill(pupil);
         tempG.setColor((isRambleyEvil())?EVIL_RAMBLEY_IRIS_OUTLINE_COLOR:
                 RAMBLEY_IRIS_OUTLINE_COLOR);
-        tempG.setStroke(getRambleyEyeStroke());
+        tempG.setStroke(getRambleyDetailStroke());
         tempG.draw(iris);
         tempG.draw(pupil);
         tempG.dispose();
@@ -1321,7 +1358,7 @@ public class RambleyPainter implements Painter<Component>{
         mouth.append(mouth1, false);
         
         if (!getShowsLines()){
-            g.setStroke(getRambleyEyeStroke());
+            g.setStroke(getRambleyDetailStroke());
             g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
             g.draw(mouth);
             g.setStroke(getRambleyNormalStroke());
@@ -1345,7 +1382,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(RAMBLEY_OUTLINE_COLOR);
             g.setStroke(getRambleyOutlineStroke());
             g.draw(headOutline);
-            g.setStroke(getRambleyEyeStroke());
+            g.setStroke(getRambleyDetailStroke());
             g.setColor(RAMBLEY_NOSE_OUTLINE_COLOR);
             g.draw(nose);
             g.draw(earInR);
