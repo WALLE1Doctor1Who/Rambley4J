@@ -458,6 +458,13 @@ public class RambleyPainter implements Painter<Component>{
     public int getFlags(){
         return flags;
     }
+    
+    public void setFlags(int flags){
+        if (flags == this.flags)
+            return;
+        this.flags = flags;
+        fireStateChanged();
+    }
     /**
      * This gets whether the given flag is set for this painter.
      * @param flag The flag to check for.
@@ -484,15 +491,8 @@ public class RambleyPainter implements Painter<Component>{
         int old = flags;    // Get the old value for the flags
             // If the flag is to be set, OR the flags with the flag. Otherwise, 
             // AND the flags with the inverse of the flag.
-        flags = (value) ? flags | flag : flags & ~flag;
-        return fireFlagChange(old);
-    }
-    
-    private boolean fireFlagChange(int old){
-        boolean change = flags != old;
-        if (change)
-            fireStateChanged();
-        return change;
+        setFlags((value) ? flags | flag : flags & ~flag);
+        return flags != old;
     }
     /**
      * This toggles whether the given flag is set for this painter. This returns 
@@ -506,8 +506,8 @@ public class RambleyPainter implements Painter<Component>{
      */
     public boolean toggleFlag(int flag){
         int old = flags;    // Get the old value for the flags
-        flags = flags ^ flag;
-        return fireFlagChange(old);
+        setFlags(flags ^ flag);
+        return flags != old;
     }
     
     public boolean isBackgroundPainted(){
