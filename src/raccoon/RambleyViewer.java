@@ -12,6 +12,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -28,7 +29,7 @@ public class RambleyViewer extends javax.swing.JFrame {
      * Creates new form RambleyViewer
      */
     public RambleyViewer() {
-        rambleyIcon = new RambleyIcon();
+        rambleyIcon = new RambleyTestIcon();
         debugIcon = new DebuggingIcon(rambleyIcon,false);
         initComponents();
         backgroundToggle.setSelected(rambleyIcon.isBackgroundPainted());
@@ -36,6 +37,10 @@ public class RambleyViewer extends javax.swing.JFrame {
         evilToggle.setSelected(rambleyIcon.isRambleyEvil());
         ratioToggle.setSelected(!rambleyIcon.isAspectRatioIgnored());
         debugToggle.setSelected(debugIcon.isDebugEnabled());
+        widthSpinner.setValue((int)Math.ceil(RambleyPainter.INTERNAL_RENDER_WIDTH));
+        heightSpinner.setValue((int)Math.ceil(RambleyPainter.INTERNAL_RENDER_HEIGHT));
+        linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), heightSpinner.getValue()));
+        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
         jSpinner1.setValue(rambleyIcon.getTestDouble1()*100);
         jSpinner2.setValue(rambleyIcon.getTestDouble2()*100);
         jSpinner3.setValue(rambleyIcon.getTestDouble3()*100);
@@ -69,12 +74,18 @@ public class RambleyViewer extends javax.swing.JFrame {
         debugToggle = new javax.swing.JCheckBox();
         printButton = new javax.swing.JButton();
         gridToggle = new javax.swing.JCheckBox();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        linesToggle = new javax.swing.JCheckBox();
         scaleToggle = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
+        abTestingToggle = new javax.swing.JCheckBox();
         evilToggle = new javax.swing.JCheckBox();
         ratioToggle = new javax.swing.JCheckBox();
         listenerToggle = new javax.swing.JCheckBox();
+        linkSizeToggle = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        widthSpinner = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
+        heightSpinner = new javax.swing.JSpinner();
+        jPanel1 = new javax.swing.JPanel();
         jSpinner1 = new javax.swing.JSpinner();
         jSpinner2 = new javax.swing.JSpinner();
         jSpinner3 = new javax.swing.JSpinner();
@@ -148,10 +159,10 @@ public class RambleyViewer extends javax.swing.JFrame {
             }
         });
 
-        jCheckBox1.setText("Lines");
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        linesToggle.setText("Lines");
+        linesToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+                linesToggleActionPerformed(evt);
             }
         });
 
@@ -163,10 +174,10 @@ public class RambleyViewer extends javax.swing.JFrame {
             }
         });
 
-        jCheckBox3.setText("A-B Test");
-        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+        abTestingToggle.setText("A-B Test");
+        abTestingToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox3ActionPerformed(evt);
+                abTestingToggleActionPerformed(evt);
             }
         });
 
@@ -187,6 +198,33 @@ public class RambleyViewer extends javax.swing.JFrame {
         listenerToggle.setSelected(true);
         listenerToggle.setText("Print Listeners");
 
+        linkSizeToggle.setText("Link Width and Height");
+        linkSizeToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                linkSizeToggleActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Width:");
+
+        widthSpinner.setModel(new javax.swing.SpinnerNumberModel(256, -3, null, 1));
+        widthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                widthSpinnerStateChanged(evt);
+            }
+        });
+
+        jLabel2.setText("Height:");
+
+        heightSpinner.setModel(new javax.swing.SpinnerNumberModel(256, -3, null, 1));
+        heightSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                heightSpinnerStateChanged(evt);
+            }
+        });
+
+        jPanel1.setLayout(new java.awt.GridLayout(3, 2, 7, 6));
+
         jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
         jSpinner1.setEnabled(false);
         jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -194,6 +232,7 @@ public class RambleyViewer extends javax.swing.JFrame {
                 jSpinner1StateChanged(evt);
             }
         });
+        jPanel1.add(jSpinner1);
 
         jSpinner2.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
         jSpinner2.setEnabled(false);
@@ -202,6 +241,7 @@ public class RambleyViewer extends javax.swing.JFrame {
                 jSpinner2StateChanged(evt);
             }
         });
+        jPanel1.add(jSpinner2);
 
         jSpinner3.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
         jSpinner3.setEnabled(false);
@@ -210,6 +250,7 @@ public class RambleyViewer extends javax.swing.JFrame {
                 jSpinner3StateChanged(evt);
             }
         });
+        jPanel1.add(jSpinner3);
 
         jSpinner4.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
         jSpinner4.setEnabled(false);
@@ -218,6 +259,7 @@ public class RambleyViewer extends javax.swing.JFrame {
                 jSpinner4StateChanged(evt);
             }
         });
+        jPanel1.add(jSpinner4);
 
         jSpinner5.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
         jSpinner5.setEnabled(false);
@@ -226,6 +268,7 @@ public class RambleyViewer extends javax.swing.JFrame {
                 jSpinner5StateChanged(evt);
             }
         });
+        jPanel1.add(jSpinner5);
 
         jSpinner6.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
         jSpinner6.setEnabled(false);
@@ -234,6 +277,7 @@ public class RambleyViewer extends javax.swing.JFrame {
                 jSpinner6StateChanged(evt);
             }
         });
+        jPanel1.add(jSpinner6);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -246,10 +290,28 @@ public class RambleyViewer extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jCheckBox3)
+                                .addComponent(backgroundToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jCheckBox1)
+                                .addComponent(gridToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(evilToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ratioToggle))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(widthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(heightSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(linkSizeToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(abTestingToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(linesToggle))
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(debugToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(printButton)
@@ -258,62 +320,41 @@ public class RambleyViewer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(scaleToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(listenerToggle))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(backgroundToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(gridToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(evilToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ratioToggle)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jSpinner1)
-                            .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSpinner6, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(listenerToggle)))
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(backgroundToggle)
                             .addComponent(gridToggle)
                             .addComponent(evilToggle)
                             .addComponent(ratioToggle))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(debugToggle)
-                            .addComponent(jCheckBox1)
-                            .addComponent(jCheckBox3)
                             .addComponent(saveButton)
                             .addComponent(printButton)
                             .addComponent(scaleToggle)
-                            .addComponent(listenerToggle)))
-                    .addGroup(layout.createSequentialGroup()
+                            .addComponent(listenerToggle))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSpinner6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(jLabel1)
+                            .addComponent(widthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)
+                            .addComponent(heightSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(linkSizeToggle)
+                            .addComponent(abTestingToggle)
+                            .addComponent(linesToggle))))
                 .addContainerGap())
         );
 
@@ -356,17 +397,17 @@ public class RambleyViewer extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        rambleyIcon.setShowsLines(jCheckBox1.isSelected());
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    private void linesToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linesToggleActionPerformed
+        rambleyIcon.setShowsLines(linesToggle.isSelected());
+    }//GEN-LAST:event_linesToggleActionPerformed
 
     private void scaleToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scaleToggleActionPerformed
         viewLabel.setImageAlwaysScaled(scaleToggle.isSelected());
     }//GEN-LAST:event_scaleToggleActionPerformed
 
-    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
-        rambleyIcon.setABTesting(jCheckBox3.isSelected());
-    }//GEN-LAST:event_jCheckBox3ActionPerformed
+    private void abTestingToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abTestingToggleActionPerformed
+        rambleyIcon.setABTesting(abTestingToggle.isSelected());
+    }//GEN-LAST:event_abTestingToggleActionPerformed
 
     private void evilToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evilToggleActionPerformed
         rambleyIcon.setRambleyEvil(evilToggle.isSelected());
@@ -525,6 +566,24 @@ public class RambleyViewer extends javax.swing.JFrame {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
 //        rambleyIcon.setEarTest(jComboBox1.getSelectedIndex());
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void widthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSpinnerStateChanged
+        if (linkSizeToggle.isSelected())
+            heightSpinner.setValue(widthSpinner.getValue());
+        viewLabel.repaint();
+    }//GEN-LAST:event_widthSpinnerStateChanged
+
+    private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
+        if (!linkSizeToggle.isSelected())
+            viewLabel.repaint();
+    }//GEN-LAST:event_heightSpinnerStateChanged
+
+    private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
+        heightSpinner.setEnabled(linkSizeToggle.isSelected());
+        if (linkSizeToggle.isSelected())
+            heightSpinner.setValue(widthSpinner.getValue());
+        viewLabel.repaint();
+    }//GEN-LAST:event_linkSizeToggleActionPerformed
     
     private void getIntersectingLine(Line2D line1, Line2D line2, double x, double y, DoubleUnaryOperator getY){
         double x1 = (line1.getX1()+line1.getX2()) / 2.0;
@@ -589,15 +648,18 @@ public class RambleyViewer extends javax.swing.JFrame {
     private DebuggingIcon debugIcon;
     private RambleyIcon rambleyIcon;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox abTestingToggle;
     private javax.swing.JCheckBox backgroundToggle;
     private javax.swing.JCheckBox debugToggle;
     private javax.swing.JCheckBox evilToggle;
     private javax.swing.JFileChooser fc;
     private javax.swing.JCheckBox gridToggle;
+    private javax.swing.JSpinner heightSpinner;
     private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;
     private javax.swing.JSpinner jSpinner3;
@@ -605,14 +667,34 @@ public class RambleyViewer extends javax.swing.JFrame {
     private javax.swing.JSpinner jSpinner5;
     private javax.swing.JSpinner jSpinner6;
     private javax.swing.JSpinner jSpinner7;
+    private javax.swing.JCheckBox linesToggle;
+    private javax.swing.JCheckBox linkSizeToggle;
     private javax.swing.JCheckBox listenerToggle;
     private javax.swing.JButton printButton;
     private javax.swing.JCheckBox ratioToggle;
     private javax.swing.JButton saveButton;
     private javax.swing.JCheckBox scaleToggle;
     private components.JThumbnailLabel viewLabel;
+    private javax.swing.JSpinner widthSpinner;
     // End of variables declaration//GEN-END:variables
-
+    
+    private class RambleyTestIcon extends RambleyIcon{
+        @Override
+        public int getIconWidth() {
+            if (widthSpinner == null)
+                return super.getIconHeight();
+            return (int)widthSpinner.getValue();
+        }
+        @Override
+        public int getIconHeight() {
+            if (linkSizeToggle == null || heightSpinner == null)
+                return super.getIconWidth();
+            if (linkSizeToggle.isSelected())
+                return getIconWidth();
+            return (int)heightSpinner.getValue();
+        }
+    }
+    
     private class IconHandler implements ChangeListener, PropertyChangeListener{
 
         @Override

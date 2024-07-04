@@ -3,7 +3,7 @@
 
  A program that renders Rambley the raccon from Indigo Park. A bit of an experiment to see if I can draw more complex images such as cartoon characters using only math and Java graphics commands.
 
- This program requires my custom SwingExtended library and my custom FilesExtended library.
+ This program requires my custom SwingExtended library and my custom FilesExtended library, at least for the time being. This is mainly for the test program.
 
  SwingExtended: https://github.com/WALLE1Doctor1Who/SwingExtended
 

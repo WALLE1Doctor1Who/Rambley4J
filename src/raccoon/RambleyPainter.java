@@ -2049,19 +2049,19 @@ public class RambleyPainter implements Painter<Component>{
     
     
         // Some debug settings that will be removed when finished
-    protected boolean getShowsLines(){
+    boolean getShowsLines(){
         return getFlag(SHOW_LINES_FLAG);
     }
     
-    protected void setShowsLines(boolean value){
+    void setShowsLines(boolean value){
         setFlag(SHOW_LINES_FLAG,value);
     }
     
-    protected boolean getABTesting(){
+    boolean getABTesting(){
         return getFlag(A_B_TESTING_FLAG);
     }
     
-    protected void setABTesting(boolean value){
+    void setABTesting(boolean value){
         setFlag(A_B_TESTING_FLAG,value);
     }
     
@@ -2072,61 +2072,61 @@ public class RambleyPainter implements Painter<Component>{
     private double testDouble5 = 0.50;
     private double testDouble6 = 2;
     
-    protected double getTestDouble1(){
+    double getTestDouble1(){
         return testDouble1;
     }
     
-    protected void setTestDouble1(double value){
+    void setTestDouble1(double value){
         testDouble1 = value;
         fireStateChanged();
     }
     
-    protected double getTestDouble2(){
+    double getTestDouble2(){
         return testDouble2;
     }
     
-    protected void setTestDouble2(double value){
+    void setTestDouble2(double value){
         testDouble2 = value;
         fireStateChanged();
     }
     
-    protected double getTestDouble3(){
+    double getTestDouble3(){
         return testDouble3;
     }
     
-    protected void setTestDouble3(double value){
+    void setTestDouble3(double value){
         testDouble3 = value;
         fireStateChanged();
     }
     
-    protected double getTestDouble4(){
+    double getTestDouble4(){
         return testDouble4;
     }
     
-    protected void setTestDouble4(double value){
+    void setTestDouble4(double value){
         testDouble4 = value;
         fireStateChanged();
     }
     
-    protected double getTestDouble5(){
+    double getTestDouble5(){
         return testDouble5;
     }
     
-    protected void setTestDouble5(double value){
+    void setTestDouble5(double value){
         testDouble5 = value;
         fireStateChanged();
     }
     
-    protected double getTestDouble6(){
+    double getTestDouble6(){
         return testDouble6;
     }
     
-    protected void setTestDouble6(double value){
+    void setTestDouble6(double value){
         testDouble6 = value;
         fireStateChanged();
     }
     
-    protected static void printPathIterator(PathIterator pathItr){
+    static void printPathIterator(PathIterator pathItr){
         HashMap<Integer,String> segTypes = new HashMap<>();
         segTypes.put(PathIterator.SEG_MOVETO, "SEG_MOVETO");
         segTypes.put(PathIterator.SEG_LINETO, "SEG_LINETO");
@@ -2143,7 +2143,7 @@ public class RambleyPainter implements Painter<Component>{
         System.out.println();
     }
     
-    protected static void printPathIterator(Shape shape){
+    static void printPathIterator(Shape shape){
         printPathIterator(shape.getPathIterator(null));
     }
 }
