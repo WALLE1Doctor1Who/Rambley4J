@@ -246,7 +246,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * The offset for the x-coordinate of the top-left corner of Rambley.
      */
-    protected static final double RAMBLEY_X_OFFSET = 27;
+    protected static final double RAMBLEY_X_OFFSET = 28;
     /**
      * The offset for the y-coordinate of the top-left corner of Rambley.
      */
@@ -1273,20 +1273,50 @@ public class RambleyPainter implements Painter<Component>{
         return Math.min(earEquToGraphicsY(y + 2.4) + RAMBLEY_EAR_TIP_Y_OFFSET, 
                 RAMBLEY_EAR_HEIGHT);
     }
-    
-    private DoubleUnaryOperator getRambleyUpperEarEquation(){
+    /**
+     * This returns the function to calculate the y-coordinate for a point on 
+     * the line that produces the upper curve on Rambley's right ear. The 
+     * function returned is effectively a {@code DoubleUnaryOperator} version of 
+     * the {@link getRambleyUpperEarY getRambleyUpperEarY} method.
+     * @return The {@link getRambleyUpperEarY getRambleyUpperEarY} method, as a 
+     * {@code DoubleUnaryOperator}.
+     * @see getRambleyUpperEarY
+     * @see getRambleyUpperEarX
+     */
+    protected DoubleUnaryOperator getRambleyUpperEarEquation(){
+            // If the upper ear function has not been initialized yet
         if (earEquationU == null)
             earEquationU = (double operand) -> getRambleyUpperEarY(operand);
         return earEquationU;
     }
-    
-    private DoubleUnaryOperator getRambleyLowerEarEquation(){
+    /**
+     * This returns the function to calculate the y-coordinate for a point on 
+     * the line that produces the lower curve on Rambley's right ear. The 
+     * function returned is effectively a {@code DoubleUnaryOperator} version of 
+     * the {@link getRambleyLowerEarY getRambleyLowerEarY} method.
+     * @return The {@link getRambleyLowerEarY getRambleyLowerEarY} method, as a 
+     * {@code DoubleUnaryOperator}.
+     * @see getRambleyLowerEarY
+     * @see getRambleyLowerEarX
+     */
+    protected DoubleUnaryOperator getRambleyLowerEarEquation(){
+            // If the lower ear function has not been initialized yet
         if (earEquationL == null)
             earEquationL = (double operand) -> getRambleyLowerEarY(operand);
         return earEquationL;
     }
-    
-    private DoubleUnaryOperator getRambleyEarTipEquation(){
+    /**
+     * This returns the function to calculate the y-coordinate for a point on 
+     * the line that produces the curve that forms the tip for Rambley's right 
+     * ear. The function returned is effectively a {@code DoubleUnaryOperator} 
+     * version of the {@link getRambleyEarTipY getRambleyEarTipY} method.
+     * @return The {@link getRambleyEarTipY getRambleyEarTipY} method, as a 
+     * {@code DoubleUnaryOperator}.
+     * @see getRambleyEarTipY
+     * @see getRambleyEarTipX
+     */
+    protected DoubleUnaryOperator getRambleyEarTipEquation(){
+            // If the ear tip function has not been initialized yet
         if (earEquationT == null)
             earEquationT = (double operand) -> getRambleyEarTipY(operand);
         return earEquationT;
@@ -1445,7 +1475,9 @@ public class RambleyPainter implements Painter<Component>{
         g.setStroke(getRambleyNormalStroke());
             // Get a transform that will flip things horizontally
         AffineTransform horizFlip = AffineTransform.getScaleInstance(-1, 1);
-        horizFlip.translate(-(INTERNAL_RENDER_HEIGHT-2), 0);
+            // Translate the horizontal flip transform to put it back on the 
+            // image
+        horizFlip.translate(-INTERNAL_RENDER_HEIGHT, 0);
         if (rect == null)
             rect = new Rectangle2D.Double();
         if (ellipse == null)
@@ -1473,8 +1505,10 @@ public class RambleyPainter implements Painter<Component>{
         
             // Create the shape for Rambley's head
         
+        rect.setFrame(0, 0, INTERNAL_RENDER_WIDTH, INTERNAL_RENDER_HEIGHT);
             // Might also be useable for the location of the nose
-        Rectangle2D head1 = new Rectangle2D.Double(RAMBLEY_X_OFFSET, RAMBLEY_Y_OFFSET+84, 200, 92);
+        Rectangle2D head1 = new Rectangle2D.Double();
+        head1.setFrameFromCenter(rect.getCenterX(), RAMBLEY_Y_OFFSET+130, rect.getCenterX()-100, RAMBLEY_Y_OFFSET+84);
         Path2D head1a = new Path2D.Double(head1);
         head1a.lineTo(head1.getMinX(), head1.getMinY());
         double a1 = Math.toRadians(26.57);
@@ -1482,7 +1516,8 @@ public class RambleyPainter implements Painter<Component>{
         head1a.lineTo(head1.getMaxX(), head1.getMinY());
         head1a.closePath();
             // Might also be usable for the location of his scarf
-        Ellipse2D head2 = new Ellipse2D.Double(head1.getMinX()+24, RAMBLEY_Y_OFFSET, 152, 176);
+        Ellipse2D head2 = new Ellipse2D.Double();
+        head2.setFrameFromCenter(head1.getCenterX(), RAMBLEY_Y_OFFSET+88, head1.getMinX()+24, RAMBLEY_Y_OFFSET);
             // Create the area for the upper part of his head
         Area temp = new Area(head2);
         temp.subtract(new Area(head1));
@@ -2489,27 +2524,32 @@ public class RambleyPainter implements Painter<Component>{
     
     
     
-        // Some debug flags and settings that will be removed when finished
-    protected static final int A_B_TESTING_FLAG = 0x40000000;
-    
-    protected static final int SHOW_LINES_FLAG = 0x80000000;
+        // Some debug settings that will be removed when finished
     
     boolean getShowsLines(){
-        return getFlag(SHOW_LINES_FLAG);
+        return showLines;
     }
     
     void setShowsLines(boolean value){
-        setFlag(SHOW_LINES_FLAG,value);
+        if (showLines == value)
+            return;
+        showLines = value;
+        fireStateChanged();
     }
     
     boolean getABTesting(){
-        return getFlag(A_B_TESTING_FLAG);
+        return abTesting;
     }
     
     void setABTesting(boolean value){
-        setFlag(A_B_TESTING_FLAG,value);
+        if (abTesting == value)
+            return;
+        abTesting = value;
+        fireStateChanged();
     }
     
+    private boolean showLines = false;
+    private boolean abTesting = false;
     private double testDouble1 = 0.26;
     private double testDouble2 = 0.5;
     private double testDouble3 = 0.85;
