@@ -782,18 +782,15 @@ public class RambleyPainter implements Painter<Component>{
     
     /**
      * This returns the gradient to use to paint the background gradient.
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     * @return 
+     * @param x The x-coordinate of the top-left corner of the area to fill.
+     * @param y The y-coordinate of the top-left corner of the area to fill.
+     * @param w The width ofthe area to fill.
+     * @param h The height of the area to fill.
+     * @return The gradient to use to paint the background gradient.
      */
-    protected Paint getBackgroundGradient(double x, double y, double w, double h){
+    protected Paint getBackgroundGradient(double x,double y,double w,double h){
+            // Get the center x-coordinate
         float x1 = (float)((w / 2.0)+x);
-//            return new LinearGradientPaint(x1,y,x1,y+h-1,
-//                    new float[]{0.0f,0.1f},
-//                    new Color[]{BACKGROUND_GRADIENT_TOP_COLOR,
-//                        BACKGROUND_GRADIENT_BOTTOM_COLOR});
         return new GradientPaint(x1,(float)y,BACKGROUND_GRADIENT_COLOR,
                 x1,(float)(y+h-1),BACKGROUND_GRADIENT_COLOR_2);
     }
@@ -809,22 +806,75 @@ public class RambleyPainter implements Painter<Component>{
     protected double getBackgroundDotOffsetY(double height){
         return getBackgroundDotOffset(height);
     }
+    /**
+     * 
+     * @param rect A rectangle outlining the bounds for the background polka 
+     * dot to return.
+     * @param path A Path2D object to use to create the path for the background 
+     * polka dot, or null.
+     * @return 
+     */
+    protected Path2D getBackgroundDot(RectangularShape rect, Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // Move to the top center point of the dot
+        path.moveTo(rect.getCenterX(), rect.getMinY());
+            // Line to the center left point
+        path.lineTo(rect.getMinX(), rect.getCenterY());
+            // Line to the bottom center point
+        path.lineTo(rect.getCenterX(), rect.getMaxY());
+            // Line to the center right point
+        path.lineTo(rect.getMaxX(), rect.getCenterY());
+            // Close the path
+        path.closePath();
+        return path;
+    }
+    /**
+     * 
+     * @param x The x-coordinate for the center of the background polka dot.
+     * @param y The y-coordinate for the center of the background polka dot.
+     * @param path A Path2D object to use to create the path for the background 
+     * polka dot, or null.
+     * @param rect A Rectangle2D object to use to calculate the bounds for the 
+     * background polka dot, or null.
+     * @return 
+     */
+    protected Path2D getBackgroundDot(double x, double y, Path2D path, Rectangle2D rect){
+            // If the given Rectangle2D object is null
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+        rect.setFrameFromCenter(x, y, x-BACKGROUND_DOT_HALF_SIZE, y-BACKGROUND_DOT_HALF_SIZE);
+        return getBackgroundDot(rect,path);
+    }
     
     protected double getPixelGridOffset(double size){
         return ((size-1)%PIXEL_GRID_SPACING)/2.0;
     }
     
-    protected Path2D getPixelGrid(double x, double y, double w, double h, Path2D path){
+    protected Path2D getPixelGrid(double x, double y, double w, double h, 
+            Path2D path){
+            // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
-        else
+        else    // Reset the given Path2D object
             path.reset();
+            // Get the maximum x-coordinate for the pixel grid
         double x2 = x+w;
+            // Get the maximum y-coordinate for the pixel grid
         double y2 = y+h;
+            // Go through and generate the vertical lines, starting at the 
+            // offset for the y-coordinate of the pixel grid and spacing them 
+            // out by the pixel grid spacing
         for (double y1 = getPixelGridOffset(h); y1 <= h; y1+=PIXEL_GRID_SPACING){
             path.moveTo(x, y1+y);
             path.lineTo(x2, y1+y);
         }
+            // Go through and generate the horizontal lines, starting at the 
+            // offset for the x-coordinate of the pixel grid and spacing them 
+            // out by the pixel grid spacing
         for (double x1 = getPixelGridOffset(w); x1 <= w; x1+=PIXEL_GRID_SPACING){
             path.moveTo(x1+x, y);
             path.lineTo(x1+x, y2);
@@ -833,9 +883,9 @@ public class RambleyPainter implements Painter<Component>{
     }
     
     private Path2D getPixelGrid(double x, double y, double w, double h){
-        if (pixelGrid == null)
-            pixelGrid = new Path2D.Double();
-        return getPixelGrid(x,y,w,h,pixelGrid);
+            // Generate the pixel grid
+        pixelGrid = getPixelGrid(x,y,w,h,pixelGrid);
+        return pixelGrid;
     }
     /**
      * This constructs a stroke to use when rendering Rambley
@@ -847,18 +897,21 @@ public class RambleyPainter implements Painter<Component>{
     }
     
     protected BasicStroke getRambleyNormalStroke(){
+            // If the normal stroke for Rambley has not been initialized yet
         if (normalStroke == null)
             normalStroke = getRambleyStroke(1.0f);
         return normalStroke;
     }
     
     protected BasicStroke getRambleyDetailStroke(){
+            // If the detail stroke for Rambley has not been initialized yet
         if (detailStroke == null)
             detailStroke = getRambleyStroke(2.0f);
         return detailStroke;
     }
     
     protected BasicStroke getRambleyOutlineStroke(){
+            // If the outline stroke for Rambley has not been initialized yet
         if (outlineStroke == null)
             outlineStroke = getRambleyStroke(3.0f);
         return outlineStroke;
@@ -907,26 +960,6 @@ public class RambleyPainter implements Painter<Component>{
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
                 RenderingHints.VALUE_STROKE_PURE);
         return g;
-    }
-    
-    protected Path2D getBackgroundDot(RectangularShape rect, Path2D path){
-        if (path == null)
-            path = new Path2D.Double();
-        else
-            path.reset();
-        path.moveTo(rect.getCenterX(), rect.getMinY());
-        path.lineTo(rect.getMinX(), rect.getCenterY());
-        path.lineTo(rect.getCenterX(), rect.getMaxY());
-        path.lineTo(rect.getMaxX(), rect.getCenterY());
-        path.closePath();
-        return path;
-    }
-    
-    protected Path2D getBackgroundDot(double x, double y, Path2D path, Rectangle2D rect){
-        if (rect == null)
-            rect = new Rectangle2D.Double();
-        rect.setFrameFromCenter(x, y, x-BACKGROUND_DOT_HALF_SIZE, y-BACKGROUND_DOT_HALF_SIZE);
-        return getBackgroundDot(rect,path);
     }
     
     protected void paintBackground(Graphics2D g, int x, int y, int w, int h){
