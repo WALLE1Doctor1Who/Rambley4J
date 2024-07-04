@@ -441,6 +441,11 @@ public class RambleyPainter implements Painter<Component>{
      * time it is used.
      */
     private DoubleUnaryOperator earEquationT = null;
+    /**
+     * This is an AffineTransform used to flip shapes horizontally. This is 
+     * initially null and is initialized the first time it is used.
+     */
+    private AffineTransform horizFlip = null;
     
     // Dedicated scratch shape objects
     
@@ -945,6 +950,32 @@ public class RambleyPainter implements Painter<Component>{
         if (outlineStroke == null)
             outlineStroke = getRambleyStroke(3.0f);
         return outlineStroke;
+    }
+    /**
+     * This returns an AffineTransform to use to flip shapes horizontally when 
+     * painting Rambley.
+     * @return The AffineTransform used to flip things horizontally.
+     */
+    protected AffineTransform getRambleyHorizontalFlipTransform(){
+            // If the horizontal flip transform has not been initialized yet
+        if (horizFlip == null){
+                // Get a transform that will flip things horizontally
+            horizFlip = AffineTransform.getScaleInstance(-1, 1);
+                // Translate the horizontal flip transform to put it back on the 
+                // image
+            horizFlip.translate(-INTERNAL_RENDER_HEIGHT, 0);
+        }
+        return horizFlip;
+    }
+    /**
+     * This flips the given area horizontally.
+     * @param area The area to flip.
+     * @return The horizontally flipped area.
+     * @see getRambleyHorizontalFlipTransform
+     * @see Area#createTransformedArea
+     */
+    protected Area createHorizontallyFlippedArea(Area area){
+        return area.createTransformedArea(getRambleyHorizontalFlipTransform());
     }
     
     
@@ -1473,11 +1504,7 @@ public class RambleyPainter implements Painter<Component>{
         }
             // Set the stroke to use to the normal stroke
         g.setStroke(getRambleyNormalStroke());
-            // Get a transform that will flip things horizontally
-        AffineTransform horizFlip = AffineTransform.getScaleInstance(-1, 1);
-            // Translate the horizontal flip transform to put it back on the 
-            // image
-        horizFlip.translate(-INTERNAL_RENDER_HEIGHT, 0);
+        
         if (rect == null)
             rect = new Rectangle2D.Double();
         if (ellipse == null)
@@ -1536,7 +1563,7 @@ public class RambleyPainter implements Painter<Component>{
         Path2D earPath = new Path2D.Double();
         
         Area earR = getRambleyEar(headBounds.getCenterX()-84,head2.getMinY()-31.5,earPath);
-        Area earL = earR.createTransformedArea(horizFlip);
+        Area earL = createHorizontallyFlippedArea(earR);
         
         Area earInR = getRambleyInnerEar(earR,RAMBLEY_INNER_EAR_SCALE,headShape);
         Area earInL = getRambleyInnerEar(earL,RAMBLEY_INNER_EAR_SCALE,headShape);
@@ -1589,7 +1616,7 @@ public class RambleyPainter implements Painter<Component>{
             // Might be used later for calculating eye location
         Ellipse2D head4 = new Ellipse2D.Double(head3.getMinX(),head3.getMinY()+17,56,32);
         temp = new Area(head4);
-        Area temp2 = temp.createTransformedArea(horizFlip);
+        Area temp2 = createHorizontallyFlippedArea(temp);
         Rectangle2D temp3 = temp2.getBounds2D();
             // Might be usable for the mouth area location, and for the eye location
         Rectangle2D head5 = new Rectangle2D.Double();
@@ -1640,7 +1667,7 @@ public class RambleyPainter implements Painter<Component>{
             // Right eyebrow area
         Area eyeBrowR = new Area(eye1);
             // Flip to form the Left eyebrow
-        Area eyeBrowL = eyeBrowR.createTransformedArea(horizFlip);
+        Area eyeBrowL = createHorizontallyFlippedArea(eyeBrowR);
         
         if (!getShowsLines()){
             g.setColor(RAMBLEY_EYEBROW_COLOR);
@@ -1692,7 +1719,7 @@ public class RambleyPainter implements Painter<Component>{
         Area eyeSurroundR = new Area(eye2);
         eyeSurroundR.add(new Area(eye3));
             // Left eye surround
-        Area eyeSurroundL = eyeSurroundR.createTransformedArea(horizFlip);
+        Area eyeSurroundL = createHorizontallyFlippedArea(eyeSurroundR);
         
         if (!getShowsLines()){
             g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
@@ -1734,7 +1761,7 @@ public class RambleyPainter implements Painter<Component>{
         
         Area eyeWhiteR = new Area(eye4);
         eyeWhiteR.add(new Area(eye6));
-        Area eyeWhiteL = eyeWhiteR.createTransformedArea(horizFlip);
+        Area eyeWhiteL = createHorizontallyFlippedArea(eyeWhiteR);
         
         if (!getShowsLines()){
             g.setColor(RAMBLEY_EYE_WHITE_COLOR);
@@ -1777,7 +1804,7 @@ public class RambleyPainter implements Painter<Component>{
         nose.add(new Area(nose4));
         temp = new Area(nose5);
         nose.add(temp);
-        nose.add(temp.createTransformedArea(horizFlip));
+        nose.add(createHorizontallyFlippedArea(temp));
         
         Path2D mouth = new Path2D.Double();
         point1.setLocation(nose1.getCenterX(), nose1.getMaxY());
@@ -1793,7 +1820,7 @@ public class RambleyPainter implements Painter<Component>{
                 point3.getX(), point3.getY());
         mouth.moveTo(point3.getX()+2, point3.getY()-2);
         mouth.lineTo(point3.getX()-2.5, point3.getY()+2.5);
-        Shape mouth1 = mouth.createTransformedShape(horizFlip);
+        Shape mouth1 = mouth.createTransformedShape(getRambleyHorizontalFlipTransform());
         mouth.append(mouth1, false);
         
         if (!getShowsLines()){
