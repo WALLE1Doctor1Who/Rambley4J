@@ -1628,7 +1628,7 @@ public class RambleyPainter implements Painter<Component>{
      * @param ear The Area representing the outer ear to derive the inner ear 
      * from.
      * @param scale The scale factor for the inner ear. 
-     * @param head The Area for the shape of Rambley's head to use to subtrack 
+     * @param head The Area for the shape of Rambley's head to use to subtract 
      * from the inner ear, or null.
      * @return The Area for the inner portion of Rambley's ear.
      */
@@ -1744,6 +1744,60 @@ public class RambleyPainter implements Painter<Component>{
             // Mask off the areas that are not a part of the facial markings.
         markings.intersect(mask);
         return markings;
+    }
+    /**
+     * This creates and returns an Area that forms the shape of Rambley's snout 
+     * area. That is to say, the area around Rambley's nose and mouth.
+     * @param headBounds The bounds of Rambley's head without his ears.
+     * @param head The Area for the shape of Rambley's head to use to ensure the 
+     * snout area lies within the head shape, or null.
+     * @param ellipse An Ellipse2D object to use to calculate the snout area, 
+     * or null.
+     * @return The area around Rambley's nose and mouth.
+     */
+    private Area createRambleySnoutArea(RectangularShape headBounds, 
+            Area head, Ellipse2D ellipse){
+            // If the ellipse is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+            // Set the ellipse's frame from the center so that it is 
+            // horizontally centered in the head, is at the bottom of the head, 
+            // and is around 72 x 56. This forms the snout area.
+        ellipse.setFrameFromCenter(
+                headBounds.getCenterX(), headBounds.getMaxY()-28, 
+                headBounds.getMinX()+63, headBounds.getMaxY());
+            // Create an area for the snout area
+        Area mouthArea = new Area(ellipse);
+            // If the area of the head was given
+        if (head != null)
+                // Make sure the snout area is fully within the head area
+            mouthArea.intersect(head);
+        return mouthArea;
+    }
+    /**
+     * This creates and returns an Area that forms the shape of Rambley's right 
+     * eyebrow. This is flipped to produce the left eyebrow. The eyebrows are 
+     * intended to be covered up by the markings around Rambley's eyes and the 
+     * eyes themselves.
+     * @param headBounds The bounds of Rambley's head without his ears.
+     * @param ellipse An Ellipse2D object to use to calculate the eyebrow, or 
+     * null.
+     * @return The area that forms Rambley's right eyebrow.
+     */
+    private Area createRambleyEyebrow(RectangularShape headBounds, 
+            Ellipse2D ellipse){
+            // If the ellipse is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+            // Set the ellipse's frame from the center so that it is around 49 
+            // pixels to the left of center, 20 pixels lower than the top of the 
+            // head, and is 40 x 40. This forms the eyebrow area, and is 
+            // intended to be covered up by the markings around the eyes and the 
+            // eyes themselves.
+        ellipse.setFrameFromCenter(
+                headBounds.getCenterX()-29, headBounds.getMinY()+40, 
+                headBounds.getCenterX()-9, headBounds.getMinY()+20);
+        return new Area(ellipse);
     }
     
     
@@ -1991,6 +2045,11 @@ public class RambleyPainter implements Painter<Component>{
             // Create the shape for the face markings around his eyes
         Area faceMarkings = createRambleyMaskFaceMarkings(headBounds,ellipse,head3,head4,rect);
         
+            // An Ellipse2D to use to form the area around Rambley's snout.
+        Ellipse2D head5 = new Ellipse2D.Double();
+            // Create the area around Rambley's nose and mouth
+        Area snoutArea = createRambleySnoutArea(headBounds,headShape,head5);
+        
             // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
             
@@ -2012,22 +2071,19 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(faceMarkings);
         }
         
-            // Create Rambley's eyebrows (will intersect with the other eye 
-            // markings)
-        
-            // Ellipse to form the right eyebrow (may be used to calculate the 
-            // location for the eyes)
+            // An Ellipse to use to form the right eyebrow
         Ellipse2D eye1 = new Ellipse2D.Double();
-        eye1.setFrameFromCenter(headBounds.getCenterX()-29, headBounds.getMinY()+40, 
-                headBounds.getCenterX()-9, headBounds.getMinY()+20);
-            // Right eyebrow area
-        Area eyeBrowR = new Area(eye1);
-            // Flip to form the Left eyebrow
+            // Create Rambley's right eyebrow (this will intersect with the 
+            // other eye markings)
+        Area eyeBrowR = createRambleyEyebrow(headBounds,eye1);
+            // Flip to form the Left eyebrow (this will intersect with the 
+            // other eye markings)
         Area eyeBrowL = createHorizontallyFlippedArea(eyeBrowR);
             
             // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
             
+                // Fill in Rambley's eyebrows
             g.setColor(RAMBLEY_EYEBROW_COLOR);
             g.fill(eyeBrowR);
             g.fill(eyeBrowL);
@@ -2041,12 +2097,7 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(eyeBrowL);
         }
             
-            // May be used for calculations regarding the location of the mouth and nose
-        Ellipse2D head7 = new Ellipse2D.Double();
-        head7.setFrameFromCenter(headBounds.getCenterX(), headBounds.getMaxY()-28, 
-                headBounds.getMinX()+63, headBounds.getMaxY());
-        Area mouthArea = new Area(head7);
-        mouthArea.intersect(headShape);
+        
         
             // Create the area around Rambley's eyes
             
@@ -2067,12 +2118,12 @@ public class RambleyPainter implements Painter<Component>{
         eye3.quadTo((point2.getX()+(point1.getX()*2))/3, 
                 ((point1.getY()+(point2.getY()*2))/3)+5, 
                 point1.getX(), point1.getY());
-        getCircleIntersections(head7,head1.getMinX(),head1.getMinY(),
+        getCircleIntersections(head5,head1.getMinX(),head1.getMinY(),
                 head1.getMaxX(),head1.getMinY(),point2,point3);
         point2.setLocation(eye2.getCenterX(), eye5.getMaxY());
         point3.setLocation(eye2.getMinX()+2, eye5.getMaxY());
         eye3.quadTo(point3.getX(), point3.getY(), point2.getX(), point2.getY());
-        eye3.quadTo(eye2.getMaxX(), head7.getMinY(),eye2.getMaxX(), eye2.getCenterY());
+        eye3.quadTo(eye2.getMaxX(), head5.getMinY(),eye2.getMaxX(), eye2.getCenterY());
         eye3.closePath();
         
             // Right eye surround
@@ -2083,16 +2134,22 @@ public class RambleyPainter implements Painter<Component>{
         
             // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
+            
+                // Set the color to use to Rambley's secondary body color
             g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
-            g.fill(mouthArea);
+                // Fill in Rambley's snout area
+            g.fill(snoutArea);
+                // Fill in the area arround Rambley's eyes
             g.fill(eyeSurroundR);
             g.fill(eyeSurroundL);
+                // Fill in the inner portion of Rambley's ears
             g.fill(earInR);
             g.fill(earInL);
+            
         } else {
                 // DEBUG: If we are not showing the lines that make up Rambley 
             g.setColor(Color.GREEN);
-            g.draw(mouthArea);
+            g.draw(snoutArea);
             g.setColor(Color.CYAN);
             g.draw(eye2);
             g.setColor(Color.RED);
@@ -2149,7 +2206,7 @@ public class RambleyPainter implements Painter<Component>{
         nose1.setFrameFromCenter(headBounds.getCenterX(), head1.getMinY()+7, 
                 headBounds.getCenterX()-9, head1.getMinY());
         Ellipse2D nose3 = new Ellipse2D.Double();
-        nose3.setFrameFromCenter(nose1.getCenterX(), head7.getMinY()+8.5, 
+        nose3.setFrameFromCenter(nose1.getCenterX(), head5.getMinY()+8.5, 
                 nose1.getMinX()+2, nose1.getMaxY());
         Ellipse2D nose4 = new Ellipse2D.Double();
         nose4.setFrameFromCenter(nose1.getCenterX(), (nose3.getCenterY()+2), 
@@ -2174,7 +2231,7 @@ public class RambleyPainter implements Painter<Component>{
         point1.setLocation(nose1.getCenterX(), nose1.getMaxY());
         mouth.moveTo(point1.getX(), point1.getY());
         double mouth2 = (nose4.getMaxY()+point1.getY())/2;
-        getCircleIntersections(head7,head1.getMinX(),mouth2,
+        getCircleIntersections(head5,head1.getMinX(),mouth2,
                 head1.getMaxX(),mouth2,point3,point2);
         point3.setLocation(point3.getX()+7.5, mouth2);
         point2.setLocation((point1.getX()+point3.getX())/2, head3.getMaxY());
