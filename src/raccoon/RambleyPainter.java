@@ -1461,11 +1461,12 @@ public class RambleyPainter implements Painter<Component>{
                 getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
     }
     /**
-     * 
+     * This creates and returns an Area that forms the shape of Rambley's right 
+     * ear.
      * @param x The x-coordinate for the top-left corner of the ear.
      * @param y The y-coordinate for the top-left corner of the ear.
      * @param path A Path2D object to use to construct the ear, or null.
-     * @return 
+     * @return The area of Rambley's right ear.
      */
     protected Area getRambleyEar(double x, double y, Path2D path){
             // If the given Path2D object is null
@@ -1848,33 +1849,30 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(ellipse);
         }
         
-        Path2D earPath = new Path2D.Double();
-        
-        Area earR = getRambleyEar(headBounds.getCenterX()-84,headBounds.getMinY()-31.5,earPath);
+            // Get the area for Rambley's right ear
+        Area earR = getRambleyEar(headBounds.getCenterX()-84,headBounds.getMinY()-31.5,path);
+            // Flip the area for Rambley's right ear to get his left ear
         Area earL = createHorizontallyFlippedArea(earR);
-        
+            // Get the area for the inner portion of Rambley's right ear
         Area earInR = getRambleyInnerEar(earR,RAMBLEY_INNER_EAR_SCALE,headShape);
+            // Get the area for the inner portion of Rambley's left ear
         Area earInL = getRambleyInnerEar(earL,RAMBLEY_INNER_EAR_SCALE,headShape);
-        
+            // Add Rambley's right ear to the shape of his head
         headShape.add(earR);
+            // Add Rambley's left ear to the shape of his head.
         headShape.add(earL);
         
-        Path2D headOutline = new Path2D.Double(headShape);
-        
-//        g.translate((getIconWidth()-headBounds.getWidth())/2.0, 
-//                (getIconHeight()-headBounds.getHeight())/2.0);
-//            // If I go for a different translation, then this will need to be 
-//            // altered to get the location right. This needs to be the width of 
-//            // the painted area, but negative
-//        horizFlip.translate(-(headBounds.getWidth()+2), 0);
-        
+            // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
+            
+                // Fill the shape of Rambley's head
             g.setColor(RAMBLEY_MAIN_BODY_COLOR);
             g.fill(headShape);
             
+            // DEBUG: If we are showing the lines that make up Rambley
         } else {
             g.setColor(Color.MAGENTA);
-            g.draw(earPath);
+            g.draw(path);
             g.setColor(Color.GRAY);
             g.draw(earInR);
             g.draw(earInL);
@@ -1887,7 +1885,7 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(headBounds);
         }
         
-            // Create shape for the face markings around his eyes
+            // Create the shape for the face markings around his eyes
         
             // Used for many of the calculations for the markings
         Ellipse2D head3 = new Ellipse2D.Double();
@@ -1916,9 +1914,14 @@ public class RambleyPainter implements Painter<Component>{
         Area head6a = new Area(head6);
         faceMarkings.subtract(head6a);
         
+            // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
+            
+                // Fill the shape of Rambley's mask-like facial markings
             g.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
             g.fill(faceMarkings);
+            
+            // DEBUG: If we are showing the lines that make up Rambley
         } else {
             g.setColor(Color.WHITE);
             g.draw(head3);
@@ -2126,7 +2129,7 @@ public class RambleyPainter implements Painter<Component>{
         if (!getShowsLines()){
             g.setColor(RAMBLEY_OUTLINE_COLOR);
             g.setStroke(getRambleyOutlineStroke());
-            g.draw(headOutline);
+            g.draw(headShape);
             g.setStroke(getRambleyDetailStroke());
             g.setColor(RAMBLEY_NOSE_OUTLINE_COLOR);
             g.draw(nose);
