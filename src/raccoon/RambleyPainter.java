@@ -1657,6 +1657,94 @@ public class RambleyPainter implements Painter<Component>{
             earIn.subtract(head);
         return earIn;
     }
+    /**
+     * This creates and returns an Area that forms the shape of the mask-like 
+     * markings on Rambley's face.
+     * @param headBounds The bounds of Rambley's head without his ears.
+     * @param ellipse1 An Ellipse2D object to use to store the general area for 
+     * Rambley's facial markings, or null.
+     * @param ellipse2 An Ellipse2D object to use to store the ellipse used to 
+     * make the bottom left (Rambley's right) portion of Rambley's facial 
+     * markings, or null.
+     * @param ellipse3 An Ellipse2D object to use to store the notch in 
+     * Rambley's facial markings in between his eyes, or null.
+     * @param rect A Rectangle2D object to use to calculate the area for 
+     * Rambley's facial markings, or null.
+     * @return The area of Rambley's mask-like facial markings.
+     */
+    private Area createRambleyMaskFaceMarkings(RectangularShape headBounds, 
+            Ellipse2D ellipse1, Ellipse2D ellipse2, Ellipse2D ellipse3, 
+            Rectangle2D rect){
+            // If the given Rectangle is null
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+            // If the first of the ellipses are null
+        if (ellipse1 == null)
+            ellipse1 = new Ellipse2D.Double();
+            // If the second of the ellipses are null
+        if (ellipse2 == null)
+            ellipse2 = new Ellipse2D.Double();
+           // If the third of the ellipses are null
+        if (ellipse3 == null)
+            ellipse3 = new Ellipse2D.Double();
+            // Set the frame of the first ellipse from the center. This ellipse 
+            // will be horizontally centered, located 58 pixels down from the 
+            // top of the head, and will be around 130 x 62. This will make up 
+            // the markings, and the remaining code will mask it into the right 
+            // shape.
+        ellipse1.setFrameFromCenter(
+                headBounds.getCenterX(), headBounds.getMinY()+89, 
+                headBounds.getMinX()+34, headBounds.getMinY()+58);
+            // Set the frame of the second ellipse to be all the way to the left 
+            // of the first ellipse, 17 pixels down from the top of the first 
+            // ellipse, and to be 56 x 32. This forms the left (Rambley's right) 
+            // part of the mask for the bottom of the facial markings, with the 
+            // right part of it being a horizontally flipped version of this 
+            // ellipse 
+        ellipse2.setFrame(ellipse1.getMinX(),ellipse1.getMinY()+17,56,32);
+            // Create an area with the second ellipse, which will be used to 
+            // create the mask for the facial markings
+        Area mask = new Area(ellipse2);
+            // Flip the second ellipse horizontally to form the right part of 
+            // the bottom of the facial markings mask
+        Area temp = createHorizontallyFlippedArea(mask);
+            // Get the bounds of the horizontally flipped version of the second 
+            // ellipse, so that we can get some location data from it
+        Rectangle2D tempBounds = temp.getBounds2D();
+            // Set the frame of the rectangle using a diagonal from the top 
+            // center of the second ellipse to the bottom center of the 
+            // horizontally flipped version of the second ellipse. This will be 
+            // used to bridge the two together to complete the bottom part of 
+            // the mask.
+        rect.setFrameFromDiagonal(ellipse2.getCenterX(), ellipse2.getMinY(), 
+                tempBounds.getCenterX(), tempBounds.getMaxY());
+            // Add the flipped version of the second ellipse to the mask
+        mask.add(temp);
+            // Add the rectangle to the mask to complete the bottom part of the 
+        mask.add(new Area(rect));   // mask
+            // Set the frame of the rectangle again using a diagonal, this time 
+            // from the top-left corner of the first ellipse, to the right of 
+            // the first ellipse and the vertical center of the second ellipse. 
+            // This will form the top portion of the mask.
+        rect.setFrameFromDiagonal(ellipse1.getMinX(), ellipse1.getMinY(), 
+                ellipse1.getMaxX(), ellipse2.getCenterY());
+            // Add the rectangle to the mask to form the top part of the mask
+        mask.add(new Area(rect));
+            // Set the frame for the third ellipse from the center so as to be 
+            // horizontally centered in the markings, with the top being 24 
+            // pixels above the first ellipse, and should be 28 x 36. This will 
+            // form the little notch between the eyes at the top of the markings
+        ellipse3.setFrameFromCenter(ellipse1.getCenterX(), ellipse1.getMinY()-6, 
+                ellipse1.getCenterX()+14, ellipse1.getMinY()-24);
+            // Remove the third ellipse from the mask so that it gets removed 
+            // from the facial markings
+        mask.subtract(new Area(ellipse3));
+            // Create the area that will get the facial markings using the first 
+        Area markings = new Area(ellipse1);     // ellipse
+            // Mask off the areas that are not a part of the facial markings.
+        markings.intersect(mask);
+        return markings;
+    }
     
     
     
@@ -1824,11 +1912,6 @@ public class RambleyPainter implements Painter<Component>{
         Ellipse2D head2 = new Ellipse2D.Double();
             // Create the shape for Rambley's head (without his ears for now)
         Area headShape = createRambleyHeadArea(head1,path,head2,ellipse);
-            // Get the minimum y-component for the path, to be used when 
-            // creating the markings on Rambley's face. This will be the 
-            // y-coordinate of the top of the triangle used as a mask to create 
-            // the cheeks.
-        double cheekTriagY = Math.ceil(path.getBounds2D().getMinY());
             // Get the bounds for the head, so that we can base the facial 
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
@@ -1885,34 +1968,14 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(headBounds);
         }
         
-            // Create the shape for the face markings around his eyes
-        
-            // Used for many of the calculations for the markings
+            // An ellipse to use to calculate the face markings areound 
+            // Rambley's eyes.
         Ellipse2D head3 = new Ellipse2D.Double();
-        head3.setFrameFromCenter(headBounds.getCenterX(), headBounds.getMinY()+89, 
-                headBounds.getMinX()+34, headBounds.getMinY()+58);
-            // Might be used later for calculating eye location
-        Ellipse2D head4 = new Ellipse2D.Double(head3.getMinX(),head3.getMinY()+17,56,32);
-        Area temp = new Area(head4);
-        Area temp2 = createHorizontallyFlippedArea(temp);
-        Rectangle2D temp3 = temp2.getBounds2D();
-            // Might be usable for the mouth area location, and for the eye location
-        Rectangle2D head5 = new Rectangle2D.Double();
-        head5.setFrameFromDiagonal(head4.getCenterX(), head4.getMinY(), 
-                temp3.getCenterX(), temp3.getMaxY());
-        temp.add(temp2);
-        temp.add(new Area(head5));
-        rect.setFrameFromDiagonal(head3.getMinX(), head3.getMinY(), 
-                head3.getMaxX(), head4.getCenterY());
-        temp.add(new Area(rect));
-        Area faceMarkings = new Area(head3);
-        faceMarkings.intersect(temp);
-            // Possible Eyebrow mask?
-        Ellipse2D head6 = new Ellipse2D.Double();
-        head6.setFrameFromCenter(head3.getCenterX(), cheekTriagY+18, 
-                head3.getCenterX()+14, cheekTriagY);
-        Area head6a = new Area(head6);
-        faceMarkings.subtract(head6a);
+            // A second ellipse to use to calculate the face markings areound 
+            // Rambley's eyes.
+        Ellipse2D head4 = new Ellipse2D.Double();
+            // Create the shape for the face markings around his eyes
+        Area faceMarkings = createRambleyMaskFaceMarkings(headBounds,ellipse,head3,head4,rect);
         
             // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
@@ -1924,16 +1987,13 @@ public class RambleyPainter implements Painter<Component>{
             // DEBUG: If we are showing the lines that make up Rambley
         } else {
             g.setColor(Color.WHITE);
-            g.draw(head3);
+            g.draw(ellipse);
             g.setColor(Color.YELLOW);
-            g.draw(head4);
-            g.draw(temp2);
-            g.setColor(Color.CYAN);
-            g.draw(head5);
+            g.draw(head3);
             g.setColor(Color.BLUE);
             g.draw(rect);
             g.setColor(Color.GREEN);
-            g.draw(head6);
+            g.draw(head4);
             g.setColor(Color.MAGENTA);
             g.draw(faceMarkings);
         }
@@ -2033,8 +2093,8 @@ public class RambleyPainter implements Painter<Component>{
         eye6.quadTo(eye5.getMinX(),eye4.getMinY(),point4.getX(),point4.getY());
         eye6.quadTo(eye2.getMinX()+5, (eye4.getMaxY()+eye5.getMaxY())/2, 
                 eye5.getCenterX(), eye5.getMaxY());
-        eye6.quadTo(head6.getMinX(), eye5.getMaxY(), 
-                (head6.getMinX()+(eye4.getMaxX()*2))/3, eye4.getMaxY());
+        eye6.quadTo(head4.getMinX(), eye5.getMaxY(), 
+                (head4.getMinX()+(eye4.getMaxX()*2))/3, eye4.getMaxY());
         getCircleIntersections(eye4,head1.getMinX(),eye4.getCenterY()-1,
                 head1.getMaxX(),eye4.getCenterY()-1,point2,point3);
         eye6.quadTo(eye4.getMaxX()+1, (eye5.getMaxY()+(eye5.getCenterY()*2))/3, 
@@ -2084,7 +2144,7 @@ public class RambleyPainter implements Painter<Component>{
                 nose1.getMaxX(), nose4.getCenterY());
         nose.subtract(new Area(rect));
         nose.add(new Area(nose4));
-        temp = new Area(nose5);
+        Area temp = new Area(nose5);
         nose.add(temp);
         nose.add(createHorizontallyFlippedArea(temp));
         
@@ -2095,7 +2155,7 @@ public class RambleyPainter implements Painter<Component>{
         getCircleIntersections(head7,head1.getMinX(),mouth2,
                 head1.getMaxX(),mouth2,point3,point2);
         point3.setLocation(point3.getX()+7.5, mouth2);
-        point2.setLocation((point1.getX()+point3.getX())/2, head4.getMaxY());
+        point2.setLocation((point1.getX()+point3.getX())/2, head3.getMaxY());
         mouth.quadTo((point1.getX()+point2.getX())/2,point2.getY(),
                 point2.getX(), point2.getY());
         mouth.quadTo((point3.getX()+point2.getX())/2,point2.getY(),
