@@ -669,29 +669,11 @@ public class RambleyViewer extends javax.swing.JFrame {
             config.putBoolean(PRINT_LISTENERS_KEY, listenerToggle.isSelected());
     }//GEN-LAST:event_listenerToggleActionPerformed
     
-    private void getIntersectingLine(Line2D line1, Line2D line2, double x, double y, DoubleUnaryOperator getY){
-        double x1 = (line1.getX1()+line1.getX2()) / 2.0;
-        double y1 = getY.applyAsDouble(x1 - x) + y;
-        Line2D l1 = new Line2D.Double(line1.getX1(), line1.getY1(), x1, y1);
-        Line2D l2 = new Line2D.Double(x1, y1, line1.getX2(), line1.getY2());
-        if (l1.intersectsLine(line2))
-            line1.setLine(l1);
-        else
-            line1.setLine(l2);
-    }
-    
     private Point2D getLineIntersection(double x, double y, Line2D line1, Line2D line2, 
             DoubleUnaryOperator getY1, DoubleUnaryOperator getY2){
-        for (int i = 0; i < 25; i++){
-            if (line1.getP1().distance(line1.getP2()) >= line2.getP1().distance(line2.getP2())){
-                getIntersectingLine(line1,line2,x,y,getY1);
-            } else {
-                getIntersectingLine(line2,line1,x,y,getY2);
-            }
-        }
-        double tempX = (line1.getX1()+line1.getX2()+line2.getX1()+line2.getX2())/4.0;
-        double temp = tempX - x;
-        return new Point2D.Double(tempX, (getY1.applyAsDouble(temp)+getY2.applyAsDouble(temp))/2.0+y);
+        double x1 = Math.min(Math.min(line1.getX1(), line1.getX2()), Math.min(line2.getX1(), line2.getX2()));
+        double x2 = Math.max(Math.max(line1.getX1(), line1.getX2()), Math.max(line2.getX1(), line2.getX2()));
+        return RambleyPainter.getLineIntersection(x, y, x1, x2, getY1, getY2, null);
     }
     
     /**

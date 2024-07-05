@@ -292,9 +292,14 @@ public class RambleyPainter implements Painter<Component>{
      * through point (0,0) in the coordinate system used by the ear equations.
      */
     private static final double RAMBLEY_EAR_Y_OFFSET = getRambleyEarOffset(0);
-    
+    /**
+     * This is the multiplier to use to convert coordinates in the ear equations 
+     * coordinate system to the image coordinate system.
+     */
     private static final double RAMBLEY_EAR_MULTIPLIER = 42;
-    
+    /**
+     * This is the height of Rambley's ears.
+     */
     private static final double RAMBLEY_EAR_HEIGHT = 1.8 * RAMBLEY_EAR_MULTIPLIER;
     /**
      * This is the offset for the y-coordinates when calculating the curve for 
@@ -315,8 +320,10 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double RAMBLEY_INNER_EAR_SCALE = 2/3.0;
     /**
-     * This converts the given y-coordinate in the graphics coordinate system 
-     * @param y
+     * This converts the given y-coordinate in the image coordinate system to a 
+     * y-coordinate in the coordinate system used by the equations used to 
+     * calculate the curves that make up Rambley's ears. 
+     * @param y The y-coordinate 
      * @return 
      */
     private static double graphicsToEarEquY(double y){
@@ -324,18 +331,30 @@ public class RambleyPainter implements Painter<Component>{
         y /= RAMBLEY_EAR_MULTIPLIER;
         return y + RAMBLEY_EAR_Y_OFFSET;
     }
-    
+    /**
+     * 
+     * @param x
+     * @return 
+     */
     private static double graphicsToEarEquX(double x){
         x /= RAMBLEY_EAR_MULTIPLIER;
         return RAMBLEY_EAR_X_OFFSET-x;
     }
-    
+    /**
+     * 
+     * @param y
+     * @return 
+     */
     private static double earEquToGraphicsY(double y){
         y -= RAMBLEY_EAR_Y_OFFSET;
         y *= RAMBLEY_EAR_MULTIPLIER;
         return (RAMBLEY_EAR_HEIGHT-y);
     }
-    
+    /**
+     * 
+     * @param x
+     * @return 
+     */
     private static double earEquToGraphicsX(double x){
         return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_EAR_MULTIPLIER;
     }
@@ -1240,7 +1259,403 @@ public class RambleyPainter implements Painter<Component>{
         headShape.add(temp);
         return headShape;
     }
-    
+    /**
+     * 
+     * ln(x)/10ln(2) + 2.3
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param x
+     * @return 
+     */
+    protected double getRambleyUpperEarY(double x){
+            // Convert the x-coordinate into the ear equations coordinate system
+        x = graphicsToEarEquX(x);
+            // If the x-coordinate is less than or equal to zero
+        if (x <= 0)
+                // Return the graphics coordinate equivalent to zero
+            return earEquToGraphicsY(0);
+            // y = ln(x)/10ln(2) + 2.3
+            // Convert the resulting y-coordinate into the graphics coordinate 
+            // system
+        return earEquToGraphicsY((Math.log(x)/(10*Math.log(2)))+2.3);
+    }
+    /**
+     * This takes in a y-coordinate for a point on the line that forms the upper 
+     * curve for Rambley's right ear, and returns the corresponding x-coordinate 
+     * for that point. 
+     * 
+     * 2^(10y-23)
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param y
+     * @return 
+     */
+    protected double getRambleyUpperEarX(double y){
+            // First, convert the y-coordinate into the ear equations coordinate 
+            // system
+            // x = 2^(10y-23)
+            // Convert the resulting x-coordinate into the graphics coordinate 
+            // system
+        return earEquToGraphicsX(Math.pow(2, 10*graphicsToEarEquY(y)-23));
+    }
+    /**
+     * This returns the function to calculate the y-coordinate for a point on 
+     * the line that produces the upper curve for Rambley's right ear. The 
+     * function returned is effectively a {@code DoubleUnaryOperator} version of 
+     * the {@link getRambleyUpperEarY getRambleyUpperEarY} method.
+     * @return The {@link getRambleyUpperEarY getRambleyUpperEarY} method, as a 
+     * {@code DoubleUnaryOperator}.
+     * @see getRambleyUpperEarY
+     * @see getRambleyUpperEarX
+     */
+    protected DoubleUnaryOperator getRambleyUpperEarEquation(){
+            // If the upper ear function has not been initialized yet
+        if (earEquationU == null)
+            earEquationU = (double operand) -> getRambleyUpperEarY(operand);
+        return earEquationU;
+    }
+    /**
+     * -(ln(1.5-x)/ln(2) - 5.2) / 8
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param x
+     * @return 
+     */
+    private static double getRambleyEarOffset(double x){
+            // y = -(ln(1.5-x)/ln(2) - 5.2) / 8
+        return -((Math.log(1.5-x)/Math.log(2))-5.2)/8;
+    }
+    /**
+     * 
+     * -(ln(1.5-x)/ln(2) - 5.2) / 8
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param x
+     * @return 
+     */
+    protected double getRambleyLowerEarY(double x){
+            // First, convert the x-coordinate into the ear equations coordinate 
+            // system
+            // y = -(ln(1.5-x)/ln(2) - 5.2) / 8
+            // Convert the resulting y-coordinate into the graphics coordinate 
+            // system
+        return earEquToGraphicsY(getRambleyEarOffset(graphicsToEarEquX(x)));
+    }
+    /**
+     * -2^(-8y+5.2) + 1.5
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param y
+     * @return 
+     */
+    protected double getRambleyLowerEarX(double y){
+            // First, convert the y-coordinate into the ear equations coordinate 
+            // system
+            // x = -2^(-8y+5.2) + 1.5
+            // Convert the resulting x-coordinate into the graphics coordinate 
+            // system
+        return earEquToGraphicsX(-Math.pow(2, -8*graphicsToEarEquY(y)+5.2)+1.5);
+    }
+    /**
+     * This returns the function to calculate the y-coordinate for a point on 
+     * the line that produces the lower curve for Rambley's right ear. The 
+     * function returned is effectively a {@code DoubleUnaryOperator} version of 
+     * the {@link getRambleyLowerEarY getRambleyLowerEarY} method.
+     * @return The {@link getRambleyLowerEarY getRambleyLowerEarY} method, as a 
+     * {@code DoubleUnaryOperator}.
+     * @see getRambleyLowerEarY
+     * @see getRambleyLowerEarX
+     */
+    protected DoubleUnaryOperator getRambleyLowerEarEquation(){
+            // If the lower ear function has not been initialized yet
+        if (earEquationL == null)
+            earEquationL = (double operand) -> getRambleyLowerEarY(operand);
+        return earEquationL;
+    }
+    /**
+     * (0.01/(x-1.5)) + 2.4
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param x
+     * @return 
+     */
+    protected double getRambleyEarTipY(double x){
+            // Convert the x-coordinate into the ear equations coordinate system
+            // Subtract 1.5 from the resulting x-coordinate
+        x = graphicsToEarEquX(x)-1.5;
+            // If x is greater than or equal to zero, then y = 0. Otherwise, 
+            // y = 0.01 / x
+        double y = (x >= 0) ? 0 : (0.01/x);
+            // y = y + 2.4
+            // Convert the resulting y-coordinate into the graphics coordinate 
+            // system
+            // Offset the y-coordinate by the tip's y offset
+            // Bound it by the ear's height
+        return Math.min(earEquToGraphicsY(y + 2.4) + RAMBLEY_EAR_TIP_Y_OFFSET, 
+                RAMBLEY_EAR_HEIGHT);
+    }
+    /**
+     * (0.01/(y-2.4)) + 1.5
+     * 
+     * Thank you AnimalWave on Discord
+     * 
+     * @param y
+     * @return 
+     */
+    protected double getRambleyEarTipX(double y){
+            // Offset the y-coordinate by the tip's y offset
+            // Convert the y-coordinate into the ear equations coordinate system
+            // Subtract 2.4 from the resulting y-coordinate
+        y = graphicsToEarEquY(y - RAMBLEY_EAR_TIP_Y_OFFSET) - 2.4;
+            // If the resulting y-coordinate is greater than or equal to zero
+        if (y >= 0)
+                // Return the graphics coordinate equivalent to zero
+            return earEquToGraphicsX(0);
+            // x = 0.01/y + 1.5
+            // Convert the resulting x-coordinate into the graphics coordinate 
+            // system
+        return earEquToGraphicsX(Math.max((0.01/y)+1.5, 0));
+    }
+    /**
+     * This returns the function to calculate the y-coordinate for a point on 
+     * the line that produces the curve that forms the tip for Rambley's right 
+     * ear. The function returned is effectively a {@code DoubleUnaryOperator} 
+     * version of the {@link getRambleyEarTipY getRambleyEarTipY} method.
+     * @return The {@link getRambleyEarTipY getRambleyEarTipY} method, as a 
+     * {@code DoubleUnaryOperator}.
+     * @see getRambleyEarTipY
+     * @see getRambleyEarTipX
+     */
+    protected DoubleUnaryOperator getRambleyEarTipEquation(){
+            // If the ear tip function has not been initialized yet
+        if (earEquationT == null)
+            earEquationT = (double operand) -> getRambleyEarTipY(operand);
+        return earEquationT;
+    }
+    /**
+     * 
+     * @param x The x-coordinate for the top-left corner of the ear.
+     * @param y The y-coordinate for the top-left corner of the ear.
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    protected Point2D getRambleyEarUpperTip(double x, double y, Point2D point){
+        return getLineIntersection(x,y,9,10.5,
+                getRambleyUpperEarEquation(),getRambleyEarTipEquation(),point);
+    }
+    /**
+     * 
+     * @param x The x-coordinate for the top-left corner of the ear.
+     * @param y The y-coordinate for the top-left corner of the ear.
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    protected Point2D getRambleyEarLowerTip(double x, double y, Point2D point){
+        return getLineIntersection(x,y,getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
+                getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
+    }
+    /**
+     * 
+     * @param x The x-coordinate for the top-left corner of the ear.
+     * @param y The y-coordinate for the top-left corner of the ear.
+     * @param path A Path2D object to use to construct the ear, or null.
+     * @return 
+     */
+    protected Area getRambleyEar(double x, double y, Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // Get the maxiumum y-coordinate for the ear
+        double y1 = RAMBLEY_EAR_HEIGHT+y;
+            // Get the maximum x-coordinate for the ear
+        double x1 = Math.max(getRambleyUpperEarX(RAMBLEY_EAR_HEIGHT), 
+                getRambleyLowerEarX(RAMBLEY_EAR_HEIGHT))+x;
+            // Get the point of intersection between the upper portion of the 
+            // ear and the tip of the ear
+        point7 = getRambleyEarUpperTip(x,y,point7);
+            // Get the point of intersection between the tip of the ear and the 
+            // lower portion of the ear
+        point8 = getRambleyEarLowerTip(x,y,point8);
+        
+            // We will need to add a curve later on in order to smoothly 
+            // transition from the upper portion of the ear to the tip of the 
+            // ear. As such, we need to calculate where the upper curve should 
+            // stop and where the tip curve should start
+        
+            // Get the x-coordinate for the start of the curve that joins the 
+            // upper portion and the tip (this is where the upper curve should 
+            // stop)
+        double tempX = point7.getX()+RAMBLEY_EAR_TIP_ROUNDING;
+            // Get the point at which the upper curve stops and the transition 
+            // curve starts
+        point5.setLocation(tempX, getRambleyUpperEarY(tempX-x)+y);
+            // Get the x-coordinate for the end of the curve that joins the 
+            // upper portion and the tip (this is where the tip curve should 
+            // start)
+        tempX = point7.getX()-RAMBLEY_EAR_TIP_ROUNDING;
+            // Get the point at which the transition curve stops and the tip 
+            // curve starts
+        point6.setLocation(tempX, getRambleyEarTipY(tempX-x)+y);
+        
+            // Create the upper portion of the ear
+            
+            // Start at the center right-most point of the ear
+        point1.setLocation(x1,y+RAMBLEY_EAR_HEIGHT/2.0);
+            // Move the path to the starting point
+        path.moveTo(point1.getX(), point1.getY());
+            // Calculate the offset for the y-coordinate when 26% of the way 
+        double tempY = RAMBLEY_EAR_HEIGHT * 0.26;   // down
+            // Get the point on the upper curve when 26% of the way down
+        point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+            // Calculate the offset for the y-coordinate when 17% of the way 
+        tempY = RAMBLEY_EAR_HEIGHT * 0.17;  // down
+            // Get the point on the upper curve when 17% of the way down
+        point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+            // Calculate the quadratic bezier curve that passes through points 
+            // point1, point2, and point3, and add that curve to the path
+        point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
+            // Calculate the offset for the y-coordinate when 10% of the way 
+        tempY = RAMBLEY_EAR_HEIGHT * 0.10;  // down
+            // Get the point on the upper curve when 10% of the way down
+        point2.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
+            // Calculate the quadratic bezier curve that passes through points 
+            // point3, point2, and point5, and add that curve to the path
+            // (point3 is the end of the previous curve, and point5 is the stop 
+            // of the upper curve and the start of the transition curve)
+        point4 = addQuadBezierCurve(point3,point2,point5,point4,path);
+        
+            // Curve to smooth the transition between the upper portion and the 
+            // tip of the ear, using the point of intersection as the control 
+            // point
+        path.quadTo(point7.getX(), point7.getY(), point6.getX(), point6.getY());
+        
+            // We will need to add a curve later on in order to smoothly 
+            // transition from the tip of the ear to the lower portion of the 
+            // ear. As such, we need to calculate where the tip curve should 
+            // stop and where the lower curve should start
+        
+            // Get the y-coordinate for the start of the curve that joins the 
+            // tip and the lower portion (this is where the tip curve should 
+            // stop)
+        tempY = point8.getY()-RAMBLEY_EAR_TIP_ROUNDING;
+            // Get the point at which the tip curve stops and the transition 
+            // curve starts
+        point5.setLocation(getRambleyEarTipX(tempY-y)+x, tempY);
+            // Get the y-coordinate for the end of the curve that joins the 
+            // tip and the lower portion (this is where the lower curve should 
+            // start)
+        tempY = point8.getY()+RAMBLEY_EAR_TIP_ROUNDING;
+            // Get the point at which the transition curve stops and the 
+            // lower curve starts
+        point7.setLocation(getRambleyLowerEarX(tempY-y)+x, tempY);
+        
+            // Create the tip of the ear
+        
+            // Calculate the range that the x-coordinates will cover
+        double dxTip = Math.abs(point5.getX()-point6.getX());
+            // Calculate the offset for the x-coordinate when 40% of the way to 
+        tempX = dxTip - (dxTip * 0.40);     // the left
+            // Get the point on the tip curve when 40% of the way to the left
+        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+            // Calculate the offset for the x-coordinate when 75% of the way to 
+        tempX = dxTip - (dxTip * 0.75);     // the left
+            // Get the point on the tip curve when 75% of the way to the left
+        point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+            // Calculate the quadratic bezier curve that passes through points 
+            // point6, point1, and point2, and add that curve to the path
+            // (point6 is the end of the last transition curve)
+        point4 = addQuadBezierCurve(point6,point1,point2,point4,path);
+            // Calculate the offset for the x-coordinate when 90% of the way to 
+        tempX = dxTip - (dxTip * 0.90);     // the left
+            // Get the point on the tip curve when 90% of the way to the left
+        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+            // Calculate the quadratic bezier curve that passes through points 
+            // point2, point1, and point5, and add that curve to the path
+            // (point2 is the end of the previous curve, and point5 is the stop 
+            // of the tip curve and the start of the next transition curve)
+        point4 = addQuadBezierCurve(point2,point1,point5,point4,path);
+        
+            // Curve to smooth the transition between the tip and the lower 
+            // portion of the ear, using the point of intersection as the 
+            // control point
+        path.quadTo(point8.getX(), point8.getY(), point7.getX(), point7.getY());
+        
+            // Create the lower portion of the ear
+            
+            // Calculate the offset for the y-coordinate when 76% of the way 
+        tempY = RAMBLEY_EAR_HEIGHT*0.76;  // down
+            // Get the point on the lower curve when 76% of the way down
+        point1.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+            // Calculate the offset for the y-coordinate when 88% of the way 
+        tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
+            // Get the point on the lower curve when 88% of the way down
+        point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+            // Calculate the quadratic bezier curve that passes through points 
+            // point7, point1, and point2, and add that curve to the path
+            // (point7 is the end of the last transition curve)
+        point4 = addQuadBezierCurve(point7,point1,point2,point4,path);
+            // Calculate the offset for the y-coordinate when 93% of the way 
+        tempY = RAMBLEY_EAR_HEIGHT*0.93;  // down
+            // Get the point on the lower curve when 93% of the way down
+        point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+            // Set the location to the bottom-right corner
+        point1.setLocation(x1,y1);
+            // Calculate the quadratic bezier curve that passes through points 
+            // point2, point3, and point1, and add that curve to the path
+            // (point2 is the end of the previous curve, and point1 is the 
+            // bottom-right corner, and the end of the lower curve)
+        point4 = addQuadBezierCurve(point2,point3,point1,point4,path);
+            // Close the path to complete the ear
+        path.closePath();
+        
+        return new Area(path);
+    }
+    /**
+     * This gets the Area to use to render the inner portion of Rambley's ear, 
+     * based off the Area of the given ear and the given scale factor for the 
+     * inner ear. The inner ear will be scaled by the given scale factor and 
+     * centered within the given Area for the outer ear. The given Area for the 
+     * head is used to subtract the head shape from the inner ear.
+     * @param ear The Area representing the outer ear to derive the inner ear 
+     * from.
+     * @param scale The scale factor for the inner ear. 
+     * @param head The Area for the shape of Rambley's head to use to subtrack 
+     * from the inner ear, or null.
+     * @return The Area for the inner portion of Rambley's ear.
+     */
+    protected Area getRambleyInnerEar(Area ear, double scale, Area head){
+            // Get the inverse of the given scale.
+        double scaleInv = 1/scale;
+            // Get the bounds of the given ear
+        Rectangle2D temp = ear.getBounds2D();
+            // Create a scale transform to scale down the inner ear
+        AffineTransform inEarTx = AffineTransform.getScaleInstance(scale, scale);
+            // Translate the transform to be at the origin
+        inEarTx.translate(-temp.getMinX(), -temp.getMinY());
+            // Translate the transform to be at the center of the outer portion 
+            // of the ear (accounting for the earler scale transform)
+        inEarTx.translate(temp.getCenterX()*scaleInv, temp.getCenterY()*scaleInv);
+            // Translate the transform left by half the ear's width, and up by 
+            // half the ear's height. When combined with the earlier scale 
+            // transform and translations, this will result in the inner ear 
+            // being centered within the outer ear
+        inEarTx.translate(-temp.getWidth()/2, -temp.getHeight()/2);
+            // Transform the outer ear to get the inner ear
+        Area earIn = ear.createTransformedArea(inEarTx);
+            // If the area of the head was given
+        if (head != null)
+                // Remove the area of the head from the inner ear
+            earIn.subtract(head);
+        return earIn;
+    }
     
     
     
@@ -1338,323 +1753,6 @@ public class RambleyPainter implements Painter<Component>{
         if (pupil == null)
             pupil = new Ellipse2D.Double();
         paintRambleyEye(g,eyeWhite,x,y,iris,pupil);
-    }
-    
-    private static double getRambleyEarOffset(double x){
-        return -((Math.log(1.5-x)/Math.log(2))-5.2)/8;
-    }
-    
-    protected double getRambleyUpperEarY(double x){
-        x = graphicsToEarEquX(x);
-        if (x <= 0)
-            return earEquToGraphicsY(0);
-        return earEquToGraphicsY((Math.log(x)/(10*Math.log(2)))+2.3);
-    }
-    /**
-     * 2^(10y-23)
-     * 
-     * Thank you AnimalWave on Discord
-     * 
-     * @param y
-     * @return 
-     */
-    protected double getRambleyUpperEarX(double y){
-        y = graphicsToEarEquY(y);
-        return earEquToGraphicsX(Math.pow(2, 10*y-23));
-    }
-    
-    protected double getRambleyLowerEarY(double x){
-         x = graphicsToEarEquX(x);
-        return earEquToGraphicsY(getRambleyEarOffset(x));
-    }
-    /**
-     * -2^(-8y+5.2) + 1.5
-     * 
-     * Thank you AnimalWave on Discord
-     * 
-     * @param y
-     * @return 
-     */
-    protected double getRambleyLowerEarX(double y){
-        y = graphicsToEarEquY(y);
-        return earEquToGraphicsX(-Math.pow(2, -8*y+5.2)+1.5);
-    }
-    /**
-     * (0.01/(y-2.4)) + 1.5
-     * 
-     * Thank you AnimalWave on Discord
-     * 
-     * @param y
-     * @return 
-     */
-    protected double getRambleyEarTipX(double y){
-        y -= RAMBLEY_EAR_TIP_Y_OFFSET;
-        y = graphicsToEarEquY(y) - 2.4;
-        if (y >= 0)
-            return earEquToGraphicsX(0);
-        return earEquToGraphicsX(Math.max((0.01/y)+1.5, 0));
-    }
-    /**
-     * (0.01/(x-1.5)) + 2.4
-     * 
-     * Thank you AnimalWave on Discord
-     * 
-     * @param x
-     * @return 
-     */
-    protected double getRambleyEarTipY(double x){
-        x = graphicsToEarEquX(x)-1.5;
-        double y = (x >= 0) ? 0 : (0.01/x);
-        return Math.min(earEquToGraphicsY(y + 2.4) + RAMBLEY_EAR_TIP_Y_OFFSET, 
-                RAMBLEY_EAR_HEIGHT);
-    }
-    /**
-     * This returns the function to calculate the y-coordinate for a point on 
-     * the line that produces the upper curve on Rambley's right ear. The 
-     * function returned is effectively a {@code DoubleUnaryOperator} version of 
-     * the {@link getRambleyUpperEarY getRambleyUpperEarY} method.
-     * @return The {@link getRambleyUpperEarY getRambleyUpperEarY} method, as a 
-     * {@code DoubleUnaryOperator}.
-     * @see getRambleyUpperEarY
-     * @see getRambleyUpperEarX
-     */
-    protected DoubleUnaryOperator getRambleyUpperEarEquation(){
-            // If the upper ear function has not been initialized yet
-        if (earEquationU == null)
-            earEquationU = (double operand) -> getRambleyUpperEarY(operand);
-        return earEquationU;
-    }
-    /**
-     * This returns the function to calculate the y-coordinate for a point on 
-     * the line that produces the lower curve on Rambley's right ear. The 
-     * function returned is effectively a {@code DoubleUnaryOperator} version of 
-     * the {@link getRambleyLowerEarY getRambleyLowerEarY} method.
-     * @return The {@link getRambleyLowerEarY getRambleyLowerEarY} method, as a 
-     * {@code DoubleUnaryOperator}.
-     * @see getRambleyLowerEarY
-     * @see getRambleyLowerEarX
-     */
-    protected DoubleUnaryOperator getRambleyLowerEarEquation(){
-            // If the lower ear function has not been initialized yet
-        if (earEquationL == null)
-            earEquationL = (double operand) -> getRambleyLowerEarY(operand);
-        return earEquationL;
-    }
-    /**
-     * This returns the function to calculate the y-coordinate for a point on 
-     * the line that produces the curve that forms the tip for Rambley's right 
-     * ear. The function returned is effectively a {@code DoubleUnaryOperator} 
-     * version of the {@link getRambleyEarTipY getRambleyEarTipY} method.
-     * @return The {@link getRambleyEarTipY getRambleyEarTipY} method, as a 
-     * {@code DoubleUnaryOperator}.
-     * @see getRambleyEarTipY
-     * @see getRambleyEarTipX
-     */
-    protected DoubleUnaryOperator getRambleyEarTipEquation(){
-            // If the ear tip function has not been initialized yet
-        if (earEquationT == null)
-            earEquationT = (double operand) -> getRambleyEarTipY(operand);
-        return earEquationT;
-    }
-    
-    protected Point2D getRambleyEarUpperTip(double x, double y, Point2D point){
-        return getLineIntersection(x,y,9,10.5,
-                getRambleyUpperEarEquation(),getRambleyEarTipEquation(),point);
-    }
-    
-    protected Point2D getRambleyEarLowerTip(double x, double y, Point2D point){
-        return getLineIntersection(x,y,getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
-                getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
-    }
-    
-    protected Area getRambleyEar(double x, double y, Path2D path){
-            // If the given Path2D object is null
-        if (path == null)
-            path = new Path2D.Double();
-        else    // Reset the given Path2D object
-            path.reset();
-            // Get the maxiumum y-coordinate for the ear
-        double y1 = RAMBLEY_EAR_HEIGHT+y;
-            // Get the maximum x-coordinate for the ear
-        double x1 = Math.max(getRambleyUpperEarX(RAMBLEY_EAR_HEIGHT), 
-                getRambleyLowerEarX(RAMBLEY_EAR_HEIGHT))+x;
-            // Get the point of intersection between the upper portion of the 
-            // ear and the tip of the ear
-        point7 = getRambleyEarUpperTip(x,y,point7);
-            // Get the point of intersection between the tip of the ear and the 
-            // lower portion of the ear
-        point8 = getRambleyEarLowerTip(x,y,point8);
-        
-            // We will need to add a curve later on in order to smoothly 
-            // transition from the upper portion of the ear to the tip of the 
-            // ear. As such, we need to calculate where the upper curve should 
-            // stop and where the tip curve should start
-        
-            // Get the x-coordinate for the start of the curve that joins the 
-            // upper portion and the tip (this is where the upper curve should 
-            // stop)
-        double tempX = point7.getX()+RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the upper curve stops and the transition 
-            // curve starts
-        point5.setLocation(tempX, getRambleyUpperEarY(tempX-x)+y);
-            // Get the x-coordinate for the end of the curve that joins the 
-            // upper portion and the tip (this is where the tip curve should 
-            // start)
-        tempX = point7.getX()-RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the transition curve stops and the tip 
-            // curve starts
-        point6.setLocation(tempX, getRambleyEarTipY(tempX-x)+y);
-        
-            // Create the upper portion of the ear
-            
-            // Start at the center right-most point of the ear
-        point1.setLocation(x1,y+RAMBLEY_EAR_HEIGHT/2.0);
-            // Move the path to the starting point
-        path.moveTo(point1.getX(), point1.getY());
-            // Calculate the offset for the y-coordinate when 26% of the way 
-        double tempY = RAMBLEY_EAR_HEIGHT * 0.26;   // down
-            // Get the point on the upper curve when 26% of the way down
-        point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
-            // Calculate the offset for the y-coordinate when 17% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT * 0.17;  // down
-            // Get the point on the upper curve when 17% of the way down
-        point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point1, point2, and point3, and add that curve to the path
-        addQuadBezierCurve(point1,point2,point3,point4,path);
-            // Calculate the offset for the y-coordinate when 10% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT * 0.10;  // down
-            // Get the point on the upper curve when 10% of the way down
-        point2.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point3, point2, and point5, and add that curve to the path
-            // (point3 is the end of the previous curve, and point5 is the stop 
-            // of the upper curve and the start of the transition curve)
-        addQuadBezierCurve(point3,point2,point5,point4,path);
-        
-            // Curve to smooth the transition between the upper portion and the 
-            // tip of the ear, using the point of intersection as the control 
-            // point
-        path.quadTo(point7.getX(), point7.getY(), point6.getX(), point6.getY());
-        
-            // We will need to add a curve later on in order to smoothly 
-            // transition from the tip of the ear to the lower portion of the 
-            // ear. As such, we need to calculate where the tip curve should 
-            // stop and where the lower curve should start
-        
-            // Get the y-coordinate for the start of the curve that joins the 
-            // tip and the lower portion (this is where the tip curve should 
-            // stop)
-        tempY = point8.getY()-RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the tip curve stops and the transition 
-            // curve starts
-        point5.setLocation(getRambleyEarTipX(tempY-y)+x, tempY);
-            // Get the y-coordinate for the end of the curve that joins the 
-            // tip and the lower portion (this is where the lower curve should 
-            // start)
-        tempY = point8.getY()+RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the transition curve stops and the 
-            // lower curve starts
-        point7.setLocation(getRambleyLowerEarX(tempY-y)+x, tempY);
-        
-            // Create the tip of the ear
-        
-            // Calculate the range that the x-coordinates will cover
-        double dxTip = Math.abs(point5.getX()-point6.getX());
-            // Calculate the offset for the x-coordinate when 40% of the way to 
-        tempX = dxTip - (dxTip * 0.40);     // the left
-            // Get the point on the tip curve when 40% of the way to the left
-        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-            // Calculate the offset for the x-coordinate when 75% of the way to 
-        tempX = dxTip - (dxTip * 0.75);     // the left
-            // Get the point on the tip curve when 75% of the way to the left
-        point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point6, point1, and point2, and add that curve to the path
-            // (point6 is the end of the last transition curve)
-        addQuadBezierCurve(point6,point1,point2,point4,path);
-            // Calculate the offset for the x-coordinate when 90% of the way to 
-        tempX = dxTip - (dxTip * 0.90);     // the left
-            // Get the point on the tip curve when 90% of the way to the left
-        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point2, point1, and point5, and add that curve to the path
-            // (point2 is the end of the previous curve, and point5 is the stop 
-            // of the tip curve and the start of the next transition curve)
-        addQuadBezierCurve(point2,point1,point5,point4,path);
-        
-            // Curve to smooth the transition between the tip and the lower 
-            // portion of the ear, using the point of intersection as the 
-            // control point
-        path.quadTo(point8.getX(), point8.getY(), point7.getX(), point7.getY());
-        
-            // Create the lower portion of the ear
-            
-            // Calculate the offset for the y-coordinate when 76% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT*0.76;  // down
-            // Get the point on the lower curve when 76% of the way down
-        point1.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-            // Calculate the offset for the y-coordinate when 88% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
-            // Get the point on the lower curve when 88% of the way down
-        point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point7, point1, and point2, and add that curve to the path
-            // (point7 is the end of the last transition curve)
-        addQuadBezierCurve(point7,point1,point2,point4,path);
-            // Calculate the offset for the y-coordinate when 93% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT*0.93;  // down
-            // Get the point on the lower curve when 93% of the way down
-        point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-            // Set the location to the bottom-right corner
-        point1.setLocation(x1,y1);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point2, point3, and point1, and add that curve to the path
-            // (point2 is the end of the previous curve, and point1 is the 
-            // bottom-right corner, and the end of the lower curve)
-        addQuadBezierCurve(point2,point3,point1,point4,path);
-            // Close the path to complete the ear
-        path.closePath();
-        
-        return new Area(path);
-    }
-    /**
-     * This gets the Area to use to render the inner portion of Rambley's ear, 
-     * based off the Area of the given ear and the given scale factor for the 
-     * inner ear. The inner ear will be scaled by the given scale factor and 
-     * centered within the given Area for the outer ear. The given Area for the 
-     * head is used to subtract the head shape from the inner ear.
-     * @param ear The Area representing the outer ear to derive the inner ear 
-     * from.
-     * @param scale The scale factor for the inner ear. 
-     * @param head The Area for the shape of Rambley's head to use to subtrack 
-     * from the inner ear, or null.
-     * @return The Area for the inner portion of Rambley's ear.
-     */
-    protected Area getRambleyInnerEar(Area ear, double scale, Area head){
-            // Get the inverse of the given scale.
-        double scaleInv = 1/scale;
-            // Get the bounds of the given ear
-        Rectangle2D temp = ear.getBounds2D();
-            // Create a scale transform to scale down the inner ear
-        AffineTransform inEarTx = AffineTransform.getScaleInstance(scale, scale);
-            // Translate the transform to be at the origin
-        inEarTx.translate(-temp.getMinX(), -temp.getMinY());
-            // Translate the transform to be at the center of the outer portion 
-            // of the ear (accounting for the earler scale transform)
-        inEarTx.translate(temp.getCenterX()*scaleInv, temp.getCenterY()*scaleInv);
-            // Translate the transform left by half the ear's width, and up by 
-            // half the ear's height. When combined with the earlier scale 
-            // transform and translations, this will result in the inner ear 
-            // being centered within the outer ear
-        inEarTx.translate(-temp.getWidth()/2, -temp.getHeight()/2);
-            // Transform the outer ear to get the inner ear
-        Area earIn = ear.createTransformedArea(inEarTx);
-            // If the area of the head was given
-        if (head != null)
-                // Remove the area of the head from the inner ear
-            earIn.subtract(head);
-        return earIn;
     }
     /**
      * 
@@ -2341,10 +2439,12 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * 
      * 
-     * @param c0 
-     * @param c1
-     * @param p0 The first point of intersection 
-     * @param p1 The second point of intersection 
+     * @param c0 One of the two circles
+     * @param c1 The other circle
+     * @param p0 The Point2D object that the first point of intersection will be 
+     * stored in.
+     * @param p1 The Point2D object that the second point of intersection will 
+     * be stored in.
      * @return {@code true} if the two circles intersect, {@code false} if 
      * either the circles are separate, one circle is fully contained within the 
      * other, or the circles are coincident and there are an infinite number of 
@@ -2410,7 +2510,13 @@ public class RambleyPainter implements Painter<Component>{
         p1.setLocation(x2 - rx, y2 + ry);
         return true;
     }
-    
+    /**
+     * This solves the 
+     * @param a
+     * @param b
+     * @param c
+     * @return 
+     */
     private static double[] solveQuadraticEquation(double a, double b, double c){
             // This will get the roots of the quadratic equation
         double[] roots = new double[2];
@@ -2441,12 +2547,15 @@ public class RambleyPainter implements Painter<Component>{
      * @param y1
      * @param x2
      * @param y2
-     * @param point1 The first point of intersection 
-     * @param point2 The second point of intersection 
+     * @param point1 The Point2D object that the first point of intersection 
+     * will be stored in.
+     * @param point2 The Point2D object that the second point of intersection 
+     * will be stored in.
      * @return 
      */
-    protected static boolean getCircleIntersections(Ellipse2D e, double x1, double y1, 
-            double x2, double y2, Point2D point1, Point2D point2){
+    protected static boolean getCircleIntersections(Ellipse2D e, 
+            double x1, double y1, double x2, double y2, Point2D point1, 
+            Point2D point2){
             // Function breaks for vertical lines
         if (x1 == x2){
                 // If the line is a point
@@ -2493,7 +2602,16 @@ public class RambleyPainter implements Painter<Component>{
         point2.setLocation(roots[1], k*roots[1]+m);
         return true;
     }
-    
+    /**
+     * 
+     * @param e
+     * @param p1
+     * @param p2
+     * @param point1 The Point2D object that the first point of intersection 
+     * will be stored in.
+     * @param point2 The Point2D object that the second point of intersection 
+     * will  be stored in.
+     */
     protected static void getCircleIntersections(Ellipse2D e, Point2D p1, 
             Point2D p2, Point2D point1, Point2D point2){
         getCircleIntersections(e,p1.getX(),p1.getY(),p2.getX(),p2.getY(),
@@ -2516,11 +2634,12 @@ public class RambleyPainter implements Painter<Component>{
      * @param p1 The control point for the curve.
      * @param p2 The end point of the curve
      * @param t
-     * @param point
+     * @param point A Point2D object to store the results in, or null.
      * @return 
      */
     protected static Point2D getQuadBezierPoint(Point2D p0, Point2D p1, 
             Point2D p2, double t, Point2D point){
+            // If the given Point2D object is null
         if (point == null)
             point = new Point2D.Double();
         point.setLocation(getQuadBezierPoint(p0.getX(),p1.getX(),p2.getX(),t),
@@ -2573,46 +2692,69 @@ public class RambleyPainter implements Painter<Component>{
      * @param p0 The starting point of the curve
      * @param p1 The point on the curve to pass through
      * @param p2 The end point of the curve
-     * @param point 
+     * @param point A Point2D object to store the results in, or null.
      * @return 
      */
     protected static Point2D getQuadBezierControlPoint(Point2D p0, Point2D p1, 
             Point2D p2, Point2D point){
+            // If the given Point2D object is null
         if (point == null)
             point = new Point2D.Double();
-        double tx1 = p0.getX() - p1.getX();
-        double ty1 = p0.getY() - p1.getY();
-        double tx2 = p2.getX() - p1.getX();
-        double ty2 = p2.getY() - p1.getY();
+            // Get the difference between the first and second points' 
+        double tx1 = p0.getX() - p1.getX();     // x-coordinates
+            // Get the difference between the first and second points' 
+        double ty1 = p0.getY() - p1.getY();     // y-coordinates
+            // Get the difference between the second and third points' 
+        double tx2 = p2.getX() - p1.getX();     // x-coordinates
+            // Get the difference between the second and third points' 
+        double ty2 = p2.getY() - p1.getY();     // y-coordinates
+            // Get the distance between the first and second points
         double d1 = p0.distance(p1);
+            // Get the distance between the second and third points
         double d2 = p2.distance(p1);
-        double d3 = Math.sqrt(d1*d2);
+            // Multiply the distance between first and second points by the 
+            // distance between the second and third points, and get the square 
+        double d3 = Math.sqrt(d1*d2);   // root of the result
         point.setLocation(p1.getX()-(d3*(tx1/d1+tx2/d2))/2,
                 p1.getY()-(d3*(ty1/d1+ty2/d2))/2);
         return point;
     }
-    
+    /**
+     * 
+     * @param p0 The starting point of the curve
+     * @param p1 The first point on the curve to pass through
+     * @param p2 The second point on the curve to pass through
+     * @param p3 The end point of the curve
+     * @param controlP1 The Point2D object that the first control point will be 
+     * stored in.
+     * @param controlP2 The Point2D object that the second control point will be 
+     * stored in.
+     */
     protected static void getCubicBezierControlPoints(Point2D p0, Point2D p1, 
             Point2D p2, Point2D p3, Point2D controlP1, Point2D controlP2){
-//        double dx = p3.getX() - p0.getX();
+            // Get the y-coordinate for the first control point
         double y1 = (-5*p0.getY()+18*p1.getY()-9*p2.getY()+2*p3.getY())/6;
+            // Get the y-coordinate for the second control point
         double y2 = (2*p0.getY()-9*p1.getY()+18*p2.getY()-5*p3.getY())/6;
-        
         controlP1.setLocation(p1.getX(),y1);
         controlP2.setLocation(p2.getX(),y2);
     }
     /**
      * https://www.codeproject.com/Articles/31859/Draw-a-Smooth-Curve-through-a-Set-of-2D-Points-wit
-     * @param knots
-     * @param ctrlPts1
-     * @param ctrlPts2
+     * @param knots A list containing all the knots in the spline
+     * @param ctrlPts1 A list to get the first control points
+     * @param ctrlPts2 A list to get the second control points
      */
     protected static void getCubicBezierSplineControlPoints(java.util.List<Point2D> knots,
             java.util.List<Point2D> ctrlPts1, java.util.List<Point2D> ctrlPts2){
+            // If the knots list is null or there are less than two knots
         if (knots == null || knots.size() < 2)
             throw new IllegalArgumentException("There must be at least 2 knots");
+            // Clear the first control points list
         ctrlPts1.clear();
+            // Clear the second control points list
         ctrlPts2.clear();
+            // The number of control points is the number of knots - 1
         int n = knots.size()-1;
             // Only 2 points, straight line.
         if (n == 1){
@@ -2628,32 +2770,14 @@ public class RambleyPainter implements Painter<Component>{
             return;
         }
         
-        double[][] coords = getSplineFirstCtrlPoints(knots,n);
-        
-            // Populate the control point arrays
-        for (int i = 0; i < n; i++){
-                // First control point
-            ctrlPts1.add(new Point2D.Double(coords[0][i],coords[1][i]));
-                // Second control point
-            double x, y;
-            if (i < n-1){
-                x = 2*knots.get(i+1).getX()-coords[0][i+1];
-                y = 2*knots.get(i+1).getY()-coords[1][i+1];
-            } else {
-                x = (knots.get(n).getX()+coords[0][n-1])/2;
-                y = (knots.get(n).getY()+coords[1][n-1])/2;
-            }
-             ctrlPts2.add(new Point2D.Double(x,y));
-        }
-    }
-    
-    private static double[][] getSplineFirstCtrlPoints(java.util.List<Point2D> knots, int n){
             // Right hand side vector
         double[][] rhs = new double[2][n];
         
             // Set right hand side values
         rhs[0][0] = knots.get(0).getX()+2*knots.get(1).getX();
         rhs[1][0] = knots.get(0).getY()+2*knots.get(1).getY();
+            // Go through and calculate the right hand side values for the 
+            // middle values
         for (int i = 1; i < n-1; i++){
             rhs[0][i] = 4*knots.get(i).getX()+2*knots.get(i+1).getX();
             rhs[1][i] = 4*knots.get(i).getY()+2*knots.get(i+1).getY();
@@ -2668,68 +2792,160 @@ public class RambleyPainter implements Painter<Component>{
         double[] tmp = new double[n];
         double b = 2.0;
             // The coordinates
-        double[][] p = new double[2][n];
-        p[0][0] = rhs[0][0] / b;
-        p[1][0] = rhs[1][0] / b;
+        double[][] coords = new double[2][n];
+        coords[0][0] = rhs[0][0] / b;
+        coords[1][0] = rhs[1][0] / b;
             // Decomposition and forward substitution
         for (int i = 1; i < n; i++){
             tmp[i] = 1 / b;
             b = ((i < n-1)?4.0:3.5)-tmp[i];
-            p[0][i] = (rhs[0][i] - p[0][i-1]) / b;
-            p[1][i] = (rhs[1][i] - p[1][i-1]) / b;
+            coords[0][i] = (rhs[0][i] - coords[0][i-1]) / b;
+            coords[1][i] = (rhs[1][i] - coords[1][i-1]) / b;
         }
             // Backsubstitution
-        for (double[] coords : p){
+        for (double[] arr : coords){
             for (int i = 1; i < n; i++){
-                coords[n-i-1] -= tmp[n-i] * coords[n-i];
+                arr[n-i-1] -= tmp[n-i] * arr[n-i];
             }
         }
-        return p;
+        
+            // Populate the control point arrays
+        for (int i = 0; i < n; i++){
+                // First control point
+            ctrlPts1.add(new Point2D.Double(coords[0][i],coords[1][i]));
+                // Second control point
+            double x, y;
+                // If not the last set of control points
+            if (i < n-1){
+                x = 2*knots.get(i+1).getX()-coords[0][i+1];
+                y = 2*knots.get(i+1).getY()-coords[1][i+1];
+            } else {
+                x = (knots.get(n).getX()+coords[0][n-1])/2;
+                y = (knots.get(n).getY()+coords[1][n-1])/2;
+            }
+            ctrlPts2.add(new Point2D.Double(x,y));
+        }
     }
-    
-    private static void getIntersectingLine(double x, double y, Line2D line1, 
-            Line2D line2, DoubleUnaryOperator getY){
+    /**
+     * 
+     * @param line1 The line to be checked and shortened.
+     * @param line2 The line to intersect with {@code line1}
+     * @param getY The equation for {@code line1}
+     * @param l1 A scratch Line2D object to use to calculate one half of {@code 
+     * line1}, or null.
+     * @param l2 A scratch Line2D object to use to calculate the other half of 
+     * {@code line1}, or null.
+     */
+    private static void getIntersectingLine(Line2D line1, Line2D line2, 
+            DoubleUnaryOperator getY, Line2D l1, Line2D l2){
+            // Get the center x-coordinate for line 1
         double x1 = (line1.getX1()+line1.getX2()) / 2.0;
-        double y1 = getY.applyAsDouble(x1 - x) + y;
-        Line2D l1 = new Line2D.Double(line1.getX1(), line1.getY1(), x1, y1);
-        Line2D l2 = new Line2D.Double(x1, y1, line1.getX2(), line1.getY2());
+            // Get the actual y-coordinate for the center of line 1
+        double y1 = getY.applyAsDouble(x1);
+            // If the first scratch Line2D object is null
+        if (l1 == null)
+            l1 = new Line2D.Double();
+            // If the second scratch Line2D object is null
+        if (l2 == null)
+            l2 = new Line2D.Double();
+            // Get the first half of line 1
+        l1.setLine(line1.getX1(), line1.getY1(), x1, y1);
+            // Get the second half of line 1
+        l2.setLine(x1, y1, line1.getX2(), line1.getY2());
+            // If the first half of line 1 intersects line 2
         if (l1.intersectsLine(line2))
+                // Set line 1 to the first half
             line1.setLine(l1);
         else
+                // Set line 1 to the second half
             line1.setLine(l2);
     }
-    
+    /**
+     * 
+     * @param x The x-coordinate to offset the point by.
+     * @param y The y-coordinate to offset the point by.
+     * @param x1 The first shared x-coordinate for the two lines.
+     * @param x2 The second shared x-coordinate for the two lines.
+     * @param getY1 The equation for the first line.
+     * @param getY2 The equation for the second line.
+     * @param resolution
+     * @param point A Point2D object to store the results in, or null.
+     * @return A rough approximation of the point at which two lines intersect
+     */
     protected static Point2D getLineIntersection(double x, double y, double x1, 
             double x2, DoubleUnaryOperator getY1, DoubleUnaryOperator getY2, 
             int resolution, Point2D point){
+            // If the given Point2D object is null
         if (point == null)
             point = new Point2D.Double();
-        Line2D line1 = new Line2D.Double(x1+x, getY1.applyAsDouble(x1)+y, 
-                x2+x, getY1.applyAsDouble(x2)+y);
-        Line2D line2 = new Line2D.Double(x1+x, getY2.applyAsDouble(x1)+y, 
-                x2+x, getY2.applyAsDouble(x2)+y);
+            // Create a Line2D object to represent rough approximation of a 
+            // segment of the line produced by getY1
+        Line2D line1 = new Line2D.Double(x1, getY1.applyAsDouble(x1), 
+                x2, getY1.applyAsDouble(x2));
+            // Create a Line2D object to represent rough approximation of a 
+            // segment of the line produced by getY2
+        Line2D line2 = new Line2D.Double(x1, getY2.applyAsDouble(x1), 
+                x2, getY2.applyAsDouble(x2));
+            // Create a scratch Line2D object
+        Line2D line3 = new Line2D.Double();
+            // Create a second scratch Line2D object
+        Line2D line4 = new Line2D.Double();
+            // Run through the tests until we have reached the desired resolution
         for (int i = 0; i < resolution; i++){
+                // If the length of line 1 is greater than or equal to the 
+                // length of line 2
             if (line1.getP1().distance(line1.getP2()) >= line2.getP1().distance(line2.getP2()))
-                getIntersectingLine(x,y,line1,line2,getY1);
+                    // Get the half of line 1 that intersects with line 2
+                getIntersectingLine(line1,line2,getY1,line3,line4);
              else 
-                getIntersectingLine(x,y,line2,line1,getY2);
+                    // Get the half of line 2 that intersects with line 1
+                getIntersectingLine(line2,line1,getY2,line3,line4);
         }
+            // Get the average of the x-coordinates for the lines
         double tempX = (line1.getX1()+line1.getX2()+line2.getX1()+line2.getX2())/4.0;
-        double temp = tempX - x;
-        point.setLocation(tempX, (getY1.applyAsDouble(temp)+getY2.applyAsDouble(temp))/2.0+y);
+            // Set the point of intersection to be the average of the lines'
+            // x-coordinates, and the average of the y-coordinates at the 
+            // average of the x-coordinates.
+        point.setLocation(tempX+x, 
+                (getY1.applyAsDouble(tempX)+getY2.applyAsDouble(tempX))/2.0+y);
         return point;
     }
-    
+    /**
+     * 
+     * @param x The x-coordinate to offset the point by.
+     * @param y The y-coordinate to offset the point by.
+     * @param x1 The first shared x-coordinate for the two lines.
+     * @param x2 The second shared x-coordinate for the two lines.
+     * @param getY1 The equation for the first line.
+     * @param getY2 The equation for the second line.
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
     protected static Point2D getLineIntersection(double x, double y, double x1, 
             double x2, DoubleUnaryOperator getY1, DoubleUnaryOperator getY2, 
             Point2D point){
         return getLineIntersection(x,y,x1,x2,getY1,getY2,
                 DEFAULT_LINE_INTERSECTION_RESOLUTION,point);
     }
-    
-    protected static void addQuadBezierCurve(Point2D p0, Point2D p1, Point2D p2, Point2D pC, Path2D path){
+    /**
+     * This calculates the control point for a quadratic bezier curve that 
+     * starts at {@code p0}, passes through {@code p1}, and ends at {@code p2}, 
+     * and adds the resulting curve to the given path.
+     * @param p0 The starting point of the curve.
+     * @param p1 The point to pass through.
+     * @param p2 The ending point of the curve.
+     * @param pC A Point2D object to store the control point in, or null.
+     * @param path The Path2D object to add the curve to.
+     * @return  The control point for the curve.
+     * @see getQuadBezierControlPoint
+     */
+    protected static Point2D addQuadBezierCurve(Point2D p0, Point2D p1, 
+            Point2D p2, Point2D pC, Path2D path){
+            // Get the control point for the curve
         pC = getQuadBezierControlPoint(p0,p1,p2,pC);
+            // Add the curve to the path
         path.quadTo(pC.getX(), pC.getY(), p2.getX(), p2.getY());
+        return pC;
     }
     
     
