@@ -1879,31 +1879,45 @@ public class RambleyPainter implements Painter<Component>{
         }
             // Set the stroke to use to the normal stroke
         g.setStroke(getRambleyNormalStroke());
-        
+            // If the Rectangle2D scratch object has not been initialized yet
         if (rect == null)
             rect = new Rectangle2D.Double();
+            // If the Ellipse2D scratch object has not been initialized yet
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
+            // If the Path2D scratch object has not been initialized yet
         if (path == null)
             path = new Path2D.Double();
-        else
-            path.reset();
+            // If the first Point2D scratch object has not been initialized yet
         if (point1 == null)
             point1 = new Point2D.Double();
+            // If the second Point2D scratch object has not been initialized yet
         if (point2 == null)
             point2 = new Point2D.Double();
+            // If the third Point2D scratch object has not been initialized yet
         if (point3 == null)
             point3 = new Point2D.Double();
+            // If the fourth Point2D scratch object has not been initialized yet
         if (point4 == null)
             point4 = new Point2D.Double();
+            // If the fifth Point2D scratch object has not been initialized yet
         if (point5 == null)
             point5 = new Point2D.Double();
+            // If the sixth Point2D scratch object has not been initialized yet
         if (point6 == null)
             point6 = new Point2D.Double();
-        if (point7 == null)
+            // If the seventh Point2D scratch object has not been initialized 
+        if (point7 == null)     // yet
             point7 = new Point2D.Double();
+            // If the eighth Point2D scratch object has not been initialized yet
         if (point8 == null)
             point8 = new Point2D.Double();
+            // If the iris Ellipse2D object has not been initialized yet
+        if (iris == null)
+            iris = new Ellipse2D.Double();
+            // If the pupil Ellipse2D object has not been initialized yet
+        if (pupil == null)
+            pupil = new Ellipse2D.Double();
         
             // A rectangle to use to calculate the shape of Rambley's head
         Rectangle2D head1 = new Rectangle2D.Double();
@@ -1952,8 +1966,8 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(RAMBLEY_MAIN_BODY_COLOR);
             g.fill(headShape);
             
-            // DEBUG: If we are showing the lines that make up Rambley
         } else {
+                // DEBUG: If we are showing the lines that make up Rambley
             g.setColor(Color.MAGENTA);
             g.draw(path);
             g.setColor(Color.GRAY);
@@ -1984,8 +1998,8 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
             g.fill(faceMarkings);
             
-            // DEBUG: If we are showing the lines that make up Rambley
         } else {
+                // DEBUG: If we are showing the lines that make up Rambley
             g.setColor(Color.WHITE);
             g.draw(ellipse);
             g.setColor(Color.YELLOW);
@@ -2010,12 +2024,16 @@ public class RambleyPainter implements Painter<Component>{
         Area eyeBrowR = new Area(eye1);
             // Flip to form the Left eyebrow
         Area eyeBrowL = createHorizontallyFlippedArea(eyeBrowR);
-        
+            
+            // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
+            
             g.setColor(RAMBLEY_EYEBROW_COLOR);
             g.fill(eyeBrowR);
             g.fill(eyeBrowL);
+            
         } else {
+                // DEBUG: If we are showing the lines that make up Rambley
             g.setColor(Color.YELLOW);
             g.draw(eye1);
             g.setColor(Color.PINK);
@@ -2025,8 +2043,8 @@ public class RambleyPainter implements Painter<Component>{
             
             // May be used for calculations regarding the location of the mouth and nose
         Ellipse2D head7 = new Ellipse2D.Double();
-        head7.setFrameFromCenter(headBounds.getCenterX(), headBounds.getMinY()+106, 
-                headBounds.getMinX()+63, headBounds.getMinY()+78);
+        head7.setFrameFromCenter(headBounds.getCenterX(), headBounds.getMaxY()-28, 
+                headBounds.getMinX()+63, headBounds.getMaxY());
         Area mouthArea = new Area(head7);
         mouthArea.intersect(headShape);
         
@@ -2063,6 +2081,7 @@ public class RambleyPainter implements Painter<Component>{
             // Left eye surround
         Area eyeSurroundL = createHorizontallyFlippedArea(eyeSurroundR);
         
+            // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
             g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
             g.fill(mouthArea);
@@ -2071,6 +2090,7 @@ public class RambleyPainter implements Painter<Component>{
             g.fill(earInR);
             g.fill(earInL);
         } else {
+                // DEBUG: If we are not showing the lines that make up Rambley 
             g.setColor(Color.GREEN);
             g.draw(mouthArea);
             g.setColor(Color.CYAN);
@@ -2105,6 +2125,7 @@ public class RambleyPainter implements Painter<Component>{
         eyeWhiteR.add(new Area(eye6));
         Area eyeWhiteL = createHorizontallyFlippedArea(eyeWhiteR);
         
+            // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
             g.setColor(RAMBLEY_EYE_WHITE_COLOR);
             double pupilX = headBounds.getCenterX()-25;
@@ -2112,6 +2133,7 @@ public class RambleyPainter implements Painter<Component>{
             paintRambleyEye(g,eyeWhiteR,pupilX,pupilY);
             paintRambleyEye(g,eyeWhiteL,pupilX+50,pupilY);
         } else {
+                // DEBUG: If we are not showing the lines that make up Rambley 
             g.setColor(Color.YELLOW);
             g.draw(eye5);
             g.setColor(RAMBLEY_MAIN_BODY_COLOR);
@@ -2165,6 +2187,7 @@ public class RambleyPainter implements Painter<Component>{
         Shape mouth1 = mouth.createTransformedShape(getRambleyHorizontalFlipTransform());
         mouth.append(mouth1, false);
         
+            // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
             g.setStroke(getRambleyDetailStroke());
             g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
@@ -2173,6 +2196,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(RAMBLEY_NOSE_COLOR);
             g.fill(nose);
         } else {
+                // DEBUG: If we are not showing the lines that make up Rambley 
             g.setColor(Color.RED);
             g.draw(nose1);
             g.setColor(Color.CYAN);
@@ -2186,6 +2210,7 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(mouth);
         }
         
+            // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
             g.setColor(RAMBLEY_OUTLINE_COLOR);
             g.setStroke(getRambleyOutlineStroke());
