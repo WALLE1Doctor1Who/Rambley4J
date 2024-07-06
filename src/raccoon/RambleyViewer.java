@@ -656,7 +656,7 @@ public class RambleyViewer extends javax.swing.JFrame {
     }//GEN-LAST:event_heightSpinnerStateChanged
 
     private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
-        heightSpinner.setEnabled(linkSizeToggle.isSelected());
+        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
         viewLabel.repaint();

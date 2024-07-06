@@ -2131,6 +2131,103 @@ public class RambleyPainter implements Painter<Component>{
             // Paint Rambley's eye
         paintRambleyEye(g,eyeWhite,iris,pupil);
     }
+    
+    /**
+     * This creates the path to use for the curve of the mouth. This uses the 
+     * ellipse given to the {@link #createRambleySnoutArea 
+     * createRambleySnoutArea} method ({@code snout}) to position the outer 
+     * edges of the mouth.
+     * @param snout An Ellipse2D object with the ellipse used to form 
+     * Rambley's snout (cannot be null).
+     * @param x The x-coordinate for the center of the mouth.
+     * @param y The y-coordinate for the top of the center spike of the mouth. 
+     * This should be y-coordinate for the bottom of the nose.
+     * @param nosePoint A Point2D object with the bottom center point on the 
+     * nose (cannot be null).
+     * @param point1 A Point2D object to use to calculate the lowest point on 
+     * the right side of the curve of the mouth, or null.
+     * @param pointC1 A Point2D object to use to calculate the control point for 
+     * the curve between {@code nosePoint} and {@code point1}. 
+     * @param point2 A Point2D object to use to calculate the end point for the 
+     * the right side of the curve of the mouth, or null.
+     * @param pointC2 A Point2D object to use to calculate the control point for 
+     * the curve between {@code point1} and {@code point2}. 
+     * @param path A Path2D object to store the results in, or null.
+     * @return A Path2D object with the mouth curve.
+     */
+    private Path2D createRambleyMouthCurve(Ellipse2D snout, double x, double y, 
+            Point2D point1, Point2D pointC1, Point2D point2, Point2D pointC2, 
+            Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // If the first of the four given scratch Point2D objects is null
+        if (point1 == null)
+            point1 = new Point2D.Double();
+            // If the second of the four given scratch Point2D objects is null
+        if (point2 == null)
+            point2 = new Point2D.Double();
+            // If the third of the four given scratch Point2D objects is null
+        if (pointC1 == null)
+            pointC1 = new Point2D.Double();
+            // If the fourth of the four given scratch Point2D objects is null
+        if (pointC2 == null)
+            pointC2 = new Point2D.Double();
+        
+            // Form the right curve of Rambley's mouth
+        
+            // Move the path to the starting point.
+        path.moveTo(x, y);
+            // Calculate the points where the snout intersects the horizontal 
+            // line 2.5 pixels above the first point.
+            // (A variation with a slight smile may be possible by adding 2.5 
+            // instead of subtracting)
+        getEllipseX(snout,x-2.5,point2,point1);
+            // Shift the left-most point 7.5 pixels to the right. This will be 
+            // the end point of the right side of the mouth curve.
+        point2.setLocation(point2.getX()+7.5, point2.getY());
+            // Set the second point to be in between the starting point and 
+            // end point,and 9 pixels below the first point. This will be the 
+            // mid-point of the right side of the mouth curve
+        point1.setLocation((x+point2.getX())/2, y+9);
+            // Set the first control point to be halfway between the starting 
+            // point and mid-point of the curve, with the y of the mid-point.
+        pointC1.setLocation((x+point1.getX())/2,point1.getY());
+            // Set the second control point to be halfway between the mid-point 
+            // and end point of the curve, with the y of the mid-point.
+        pointC2.setLocation((point2.getX()+point1.getX())/2,point1.getY());
+            // Add a quadratic bezier curve between the starting point and 
+            // mid-point, using the first control point.
+        path.quadTo(pointC1.getX(),pointC1.getY(),point1.getX(), point1.getY());
+            // Add a quadratic bezier curve between the mid-point and end point, 
+            // using the first control point.
+        path.quadTo(pointC2.getX(),pointC2.getY(),point2.getX(), point2.getY());
+        
+            // Form the line at the right edge of his mouth
+        
+            // Move to two pixels to the right and two pixels up from the end of 
+            // the curve
+        path.moveTo(point2.getX()+2, point2.getY()-2);
+            // Draw a line that is 4.5 pixels to the left and 4.5 pixels up
+        path.lineTo(point2.getX()-2.5, point2.getY()+2.5);
+        
+            // Flip the right side of the mouth to create the left side of the 
+            // mouth
+        
+            // The transform to flip the right side to the left. Start by 
+            // creating a transform to flip stuff horizontally
+        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+            // Translate it by twice the starting point's x-coordinate, once to 
+            // put it where the original is and again to get it to the other 
+            // side of Rambley's face
+        tx.translate(-x*2, 0);
+            // Flip the path to form the left side of the mouth and then add the 
+            // left side of the mouth to the path
+        path.append(path.createTransformedShape(tx), false);
+        return path;
+    }
     /**
      * 
      * @param g The graphics context to render to.
@@ -2367,21 +2464,10 @@ public class RambleyPainter implements Painter<Component>{
         nose.add(temp);
         nose.add(createHorizontallyFlippedArea(temp));
         
-        Path2D mouth = new Path2D.Double();
-        point1.setLocation(nose1.getCenterX(), nose1.getMaxY());
-        mouth.moveTo(point1.getX(), point1.getY());
-            // A slight smile may be possible by adding 2.5 instead of subtracting
-        getEllipseX(head5,point1.getY()-2.5,point3,point2);
-        point3.setLocation(point3.getX()+7.5, point3.getY());
-        point2.setLocation((point1.getX()+point3.getX())/2, point1.getY()+9);
-        mouth.quadTo((point1.getX()+point2.getX())/2,point2.getY(),
-                point2.getX(), point2.getY());
-        mouth.quadTo((point3.getX()+point2.getX())/2,point2.getY(),
-                point3.getX(), point3.getY());
-        mouth.moveTo(point3.getX()+2, point3.getY()-2);
-        mouth.lineTo(point3.getX()-2.5, point3.getY()+2.5);
-        Shape mouth1 = mouth.createTransformedShape(getRambleyHorizontalFlipTransform());
-        mouth.append(mouth1, false);
+            // Get the curve for Rambley's mouth, using the bottom center of the 
+            // nose to position the mouth.
+        Path2D mouthCurve = createRambleyMouthCurve(head5,nose1.getCenterX(),
+                nose1.getMaxY(),point1,point2,point3,point4,null);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
@@ -2395,7 +2481,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(Color.MAGENTA);
             g.draw(nose);
             g.setColor(Color.BLUE);
-            g.draw(mouth);
+            g.draw(mouthCurve);
         }
         
             // DEBUG: If we are not showing the lines that make up Rambley 
@@ -2432,7 +2518,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setStroke(getRambleyDetailStroke());
                 // Draw Rambley's mouth
             g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
-            g.draw(mouth);
+            g.draw(mouthCurve);
                 // Set the stroke to Rambley's normal stroke
             g.setStroke(getRambleyNormalStroke());
                 // Draw Rambley's nose
