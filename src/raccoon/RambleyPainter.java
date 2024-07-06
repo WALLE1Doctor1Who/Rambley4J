@@ -2184,7 +2184,7 @@ public class RambleyPainter implements Painter<Component>{
             // line 2.5 pixels above the first point.
             // (A variation with a slight smile may be possible by adding 2.5 
             // instead of subtracting)
-        getEllipseX(snout,x-2.5,point2,point1);
+        getEllipseX(snout,y-2.5,point2,point1);
             // Shift the left-most point 7.5 pixels to the right. This will be 
             // the end point of the right side of the mouth curve.
         point2.setLocation(point2.getX()+7.5, point2.getY());
