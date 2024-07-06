@@ -1818,13 +1818,13 @@ public class RambleyPainter implements Painter<Component>{
      * point) of the bottom-left curve, or null.
      * @param point2 A Point2D object to store the bottom-right most point (end 
      * point) of the bottom-left curve, or null.
-     * @param point3 A Point2D object to store the control point of the 
+     * @param pointC A Point2D object to store the control point of the 
      * bottom-left curve, or null.
      * @return The area that forms the markings around Rambley's right eye.
      */
     private Area createRambleyEyeMarkings(Ellipse2D eyeBrow, Ellipse2D snout, 
             Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2, 
-            Point2D point3){
+            Point2D pointC){
             // If the given Ellipse2D object is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -1840,8 +1840,8 @@ public class RambleyPainter implements Painter<Component>{
         if (point2 == null)
             point2 = new Point2D.Double();
             // If the third of the three given Point2D objects is null
-        if (point3 == null)
-            point3 = new Point2D.Double();
+        if (pointC == null)
+            pointC = new Point2D.Double();
             // Set the frame for the ellipse from the center, with its right 
             // side aligned with Rambley's eyebrows, 4 pixels lower than the 
             // eyebrows, and it should be 43 x 48. This forms the top-right part 
@@ -1876,10 +1876,10 @@ public class RambleyPainter implements Painter<Component>{
             // The control point is 2 pixels to the left of the ellipse, and at 
             // the same y-coordinate as the end of the curve (14 pixels below 
             // the ellipse)
-        point3.setLocation(ellipse.getMinX()+2, point2.getY());
+        pointC.setLocation(ellipse.getMinX()+2, point2.getY());
             // Add a bezier curve from point1 to point2, using point3 as the 
             // control point.
-        path.quadTo(point3.getX(), point3.getY(), point2.getX(), point2.getY());
+        path.quadTo(pointC.getX(), pointC.getY(), point2.getX(), point2.getY());
             // Add a bezier control point from point2 to the right-center of the 
             // ellipse. Use the ellipse's right-most x-coordinate and the 
             // snout's y-coordinate as the control. This curve will mostly be 
@@ -2635,14 +2635,14 @@ public class RambleyPainter implements Painter<Component>{
             p0.setLocation(Double.NaN, Double.NaN);
             p1.setLocation(p0);
             return false;
-        }   // If the given x-coordinate is right at the left or right bounds of 
-            // the ellipse
+        }   // If the given x-coordinate is at the left or right bounds of the 
+            // ellipse
         else if (x == ellipse.getMinX() || x == ellipse.getMaxX()){
                 // The points will be at the vertical center of the ellipse
             p0.setLocation(x, ellipse.getCenterY());
             p1.setLocation(p0);
             return true;
-        }   // If the given x-coordinate is right at the center of the ellipse
+        }   // If the given x-coordinate is at the center of the ellipse
         else if (x == ellipse.getCenterX()){
                 // The points will be at the top and bottom of the ellipse
             p0.setLocation(x, ellipse.getMinY());
@@ -2660,6 +2660,42 @@ public class RambleyPainter implements Painter<Component>{
             // Bottom point will be below the vertical center of the ellipse
         p1.setLocation(x, ellipse.getCenterY()+y);
         return true;
+    }
+    /**
+     * This calculates the x-coordinates for points on the given ellipse for the 
+     * given y-coordinate
+     * @param ellipse The ellipse to calculate the points on
+     * @param y The y-coordinate to get the points for
+     * @param p0 The Point2D object that the left-most point will be stored in.
+     * @param p1 The Point2D object that the right-most point will be stored in.
+     * @return Whether the y-coordinate lies on the ellipse.
+     */
+    protected static boolean getEllipseX(Ellipse2D ellipse, double y,Point2D p0, 
+            Point2D p1){
+            // If the given y-coordinate is out of range of the ellipse
+        if (y < ellipse.getMinY() || y > ellipse.getMaxY()){
+                // Set the points to return to NaN
+            p0.setLocation(Double.NaN, Double.NaN);
+            p1.setLocation(p0);
+            return false;
+        }   // If the given y-coordinate is at the top or bottom bounds of the 
+            // ellipse
+        else if (y == ellipse.getMinY() || y == ellipse.getMaxY()){
+                // The points will be at the vertical center of the ellipse
+            p0.setLocation(ellipse.getCenterX(), y);
+            p1.setLocation(p0);
+            return true;
+        }   // If the given y-coordinate is at the center of the ellipse
+        else if (y == ellipse.getCenterY()){
+                // The points will be at the top and bottom of the ellipse
+            p0.setLocation(ellipse.getMinX(),y);
+            p1.setLocation(ellipse.getMaxX(),y);
+            return true;
+        }
+            // Get the intersections of the horizontal line at the given 
+            // y-coordinate
+        return getCircleIntersections(ellipse,ellipse.getMinX(),y,
+                ellipse.getMaxX(),y,p0,p1);
     }
     /**
      * This function gets the radius of the circle represented by the given 
@@ -3215,12 +3251,12 @@ public class RambleyPainter implements Painter<Component>{
     
     private boolean showLines = false;
     private boolean abTesting = false;
-    private double testDouble1 = 0.26;
-    private double testDouble2 = 0.5;
-    private double testDouble3 = 0.85;
+    private double testDouble1 = 1.0;
+    private double testDouble2 = 1.0;
+    private double testDouble3 = 1.0;
     private double testDouble4 = 1.0;
-    private double testDouble5 = 0.50;
-    private double testDouble6 = 2;
+    private double testDouble5 = 1.0;
+    private double testDouble6 = 1.0;
     
     double getTestDouble1(){
         return testDouble1;
