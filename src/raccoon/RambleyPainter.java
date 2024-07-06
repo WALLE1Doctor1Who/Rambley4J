@@ -475,6 +475,18 @@ public class RambleyPainter implements Painter<Component>{
     public static final String PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED = 
             "PixelGridSpacingPropertyChanged"; 
     
+//    public static final String RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED = 
+//            "RambleyRightEyeXPropertyChanged";
+//    
+//    public static final String RAMBLEY_RIGHT_EYE_Y_PROPERTY_CHANGED = 
+//            "RambleyRightEyeYPropertyChanged";
+//    
+//    public static final String RAMBLEY_LEFT_EYE_X_PROPERTY_CHANGED = 
+//            "RambleyLeftEyeXPropertyChanged";
+//    
+//    public static final String RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED = 
+//            "RambleyLeftEyeYPropertyChanged";
+    
     // Settings and listeners
     
     /**
@@ -497,7 +509,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the diagonal spacing between the centers of the background polka 
      * dots. That is to say, the center of each background polka dot is {@code 
-     * dotSpacing} pixels to the left and {@code  dotSpacing} pixels below the 
+     * dotSpacing} pixels to the left and {@code dotSpacing} pixels below the 
      * center of another background polka dot.
      */
     private double dotSpacing;
@@ -509,7 +521,7 @@ public class RambleyPainter implements Painter<Component>{
     private double lineSpacing;
     /**
      * The x component for the location of the center of Rambley's right iris and 
-     * pupil. 0.5 is center, 0.0 is the left-most bounds for Rambley's right eye 
+     * pupil. 0.5 is the default position, 0.0 is the left-most bounds for Rambley's right eye 
      * (screen's left, Rambley's right), 1.0 is the right-most bounds for 
      * Rambley's right eye (screen's right, Rambley's left).
      */
@@ -522,7 +534,7 @@ public class RambleyPainter implements Painter<Component>{
     private double eyeRightY;
     /**
      * The x component for the location of the center of Rambley's left iris and 
-     * pupil. 0.5 is center, 0.0 is the left-most bounds for Rambley's left eye 
+     * pupil. 0.5 is the default position, 0.0 is the left-most bounds for Rambley's left eye 
      * (screen's left, Rambley's right), 1.0 is the right-most bounds for 
      * Rambley's left eye (screen's right, Rambley's left).
      */
@@ -1075,6 +1087,49 @@ public class RambleyPainter implements Painter<Component>{
             firePropertyChange(PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED,old,spacing);
         }
         return this;
+    }
+    
+    public double getRambleyRightEyeX(){
+        return eyeRightX;
+    }
+    
+    public double getRambleyRightEyeY(){
+        return eyeRightY;
+    }
+    
+    public RambleyPainter setRambleyRightEye(double x, double y){
+            // If the x position or the y position has changed
+        if (x != eyeRightX || y != eyeRightY){
+            eyeRightX = x;
+            eyeRightY = y;
+                // Fire a change in the state
+            fireStateChanged();
+        }
+        return this;
+    }
+    
+    public double getRambleyLeftEyeX(){
+        return eyeLeftX;
+    }
+    
+    public double getRambleyLeftEyeY(){
+        return eyeLeftY;
+    }
+    
+    public RambleyPainter setRambleyLeftEye(double x, double y){
+            // If the x position or the y position has changed
+        if (x != eyeLeftX || y != eyeLeftY){
+            eyeLeftX = x;
+            eyeLeftY = y;
+                // Fire a change in the state
+            fireStateChanged();
+        }
+        return this;
+    }
+    
+    public RambleyPainter setRambleyEyes(double x, double y){
+            // Set the position for both the right and left eyes
+        return setRambleyRightEye(x, y).setRambleyLeftEye(x, y);
     }
     
     
@@ -2426,6 +2481,40 @@ public class RambleyPainter implements Painter<Component>{
         paintRambleyEye(g,eyeWhite,iris,pupil);
     }
     /**
+     * 
+     * @param g The graphics context to render to.
+     * @param eyeWhite The shape to use to paint the eye white for Rambley's 
+     * eye.
+     * @param x 
+     * @param y 
+     * @param bounds The bounds for {@code eyeWhite}, or null. This is used to 
+     * calculate the location for the eye relative to the eye white.
+     * @param minXOff The offset for the minimum x-coordinate.
+     * @param maxXOff The offset for the maximum x-coordinate.
+     * @param iris The Ellipse2D object representing Rambley's iris, or null.
+     * @param pupil The Ellipse2D object representing Rambley's pupil, or null.
+     */
+    protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x,
+            double y,Rectangle2D bounds,double minXOff,double maxXOff,
+            Ellipse2D iris,Ellipse2D pupil){
+            // If the given bounds for the eye is null
+        if (bounds == null)
+                // Get the bounds for the eye
+            bounds = eyeWhite.getBounds2D();
+            // Expand the bounds using the given minimum and maximum x offsets
+        bounds.setFrameFromDiagonal(bounds.getMinX()+minXOff,bounds.getMinY(), 
+                bounds.getMaxX()+maxXOff, bounds.getMaxY());
+            // Expand the bounds by the size of the iris
+        bounds.setFrameFromCenter(bounds.getCenterX(), bounds.getCenterY(), 
+                bounds.getMinX()-RAMBLEY_IRIS_HALF_SIZE,
+                bounds.getMinY()-RAMBLEY_IRIS_HALF_SIZE);
+            // Calculate the location for the iris and pupil using the given x 
+            // and y values to determine how far right and down, respectively, 
+            // they are in the eye white
+        paintRambleyEye(g,eyeWhite,bounds.getMinX()+(bounds.getWidth()*x),
+                bounds.getMinY()+(bounds.getHeight()*y),iris,pupil);
+    }
+    /**
      * This creates and returns an Area that forms the shape of Rambley's nose. 
      * This uses the ellipse given to the {@link #createRambleySnoutArea 
      * createRambleySnoutArea} method ({@code snout}) to position and control 
@@ -2820,14 +2909,17 @@ public class RambleyPainter implements Painter<Component>{
                 // Fill in the inner portion of Rambley's ears
             g.fill(earInR);
             g.fill(earInL);
-                // Calculate the x-coordinate for Rambley's right iris and pupil
-            double pupilX = headBounds.getCenterX()-25;
-                // Calculate the y-coordinate for Rambley's right iris and pupil
-            double pupilY = eyeWhiteR.getBounds2D().getCenterY();
+                // Get the bounds for the right eye
+            Rectangle2D eyeBounds = eyeWhiteR.getBounds2D();
+                // Get the offset to use to shift the iris and pupil to their 
+                // default positions
+            double pupilX = ((headBounds.getCenterX()-25)-eyeBounds.getCenterX())*2;
                 // Draw Rambley's right eye
-            paintRambleyEye(g,eyeWhiteR,pupilX,pupilY,iris,pupil);
+            paintRambleyEye(g,eyeWhiteR,getRambleyRightEyeX(),getRambleyRightEyeY(),
+                    eyeBounds,0,pupilX,iris,pupil);
                 // Draw Rambley's left eye
-            paintRambleyEye(g,eyeWhiteL,pupilX+50,pupilY,iris,pupil);
+            paintRambleyEye(g,eyeWhiteL,getRambleyLeftEyeX(),getRambleyLeftEyeY(),
+                    eyeWhiteL.getBounds2D(),-pupilX,0,iris,pupil);
                 // Set the stroke to Rambley's detail stroke
             g.setStroke(getRambleyDetailStroke());
                 // Draw Rambley's mouth
@@ -3783,7 +3875,7 @@ public class RambleyPainter implements Painter<Component>{
     private double testDouble3 = 1.0;
     private double testDouble4 = 1.0;
     private double testDouble5 = 1.0;
-    private double testDouble6 = 1.0;
+    private double testDouble6 = 0.0;
     
     double getTestDouble1(){
         return testDouble1;
