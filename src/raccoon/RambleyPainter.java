@@ -1901,9 +1901,133 @@ public class RambleyPainter implements Painter<Component>{
         eyeSurround.add(new Area(path));
         return eyeSurround;
     }
-    
-    
-    
+    /**
+     * This creates and returns an Area that forms the shape of Rambley's right 
+     * eye. This uses the ellipse given to the {@link #createRambleyEyebrow 
+     * createRambleyEyebrow} method ({@code eyeBrow}) and the ellipse and three 
+     * points given to {@link #createRambleyEyeMarkings 
+     * createRambleyEyeMarkings} method ({@code eyeMarkEllipse}, {@code 
+     * eyeMarkP1}, {@code eyeMarkP2}, and {@code eyeMarkPC}).
+     * @param headBounds The bounds of Rambley's head to position and control 
+     * the form of the shape.
+     * @param eyeBrow An Ellipse2D object with the ellipse used to form 
+     * Rambley's right eyebrow.
+     * @param eyeMarkEllipse An Ellipse2D object with the ellipse used to form 
+     * the markings around Rambley's right eye.
+     * @param eyeMarkP1 The top-left most point (starting point) of the 
+     * bottom-left curve of the eye markings, or null.
+     * @param eyeMarkP2 The bottom-right most point (end point) of the 
+     * bottom-left curve of the eye markings, or null.
+     * @param eyeMarkPC The control point of the bottom-left curve of the eye 
+     * markings, or null.
+     * @param ellipse An Ellipse2D object to use to calculate the top-right 
+     * portion of the eye, or null.
+     * @param rect A rectangular shape to use to calculate a reference for the 
+     * curves that form the eye not formed by {@code ellipse}, or null.
+     * @param path A Path2D object to use to form the portion of the eye that 
+     * will not be formed by {@code ellipse}, or null.
+     * @param point1 A Point2D object to store the bottom-left point (end point) 
+     * of the top-left curve for the eye, or null.
+     * @param point2 A Point2D object to store the top-right point (end point) 
+     * of the last curve for the eye, or null.
+     * @param point3 A disposable Point2D object to use to calculate some 
+     * points, or null.
+     * @return The area that forms Rambley's right eye.
+     */
+    private Area createRambleyEyeShape(RectangularShape headBounds, 
+            Ellipse2D eyeBrow, Ellipse2D eyeMarkEllipse, Point2D eyeMarkP1, 
+            Point2D eyeMarkP2, Point2D eyeMarkPC, Ellipse2D ellipse, 
+            RectangularShape rect, Path2D path, Point2D point1, Point2D point2, 
+            Point2D point3){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+           // If the given rectangular shae object is null
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+            // If the given Ellipse2D object is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+            // If the first of the three given Point2D objects is null
+        if (point1 == null)
+            point1 = new Point2D.Double();
+            // If the second of the three given Point2D objects is null
+        if (point2 == null)
+            point2 = new Point2D.Double();
+            // If the third of the three given Point2D objects is null
+        if (point3 == null)
+            point3 = new Point2D.Double();
+            // Set the frame from the ellipse from its center, with its right 
+            // side lining up with the eyebrow ellipse, 12 pixels lower than 
+            // the eye marks ellipse, and is 32 x 47. This forms the top-right 
+            // part of the eye.
+        ellipse.setFrameFromCenter(
+                eyeBrow.getCenterX()+4, eyeMarkEllipse.getCenterY()+11.5, 
+                eyeBrow.getMaxX(), eyeMarkEllipse.getMinY()+12);
+            // Set the frame of the rectangular shape from its center, with its 
+            // right side lining up with the eyebrow ellipse, 14 pixels lower 
+            // than the eye marks ellipse, and is 39 x 48. This is used as a 
+            // reference for the curves that form the eye.
+        rect.setFrameFromCenter(
+                eyeBrow.getCenterX()+0.5, eyeMarkEllipse.getCenterY()+14, 
+                eyeBrow.getMaxX(), eyeMarkEllipse.getMinY()+14);
+            // Start the path at the top-center of the ellipse
+        path.moveTo(ellipse.getCenterX(), ellipse.getMinY());
+            // Draw a horizontal line that stops halfway between the center of 
+            // the ellipse and the center of the rectangular shape
+        path.lineTo((ellipse.getCenterX()+rect.getCenterX())/2, ellipse.getMinY());
+            // This will get the t value to use for the point on the bottom-left 
+            // bezier curve for the eye markings. We want the t value for the 
+            // point on the curve that is 4 pixels to the left of the 
+            // rectangular shape. If there are 2 t values, we want the smaller 
+            // of the two.
+        double t = getQuadBezierT(eyeMarkP1.getX(),eyeMarkPC.getX(),
+                eyeMarkP2.getX(),rect.getMinX()-4)[0];
+            // Get the point at the calculated t value on the bottom-left bezier 
+            // curve of the eye markings. This should be around 4 pixels to the 
+            // left of the rectangular shape
+        point1 = getQuadBezierPoint(eyeMarkP1,eyeMarkPC,eyeMarkP2,t, point1);
+            // Add a quadratic bezier curve from the previous point to point1, 
+            // using a control point that is at the point formed by the 
+            // left-most x-coordinate of the rectangular shape and the top 
+            // y-coordinate of the ellipse.
+        path.quadTo(rect.getMinX(),ellipse.getMinY(),point1.getX(),point1.getY());
+            // Add a quadratic bezier curve from point1 to the bottom-center of 
+            // the rectangular shape, using a control point that is 5 pixels to 
+            // the right of the eye marks ellipse, and that is halfway between 
+            // the bottoms of the rectangular shape and the eye ellipse.
+        path.quadTo(eyeMarkEllipse.getMinX()+5, (ellipse.getMaxY()+rect.getMaxY())/2, 
+                rect.getCenterX(), rect.getMaxY());
+            // Get the x-coordinate to use for the control point of the next 
+            // quadratic bezier curve. This is 14 pixels left of the center of 
+            // the face
+        double x = headBounds.getCenterX()-14;
+            // Add a quadratic bezier curve from the previous point to 2/3rds of 
+            // the way between the control point of this curve and the 
+            // right-most point of the ellipse, and at the bottom of the 
+            // ellipse. The control point is 14 pixels to the left of the center 
+            // of the face and is at the bottom of the rectangular shape.
+        path.quadTo(x, rect.getMaxY(), (x+(ellipse.getMaxX()*2))/3, ellipse.getMaxY());
+            // Calculate the points where the ellipse intersects the horizontal 
+            // line one pixel above the center of the ellipse
+        getEllipseX(ellipse,ellipse.getCenterY()-1,point3,point2);
+            // Add a quadratic bezier curve from the previous point to point2 
+            // (the right-most intersection point), and using a control point 
+            // that is 1 pixel to the right of the rectangular shape, and is 
+            // 2/3rds of the way from the center of the rectangular shape to the  
+            // bottom of the rectangular shape.
+        path.quadTo(ellipse.getMaxX()+1, (rect.getMaxY()+(rect.getCenterY()*2))/3, 
+                point2.getX(), point2.getY());
+            // Close the path, completing the curves
+        path.closePath();
+            // Create the area for the eye, starting with the ellipse
+        Area eye = new Area(ellipse);
+            // Add the shape formed by the path to the eye
+        eye.add(new Area(path));
+        return eye;
+    }
     /**
      * 
      * @param x The x-coordinate of the center of Rambley's eye.
@@ -2172,17 +2296,6 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(Color.PINK);
             g.draw(eyeBrowR);
             g.draw(eyeBrowL);
-        }
-        
-        Ellipse2D eye4 = new Ellipse2D.Double();
-        eye4.setFrameFromCenter(eye1.getCenterX()+4, eye2.getCenterY()+11.5, 
-                eye1.getMinX()+8, eye2.getMinY()+12);
-        Ellipse2D eye5 = new Ellipse2D.Double();
-        eye5.setFrameFromCenter(eye1.getCenterX()+0.5, eye4.getCenterY()+2.5, 
-                eye4.getMaxX(), eye4.getMinY()+2);
-        
-            // DEBUG: If we are showing the lines that make up Rambley 
-        if (getShowsLines()){
             g.setColor(Color.GREEN);
             g.draw(snoutArea);
             g.setColor(Color.CYAN);
@@ -2194,37 +2307,20 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(eyeSurroundL);
         }
         
-        Path2D eye6 = new Path2D.Double();
-        eye6.moveTo(eye4.getCenterX(), eye4.getMinY());
-        eye6.lineTo((eye4.getCenterX()+eye5.getCenterX())/2, eye4.getMinY());
-        double[] tArr = getQuadBezierT(point1.getX(),point3.getX(),point2.getX(),eye5.getMinX()-4);
-        double t = 1;
-        for (double tempT : tArr)
-            t = Math.min(tempT, t);
-        point4 = getQuadBezierPoint(point1,point3,point2,t, point4);
-        eye6.quadTo(eye5.getMinX(),eye4.getMinY(),point4.getX(),point4.getY());
-        eye6.quadTo(eye2.getMinX()+5, (eye4.getMaxY()+eye5.getMaxY())/2, 
-                eye5.getCenterX(), eye5.getMaxY());
-        eye6.quadTo(head4.getMinX(), eye5.getMaxY(), 
-                (head4.getMinX()+(eye4.getMaxX()*2))/3, eye4.getMaxY());
-        getCircleIntersections(eye4,head1.getMinX(),eye4.getCenterY()-1,
-                head1.getMaxX(),eye4.getCenterY()-1,point2,point3);
-        eye6.quadTo(eye4.getMaxX()+1, (eye5.getMaxY()+(eye5.getCenterY()*2))/3, 
-                point3.getX(), point3.getY());
-        eye6.closePath();
-        
-        Area eyeWhiteR = new Area(eye4);
-        eyeWhiteR.add(new Area(eye6));
+            // Create the shape of Rambley's right eye
+        Area eyeWhiteR = createRambleyEyeShape(headBounds,eye1,eye2,point1,
+                point2,point3,ellipse,rect,path,point4,point5,point6);
+            // Flip to form the shape of Rambley's left eye
         Area eyeWhiteL = createHorizontallyFlippedArea(eyeWhiteR);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
             g.setColor(Color.YELLOW);
-            g.draw(eye5);
+            g.draw(ellipse);
             g.setColor(RAMBLEY_MAIN_BODY_COLOR);
-            g.draw(eye4);
+            g.draw(rect);
             g.setColor(RAMBLEY_SCARF_COLOR);
-            g.draw(eye6);
+            g.draw(path);
             g.setColor(RAMBLEY_IRIS_COLOR);
             g.draw(eyeWhiteR);
             g.draw(eyeWhiteL);
