@@ -382,6 +382,19 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000020;
     /**
+     * This is the flag which controls which side of Rambley's face his fang 
+     * shows on when his mouth is open. This flag has no effect when Rambley's 
+     * mouth is closed, and has no effect when Rambley is Evil, since Evil 
+     * Rambley shows both fangs. When set, Rambley's fang will show on the left 
+     * side of his mouth instead of the right side.
+     */
+    public static final int RAMBLEY_FANG_SIDE_FLAG =        0x00000040;
+    /**
+     * This is the flag which controls whether Rambley is showing his teeth when 
+     * his mouth is closed.
+     */
+    public static final int RAMBLEY_SHOWING_TEETH_FLAG =    0x00000080;
+    /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
      */
@@ -426,6 +439,18 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final String CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED = 
             "CircularDotsPropertyChanged";
+    /**
+     * This identifies that a change has been made to which side Rambley's fang 
+     * will be on when his mouth is open.
+     */
+    public static final String RAMBLEY_FANG_SIDE_PROPERTY_CHANGED = 
+            "RambleyFangSidePropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley is bearing 
+     * his teeth when his mouth is open.
+     */
+    public static final String RAMBLEY_SHOWING_TEETH_PROPERTY_CHANGED = 
+            "RambleyShowingTeethPropertyChanged";
     // Any more flag property names go here
     /**
      * This generates a map that maps flags for controlling {@code 
@@ -445,6 +470,9 @@ public class RambleyPainter implements Painter<Component>{
         nameMap.put(EVIL_RAMBLEY_FLAG, EVIL_RAMBLEY_PROPERTY_CHANGED);
         nameMap.put(CIRCULAR_BACKGROUND_DOTS_FLAG, 
                 CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED);
+        nameMap.put(RAMBLEY_FANG_SIDE_FLAG, RAMBLEY_FANG_SIDE_PROPERTY_CHANGED);
+        nameMap.put(RAMBLEY_SHOWING_TEETH_FLAG, 
+                RAMBLEY_SHOWING_TEETH_PROPERTY_CHANGED);
         
             // Return an unmodifiable verion of the map
         return Collections.unmodifiableNavigableMap(nameMap);
@@ -486,6 +514,18 @@ public class RambleyPainter implements Painter<Component>{
 //    
 //    public static final String RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED = 
 //            "RambleyLeftEyeYPropertyChanged";
+    /**
+     * This identifies that a change has been made to how wide Rambley's mouth is 
+     * open.
+     */
+    public static final String RAMBLEY_MOUTH_OPEN_WIDENESS_PROPERTY_CHANGED = 
+            "RambleyOpenMouthXPropertyChanged";
+    /**
+     * This identifies that a change has been made to how far Rambley's mouth 
+     * is open.
+     */
+    public static final String RAMBLEY_MOUTH_OPEN_HEIGHT_PROPERTY_CHANGED = 
+            "RambleyOpenMouthYPropertyChanged";
     
     // Settings and listeners
     
@@ -545,6 +585,14 @@ public class RambleyPainter implements Painter<Component>{
      * 1.0 is the bottom-most bounds for Rambley's left eye.
      */
     private double eyeLeftY;
+    /**
+     * This is used to control how far Rambley's mouth is open. 0.0 to 1.0
+     */
+    private double mouthOpenX;
+    /**
+     * This is used to control how wide Rambley's mouth is open. 0.0 to 1.0
+     */
+    private double mouthOpenY;
     
     // Commonly used objects for the rendering process
     
@@ -693,6 +741,8 @@ public class RambleyPainter implements Painter<Component>{
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
         lineSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.5;
+        mouthOpenX = 1.0;
+        mouthOpenY = 0.0;
         changeSupport = new PropertyChangeSupport(this);
     }
     
@@ -1001,6 +1051,36 @@ public class RambleyPainter implements Painter<Component>{
     public RambleyPainter setCircularBackgroundDots(boolean value){
         return setFlag(CIRCULAR_BACKGROUND_DOTS_FLAG,value);
     }
+    /**
+     * 
+     * @return 
+     */
+    public boolean getRambleyFangSide(){
+        return getFlag(RAMBLEY_FANG_SIDE_FLAG);
+    }
+    /**
+     * 
+     * @param value
+     * @return 
+     */
+    public RambleyPainter setRambleyFangSide(boolean value){
+        return setFlag(RAMBLEY_FANG_SIDE_FLAG,value);
+    }
+    /**
+     * 
+     * @return 
+     */
+    public boolean isRambleyShowingTeeth(){
+        return getFlag(RAMBLEY_SHOWING_TEETH_FLAG);
+    }
+    /**
+     * 
+     * @param value
+     * @return 
+     */
+    public RambleyPainter setRambleyShowingTeeth(boolean value){
+        return setFlag(RAMBLEY_SHOWING_TEETH_FLAG,value);
+    }
     
     
     
@@ -1130,6 +1210,36 @@ public class RambleyPainter implements Painter<Component>{
     public RambleyPainter setRambleyEyes(double x, double y){
             // Set the position for both the right and left eyes
         return setRambleyRightEye(x, y).setRambleyLeftEye(x, y);
+    }
+    
+    public double getRambleyMouthOpenWideness(){
+        return mouthOpenX;
+    }
+    
+    public RambleyPainter setRambleyMouthOpenWideness(double x){
+            // If the x value would change
+        if (x != mouthOpenX){
+                // Get the old x value
+            double old = mouthOpenX;
+            mouthOpenX = x;
+            firePropertyChange(RAMBLEY_MOUTH_OPEN_WIDENESS_PROPERTY_CHANGED,old,x);
+        }
+        return this;
+    }
+    
+    public double getRambleyMouthOpenHeight(){
+        return mouthOpenY;
+    }
+    
+    public RambleyPainter setRambleyMouthOpenHeight(double y){
+            // If the y value would change
+        if (y != mouthOpenY){
+                // Get the old y value
+            double old = mouthOpenY;
+            mouthOpenY = y;
+            firePropertyChange(RAMBLEY_MOUTH_OPEN_HEIGHT_PROPERTY_CHANGED,old,y);
+        }
+        return this;
     }
     
     
@@ -2961,7 +3071,11 @@ public class RambleyPainter implements Painter<Component>{
         return "flags="+getFlags()+
                 ",dotSize="+getBackgroundDotSize()+
                 ",dotSpacing="+getBackgroundDotSpacing()+
-                ",lineSpacing="+getPixelGridLineSpacing();
+                ",lineSpacing="+getPixelGridLineSpacing()+
+                ",rightEye=("+getRambleyRightEyeX()+","+getRambleyRightEyeY()+")"+
+                ",leftEye=("+getRambleyLeftEyeX()+","+getRambleyLeftEyeY()+")"+
+                ",mouthOpenHeight="+getRambleyMouthOpenHeight()+
+                ",mouthOpenWide="+getRambleyMouthOpenWideness();
     }
     @Override
     public String toString(){
