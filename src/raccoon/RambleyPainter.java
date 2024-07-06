@@ -2543,6 +2543,49 @@ public class RambleyPainter implements Painter<Component>{
                 Double.valueOf(newValue));
     }
     /**
+     * This calculates the y-coordinates for points on the given ellipse for the 
+     * given x-coordinate
+     * @param ellipse The ellipse to calculate the points on
+     * @param x The x-coordinate to get the points for
+     * @param p0 The Point2D object that the upper point will be stored in.
+     * @param p1 The Point2D object that the lower point will be stored in.
+     * @return Whether the x-coordinate lies on the ellipse.
+     */
+    protected static boolean getEllipseY(Ellipse2D ellipse, double x,Point2D p0, 
+            Point2D p1){
+            // If the given x-coordinate is out of range of the ellipse
+        if (x < ellipse.getMinX() || x > ellipse.getMaxX()){
+                // Set the points to return to NaN
+            p0.setLocation(Double.NaN, Double.NaN);
+            p1.setLocation(p0);
+            return false;
+        }   // If the given x-coordinate is right at the left or right bounds of 
+            // the ellipse
+        else if (x == ellipse.getMinX() || x == ellipse.getMaxX()){
+                // The points will be at the vertical center of the ellipse
+            p0.setLocation(x, ellipse.getCenterY());
+            p1.setLocation(p0);
+            return true;
+        }   // If the given x-coordinate is right at the center of the ellipse
+        else if (x == ellipse.getCenterX()){
+                // The points will be at the top and bottom of the ellipse
+            p0.setLocation(x, ellipse.getMinY());
+            p1.setLocation(x, ellipse.getMaxY());
+            return true;
+        }
+            // Calculate half of the width of the ellipse
+        double a = ellipse.getWidth()/2.0;
+            // Let b be half the height of the ellipse
+            // Relative to the center of the ellipse, y = (b/a)*sqrt(a^2-x^2)
+        double y = ((ellipse.getHeight()/2.0)/a)*
+                Math.sqrt(Math.pow(a, 2)-Math.pow(x-ellipse.getCenterX(), 2));
+            // Top point will be above the vertical center of the ellipse
+        p0.setLocation(x, ellipse.getCenterY()-y);
+            // Bottom point will be below the vertical center of the ellipse
+        p1.setLocation(x, ellipse.getCenterY()+y);
+        return true;
+    }
+    /**
      * This function gets the radius of the circle represented by the given 
      * ellipse. If the given ellipse is not a circle (i.e. the width and height 
      * are not the same), then this will take the average of the width and 
@@ -2668,15 +2711,15 @@ public class RambleyPainter implements Painter<Component>{
      * This gets the points at which the given line intersects with the given 
      * ellipse.
      * @param e
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
+     * @param x1 The x-coordinate for the first point on the line
+     * @param y1 The y-coordinate for the first point on the line
+     * @param x2 The x-coordinate for the second point on the line
+     * @param y2 The y-coordinate for the second point on the line
      * @param point1 The Point2D object that the first point of intersection 
      * will be stored in.
      * @param point2 The Point2D object that the second point of intersection 
      * will be stored in.
-     * @return 
+     * @return Whether the line intersects the ellipse.
      */
     protected static boolean getCircleIntersections(Ellipse2D e, 
             double x1, double y1, double x2, double y2, Point2D point1, 
@@ -2689,17 +2732,8 @@ public class RambleyPainter implements Painter<Component>{
                 point1.setLocation(Double.NaN, Double.NaN);
                 point2.setLocation(point1);
                 return false;
-            }
-                // Rotate everything by 90 degrees.
-                // Bam! The vertical line is now a horizontal line
-            e.setFrame(e.getY(),e.getX(),e.getHeight(),e.getWidth());
-                // Calculate the points of intersection for the horizontal line
-            boolean value = getCircleIntersections(e,y1,x1,y2,x2,point1,point2);
-                // Rotate everything back
-            point1.setLocation(point1.getY(), point1.getX());
-            point2.setLocation(point2.getY(), point2.getX());
-            e.setFrame(e.getY(),e.getX(),e.getHeight(),e.getWidth());
-            return value;
+            }   // Get the points on the ellipse for the given x-coordinates
+            return getEllipseY(e,x1,point1,point2);
         }   // Get the slope of the line
         double k = (y2 - y1) / (x2 - x1);
             // Get the coefficient for the line
@@ -2730,16 +2764,17 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * 
      * @param e
-     * @param p1
-     * @param p2
+     * @param p1 The first point on the line
+     * @param p2 The second point on the line
      * @param point1 The Point2D object that the first point of intersection 
      * will be stored in.
      * @param point2 The Point2D object that the second point of intersection 
      * will  be stored in.
+     * @return Whether the line intersects the ellipse.
      */
-    protected static void getCircleIntersections(Ellipse2D e, Point2D p1, 
+    protected static boolean getCircleIntersections(Ellipse2D e, Point2D p1, 
             Point2D p2, Point2D point1, Point2D point2){
-        getCircleIntersections(e,p1.getX(),p1.getY(),p2.getX(),p2.getY(),
+        return getCircleIntersections(e,p1.getX(),p1.getY(),p2.getX(),p2.getY(),
                 point1,point2);
     }
     /**
