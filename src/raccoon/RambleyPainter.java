@@ -2370,11 +2370,10 @@ public class RambleyPainter implements Painter<Component>{
         Path2D mouth = new Path2D.Double();
         point1.setLocation(nose1.getCenterX(), nose1.getMaxY());
         mouth.moveTo(point1.getX(), point1.getY());
-        double mouth2 = (nose4.getMaxY()+point1.getY())/2;
-        getCircleIntersections(head5,head1.getMinX(),mouth2,
-                head1.getMaxX(),mouth2,point3,point2);
-        point3.setLocation(point3.getX()+7.5, mouth2);
-        point2.setLocation((point1.getX()+point3.getX())/2, head3.getMaxY());
+            // A slight smile may be possible by adding 2.5 instead of subtracting
+        getEllipseX(head5,point1.getY()-2.5,point3,point2);
+        point3.setLocation(point3.getX()+7.5, point3.getY());
+        point2.setLocation((point1.getX()+point3.getX())/2, point1.getY()+9);
         mouth.quadTo((point1.getX()+point2.getX())/2,point2.getY(),
                 point2.getX(), point2.getY());
         mouth.quadTo((point3.getX()+point2.getX())/2,point2.getY(),
