@@ -7,9 +7,7 @@ package raccoon;
 import java.awt.*;
 import java.awt.geom.*;
 import java.beans.*;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -401,15 +399,79 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG | 
             PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG;
-    // Insert property names for the properties represented by the flags here
-//    /**
-//     * This identifies that a change has been made to whether the background 
-//     * should be painted.
-//     */
-//    public static final String BACKGROUND_PAINTED_PROPERTY_CHANGED = 
-//            "BackgroundPaintedPropertyChanged";
+    // Maximum flag value goes here
+    /**
+     * This identifies that a change has been made to whether the background 
+     * should be painted.
+     */
+    public static final String BACKGROUND_PAINTED_PROPERTY_CHANGED = 
+            "BackgroundPaintedPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether the pixel grid 
+     * should be painted.
+     */
+    public static final String PIXEL_GRID_PAINTED_PROPERTY_CHANGED = 
+            "PixelGridPaintedPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley's border 
+     * and shadow should be painted.
+     * 
+     * @todo Finalize the name for this flag.
+     */
+    public static final String BORDER_AND_SHADOW_PAINTED_PROPERTY_CHANGED = 
+            "BorderShadowPaintedPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether the aspect ratio 
+     * for Rambley will be ignored.
+     */
+    public static final String IGNORE_ASPECT_RATIO_PROPERTY_CHANGED = 
+            "IgnoreAspectRatioPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley is evil or 
+     * not.
+     */
+    public static final String EVIL_RAMBLEY_PROPERTY_CHANGED = 
+            "EvilRambleyPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether the background 
+     * polka dots are circular or diamonds.
+     */
+    public static final String CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED = 
+            "CircularDotsPropertyChanged";
+    // Any more flag property names go here
     
     
+    
+    
+    /**
+     * This generates a map that maps flags for controlling {@code 
+     * RambleyPainter} to their respective property names. This map is not 
+     * modifiable. 
+     * @return A map that maps flags to property names.
+     */
+    private static NavigableMap<Integer, String> generateFlagNameMap(){
+            // Create a map to map the flags to the names
+        TreeMap<Integer, String> nameMap = new TreeMap<>();
+        nameMap.put(PAINT_BACKGROUND_FLAG, BACKGROUND_PAINTED_PROPERTY_CHANGED);
+        nameMap.put(PAINT_PIXEL_GRID_FLAG, PIXEL_GRID_PAINTED_PROPERTY_CHANGED);
+        nameMap.put(PAINT_BORDER_AND_SHADOW_FLAG, 
+                BORDER_AND_SHADOW_PAINTED_PROPERTY_CHANGED);
+        nameMap.put(IGNORE_ASPECT_RATIO_FLAG, 
+                IGNORE_ASPECT_RATIO_PROPERTY_CHANGED);
+        nameMap.put(EVIL_RAMBLEY_FLAG, EVIL_RAMBLEY_PROPERTY_CHANGED);
+        nameMap.put(CIRCULAR_BACKGROUND_DOTS_FLAG, 
+                CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED);
+        
+            // Return an unmodifiable verion of the map
+        return Collections.unmodifiableNavigableMap(nameMap);
+    }
+    /**
+     * This is a map that maps the flags for controlling {@code RambleyPainter} 
+     * to their respective property names. If a flag does not appear in this 
+     * map, then it is not considered a property of {@code RambleyPainter}.
+     */
+    public static final NavigableMap<Integer, String> FLAG_PROPERTY_NAMES_MAP = 
+            generateFlagNameMap();
     
     // Settings and listeners
     
@@ -623,7 +685,25 @@ public class RambleyPainter implements Painter<Component>{
     public RambleyPainter setFlags(int flags){
             // If the flags would change
         if (flags != this.flags){
+                // This gets the flags that will be changed. The old and new 
+                // flags are XOR'd to get the flags that will be changed.
+            int changed = this.flags ^ flags;
+                // Set the flags
             this.flags = flags;
+                // Go through the flags that have a property name assigned to them
+            for (Integer flag : FLAG_PROPERTY_NAMES_MAP.navigableKeySet()){
+                    // If the flag is somehow null
+                if (flag == null)
+                    continue;   // Skip this flag
+                    // If the current flag is one of the flags that changed
+                if ((changed & flag) == flag)
+                    firePropertyChange(FLAG_PROPERTY_NAMES_MAP.get(flag),
+                            getFlag(flag));
+                    // If this is the last bit that changed in the flags
+                if (Integer.highestOneBit(flag) >= Integer.highestOneBit(changed))
+                    break;
+            }
+                // Is a state change still necessary?
             fireStateChanged();
         }
         return this;
