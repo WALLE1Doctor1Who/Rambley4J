@@ -2029,11 +2029,14 @@ public class RambleyPainter implements Painter<Component>{
         return eye;
     }
     /**
-     * 
+     * This sets the location for the {@code iris} and {@code pupil} ellipses 
+     * for Rambley's eyes to the given center x and y coordinates.
      * @param x The x-coordinate of the center of Rambley's eye.
      * @param y The y-coordinate of the center of Rambley's eye.
      * @param iris An Ellipse2D object to store Rambley's iris in.
      * @param pupil An Ellipse2D object to store Rambley's pupil in.
+     * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, Ellipse2D) 
      */
     protected void setRambleyEyeLocation(double x, double y, Ellipse2D iris, 
             Ellipse2D pupil){
@@ -2050,12 +2053,14 @@ public class RambleyPainter implements Painter<Component>{
                 x+RAMBLEY_PUPIL_HALF_SIZE, y+RAMBLEY_PUPIL_HALF_SIZE);
     }
     /**
-     * 
+     * This paints Rambley's eye using the given eye white, iris, and pupil.
      * @param g The graphics context to render to.
      * @param eyeWhite The shape to use to paint the eye white for Rambley's 
      * eye.
      * @param iris The Ellipse2D object representing Rambley's iris.
      * @param pupil The Ellipse2D object representing Rambley's pupil.
+     * @see #setRambleyEyeLocation(double, double, Ellipse2D, Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, Ellipse2D) 
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,Ellipse2D iris,
             Ellipse2D pupil){
@@ -2097,22 +2102,33 @@ public class RambleyPainter implements Painter<Component>{
         g.dispose();
     }
     /**
-     * 
+     * This sets the location for the {@code iris} and {@code pupil} ellipses 
+     * for Rambley's eyes to the given center x and y coordinates, and then 
+     * paints Rambley's eye Rambley's eye using the given eye white, iris, and 
+     * pupil. This is equivalent to calling {@link #setRambleyEyeLocation 
+     * setRambleyEyeLocation} before calling {@link #paintRambleyEye(Graphics2D, 
+     * Shape, Ellipse2D, Ellipse2D) paintRambleyEye}.
      * @param g The graphics context to render to.
      * @param eyeWhite The shape to use to paint the eye white for Rambley's 
      * eye.
      * @param x The x-coordinate of the center of Rambley's iris and pupil.
      * @param y The y-coordinate of the center of Rambley's iris and pupil.
-     * @param iris The Ellipse2D object representing Rambley's iris.
-     * @param pupil The Ellipse2D object representing Rambley's pupil.
+     * @param iris The Ellipse2D object representing Rambley's iris, or null.
+     * @param pupil The Ellipse2D object representing Rambley's pupil, or null.
+     * @see #setRambleyEyeLocation(double, double, Ellipse2D, Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, 
             double y,Ellipse2D iris,Ellipse2D pupil){
+            // If the given iris Ellipse2D object is null
         if (iris == null)
             iris = new Ellipse2D.Double();
+            // If the given pupil Ellipse2D object is null
         if (pupil == null)
             pupil = new Ellipse2D.Double();
+            // Set the location of Rambley's iris and pupil
         setRambleyEyeLocation(x,y,iris,pupil);
+            // Paint Rambley's eye
         paintRambleyEye(g,eyeWhite,iris,pupil);
     }
     /**
@@ -2451,8 +2467,7 @@ public class RambleyPainter implements Painter<Component>{
      * @return A String representation of this {@code RambleyIcon}.
      */
     protected String paramString(){
-        return "paintBackground="+isBackgroundPainted()+
-                ",pixelGridPainted="+isPixelGridPainted();
+        return "flags="+getFlags();
     }
     @Override
     public String toString(){
