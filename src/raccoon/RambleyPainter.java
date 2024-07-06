@@ -391,6 +391,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int EVIL_RAMBLEY_FLAG =             0x00000010;
     /**
+     * This is the flag for drawing the background polka dots as circles instead 
+     * of diamonds.
+     */
+    public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000020;
+    /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
      */
@@ -665,10 +670,10 @@ public class RambleyPainter implements Painter<Component>{
      * RambleyPainter}. If this is {@code true}, then a background reminiscent 
      * of the one seen on Rambley's screens in Indigo Park will be painted 
      * behind Rambley. The background will consist of {@link 
-     * BACKGROUND_DOT_COLOR dark blue} diamond-shaped polka dots over a gradient 
-     * going from {@link BACKGROUND_GRADIENT_COLOR dark blue} at the top to 
-     * {@link BACKGROUND_COLOR light blue} at the bottom. The default value for 
-     * this is {@code true}.
+     * BACKGROUND_DOT_COLOR dark blue} diamond-shaped or circle-shaped polka 
+     * dots over a gradient going from {@link BACKGROUND_GRADIENT_COLOR dark 
+     * blue} at the top to {@link BACKGROUND_COLOR light blue} at the bottom. 
+     * The default value for this is {@code true}.
      * 
      * @todo Add references to other related methods.
      * 
@@ -847,6 +852,41 @@ public class RambleyPainter implements Painter<Component>{
     protected RambleyPainter setBorderAndShadowPainted(boolean enabled){
         return setFlag(PAINT_BORDER_AND_SHADOW_FLAG,enabled);
     }
+    /**
+     * This returns whether the polka dots in the background will be circles or 
+     * diamonds. If this is {@code true}, then the background polka dots will be 
+     * circles. If this is {@code false} then the background polka dots will be 
+     * diamonds. The default value for this is {@code false}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @return {@code true} if the background polka dots are circles, {@code 
+     * false} if the background polka dots are diamonds.
+     * @see CIRCULAR_BACKGROUND_DOTS_FLAG
+     * @see #getFlag 
+     * @see #setCircularBackgroundDots
+     */
+    public boolean getCircularBackgroundDots(){
+        return getFlag(CIRCULAR_BACKGROUND_DOTS_FLAG);
+    }
+    /**
+     * This sets whether the polka dots in the background will be circles or 
+     * diamonds. If this is {@code true}, then the background polka dots will be 
+     * circles. If this is {@code false} then the background polka dots will be 
+     * diamonds. The default value for this is {@code false}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param value {@code true} if the background polka dots should be circles, 
+     * {@code false} if the background polka dots should be diamonds.
+     * @return This {@code RambleyPainter}.
+     * @see CIRCULAR_BACKGROUND_DOTS_FLAG
+     * @see #setFlag 
+     * @see #getCircularBackgroundDots
+     */
+    public RambleyPainter setCircularBackgroundDots(boolean value){
+        return setFlag(CIRCULAR_BACKGROUND_DOTS_FLAG,value);
+    }
     
     
     
@@ -880,25 +920,38 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * 
-     * @param rect A rectangle outlining the bounds for the background polka 
+     * @param bounds A rectangle outlining the bounds for the background polka 
      * dot to return.
      * @param path A Path2D object to store the results in, or null.
-     * @return The Path2D object to use to draw a background polka dot.
+     * @param ellipse An Ellipse2D object to store the results in, or null.
+     * @return The shape object to use to draw a background polka dot.
      */
-    protected Path2D getBackgroundDot(RectangularShape rect, Path2D path){
+    protected Shape getBackgroundDot(RectangularShape bounds, Path2D path, 
+            Ellipse2D ellipse){
+            // If the background dots should be circular
+        if (getCircularBackgroundDots()){
+                // If the given Ellipse2D object is null
+            if (ellipse == null)
+                ellipse = new Ellipse2D.Double();
+                // Set the frame of the ellipse to be the frame of the rectangle
+            ellipse.setFrame(bounds.getX(), bounds.getY(), bounds.getWidth(), 
+                    bounds.getHeight());
+                // Return the ellipse
+            return ellipse;
+        }
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
         else    // Reset the given Path2D object
             path.reset();
             // Move to the top center point of the dot
-        path.moveTo(rect.getCenterX(), rect.getMinY());
+        path.moveTo(bounds.getCenterX(), bounds.getMinY());
             // Line to the center left point
-        path.lineTo(rect.getMinX(), rect.getCenterY());
+        path.lineTo(bounds.getMinX(), bounds.getCenterY());
             // Line to the bottom center point
-        path.lineTo(rect.getCenterX(), rect.getMaxY());
+        path.lineTo(bounds.getCenterX(), bounds.getMaxY());
             // Line to the center right point
-        path.lineTo(rect.getMaxX(), rect.getCenterY());
+        path.lineTo(bounds.getMaxX(), bounds.getCenterY());
             // Close the path
         path.closePath();
         return path;
@@ -908,11 +961,13 @@ public class RambleyPainter implements Painter<Component>{
      * @param x The x-coordinate for the center of the background polka dot.
      * @param y The y-coordinate for the center of the background polka dot.
      * @param path A Path2D object to store the results in, or null.
+     * @param ellipse An Ellipse2D object to store the results in, or null.
      * @param rect A Rectangle2D object to temporarily store the bounds for the 
      * background polka dot in, or null.
-     * @return The Path2D object to use to draw a background polka dot.
+     * @return The shape object to use to draw a background polka dot.
      */
-    protected Path2D getBackgroundDot(double x, double y, Path2D path, Rectangle2D rect){
+    protected Shape getBackgroundDot(double x, double y, Path2D path, 
+            Ellipse2D ellipse, Rectangle2D rect){
             // If the given Rectangle2D object is null
         if (rect == null)
             rect = new Rectangle2D.Double();
@@ -920,7 +975,7 @@ public class RambleyPainter implements Painter<Component>{
             // a background polka dot.
         rect.setFrameFromCenter(x, y, x-BACKGROUND_DOT_HALF_SIZE, 
                 y-BACKGROUND_DOT_HALF_SIZE);
-        return getBackgroundDot(rect,path);
+        return getBackgroundDot(rect,path,ellipse);
     }
     
     protected double getPixelGridOffset(double size){
@@ -1164,6 +1219,12 @@ public class RambleyPainter implements Painter<Component>{
             // If the scratch Rectangle2D object has not been initialized yet
         if (rect == null)
             rect = new Rectangle2D.Double();
+            // If the first Ellipse2D scratch object has not been initialized 
+        if (ellipse1 == null)   // yet
+            ellipse1 = new Ellipse2D.Double();
+            // If the scratch Path2D object has not been initialized yet
+        if (path == null)
+            path = new Path2D.Double();
             // Get the x offset for the background polka dots
         double x1 = getBackgroundDotOffsetX(w);
             // Get the y offset for the background polka dots
@@ -1181,10 +1242,8 @@ public class RambleyPainter implements Painter<Component>{
                 // compared to the polka dots on even rows)
             for (double xDot = BACKGROUND_DOT_SPACING * (i % 2); xDot <= w; 
                     xDot+=BACKGROUND_DOT_SPACING+BACKGROUND_DOT_SPACING){
-                    // Get the background polka dot to render
-                path = getBackgroundDot(xDot+x1,yDot,path,rect);
                     // Fill the current background polka dot
-                g.fill(path);
+                g.fill(getBackgroundDot(xDot+x1,yDot,path,ellipse1,rect));
             }
         }
         g.dispose();

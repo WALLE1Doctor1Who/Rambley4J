@@ -80,15 +80,9 @@ public class RambleyViewer extends javax.swing.JFrame {
         } catch (IllegalArgumentException ex){
             System.out.println("Invalid setting: " + ex);
         }
-        backgroundToggle.setSelected(rambleyIcon.isBackgroundPainted());
-        gridToggle.setSelected(rambleyIcon.isPixelGridPainted());
-        evilToggle.setSelected(rambleyIcon.isRambleyEvil());
-        ratioToggle.setSelected(!rambleyIcon.isAspectRatioIgnored());
-        abTestingToggle.setSelected(rambleyIcon.getABTesting());
-        linesToggle.setSelected(rambleyIcon.getShowsLines());
+        updateSettings();
         debugToggle.setSelected(debugIcon.isDebugEnabled());
         scaleToggle.setSelected(viewLabel.isImageAlwaysScaled());
-        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
         
         jSpinner1.setValue(rambleyIcon.getTestDouble1()*100);
         jSpinner2.setValue(rambleyIcon.getTestDouble2()*100);
@@ -103,6 +97,18 @@ public class RambleyViewer extends javax.swing.JFrame {
         IconHandler handler = new IconHandler();
         rambleyIcon.addChangeListener(handler);
         rambleyIcon.addPropertyChangeListener(handler);
+    }
+    
+    private void updateSettings(){
+        backgroundToggle.setSelected(rambleyIcon.isBackgroundPainted());
+        gridToggle.setSelected(rambleyIcon.isPixelGridPainted());
+        evilToggle.setSelected(rambleyIcon.isRambleyEvil());
+        ratioToggle.setSelected(!rambleyIcon.isAspectRatioIgnored());
+        circleDotToggle.setSelected(rambleyIcon.getCircularBackgroundDots());
+        shadowToggle.setSelected(rambleyIcon.isBorderAndShadowPainted());
+        abTestingToggle.setSelected(rambleyIcon.getABTesting());
+        linesToggle.setSelected(rambleyIcon.getShowsLines());
+        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
     }
 
     /**
@@ -142,6 +148,9 @@ public class RambleyViewer extends javax.swing.JFrame {
         jSpinner4 = new javax.swing.JSpinner();
         jSpinner5 = new javax.swing.JSpinner();
         jSpinner6 = new javax.swing.JSpinner();
+        circleDotToggle = new javax.swing.JCheckBox();
+        shadowToggle = new javax.swing.JCheckBox();
+        resetButton = new javax.swing.JButton();
 
         fc.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         fc.setFileFilter(ImageExtensions.PNG_FILTER);
@@ -333,6 +342,27 @@ public class RambleyViewer extends javax.swing.JFrame {
         });
         jPanel1.add(jSpinner6);
 
+        circleDotToggle.setText("Circle Dots");
+        circleDotToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                circleDotToggleActionPerformed(evt);
+            }
+        });
+
+        shadowToggle.setText("Shadow");
+        shadowToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                shadowToggleActionPerformed(evt);
+            }
+        });
+
+        resetButton.setText("Reset");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -350,7 +380,11 @@ public class RambleyViewer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(evilToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ratioToggle))
+                                .addComponent(ratioToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(circleDotToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(shadowToggle))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -371,6 +405,8 @@ public class RambleyViewer extends javax.swing.JFrame {
                                 .addComponent(printButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(saveButton)
+                                .addGap(8, 8, 8)
+                                .addComponent(resetButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(scaleToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -392,14 +428,17 @@ public class RambleyViewer extends javax.swing.JFrame {
                             .addComponent(backgroundToggle)
                             .addComponent(gridToggle)
                             .addComponent(evilToggle)
-                            .addComponent(ratioToggle))
+                            .addComponent(ratioToggle)
+                            .addComponent(circleDotToggle)
+                            .addComponent(shadowToggle))
                         .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(debugToggle)
                             .addComponent(saveButton)
                             .addComponent(printButton)
                             .addComponent(scaleToggle)
-                            .addComponent(listenerToggle))
+                            .addComponent(listenerToggle)
+                            .addComponent(resetButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -668,6 +707,30 @@ public class RambleyViewer extends javax.swing.JFrame {
         if (config != null)
             config.putBoolean(PRINT_LISTENERS_KEY, listenerToggle.isSelected());
     }//GEN-LAST:event_listenerToggleActionPerformed
+
+    private void circleDotToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_circleDotToggleActionPerformed
+        rambleyIcon.setCircularBackgroundDots(circleDotToggle.isSelected());
+        updateConfigFlags();
+    }//GEN-LAST:event_circleDotToggleActionPerformed
+
+    private void shadowToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shadowToggleActionPerformed
+        rambleyIcon.setBorderAndShadowPainted(shadowToggle.isSelected());
+        updateConfigFlags();
+    }//GEN-LAST:event_shadowToggleActionPerformed
+
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        rambleyIcon.setFlags(RambleyPainter.PAINT_BACKGROUND_FLAG | 
+            RambleyPainter.PAINT_PIXEL_GRID_FLAG | 
+                RambleyPainter.PAINT_BORDER_AND_SHADOW_FLAG);
+        widthSpinner.setValue((int)RambleyPainter.INTERNAL_RENDER_WIDTH);
+        heightSpinner.setValue((int)RambleyPainter.INTERNAL_RENDER_HEIGHT);
+        linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), 
+                heightSpinner.getValue()));
+        updateConfigFlags();
+        updateSettings();
+        if (config != null)
+            config.putBoolean(LINK_PAINTER_SIZE_KEY, linkSizeToggle.isSelected());
+    }//GEN-LAST:event_resetButtonActionPerformed
     
     private Point2D getLineIntersection(double x, double y, Line2D line1, Line2D line2, 
             DoubleUnaryOperator getY1, DoubleUnaryOperator getY2){
@@ -720,6 +783,7 @@ public class RambleyViewer extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox abTestingToggle;
     private javax.swing.JCheckBox backgroundToggle;
+    private javax.swing.JCheckBox circleDotToggle;
     private javax.swing.JCheckBox debugToggle;
     private javax.swing.JCheckBox evilToggle;
     private javax.swing.JFileChooser fc;
@@ -742,8 +806,10 @@ public class RambleyViewer extends javax.swing.JFrame {
     private javax.swing.JCheckBox listenerToggle;
     private javax.swing.JButton printButton;
     private javax.swing.JCheckBox ratioToggle;
+    private javax.swing.JButton resetButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JCheckBox scaleToggle;
+    private javax.swing.JCheckBox shadowToggle;
     private components.JThumbnailLabel viewLabel;
     private javax.swing.JSpinner widthSpinner;
     // End of variables declaration//GEN-END:variables
