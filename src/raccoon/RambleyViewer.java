@@ -71,6 +71,12 @@ public class RambleyViewer extends javax.swing.JFrame {
                     (int)Math.ceil(RambleyPainter.INTERNAL_RENDER_HEIGHT)));
             linkSizeToggle.setSelected(config.getBoolean(LINK_PAINTER_SIZE_KEY, 
                     Objects.equals(widthSpinner.getValue(), heightSpinner.getValue())));
+            bgDotSizeSpinner.setValue(config.getDouble(
+                    RambleyPainter.BACKGROUND_DOT_SIZE_PROPERTY_CHANGED, 
+                    rambleyIcon.getBackgroundDotSize()));
+            bgDotSpacingSpinner.setValue(config.getDouble(
+                    RambleyPainter.BACKGROUND_DOT_SPACING_PROPERTY_CHANGED, 
+                    rambleyIcon.getBackgroundDotSpacing()));
             String selFile = config.get(SELECTED_SAVE_FILE_KEY, null);
             if (selFile != null)
                 fc.setSelectedFile(new File(selFile));
@@ -151,6 +157,10 @@ public class RambleyViewer extends javax.swing.JFrame {
         circleDotToggle = new javax.swing.JCheckBox();
         shadowToggle = new javax.swing.JCheckBox();
         resetButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        bgDotSizeSpinner = new javax.swing.JSpinner();
+        jLabel4 = new javax.swing.JLabel();
+        bgDotSpacingSpinner = new javax.swing.JSpinner();
 
         fc.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         fc.setFileFilter(ImageExtensions.PNG_FILTER);
@@ -363,6 +373,24 @@ public class RambleyViewer extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setText("BG Dot Size:");
+
+        bgDotSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        bgDotSizeSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                bgDotSizeSpinnerStateChanged(evt);
+            }
+        });
+
+        jLabel4.setText("BG Dot Spacing:");
+
+        bgDotSpacingSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        bgDotSpacingSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                bgDotSpacingSpinnerStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -373,18 +401,6 @@ public class RambleyViewer extends javax.swing.JFrame {
                     .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(backgroundToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(gridToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(evilToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ratioToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(circleDotToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(shadowToggle))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -410,7 +426,27 @@ public class RambleyViewer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(scaleToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(listenerToggle)))
+                                .addComponent(listenerToggle))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(backgroundToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(gridToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(evilToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ratioToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(circleDotToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(shadowToggle))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bgDotSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bgDotSpacingSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -419,7 +455,7 @@ public class RambleyViewer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -431,7 +467,13 @@ public class RambleyViewer extends javax.swing.JFrame {
                             .addComponent(ratioToggle)
                             .addComponent(circleDotToggle)
                             .addComponent(shadowToggle))
-                        .addGap(7, 7, 7)
+                        .addGap(5, 5, 5)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(bgDotSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)
+                            .addComponent(bgDotSpacingSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(debugToggle)
                             .addComponent(saveButton)
@@ -726,11 +768,27 @@ public class RambleyViewer extends javax.swing.JFrame {
         heightSpinner.setValue((int)RambleyPainter.INTERNAL_RENDER_HEIGHT);
         linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), 
                 heightSpinner.getValue()));
+        bgDotSizeSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SIZE);
+        bgDotSpacingSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SPACING);
         updateConfigFlags();
         updateSettings();
         if (config != null)
             config.putBoolean(LINK_PAINTER_SIZE_KEY, linkSizeToggle.isSelected());
     }//GEN-LAST:event_resetButtonActionPerformed
+
+    private void bgDotSizeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_bgDotSizeSpinnerStateChanged
+        rambleyIcon.setBackgroundDotSize((Double)bgDotSizeSpinner.getValue());
+        if (config != null)
+            config.putDouble(RambleyPainter.BACKGROUND_DOT_SIZE_PROPERTY_CHANGED, 
+                    rambleyIcon.getBackgroundDotSize());
+    }//GEN-LAST:event_bgDotSizeSpinnerStateChanged
+
+    private void bgDotSpacingSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_bgDotSpacingSpinnerStateChanged
+        rambleyIcon.setBackgroundDotSpacing((Double)bgDotSpacingSpinner.getValue());
+        if (config != null)
+            config.putDouble(RambleyPainter.BACKGROUND_DOT_SPACING_PROPERTY_CHANGED, 
+                    rambleyIcon.getBackgroundDotSpacing());
+    }//GEN-LAST:event_bgDotSpacingSpinnerStateChanged
     
     private Point2D getLineIntersection(double x, double y, Line2D line1, Line2D line2, 
             DoubleUnaryOperator getY1, DoubleUnaryOperator getY2){
@@ -783,6 +841,8 @@ public class RambleyViewer extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox abTestingToggle;
     private javax.swing.JCheckBox backgroundToggle;
+    private javax.swing.JSpinner bgDotSizeSpinner;
+    private javax.swing.JSpinner bgDotSpacingSpinner;
     private javax.swing.JCheckBox circleDotToggle;
     private javax.swing.JCheckBox debugToggle;
     private javax.swing.JCheckBox evilToggle;
@@ -793,6 +853,8 @@ public class RambleyViewer extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;

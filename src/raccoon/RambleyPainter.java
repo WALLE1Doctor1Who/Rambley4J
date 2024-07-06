@@ -214,27 +214,16 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected static final int DEFAULT_LINE_INTERSECTION_RESOLUTION = 25;
     /**
-     * This is the width and height of the background polka dots.
+     * This is the default width and height of the background polka dots.
      */
-    protected static final double BACKGROUND_DOT_SIZE = 8;
+    protected static final double DEFAULT_BACKGROUND_DOT_SIZE = 8.0;
     /**
-     * This contains half of the {@link BACKGROUND_DOT_SIZE size} of the 
-     * background polka dots. This is used for calculating the location of the 
-     * background polka dots when using their center coordinates to position 
-     * them.
-     */
-    private static final double BACKGROUND_DOT_HALF_SIZE = 
-            BACKGROUND_DOT_SIZE/2.0;
-    /**
-     * This is the diagonal spacing between the centers of the background polka 
-     * dots. That is to say, the center of each background polka dot is {@code 
-     * BACKGROUND_DOT_SPACING} pixels to the left and {@code 
-     * BACKGROUND_DOT_SPACING} pixels below the center of another background 
-     * polka dot.
+     * This is the default diagonal spacing between the centers of the 
+     * background polka dots.
      * 
      * @todo Rework the documentation for this constant.
      */
-    protected static final double BACKGROUND_DOT_SPACING = 12;
+    protected static final double DEFAULT_BACKGROUND_DOT_SPACING = 12.0;
     /**
      * This is the spacing between the lines in the pixel grid. For the vertical 
      * lines, this is the horizontal spacing. For the horizontal lines, this is 
@@ -359,7 +348,6 @@ public class RambleyPainter implements Painter<Component>{
     
     
     
-    
     /**
      * This is the flag for whether the background will be painted.
      */
@@ -439,10 +427,6 @@ public class RambleyPainter implements Painter<Component>{
     public static final String CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED = 
             "CircularDotsPropertyChanged";
     // Any more flag property names go here
-    
-    
-    
-    
     /**
      * This generates a map that maps flags for controlling {@code 
      * RambleyPainter} to their respective property names. This map is not 
@@ -472,6 +456,18 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final NavigableMap<Integer, String> FLAG_PROPERTY_NAMES_MAP = 
             generateFlagNameMap();
+    /**
+     * This identifies that a change has been made to the width and height of 
+     * the background polka dots.
+     */
+    public static final String BACKGROUND_DOT_SIZE_PROPERTY_CHANGED = 
+            "BackgroundDotSizePropertyChanged"; 
+    /**
+     * This identifies that a change has been made to the spacing of the 
+     * background polka dots.
+     */
+    public static final String BACKGROUND_DOT_SPACING_PROPERTY_CHANGED = 
+            "BackgroundDotSpacingPropertyChanged"; 
     
     // Settings and listeners
     
@@ -488,6 +484,17 @@ public class RambleyPainter implements Painter<Component>{
      * This stores the flags used to store the settings for this painter.
      */
     private int flags;
+    /**
+     * The width and height of the background polka dots.
+     */
+    private double dotSize;
+    /**
+     * This is the diagonal spacing between the centers of the background polka 
+     * dots. That is to say, the center of each background polka dot is {@code 
+     * dotSpacing} pixels to the left and {@code  dotSpacing} pixels below the 
+     * center of another background polka dot.
+     */
+    private double dotSpacing;
     /**
      * The x component for the location of the center of Rambley's right iris and 
      * pupil. 0.5 is center, 0.0 is the left-most bounds for Rambley's right eye 
@@ -658,6 +665,8 @@ public class RambleyPainter implements Painter<Component>{
     
     public RambleyPainter(){
         flags = DEFAULT_FLAG_SETTINGS;
+        dotSize = DEFAULT_BACKGROUND_DOT_SIZE;
+        dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.5;
         changeSupport = new PropertyChangeSupport(this);
     }
@@ -971,6 +980,66 @@ public class RambleyPainter implements Painter<Component>{
     
     
     /**
+     * This returns the width and height used for the background polka dots.
+     * @return The size of the background polka dots.
+     */
+    public double getBackgroundDotSize(){
+        return dotSize;
+    }
+    /**
+     * This sets the width and height used for the background polka dots. 
+     * @param size The size for the background polka dots. 
+     * @return This {@code RambleyPainter}.
+     */
+    public RambleyPainter setBackgroundDotSize(double size){
+            // If the new size is different from the old size
+        if (size != dotSize){
+                // Get the old size
+            double old = dotSize;
+            dotSize = size;
+            firePropertyChange(BACKGROUND_DOT_SIZE_PROPERTY_CHANGED,old,size);
+        }
+        return this;
+    }
+    /**
+     * This returns the diagonal spacing between the centers of the background 
+     * polka dots. That is to say, the center of each background polka dot is 
+     * {@code getBackgroundDotSpacing()} pixels to the left and {@code 
+     * getBackgroundDotSpacing()} pixels below the center of the previous 
+     * background polka dot.
+     * 
+     * @todo Rework the documentation for this method.
+     * @return The diagonal spacing between the background polka dots.
+     */
+    public double getBackgroundDotSpacing(){
+        return dotSpacing;
+    }
+    /**
+     * This sets the diagonal spacing between the centers of the background 
+     * polka dots. That is to say, the center of each background polka dot will  
+     * be {@code getBackgroundDotSpacing()} pixels to the left and {@code 
+     * getBackgroundDotSpacing()} pixels below the center of the previous 
+     * background polka dot.
+     * 
+     * @todo Rework the documentation for this method.
+     * 
+     * @param spacing The diagonal spacing between the background polka dots.
+     * @return This {@code RambleyPainter}.
+     */
+    public RambleyPainter setBackgroundDotSpacing(double spacing){
+            // If the new spacing is different from the old spacing
+        if (spacing != dotSpacing){
+                // Get the old dot spacing
+            double old = dotSpacing;
+            dotSpacing = spacing;
+            firePropertyChange(BACKGROUND_DOT_SPACING_PROPERTY_CHANGED,old,spacing);
+        }
+        return this;
+    }
+    
+    
+    
+    /**
      * This returns the gradient to use to paint the background gradient.
      * @param x The x-coordinate of the top-left corner of the area to fill.
      * @param y The y-coordinate of the top-left corner of the area to fill.
@@ -988,7 +1057,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     
     protected double getBackgroundDotOffset(double size){
-        return (size%BACKGROUND_DOT_SPACING)/2.0;
+        return (size%getBackgroundDotSpacing())/2.0;
     }
     
     protected double getBackgroundDotOffsetX(double width){
@@ -1053,8 +1122,8 @@ public class RambleyPainter implements Painter<Component>{
             rect = new Rectangle2D.Double();
             // Set the frame of the rectangle from the center to be the size of 
             // a background polka dot.
-        rect.setFrameFromCenter(x, y, x-BACKGROUND_DOT_HALF_SIZE, 
-                y-BACKGROUND_DOT_HALF_SIZE);
+        rect.setFrameFromCenter(x, y, x-getBackgroundDotSize()/2.0, 
+                y-getBackgroundDotSize()/2.0);
         return getBackgroundDot(rect,path,ellipse);
     }
     
@@ -1313,15 +1382,15 @@ public class RambleyPainter implements Painter<Component>{
             // of the background polka dots (to create the polka dot pattern, 
             // we need to know what row number we are on, so we can offset the 
             // x-coordinates accordingly)
-        for (int i = 0; (i * BACKGROUND_DOT_SPACING) <= h; i++){
+        for (int i = 0; (i * getBackgroundDotSpacing()) <= h; i++){
                 // Get the y-coordinate for the centers of the polka dots on 
                 // this row
-            double yDot = (i * BACKGROUND_DOT_SPACING)+y1;
+            double yDot = (i * getBackgroundDotSpacing())+y1;
                 // Go through the x-coordinates for the centers of the 
                 // background polka dots (polka dots on odd rows are offset 
                 // compared to the polka dots on even rows)
-            for (double xDot = BACKGROUND_DOT_SPACING * (i % 2); xDot <= w; 
-                    xDot+=BACKGROUND_DOT_SPACING+BACKGROUND_DOT_SPACING){
+            for (double xDot = getBackgroundDotSpacing() * (i % 2); xDot <= w; 
+                    xDot+=getBackgroundDotSpacing()+getBackgroundDotSpacing()){
                     // Fill the current background polka dot
                 g.fill(getBackgroundDot(xDot+x1,yDot,path,ellipse1,rect));
             }
@@ -2757,7 +2826,9 @@ public class RambleyPainter implements Painter<Component>{
      * @return A String representation of this {@code RambleyIcon}.
      */
     protected String paramString(){
-        return "flags="+getFlags();
+        return "flags="+getFlags()+
+                ",dotSize="+getBackgroundDotSize()+
+                ",dotSpacing="+getBackgroundDotSpacing();
     }
     @Override
     public String toString(){
