@@ -1889,14 +1889,6 @@ public class RambleyPainter implements Painter<Component>{
         setRambleyEyeLocation(x,y,iris,pupil);
         paintRambleyEye(g,eyeWhite,iris,pupil);
     }
-    
-    private void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, double y){
-        if (iris == null)
-            iris = new Ellipse2D.Double();
-        if (pupil == null)
-            pupil = new Ellipse2D.Double();
-        paintRambleyEye(g,eyeWhite,x,y,iris,pupil);
-    }
     /**
      * 
      * @param g The graphics context to render to.
@@ -2013,15 +2005,8 @@ public class RambleyPainter implements Painter<Component>{
             // Add Rambley's left ear to the shape of his head.
         headShape.add(earL);
         
-            // DEBUG: If we are not showing the lines that make up Rambley 
-        if (!getShowsLines()){
-            
-                // Fill the shape of Rambley's head
-            g.setColor(RAMBLEY_MAIN_BODY_COLOR);
-            g.fill(headShape);
-            
-        } else {
-                // DEBUG: If we are showing the lines that make up Rambley
+            // DEBUG: If we are showing the lines that make up Rambley 
+        if (getShowsLines()){
             g.setColor(Color.MAGENTA);
             g.draw(path);
             g.setColor(Color.GRAY);
@@ -2050,15 +2035,8 @@ public class RambleyPainter implements Painter<Component>{
             // Create the area around Rambley's nose and mouth
         Area snoutArea = createRambleySnoutArea(headBounds,headShape,head5);
         
-            // DEBUG: If we are not showing the lines that make up Rambley 
-        if (!getShowsLines()){
-            
-                // Fill the shape of Rambley's mask-like facial markings
-            g.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
-            g.fill(faceMarkings);
-            
-        } else {
-                // DEBUG: If we are showing the lines that make up Rambley
+            // DEBUG: If we are showing the lines that make up Rambley 
+        if (getShowsLines()){
             g.setColor(Color.WHITE);
             g.draw(ellipse);
             g.setColor(Color.YELLOW);
@@ -2080,24 +2058,14 @@ public class RambleyPainter implements Painter<Component>{
             // other eye markings)
         Area eyeBrowL = createHorizontallyFlippedArea(eyeBrowR);
             
-            // DEBUG: If we are not showing the lines that make up Rambley 
-        if (!getShowsLines()){
-            
-                // Fill in Rambley's eyebrows
-            g.setColor(RAMBLEY_EYEBROW_COLOR);
-            g.fill(eyeBrowR);
-            g.fill(eyeBrowL);
-            
-        } else {
-                // DEBUG: If we are showing the lines that make up Rambley
+            // DEBUG: If we are showing the lines that make up Rambley 
+        if (getShowsLines()){
             g.setColor(Color.YELLOW);
             g.draw(eye1);
             g.setColor(Color.PINK);
             g.draw(eyeBrowR);
             g.draw(eyeBrowL);
         }
-            
-        
         
             // Create the area around Rambley's eyes
             
@@ -2132,22 +2100,8 @@ public class RambleyPainter implements Painter<Component>{
             // Left eye surround
         Area eyeSurroundL = createHorizontallyFlippedArea(eyeSurroundR);
         
-            // DEBUG: If we are not showing the lines that make up Rambley 
-        if (!getShowsLines()){
-            
-                // Set the color to use to Rambley's secondary body color
-            g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
-                // Fill in Rambley's snout area
-            g.fill(snoutArea);
-                // Fill in the area arround Rambley's eyes
-            g.fill(eyeSurroundR);
-            g.fill(eyeSurroundL);
-                // Fill in the inner portion of Rambley's ears
-            g.fill(earInR);
-            g.fill(earInL);
-            
-        } else {
-                // DEBUG: If we are not showing the lines that make up Rambley 
+            // DEBUG: If we are showing the lines that make up Rambley 
+        if (getShowsLines()){
             g.setColor(Color.GREEN);
             g.draw(snoutArea);
             g.setColor(Color.CYAN);
@@ -2182,15 +2136,8 @@ public class RambleyPainter implements Painter<Component>{
         eyeWhiteR.add(new Area(eye6));
         Area eyeWhiteL = createHorizontallyFlippedArea(eyeWhiteR);
         
-            // DEBUG: If we are not showing the lines that make up Rambley 
-        if (!getShowsLines()){
-            g.setColor(RAMBLEY_EYE_WHITE_COLOR);
-            double pupilX = headBounds.getCenterX()-25;
-            double pupilY = eyeWhiteR.getBounds2D().getCenterY();
-            paintRambleyEye(g,eyeWhiteR,pupilX,pupilY);
-            paintRambleyEye(g,eyeWhiteL,pupilX+50,pupilY);
-        } else {
-                // DEBUG: If we are not showing the lines that make up Rambley 
+            // DEBUG: If we are showing the lines that make up Rambley 
+        if (getShowsLines()){
             g.setColor(Color.YELLOW);
             g.draw(eye5);
             g.setColor(RAMBLEY_MAIN_BODY_COLOR);
@@ -2244,16 +2191,8 @@ public class RambleyPainter implements Painter<Component>{
         Shape mouth1 = mouth.createTransformedShape(getRambleyHorizontalFlipTransform());
         mouth.append(mouth1, false);
         
-            // DEBUG: If we are not showing the lines that make up Rambley 
-        if (!getShowsLines()){
-            g.setStroke(getRambleyDetailStroke());
-            g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
-            g.draw(mouth);
-            g.setStroke(getRambleyNormalStroke());
-            g.setColor(RAMBLEY_NOSE_COLOR);
-            g.fill(nose);
-        } else {
-                // DEBUG: If we are not showing the lines that make up Rambley 
+            // DEBUG: If we are showing the lines that make up Rambley 
+        if (getShowsLines()){
             g.setColor(Color.RED);
             g.draw(nose1);
             g.setColor(Color.CYAN);
@@ -2269,18 +2208,61 @@ public class RambleyPainter implements Painter<Component>{
         
             // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
-            g.setColor(RAMBLEY_OUTLINE_COLOR);
-            g.setStroke(getRambleyOutlineStroke());
-            g.draw(headShape);
+                // Fill the shape of Rambley's head
+            g.setColor(RAMBLEY_MAIN_BODY_COLOR);
+            g.fill(headShape);
+                // Fill the shape of Rambley's mask-like facial markings
+            g.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
+            g.fill(faceMarkings);
+                // Fill in Rambley's eyebrows
+            g.setColor(RAMBLEY_EYEBROW_COLOR);
+            g.fill(eyeBrowR);
+            g.fill(eyeBrowL);
+                // Set the color to use to Rambley's secondary body color
+            g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
+                // Fill in Rambley's snout area
+            g.fill(snoutArea);
+                // Fill in the area arround Rambley's eyes
+            g.fill(eyeSurroundR);
+            g.fill(eyeSurroundL);
+                // Fill in the inner portion of Rambley's ears
+            g.fill(earInR);
+            g.fill(earInL);
+                // Calculate the x-coordinate for Rambley's right iris and pupil
+            double pupilX = headBounds.getCenterX()-25;
+                // Calculate the y-coordinate for Rambley's right iris and pupil
+            double pupilY = eyeWhiteR.getBounds2D().getCenterY();
+                // Draw Rambley's right eye
+            paintRambleyEye(g,eyeWhiteR,pupilX,pupilY,iris,pupil);
+                // Draw Rambley's left eye
+            paintRambleyEye(g,eyeWhiteL,pupilX+50,pupilY,iris,pupil);
+                // Set the stroke to Rambley's detail stroke
             g.setStroke(getRambleyDetailStroke());
-            g.setColor(RAMBLEY_NOSE_OUTLINE_COLOR);
-            g.draw(nose);
-            g.draw(earInR);
-            g.draw(earInL);
-            
+                // Draw Rambley's mouth
+            g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
+            g.draw(mouth);
+                // Set the stroke to Rambley's normal stroke
             g.setStroke(getRambleyNormalStroke());
+                // Draw Rambley's nose
+            g.setColor(RAMBLEY_NOSE_COLOR);
+            g.fill(nose);
+                // Set the color to Rambley's main outline color
+            g.setColor(RAMBLEY_OUTLINE_COLOR);
+                // Set the stroke to Rambley's outline stroke
+            g.setStroke(getRambleyOutlineStroke());
+                // Draw the outline for Rambley's head
+            g.draw(headShape);
+                // Set the stroke to Rambley's detail stroke
+            g.setStroke(getRambleyDetailStroke());
+                // Draw the outline for Rambley's inner right ear
+            g.draw(earInR);
+                // Draw the outline for Rambley's inner left ear
+            g.draw(earInL);
+                // Set the color to the outline color for Rambley's nose
+            g.setColor(RAMBLEY_NOSE_OUTLINE_COLOR);
+                // Draw the outline for Rambley's nose
+            g.draw(nose);
         }
-        
         
         g.dispose();
     }
