@@ -27,3 +27,5 @@ replay_pid*
 
 # The open files and bookmarks config file for the project
 /nbproject/private/private.xml
+/src/raccoon/RambleyTestViewer.java
+/src/raccoon/RambleyTestViewer.form
