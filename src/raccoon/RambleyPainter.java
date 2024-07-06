@@ -996,6 +996,20 @@ public class RambleyPainter implements Painter<Component>{
         return outlineStroke;
     }
     /**
+     * This returns an AffineTransform that flips shapes horizontally and 
+     * translates it by {@code dx}.
+     * @param dx The dx value by which to translate stuff, relative to the 
+     * original coordinate space.
+     * @return An AffineTransform used to flip things horizontally.
+     */
+    protected AffineTransform getHorizontalFlipTransform(double dx){
+            // Get a transform that will flip things horizontally
+        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+            // Translate everything by dx
+        tx.translate(-dx, 0);
+        return tx;
+    }
+    /**
      * This returns an AffineTransform to use to flip shapes horizontally when 
      * painting Rambley.
      * @return The AffineTransform used to flip things horizontally.
@@ -1004,10 +1018,7 @@ public class RambleyPainter implements Painter<Component>{
             // If the horizontal flip transform has not been initialized yet
         if (horizFlip == null){
                 // Get a transform that will flip things horizontally
-            horizFlip = AffineTransform.getScaleInstance(-1, 1);
-                // Translate the horizontal flip transform to put it back on the 
-                // image
-            horizFlip.translate(-INTERNAL_RENDER_HEIGHT, 0);
+            horizFlip = getHorizontalFlipTransform(INTERNAL_RENDER_HEIGHT);
         }
         return horizFlip;
     }
@@ -1020,6 +1031,22 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected Area createHorizontallyFlippedArea(Area area){
         return area.createTransformedArea(getRambleyHorizontalFlipTransform());
+    }
+    /**
+     * This flips the given path horizontally over the vertical line at the 
+     * given x-coordinate and adds the flipped path back to the given path.
+     * @param path The Path2D object to flip horizontally and add to.
+     * @param x The x-coordinate of the vertical line to flip the path over.
+     * @return The given Path2D object, now with the horizontally flipped 
+     * version of it added to it.
+     */
+    protected Path2D mirrorPathHorizontally(Path2D path, double x){
+            // Flip the path horizontally and translate it by twice the given 
+            // x-coordinate in order to put where it where it should be when 
+            // mirrored.
+        path.append(path.createTransformedShape(getHorizontalFlipTransform(x*2)), 
+                false);
+        return path;
     }
     
     
@@ -1616,7 +1643,6 @@ public class RambleyPainter implements Painter<Component>{
         point4 = addQuadBezierCurve(point2,point3,point1,point4,path);
             // Close the path to complete the ear
         path.closePath();
-        
         return new Area(path);
     }
     /**
@@ -1944,7 +1970,7 @@ public class RambleyPainter implements Painter<Component>{
             path = new Path2D.Double();
         else    // Reset the given Path2D object
             path.reset();
-           // If the given rectangular shae object is null
+           // If the given RectangularShape object is null
         if (rect == null)
             rect = new Rectangle2D.Double();
             // If the given Ellipse2D object is null
@@ -2213,19 +2239,10 @@ public class RambleyPainter implements Painter<Component>{
             // Draw a line that is 4.5 pixels to the left and 4.5 pixels up
         path.lineTo(point2.getX()-2.5, point2.getY()+2.5);
         
-            // Flip the right side of the mouth to create the left side of the 
-            // mouth
-        
-            // The transform to flip the right side to the left. Start by 
-            // creating a transform to flip stuff horizontally
-        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
-            // Translate it by twice the starting point's x-coordinate, once to 
-            // put it where the original is and again to get it to the other 
-            // side of Rambley's face
-        tx.translate(-x*2, 0);
-            // Flip the path to form the left side of the mouth and then add the 
-            // left side of the mouth to the path
-        path.append(path.createTransformedShape(tx), false);
+            // Flip the path (which holds the right side of the mouth) 
+            // horizontally to form the left side of the mouth and then add the 
+            // left side of the mouth to the path.
+        path = mirrorPathHorizontally(path,x);
         return path;
     }
     /**
@@ -2437,48 +2454,35 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(eyeWhiteL);
         }
         
+        
+        path.reset();
         rect.setFrameFromCenter(headBounds.getCenterX(), snoutEllipse.getMinY()+13, 
                 headBounds.getCenterX()-9, snoutEllipse.getMinY()+6);
-        Ellipse2D nose1 = new Ellipse2D.Double();
-        nose1.setFrameFromCenter(rect.getCenterX(), snoutEllipse.getMinY()+8.5, 
-                rect.getMinX()+2, rect.getMaxY());
-        Ellipse2D nose2 = new Ellipse2D.Double();
-        nose2.setFrameFromCenter(rect.getCenterX(), (nose1.getCenterY()+2), 
+        ellipse.setFrameFromCenter(rect.getCenterX(), rect.getMinY()+4.5, 
                 rect.getMinX(), rect.getMinY());
-        Path2D nose5 = new Path2D.Double();
-        nose5.moveTo(nose2.getMinX(), nose2.getCenterY());
-        nose5.curveTo(rect.getMinX(),rect.getCenterY(),
+        path.moveTo(ellipse.getMinX(), ellipse.getCenterY());
+        path.curveTo(rect.getMinX(),rect.getCenterY(),
                 (rect.getMinX()+rect.getCenterX())/2-1, rect.getMaxY(), 
-                nose1.getCenterX(), nose1.getMaxY());
-        nose5.lineTo(rect.getCenterX(), nose2.getCenterY());
-        nose5.closePath();
-        Area nose = new Area(nose1);
-        rect.setFrameFromDiagonal(rect.getMinX(), nose1.getMinX(), 
-                rect.getMaxX(), nose2.getCenterY());
-        nose.subtract(new Area(rect));
-        nose.add(new Area(nose2));
-        Area temp = new Area(nose5);
-        nose.add(temp);
-        nose.add(createHorizontallyFlippedArea(temp));
+                rect.getCenterX(), rect.getMaxY());
+        path.lineTo(rect.getCenterX(), ellipse.getCenterY());
+        path.closePath();
+        path = mirrorPathHorizontally(path,rect.getCenterX());
+        Area nose = new Area(ellipse);
+        nose.add(new Area(path));
         
-            // Get the bounds for the nose
-        Rectangle2D noseBounds = nose.getBounds2D();
             // Get the curve for Rambley's mouth, using the bottom center of the 
             // nose to position the mouth.
-        Path2D mouthCurve = createRambleyMouthCurve(snoutEllipse,noseBounds.getCenterX(),
-                noseBounds.getMaxY(),point1,point2,point3,point4,null);
+        Path2D mouthCurve = createRambleyMouthCurve(snoutEllipse,rect.getCenterX(),
+                rect.getMaxY(),point1,point2,point3,point4,null);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
             g.setColor(Color.RED);
-            g.draw(noseBounds);
-            g.setColor(Color.CYAN);
-            g.draw(nose5);
-            g.setColor(Color.PINK);
-            g.draw(nose1);
-            g.draw(nose2);
-            g.setColor(Color.DARK_GRAY);
             g.draw(rect);
+            g.setColor(Color.CYAN);
+            g.draw(path);
+            g.setColor(Color.PINK);
+            g.draw(ellipse);
             g.setColor(Color.MAGENTA);
             g.draw(nose);
             g.setColor(Color.BLUE);
