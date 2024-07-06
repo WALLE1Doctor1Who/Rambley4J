@@ -1660,7 +1660,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of the mask-like 
      * markings on Rambley's face.
-     * @param headBounds The bounds of Rambley's head without his ears.
+     * @param headBounds The bounds of Rambley's head.
      * @param ellipse1 An Ellipse2D object to use to store the general area for 
      * Rambley's facial markings, or null.
      * @param ellipse2 An Ellipse2D object to use to store the ellipse used to 
@@ -1688,13 +1688,13 @@ public class RambleyPainter implements Painter<Component>{
         if (ellipse3 == null)
             ellipse3 = new Ellipse2D.Double();
             // Set the frame of the first ellipse from the center. This ellipse 
-            // will be horizontally centered, located 58 pixels down from the 
-            // top of the head, and will be around 130 x 62. This will make up 
-            // the markings, and the remaining code will mask it into the right 
+            // will be horizontally centered, located 14 pixels above the bottom 
+            // of the head, and will be around 130 x 62. This will make up the 
+            // markings, and the remaining code will mask it into the right 
             // shape.
         ellipse1.setFrameFromCenter(
-                headBounds.getCenterX(), headBounds.getMinY()+89, 
-                headBounds.getMinX()+34, headBounds.getMinY()+58);
+                headBounds.getCenterX(), headBounds.getMaxY()-45, 
+                headBounds.getMinX()+34, headBounds.getMaxY()-14);
             // Set the frame of the second ellipse to be all the way to the left 
             // of the first ellipse, 17 pixels down from the top of the first 
             // ellipse, and to be 56 x 32. This forms the left (Rambley's right) 
@@ -1748,7 +1748,8 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of Rambley's snout 
      * area. That is to say, the area around Rambley's nose and mouth.
-     * @param headBounds The bounds of Rambley's head without his ears.
+     * @param headBounds The bounds of Rambley's head, or null if {@code head} 
+     * is not null.
      * @param head The Area for the shape of Rambley's head to use to ensure the 
      * snout area lies within the head shape, or null.
      * @param ellipse An Ellipse2D object to use to calculate the snout area, 
@@ -1760,6 +1761,12 @@ public class RambleyPainter implements Painter<Component>{
             // If the ellipse is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
+            // If the bounds for the head are null but the area for the head is 
+        if (headBounds == null && head != null)     // not
+                // Get the bounds for the head
+            headBounds = head.getBounds2D();
+            // Make sure the head bounds are not null
+        Objects.requireNonNull(headBounds);
             // Set the ellipse's frame from the center so that it is 
             // horizontally centered in the head, is at the bottom of the head, 
             // and is around 72 x 56. This forms the snout area.
@@ -2948,9 +2955,11 @@ public class RambleyPainter implements Painter<Component>{
                 if (r0 == r1)
                     return new double[]{r0};
                     // If the second root is greater than the first
-                else if (r1 > r0)
-                        // Sort the roots
-                    Arrays.sort(roots);
+                else if (r1 > r0){
+                        // Swap the two roots in the array
+                    roots[0] = r1;
+                    roots[1] = r0;
+                }
                 return roots;
                 // If only the first root is between 0 and 1, inclusive
             } else if (r0 >= 0 && r0 <= 1){
