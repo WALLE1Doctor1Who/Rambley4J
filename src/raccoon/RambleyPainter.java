@@ -2304,13 +2304,11 @@ public class RambleyPainter implements Painter<Component>{
         if (pupil == null)
             pupil = new Ellipse2D.Double();
         
-            // A rectangle to use to calculate the shape of Rambley's head
-        Rectangle2D head1 = new Rectangle2D.Double();
             // An ellipse to use to calculate the upper part of Rambley's head
             // (Might also be usable for the location of his scarf)
-        Ellipse2D head2 = new Ellipse2D.Double();
+        Ellipse2D head1 = new Ellipse2D.Double();
             // Create the shape for Rambley's head (without his ears for now)
-        Area headShape = createRambleyHeadArea(head1,path,head2,ellipse);
+        Area headShape = createRambleyHeadArea(rect,path,head1,ellipse);
             // Get the bounds for the head, so that we can base the facial 
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
@@ -2323,7 +2321,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(Color.BLACK);
             g.draw(path);
             g.setColor(Color.DARK_GRAY);
-            g.draw(head2);
+            g.draw(head1);
             g.setColor(Color.GRAY);
             g.draw(ellipse);
         }
@@ -2360,28 +2358,28 @@ public class RambleyPainter implements Painter<Component>{
         
             // An ellipse to use to calculate the face markings areound 
             // Rambley's eyes.
-        Ellipse2D head3 = new Ellipse2D.Double();
+        Ellipse2D head2 = new Ellipse2D.Double();
             // A second ellipse to use to calculate the face markings areound 
             // Rambley's eyes.
-        Ellipse2D head4 = new Ellipse2D.Double();
+        Ellipse2D head3 = new Ellipse2D.Double();
             // Create the shape for the face markings around his eyes
         Area faceMarkings = createRambleyMaskFaceMarkings(headBounds,ellipse,
-                head3,head4,rect);
+                head2,head3,rect);
             // An Ellipse2D to use to form the area around Rambley's snout.
-        Ellipse2D head5 = new Ellipse2D.Double();
+        Ellipse2D snoutEllipse = new Ellipse2D.Double();
             // Create the area around Rambley's nose and mouth
-        Area snoutArea = createRambleySnoutArea(headBounds,headShape,head5);
+        Area snoutArea = createRambleySnoutArea(headBounds,headShape,snoutEllipse);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
             g.setColor(Color.WHITE);
             g.draw(ellipse);
             g.setColor(Color.YELLOW);
-            g.draw(head3);
+            g.draw(head2);
             g.setColor(Color.BLUE);
             g.draw(rect);
             g.setColor(Color.GREEN);
-            g.draw(head4);
+            g.draw(head3);
             g.setColor(Color.MAGENTA);
             g.draw(faceMarkings);
         }
@@ -2397,8 +2395,8 @@ public class RambleyPainter implements Painter<Component>{
             // An Ellipse to use to form Rambley's right eye
         Ellipse2D eye2 = new Ellipse2D.Double();
             // Create the area around Rambley's right eye
-        Area eyeSurroundR = createRambleyEyeMarkings(eye1,head5,eye2,path,
-                point1,point2,point3);
+        Area eyeSurroundR = createRambleyEyeMarkings(eye1,snoutEllipse,eye2,
+                path,point1,point2,point3);
             // Flip to form the area around Rambley's left eye
         Area eyeSurroundL = createHorizontallyFlippedArea(eyeSurroundR);
         
@@ -2439,45 +2437,48 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(eyeWhiteL);
         }
         
-        Rectangle2D nose1 = new Rectangle2D.Double();
-        nose1.setFrameFromCenter(headBounds.getCenterX(), head1.getMinY()+7, 
-                headBounds.getCenterX()-9, head1.getMinY());
-        Ellipse2D nose3 = new Ellipse2D.Double();
-        nose3.setFrameFromCenter(nose1.getCenterX(), head5.getMinY()+8.5, 
-                nose1.getMinX()+2, nose1.getMaxY());
-        Ellipse2D nose4 = new Ellipse2D.Double();
-        nose4.setFrameFromCenter(nose1.getCenterX(), (nose3.getCenterY()+2), 
-                nose1.getMinX(), nose1.getMinY());
+        rect.setFrameFromCenter(headBounds.getCenterX(), snoutEllipse.getMinY()+13, 
+                headBounds.getCenterX()-9, snoutEllipse.getMinY()+6);
+        Ellipse2D nose1 = new Ellipse2D.Double();
+        nose1.setFrameFromCenter(rect.getCenterX(), snoutEllipse.getMinY()+8.5, 
+                rect.getMinX()+2, rect.getMaxY());
+        Ellipse2D nose2 = new Ellipse2D.Double();
+        nose2.setFrameFromCenter(rect.getCenterX(), (nose1.getCenterY()+2), 
+                rect.getMinX(), rect.getMinY());
         Path2D nose5 = new Path2D.Double();
-        nose5.moveTo(nose4.getMinX(), nose4.getCenterY());
-        nose5.curveTo(nose1.getMinX(),nose1.getCenterY(),
-                (nose1.getMinX()+nose1.getCenterX())/2-1, nose1.getMaxY(), 
-                nose3.getCenterX(), nose3.getMaxY());
-        nose5.lineTo(nose1.getCenterX(), nose4.getCenterY());
+        nose5.moveTo(nose2.getMinX(), nose2.getCenterY());
+        nose5.curveTo(rect.getMinX(),rect.getCenterY(),
+                (rect.getMinX()+rect.getCenterX())/2-1, rect.getMaxY(), 
+                nose1.getCenterX(), nose1.getMaxY());
+        nose5.lineTo(rect.getCenterX(), nose2.getCenterY());
         nose5.closePath();
-        Area nose = new Area(nose3);
-        rect.setFrameFromDiagonal(nose1.getMinX(), nose3.getMinX(), 
-                nose1.getMaxX(), nose4.getCenterY());
+        Area nose = new Area(nose1);
+        rect.setFrameFromDiagonal(rect.getMinX(), nose1.getMinX(), 
+                rect.getMaxX(), nose2.getCenterY());
         nose.subtract(new Area(rect));
-        nose.add(new Area(nose4));
+        nose.add(new Area(nose2));
         Area temp = new Area(nose5);
         nose.add(temp);
         nose.add(createHorizontallyFlippedArea(temp));
         
+            // Get the bounds for the nose
+        Rectangle2D noseBounds = nose.getBounds2D();
             // Get the curve for Rambley's mouth, using the bottom center of the 
             // nose to position the mouth.
-        Path2D mouthCurve = createRambleyMouthCurve(head5,nose1.getCenterX(),
-                nose1.getMaxY(),point1,point2,point3,point4,null);
+        Path2D mouthCurve = createRambleyMouthCurve(snoutEllipse,noseBounds.getCenterX(),
+                noseBounds.getMaxY(),point1,point2,point3,point4,null);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
             g.setColor(Color.RED);
-            g.draw(nose1);
+            g.draw(noseBounds);
             g.setColor(Color.CYAN);
             g.draw(nose5);
             g.setColor(Color.PINK);
-            g.draw(nose3);
-            g.draw(nose4);
+            g.draw(nose1);
+            g.draw(nose2);
+            g.setColor(Color.DARK_GRAY);
+            g.draw(rect);
             g.setColor(Color.MAGENTA);
             g.draw(nose);
             g.setColor(Color.BLUE);
