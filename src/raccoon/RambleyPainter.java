@@ -225,11 +225,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected static final double DEFAULT_BACKGROUND_DOT_SPACING = 12.0;
     /**
-     * This is the spacing between the lines in the pixel grid. For the vertical 
-     * lines, this is the horizontal spacing. For the horizontal lines, this is 
-     * the vertical spacing.
+     * This is the default spacing between the lines in the pixel grid. For the 
+     * vertical lines, this is the horizontal spacing. For the horizontal lines, 
+     * this is the vertical spacing.
      */
-    protected static final double PIXEL_GRID_SPACING = 5;
+    protected static final double DEFAULT_PIXEL_GRID_LINE_SPACING = 5;
     /**
      * The offset for the x-coordinate of the top-left corner of Rambley.
      */
@@ -468,6 +468,12 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final String BACKGROUND_DOT_SPACING_PROPERTY_CHANGED = 
             "BackgroundDotSpacingPropertyChanged"; 
+    /**
+     * This identifies that a change has been made to the spacing of the lines 
+     * in the pixel grid.
+     */
+    public static final String PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED = 
+            "PixelGridSpacingPropertyChanged"; 
     
     // Settings and listeners
     
@@ -495,6 +501,12 @@ public class RambleyPainter implements Painter<Component>{
      * center of another background polka dot.
      */
     private double dotSpacing;
+    /**
+     * This is the spacing between the lines in the pixel grid. For the vertical 
+     * lines, this is the horizontal spacing. For the horizontal lines, this is 
+     * the vertical spacing.
+     */
+    private double lineSpacing;
     /**
      * The x component for the location of the center of Rambley's right iris and 
      * pupil. 0.5 is center, 0.0 is the left-most bounds for Rambley's right eye 
@@ -667,6 +679,7 @@ public class RambleyPainter implements Painter<Component>{
         flags = DEFAULT_FLAG_SETTINGS;
         dotSize = DEFAULT_BACKGROUND_DOT_SIZE;
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
+        lineSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.5;
         changeSupport = new PropertyChangeSupport(this);
     }
@@ -1009,6 +1022,7 @@ public class RambleyPainter implements Painter<Component>{
      * background polka dot.
      * 
      * @todo Rework the documentation for this method.
+     * 
      * @return The diagonal spacing between the background polka dots.
      */
     public double getBackgroundDotSpacing(){
@@ -1033,6 +1047,32 @@ public class RambleyPainter implements Painter<Component>{
             double old = dotSpacing;
             dotSpacing = spacing;
             firePropertyChange(BACKGROUND_DOT_SPACING_PROPERTY_CHANGED,old,spacing);
+        }
+        return this;
+    }
+    /**
+     * This returns the spacing between the lines in the pixel grid. For the 
+     * vertical lines, this is the horizontal spacing. For the horizontal lines, 
+     * this is the vertical spacing.
+     * @return The spacing between the lines in the pixel grid.
+     */
+    public double getPixelGridLineSpacing(){
+        return lineSpacing;
+    }
+    /**
+     * This sets the spacing between the lines in the pixel grid. For the 
+     * vertical lines, this is the horizontal spacing. For the horizontal lines, 
+     * this is the vertical spacing.
+     * @param spacing The spacing between the lines in the pixel grid.
+     * @return This {@code RambleyPainter}.
+     */
+    public RambleyPainter setPixelGridLineSpacing(double spacing){
+            // If the new spacing is different from the old spacing
+        if (spacing != lineSpacing){
+                // Get the old line spacing
+            double old = lineSpacing;
+            lineSpacing = spacing;
+            firePropertyChange(PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED,old,spacing);
         }
         return this;
     }
@@ -1128,7 +1168,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     
     protected double getPixelGridOffset(double size){
-        return ((size-1)%PIXEL_GRID_SPACING)/2.0;
+        return ((size-1)%getPixelGridLineSpacing())/2.0;
     }
     /**
      * 
@@ -1155,14 +1195,14 @@ public class RambleyPainter implements Painter<Component>{
             // Go through and generate the vertical lines, starting at the 
             // offset for the y-coordinate of the pixel grid and spacing them 
             // out by the pixel grid spacing
-        for (double y1 = getPixelGridOffset(h); y1 <= h; y1+=PIXEL_GRID_SPACING){
+        for (double y1 = getPixelGridOffset(h); y1 <= h; y1+=getPixelGridLineSpacing()){
             path.moveTo(x, y1+y);
             path.lineTo(x2, y1+y);
         }
             // Go through and generate the horizontal lines, starting at the 
             // offset for the x-coordinate of the pixel grid and spacing them 
             // out by the pixel grid spacing
-        for (double x1 = getPixelGridOffset(w); x1 <= w; x1+=PIXEL_GRID_SPACING){
+        for (double x1 = getPixelGridOffset(w); x1 <= w; x1+=getPixelGridLineSpacing()){
             path.moveTo(x1+x, y);
             path.lineTo(x1+x, y2);
         }
@@ -2828,7 +2868,8 @@ public class RambleyPainter implements Painter<Component>{
     protected String paramString(){
         return "flags="+getFlags()+
                 ",dotSize="+getBackgroundDotSize()+
-                ",dotSpacing="+getBackgroundDotSpacing();
+                ",dotSpacing="+getBackgroundDotSpacing()+
+                ",lineSpacing="+getPixelGridLineSpacing();
     }
     @Override
     public String toString(){
