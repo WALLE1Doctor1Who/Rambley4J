@@ -1841,8 +1841,8 @@ public class RambleyPainter implements Painter<Component>{
      * the form of the shape.
      * @param eyeBrow An Ellipse2D object with the ellipse used to form 
      * Rambley's right eyebrow (cannot be null).
-     * @param snout  An Ellipse2D object with the ellipse used to form 
-     * Rambley's snout (cannot be null).
+     * @param snout  An Ellipse2D object with the ellipse used to form Rambley's 
+     * snout (cannot be null).
      * @param ellipse An Ellipse2D object to use to calculate the top-right 
      * portion of the markings, or null.
      * @param path A Path2D object to use to form the portion of the markings 
@@ -2157,14 +2157,75 @@ public class RambleyPainter implements Painter<Component>{
             // Paint Rambley's eye
         paintRambleyEye(g,eyeWhite,iris,pupil);
     }
-    
+    /**
+     * This creates and returns an Area that forms the shape of Rambley's nose. 
+     * This uses the ellipse given to the {@link #createRambleySnoutArea 
+     * createRambleySnoutArea} method ({@code snout}) to position and control 
+     * the form of the shape.
+     * @param snout An Ellipse2D object with the ellipse used to form Rambley's 
+     * snout (cannot be null).
+     * @param rect A Rectangle2D object to store the bounds of the nose, or 
+     * null.
+     * @param ellipse An Ellipse2D object to store the ellipse that forms the 
+     * top of the nose, or null.
+     * @param path A Path2D object to store the bottom of the nose, or null.
+     * @return The area that forms Rambley's nose.
+     */
+    private Area createRambleyNoseShape(Ellipse2D snout, Rectangle2D rect, 
+            Ellipse2D ellipse, Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+           // If the given Rectangle2D object is null
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+            // If the given Ellipse2D object is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+            // Set the frame of the rectangle from its center that is 
+            // horizontally centered on the snout, 6 pixels below the top of the 
+            // snout, and is around 18 x 14. This will form the bounds of the 
+            // nose
+        rect.setFrameFromCenter(snout.getCenterX(), snout.getMinY()+13, 
+                snout.getCenterX()-9, snout.getMinY()+6);
+            // Set the frame of the ellipse from its center with it's top-left 
+            // corner at the top-left corner of the bounds, and that is 18 x 9. 
+            // This will form the top of the nose
+        ellipse.setFrameFromCenter(rect.getCenterX(), rect.getMinY()+4.5, 
+                rect.getMinX(), rect.getMinY());
+            // Start the path at the left center of the ellipse
+        path.moveTo(ellipse.getMinX(), ellipse.getCenterY());
+            // Add a cubic bezier curve to the center bottom of the bounds of 
+            // the nose. The first control point is at the left center of the 
+            // bounds. The second control point is halfway between the left and 
+            // center of the bounds of the nose, and over to the left by one 
+            // pixel, and is at the bottom of the bounds of the nose.
+        path.curveTo(rect.getMinX(),rect.getCenterY(),
+                (rect.getMinX()+rect.getCenterX())/2-1, rect.getMaxY(), 
+                rect.getCenterX(), rect.getMaxY());
+            // Add a line to the center of the ellipse (this is a vertical line 
+            // to the top of the path.
+        path.lineTo(rect.getCenterX(), ellipse.getCenterY());
+            // Close the path
+        path.closePath();
+            // Flip the path horizontally to form the other half of the nose 
+            // and then add it to the path to complete the bottom part of the 
+        path = mirrorPathHorizontally(path,rect.getCenterX());  // nose
+            // Create the area for the nose, starting with the top of the nose
+        Area nose = new Area(ellipse);
+            // Add the path representing the bottom of the nose
+        nose.add(new Area(path));
+        return nose;
+    }
     /**
      * This creates the path to use for the curve of the mouth. This uses the 
      * ellipse given to the {@link #createRambleySnoutArea 
      * createRambleySnoutArea} method ({@code snout}) to position the outer 
      * edges of the mouth.
-     * @param snout An Ellipse2D object with the ellipse used to form 
-     * Rambley's snout (cannot be null).
+     * @param snout An Ellipse2D object with the ellipse used to form Rambley's 
+     * snout (cannot be null).
      * @param x The x-coordinate for the center of the mouth.
      * @param y The y-coordinate for the top of the center spike of the mouth. 
      * This should be y-coordinate for the bottom of the nose.
@@ -2454,22 +2515,8 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(eyeWhiteL);
         }
         
-        
-        path.reset();
-        rect.setFrameFromCenter(headBounds.getCenterX(), snoutEllipse.getMinY()+13, 
-                headBounds.getCenterX()-9, snoutEllipse.getMinY()+6);
-        ellipse.setFrameFromCenter(rect.getCenterX(), rect.getMinY()+4.5, 
-                rect.getMinX(), rect.getMinY());
-        path.moveTo(ellipse.getMinX(), ellipse.getCenterY());
-        path.curveTo(rect.getMinX(),rect.getCenterY(),
-                (rect.getMinX()+rect.getCenterX())/2-1, rect.getMaxY(), 
-                rect.getCenterX(), rect.getMaxY());
-        path.lineTo(rect.getCenterX(), ellipse.getCenterY());
-        path.closePath();
-        path = mirrorPathHorizontally(path,rect.getCenterX());
-        Area nose = new Area(ellipse);
-        nose.add(new Area(path));
-        
+            // Create the shape of Rambley's nose
+        Area nose = createRambleyNoseShape(snoutEllipse,rect,ellipse,path);
             // Get the curve for Rambley's mouth, using the bottom center of the 
             // nose to position the mouth.
         Path2D mouthCurve = createRambleyMouthCurve(snoutEllipse,rect.getCenterX(),
