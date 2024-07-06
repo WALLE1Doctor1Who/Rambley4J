@@ -2924,7 +2924,8 @@ public class RambleyPainter implements Painter<Component>{
      * @param p1 The control point for the curve
      * @param p2 The end point of the curve
      * @param p The point to get the value of t for
-     * @return 
+     * @return The t value(s) for the point on the curve (if there are 2, then 
+     * they will be sorted from smallest to largest
      */
     protected static double[] getQuadBezierT(double p0, double p1, double p2, double p){
             // Get the a coefficient for the quadratic equation
@@ -2946,6 +2947,10 @@ public class RambleyPainter implements Painter<Component>{
                     // If both roots are the same
                 if (r0 == r1)
                     return new double[]{r0};
+                    // If the second root is greater than the first
+                else if (r1 > r0)
+                        // Sort the roots
+                    Arrays.sort(roots);
                 return roots;
                 // If only the first root is between 0 and 1, inclusive
             } else if (r0 >= 0 && r0 <= 1){
