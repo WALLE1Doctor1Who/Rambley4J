@@ -1978,10 +1978,7 @@ public class RambleyPainter implements Painter<Component>{
         
             // DEBUG: If we are showing the lines that make up Rambley
         if (getShowsLines()){
-            System.out.println("Head: " + headBounds);
-            System.out.println("Head Minimum: (" + headBounds.getMinX() + ", " + headBounds.getMinY()+")");
-            System.out.println("Head Center: (" + headBounds.getCenterX() + ", " + headBounds.getCenterY()+")");
-            System.out.println("Head Maximum: (" + headBounds.getMaxX() + ", " + headBounds.getMaxY()+")");
+            printShape("headBounds",headBounds);
 //            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 //                    RenderingHints.VALUE_ANTIALIAS_OFF);
             g.setColor(Color.BLACK);
@@ -2007,6 +2004,7 @@ public class RambleyPainter implements Painter<Component>{
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
+            printShape("headShape",headShape);
             g.setColor(Color.MAGENTA);
             g.draw(path);
             g.setColor(Color.GRAY);
@@ -3186,5 +3184,12 @@ public class RambleyPainter implements Painter<Component>{
     
     static void printPathIterator(Shape shape){
         printPathIterator(shape.getPathIterator(null));
+    }
+    
+    static void printShape(String shapeName, Shape shape){
+        Rectangle2D bounds = shape.getBounds2D();
+        System.out.println(shapeName+": " + bounds + ", Center=(" + 
+                bounds.getCenterX() + ", " + bounds.getCenterY()+"), Max=("+
+                bounds.getMaxX() + ", " + bounds.getMaxY()+")");
     }
 }
