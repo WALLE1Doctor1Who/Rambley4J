@@ -2896,20 +2896,6 @@ public class RambleyPainter implements Painter<Component>{
             // Get the bounds for the head, so that we can base the facial 
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
-        
-            // DEBUG: If we are showing the lines that make up Rambley
-        if (getShowsLines()){
-            printShape("headBounds",headBounds);
-//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-//                    RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setColor(Color.BLACK);
-            g.draw(path);
-            g.setColor(Color.DARK_GRAY);
-            g.draw(ellipse1);
-            g.setColor(Color.GRAY);
-            g.draw(ellipse2);
-        }
-        
             // Get the area for Rambley's right ear
         Area earR = getRambleyEar(headBounds.getCenterX()-84,headBounds.getMinY()-31.5,path);
             // Flip the area for Rambley's right ear to get his left ear
@@ -2925,15 +2911,10 @@ public class RambleyPainter implements Painter<Component>{
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
+            printShape("headBounds",headBounds);
             printShape("headShape",headShape);
-            g.setColor(Color.MAGENTA);
-            g.draw(path);
-            g.setColor(Color.GRAY);
-            g.draw(earInR);
-            g.draw(earInL);
-            g.setColor(Color.WHITE);
-            g.draw(earR);
-            g.draw(earL);
+//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+//                    RenderingHints.VALUE_ANTIALIAS_OFF);
             g.setColor(Color.RED);
             g.draw(headShape);
             g.setColor(Color.ORANGE);
@@ -2945,21 +2926,6 @@ public class RambleyPainter implements Painter<Component>{
                 ellipse2,ellipse3,rect);
             // Create the area around Rambley's nose and mouth
         Area snoutArea = createRambleySnoutArea(headBounds,headShape,snout);
-        
-            // DEBUG: If we are showing the lines that make up Rambley 
-        if (getShowsLines()){
-            g.setColor(Color.WHITE);
-            g.draw(ellipse1);
-            g.setColor(Color.YELLOW);
-            g.draw(ellipse2);
-            g.setColor(Color.BLUE);
-            g.draw(rect);
-            g.setColor(Color.GREEN);
-            g.draw(ellipse3);
-            g.setColor(Color.MAGENTA);
-            g.draw(faceMarkings);
-        }
-        
             // Create Rambley's right eyebrow (this will intersect with the 
             // other eye markings)
         Area eyeBrowR = createRambleyEyebrow(headBounds,ellipse2);
@@ -2971,44 +2937,11 @@ public class RambleyPainter implements Painter<Component>{
                 path,point1,point2,point3);
             // Flip to form the area around Rambley's left eye
         Area eyeSurroundL = createHorizontallyFlippedArea(eyeSurroundR);
-        
-            // DEBUG: If we are showing the lines that make up Rambley 
-        if (getShowsLines()){
-            g.setColor(Color.YELLOW);
-            g.draw(ellipse2);
-            g.setColor(Color.PINK);
-            g.draw(eyeBrowR);
-            g.draw(eyeBrowL);
-            g.setColor(Color.GREEN);
-            g.draw(snoutArea);
-            g.setColor(Color.CYAN);
-            g.draw(ellipse3);
-            g.setColor(Color.RED);
-            g.draw(path);
-            g.setColor(Color.ORANGE);
-            g.draw(eyeSurroundR);
-            g.draw(eyeSurroundL);
-        }
-        
             // Create the shape of Rambley's right eye
         Area eyeWhiteR = createRambleyEyeShape(headBounds,ellipse2,ellipse3,
                 point1,point2,point3,ellipse1,rect,path,point4,point5,point6);
             // Flip to form the shape of Rambley's left eye
         Area eyeWhiteL = createHorizontallyFlippedArea(eyeWhiteR);
-        
-            // DEBUG: If we are showing the lines that make up Rambley 
-        if (getShowsLines()){
-            g.setColor(Color.YELLOW);
-            g.draw(ellipse1);
-            g.setColor(RAMBLEY_MAIN_BODY_COLOR);
-            g.draw(rect);
-            g.setColor(RAMBLEY_SCARF_COLOR);
-            g.draw(path);
-            g.setColor(RAMBLEY_IRIS_COLOR);
-            g.draw(eyeWhiteR);
-            g.draw(eyeWhiteL);
-        }
-        
             // Create the shape of Rambley's nose
         Area nose = createRambleyNoseShape(snout,rect,ellipse1,path);
             // Set the location of the point to the bottom center of the nose
@@ -3020,6 +2953,8 @@ public class RambleyPainter implements Painter<Component>{
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
+            g.setColor(Color.GREEN);
+            g.draw(snoutArea);
             g.setColor(Color.RED);
             g.draw(rect);
             g.setColor(Color.CYAN);
