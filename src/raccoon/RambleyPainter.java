@@ -390,10 +390,10 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int RAMBLEY_FANG_SIDE_FLAG =        0x00000040;
     /**
-     * This is the flag which controls whether Rambley is showing his teeth when 
-     * his mouth is closed.
+     * This is the flag which controls whether Rambley's jaw is closed when his 
+     * mouth is open.
      */
-    public static final int RAMBLEY_SHOWING_TEETH_FLAG =    0x00000080;
+    public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000080;
     /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
@@ -446,11 +446,11 @@ public class RambleyPainter implements Painter<Component>{
     public static final String RAMBLEY_FANG_SIDE_PROPERTY_CHANGED = 
             "RambleyFangSidePropertyChanged";
     /**
-     * This identifies that a change has been made to whether Rambley is bearing 
-     * his teeth when his mouth is open.
+     * This identifies that a change has been made to whether Rambley's jaw is 
+     * closed when his mouth is open.
      */
-    public static final String RAMBLEY_SHOWING_TEETH_PROPERTY_CHANGED = 
-            "RambleyShowingTeethPropertyChanged";
+    public static final String RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED = 
+            "RambleyJawClosedPropertyChanged";
     // Any more flag property names go here
     /**
      * This generates a map that maps flags for controlling {@code 
@@ -471,8 +471,8 @@ public class RambleyPainter implements Painter<Component>{
         nameMap.put(CIRCULAR_BACKGROUND_DOTS_FLAG, 
                 CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED);
         nameMap.put(RAMBLEY_FANG_SIDE_FLAG, RAMBLEY_FANG_SIDE_PROPERTY_CHANGED);
-        nameMap.put(RAMBLEY_SHOWING_TEETH_FLAG, 
-                RAMBLEY_SHOWING_TEETH_PROPERTY_CHANGED);
+        nameMap.put(RAMBLEY_JAW_CLOSED_FLAG, 
+                RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED);
         
             // Return an unmodifiable verion of the map
         return Collections.unmodifiableNavigableMap(nameMap);
@@ -660,10 +660,10 @@ public class RambleyPainter implements Painter<Component>{
      */
     private Ellipse2D snout = null;
     /**
-     * A Path2D object used to render the top curve of Rambley's mouth. This is 
+     * A Path2D object used to render the path of Rambley's mouth. This is 
      * initially null and is initialized the first time it is used.
      */
-    private Path2D mouthTop = null;
+    private Path2D mouthPath = null;
     
     // Generic scratch shape objects
     
@@ -1070,16 +1070,16 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @return 
      */
-    public boolean isRambleyShowingTeeth(){
-        return getFlag(RAMBLEY_SHOWING_TEETH_FLAG);
+    public boolean isRambleyJawClosed(){
+        return getFlag(RAMBLEY_JAW_CLOSED_FLAG);
     }
     /**
      * 
      * @param value
      * @return 
      */
-    public RambleyPainter setRambleyShowingTeeth(boolean value){
-        return setFlag(RAMBLEY_SHOWING_TEETH_FLAG,value);
+    public RambleyPainter setRambleyJawClosed(boolean value){
+        return setFlag(RAMBLEY_JAW_CLOSED_FLAG,value);
     }
     
     
@@ -1216,13 +1216,17 @@ public class RambleyPainter implements Painter<Component>{
         return mouthOpenX;
     }
     
-    public RambleyPainter setRambleyMouthOpenWideness(double x){
-            // If the x value would change
-        if (x != mouthOpenX){
-                // Get the old x value
+    public RambleyPainter setRambleyMouthOpenWideness(double width){
+            // If the given width is less than zero or greater than 1
+        if (width < 0.0 || width > 1.0)
+            throw new IllegalArgumentException("Mouth wideness must be between "
+                    + "0 and 1, inclusive (0.0 <= "+width+" <= 1.0)");
+            // If the width value would change
+        if (width != mouthOpenX){
+                // Get the old width value
             double old = mouthOpenX;
-            mouthOpenX = x;
-            firePropertyChange(RAMBLEY_MOUTH_OPEN_WIDENESS_PROPERTY_CHANGED,old,x);
+            mouthOpenX = width;
+            firePropertyChange(RAMBLEY_MOUTH_OPEN_WIDENESS_PROPERTY_CHANGED,old,width);
         }
         return this;
     }
@@ -1231,13 +1235,17 @@ public class RambleyPainter implements Painter<Component>{
         return mouthOpenY;
     }
     
-    public RambleyPainter setRambleyMouthOpenHeight(double y){
-            // If the y value would change
-        if (y != mouthOpenY){
-                // Get the old y value
+    public RambleyPainter setRambleyMouthOpenHeight(double height){
+            // If the given height is less than zero or greater than 1
+        if (height < 0.0 || height > 1.0)
+            throw new IllegalArgumentException("Mouth wideness must be between "
+                    + "0 and 1, inclusive (0.0 <= "+height+" <= 1.0)");
+            // If the height value would change
+        if (height != mouthOpenY){
+                // Get the old height value
             double old = mouthOpenY;
-            mouthOpenY = y;
-            firePropertyChange(RAMBLEY_MOUTH_OPEN_HEIGHT_PROPERTY_CHANGED,old,y);
+            mouthOpenY = height;
+            firePropertyChange(RAMBLEY_MOUTH_OPEN_HEIGHT_PROPERTY_CHANGED,old,height);
         }
         return this;
     }
@@ -3006,8 +3014,8 @@ public class RambleyPainter implements Painter<Component>{
         point1.setLocation(rect.getCenterX(),rect.getMaxY());
             // Get the curve for Rambley's mouth, using the bottom center of the 
             // nose to position the mouth.
-        mouthTop = createRambleyMouthCurve(snout,point1,point2,point3,point4,
-                point5,mouthTop);
+        mouthPath = createRambleyMouthCurve(snout,point1,point2,point3,point4,
+                point5,mouthPath);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
@@ -3020,7 +3028,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(Color.MAGENTA);
             g.draw(nose);
             g.setColor(Color.BLUE);
-            g.draw(mouthTop);
+            g.draw(mouthPath);
         }
         
             // DEBUG: If we are not showing the lines that make up Rambley 
@@ -3060,7 +3068,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setStroke(getRambleyDetailStroke());
                 // Draw Rambley's mouth
             g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
-            g.draw(mouthTop);
+            g.draw(mouthPath);
                 // Set the stroke to Rambley's normal stroke
             g.setStroke(getRambleyNormalStroke());
                 // Draw Rambley's nose
