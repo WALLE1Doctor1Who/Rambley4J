@@ -2812,8 +2812,8 @@ public class RambleyPainter implements Painter<Component>{
      * null).
      * @param mouthWidth A value between 0.0 and 1.0, inclusive, used to control 
      * the width of Rambley's open mouth.
-     * @param mouthHeight A value between 0.0 and 1.0, inclusive, used to control 
-     * the height of Rambley's open mouth.
+     * @param mouthHeight A value between 0.0 and 1.0, inclusive, used to 
+     * control the height of Rambley's open mouth.
      * @param snout An Ellipse2D object with the ellipse used to form Rambley's 
      * snout (cannot be null).
      * @param midPoint The Point2D object with the center point of the mouth 
@@ -2933,18 +2933,24 @@ public class RambleyPainter implements Painter<Component>{
      * @param xC The center x-coordinate for the tongue.
      * @param x The x-coordiante for the top-left corner of the tongue.
      * @param y The y-coordinate of the bottom of the mouth.
+     * @param mouthWidth A value between 0.0 and 1.0, inclusive, used to control 
+     * the width of Rambley's open mouth.
+     * @param mouthHeight A value between 0.0 and 1.0, inclusive, used to 
+     * control the height of Rambley's open mouth.
      * @param openMouth The area that forms Rambley's open mouth.
      * @param ellipse An Ellipse2D object to use to calculate the tongue, or 
      * null.
      * @return An area that forms Rambley's tongue.
      */
     private Area createRambleyTongueShape(double xC, double x, double y, 
-            Area openMouth, Ellipse2D ellipse){
+            double mouthWidth, double mouthHeight, Area openMouth, 
+            Ellipse2D ellipse){
             // If the given Ellipse2D object is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
-            // Shift the y-coordinate up by 11.75 pixels
-        y -= 11.75;
+            // Shift the y-coordinate up by up to 11.75 pixels, depending on the 
+            // open mouth's height
+        y -= 11.75 * mouthHeight;
             // Set the given ellipse from its center to a circle that is at the 
             // given x-coordinate and shifted y-coordinate, and that has the 
             // given center x-coordinate
@@ -2957,9 +2963,15 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns the Area that forms Rambley's right fang.
-     * @param pointM1 The Point2D object with the lowest point on the right side 
+     * @param mouthWidth A value between 0.0 and 1.0, inclusive, used to control 
+     * the width of Rambley's open mouth.
+     * @param mouthHeight A value between 0.0 and 1.0, inclusive, used to 
+     * control the height of Rambley's open mouth.
+     * @param pointM1 The Point2D object with the center point of the mouth 
+     * curve (cannot be null).
+     * @param pointM2 The Point2D object with the lowest point on the right side 
      * of the mouth curve (cannot be null).
-     * @param pointM2 The Point2D object with the end point for the the right 
+     * @param pointM3 The Point2D object with the end point for the the right 
      * side of the mouth curve (cannot be null).
      * @param point1 A Point2D object to use to calculate the starting point for 
      * the curve that forms the fang, or null.
@@ -2969,8 +2981,9 @@ public class RambleyPainter implements Painter<Component>{
      * null.
      * @return The area that forms Rambley's right fang.
      */
-    private Area createRambleyFangShape(Point2D pointM1, Point2D pointM2, 
-           Point2D point1, Point2D point2, Path2D path){
+    private Area createRambleyFangShape(double mouthWidth, double mouthHeight, 
+            Point2D pointM1, Point2D pointM2, Point2D pointM3, Point2D point1, 
+            Point2D point2, Path2D path){
             // If the first of the two given scratch Point2D objects is null
         if (point1 == null)
             point1 = new Point2D.Double();
@@ -2985,11 +2998,11 @@ public class RambleyPainter implements Painter<Component>{
             // Set the location of the starting point of the curve to be 8.5 
             // pixels to the right of the left-most point on the mouth curve, 
             // and to have the left-most point's y-coordinate
-        point1.setLocation(pointM2.getX()+8.5, pointM2.getY());
+        point1.setLocation(pointM3.getX()+8.5, pointM3.getY());
             // Set the location of the ending point to be 4 pixels to the right 
             // of the starting curve (the fang will be 8 pixels wide at its 
             // widest point), and 8.75 pixels below the starting point
-        point2.setLocation(point1.getX()+4, pointM1.getY()+8.75);
+        point2.setLocation(point1.getX()+4, pointM2.getY()+8.75);
             // Move the path to the starting point
         path.moveTo(point1.getX(), point1.getY());
             // Add a quadratic bezier curve between the starting point and the 
@@ -3157,12 +3170,6 @@ public class RambleyPainter implements Painter<Component>{
         if (getShowsLines()){
             g.setColor(Color.GREEN);
             g.draw(snoutArea);
-            g.setColor(Color.RED);
-            g.draw(rect);
-            g.setColor(Color.CYAN);
-            g.draw(path);
-            g.setColor(Color.PINK);
-            g.draw(ellipse1);
             g.setColor(Color.MAGENTA);
             g.draw(nose);
             g.setColor(Color.BLUE);
@@ -3212,24 +3219,23 @@ public class RambleyPainter implements Painter<Component>{
                     snout,point1,point2,point3,point4,point5,point6,rect,path);
                 // Create the shape of Rambley's tongue
             Area tongue = createRambleyTongueShape(rect.getCenterX(),point4.getX(),
-                    rect.getMaxY(),openMouth,ellipse1);
+                    rect.getMaxY(),getRambleyOpenMouthWidth(), 
+                    getRambleyOpenMouthHeight(),openMouth,ellipse1);
             
                 // DEBUG: If we are showing the lines that make up Rambley 
             if (getShowsLines()){
-                g.setColor(Color.ORANGE);
-                g.draw(rect);
                 g.setColor(Color.LIGHT_GRAY);
                 g.draw(path);
                 g.setColor(RAMBLEY_MAIN_BODY_COLOR);
                 g.draw(openMouth);
-                g.setColor(Color.CYAN);
-                g.draw(ellipse1);
                 g.setColor(Color.GREEN);
                 g.draw(tongue);
             }
             
                 // Create the shape of Rambley's right fang
-            Area fang = createRambleyFangShape(point2,point4,point7,point8,path);
+            Area fang = createRambleyFangShape(getRambleyOpenMouthWidth(), 
+                    getRambleyOpenMouthHeight(),point1,point2,point4,point7,
+                    point8,path);
                 // If Rambley is evil
             if (isRambleyEvil())
                     // Add a left fang to the area of the right fang
@@ -3243,6 +3249,7 @@ public class RambleyPainter implements Painter<Component>{
 
                 // DEBUG: If we are showing the lines that make up Rambley 
             if (getShowsLines()){
+                printShape("fang",fang);
                 g.setColor(Color.PINK);
                 g.draw(path);
                 g.setColor(Color.WHITE);
