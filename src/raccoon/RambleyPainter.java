@@ -515,17 +515,17 @@ public class RambleyPainter implements Painter<Component>{
 //    public static final String RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED = 
 //            "RambleyLeftEyeYPropertyChanged";
     /**
-     * This identifies that a change has been made to how wide Rambley's mouth is 
-     * open.
+     * This identifies that a change has been made to how wide Rambley's mouth 
+     * is open.
      */
-    public static final String RAMBLEY_MOUTH_OPEN_WIDENESS_PROPERTY_CHANGED = 
-            "RambleyOpenMouthXPropertyChanged";
+    public static final String RAMBLEY_OPEN_MOUTH_WIDTH_PROPERTY_CHANGED = 
+            "RambleyOpenMouthWidthPropertyChanged";
     /**
      * This identifies that a change has been made to how far Rambley's mouth 
      * is open.
      */
-    public static final String RAMBLEY_MOUTH_OPEN_HEIGHT_PROPERTY_CHANGED = 
-            "RambleyOpenMouthYPropertyChanged";
+    public static final String RAMBLEY_OPEN_MOUTH_HEIGHT_PROPERTY_CHANGED = 
+            "RambleyOpenMouthHeightPropertyChanged";
     
     // Settings and listeners
     
@@ -588,11 +588,11 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is used to control how far Rambley's mouth is open. 0.0 to 1.0
      */
-    private double mouthOpenX;
+    private double mouthOpenWidth;
     /**
      * This is used to control how wide Rambley's mouth is open. 0.0 to 1.0
      */
-    private double mouthOpenY;
+    private double mouthOpenHeight;
     
     // Commonly used objects for the rendering process
     
@@ -741,8 +741,8 @@ public class RambleyPainter implements Painter<Component>{
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
         lineSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.5;
-        mouthOpenX = 1.0;
-        mouthOpenY = 0.0;
+        mouthOpenWidth = 1.0;
+        mouthOpenHeight = 0.0;
         changeSupport = new PropertyChangeSupport(this);
     }
     
@@ -1212,40 +1212,40 @@ public class RambleyPainter implements Painter<Component>{
         return setRambleyRightEye(x, y).setRambleyLeftEye(x, y);
     }
     
-    public double getRambleyMouthOpenWideness(){
-        return mouthOpenX;
+    public double getRambleyOpenMouthWidth(){
+        return mouthOpenWidth;
     }
     
-    public RambleyPainter setRambleyMouthOpenWideness(double width){
+    public RambleyPainter setRambleyOpenMouthWidth(double width){
             // If the given width is less than zero or greater than 1
         if (width < 0.0 || width > 1.0)
-            throw new IllegalArgumentException("Mouth wideness must be between "
+            throw new IllegalArgumentException("Open mouth width must be between "
                     + "0 and 1, inclusive (0.0 <= "+width+" <= 1.0)");
             // If the width value would change
-        if (width != mouthOpenX){
+        if (width != mouthOpenWidth){
                 // Get the old width value
-            double old = mouthOpenX;
-            mouthOpenX = width;
-            firePropertyChange(RAMBLEY_MOUTH_OPEN_WIDENESS_PROPERTY_CHANGED,old,width);
+            double old = mouthOpenWidth;
+            mouthOpenWidth = width;
+            firePropertyChange(RAMBLEY_OPEN_MOUTH_WIDTH_PROPERTY_CHANGED,old,width);
         }
         return this;
     }
     
-    public double getRambleyMouthOpenHeight(){
-        return mouthOpenY;
+    public double getRambleyOpenMouthHeight(){
+        return mouthOpenHeight;
     }
     
-    public RambleyPainter setRambleyMouthOpenHeight(double height){
+    public RambleyPainter setRambleyOpenMouthHeight(double height){
             // If the given height is less than zero or greater than 1
         if (height < 0.0 || height > 1.0)
-            throw new IllegalArgumentException("Mouth wideness must be between "
+            throw new IllegalArgumentException("Open mouth height must be between "
                     + "0 and 1, inclusive (0.0 <= "+height+" <= 1.0)");
             // If the height value would change
-        if (height != mouthOpenY){
+        if (height != mouthOpenHeight){
                 // Get the old height value
-            double old = mouthOpenY;
-            mouthOpenY = height;
-            firePropertyChange(RAMBLEY_MOUTH_OPEN_HEIGHT_PROPERTY_CHANGED,old,height);
+            double old = mouthOpenHeight;
+            mouthOpenHeight = height;
+            firePropertyChange(RAMBLEY_OPEN_MOUTH_HEIGHT_PROPERTY_CHANGED,old,height);
         }
         return this;
     }
@@ -2707,11 +2707,12 @@ public class RambleyPainter implements Painter<Component>{
      * @param point1 A Point2D object to use to calculate the lowest point on 
      * the right side of the curve of the mouth, or null.
      * @param pointC1 A Point2D object to use to calculate the control point for 
-     * the curve between {@code nosePoint} and {@code point1}. 
+     * the curve between the given {@code x} and {@code y} and {@code point1}, 
+     * or null. 
      * @param point2 A Point2D object to use to calculate the end point for the 
      * the right side of the curve of the mouth, or null.
      * @param pointC2 A Point2D object to use to calculate the control point for 
-     * the curve between {@code point1} and {@code point2}. 
+     * the curve between {@code point1} and {@code point2}, or null. 
      * @param path A Path2D object to store the results in, or null.
      * @return A Path2D object with the mouth curve.
      */
@@ -2791,11 +2792,11 @@ public class RambleyPainter implements Painter<Component>{
      * @param point1 A Point2D object to use to calculate the lowest point on 
      * the right side of the curve of the mouth, or null.
      * @param pointC1 A Point2D object to use to calculate the control point for 
-     * the curve between {@code nosePoint} and {@code point1}. 
+     * the curve between {@code point} and {@code point1}, or null. 
      * @param point2 A Point2D object to use to calculate the end point for the 
      * the right side of the curve of the mouth, or null.
      * @param pointC2 A Point2D object to use to calculate the control point for 
-     * the curve between {@code point1} and {@code point2}. 
+     * the curve between {@code point1} and {@code point2}, or null. 
      * @param path A Path2D object to store the results in, or null.
      * @return A Path2D object with the mouth curve.
      */
@@ -3108,8 +3109,8 @@ public class RambleyPainter implements Painter<Component>{
                 ",lineSpacing="+getPixelGridLineSpacing()+
                 ",rightEye=("+getRambleyRightEyeX()+","+getRambleyRightEyeY()+")"+
                 ",leftEye=("+getRambleyLeftEyeX()+","+getRambleyLeftEyeY()+")"+
-                ",mouthOpenHeight="+getRambleyMouthOpenHeight()+
-                ",mouthOpenWide="+getRambleyMouthOpenWideness();
+                ",mouthOpenHeight="+getRambleyOpenMouthHeight()+
+                ",mouthOpenWidth="+getRambleyOpenMouthWidth();
     }
     @Override
     public String toString(){
