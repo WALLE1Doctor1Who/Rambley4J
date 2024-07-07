@@ -2696,8 +2696,6 @@ public class RambleyPainter implements Painter<Component>{
      * @param x The x-coordinate for the center of the mouth.
      * @param y The y-coordinate for the top of the center spike of the mouth. 
      * This should be y-coordinate for the bottom of the nose.
-     * @param nosePoint A Point2D object with the bottom center point on the 
-     * nose (cannot be null).
      * @param point1 A Point2D object to use to calculate the lowest point on 
      * the right side of the curve of the mouth, or null.
      * @param pointC1 A Point2D object to use to calculate the control point for 
@@ -2772,6 +2770,32 @@ public class RambleyPainter implements Painter<Component>{
             // left side of the mouth to the path.
         path = mirrorPathHorizontally(path,x);
         return path;
+    }
+    /**
+     * This creates the path to use for the curve of the mouth. This uses the 
+     * ellipse given to the {@link #createRambleySnoutArea 
+     * createRambleySnoutArea} method ({@code snout}) to position the outer 
+     * edges of the mouth.
+     * @param snout An Ellipse2D object with the ellipse used to form Rambley's 
+     * snout (cannot be null).
+     * @param point The Point2D object with the center point of the mouth curve 
+     * (cannot be null). This should be the bottom center point of the nose.
+     * @param point1 A Point2D object to use to calculate the lowest point on 
+     * the right side of the curve of the mouth, or null.
+     * @param pointC1 A Point2D object to use to calculate the control point for 
+     * the curve between {@code nosePoint} and {@code point1}. 
+     * @param point2 A Point2D object to use to calculate the end point for the 
+     * the right side of the curve of the mouth, or null.
+     * @param pointC2 A Point2D object to use to calculate the control point for 
+     * the curve between {@code point1} and {@code point2}. 
+     * @param path A Path2D object to store the results in, or null.
+     * @return A Path2D object with the mouth curve.
+     */
+    private Path2D createRambleyMouthCurve(Ellipse2D snout, Point2D point, 
+            Point2D point1, Point2D pointC1, Point2D point2, Point2D pointC2, 
+            Path2D path){
+        return createRambleyMouthCurve(snout,point.getX(),point.getY(),point1,
+                pointC1,point2,pointC2,path);
     }
     /**
      * 
@@ -2978,10 +3002,12 @@ public class RambleyPainter implements Painter<Component>{
         
             // Create the shape of Rambley's nose
         Area nose = createRambleyNoseShape(snout,rect,ellipse1,path);
+            // Set the location of the point to the bottom center of the nose
+        point1.setLocation(rect.getCenterX(),rect.getMaxY());
             // Get the curve for Rambley's mouth, using the bottom center of the 
             // nose to position the mouth.
-        mouthTop = createRambleyMouthCurve(snout,rect.getCenterX(),
-                rect.getMaxY(),point1,point2,point3,point4,mouthTop);
+        mouthTop = createRambleyMouthCurve(snout,point1,point2,point3,point4,
+                point5,mouthTop);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
