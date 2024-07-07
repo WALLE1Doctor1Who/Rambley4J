@@ -2807,6 +2807,208 @@ public class RambleyPainter implements Painter<Component>{
                 pointC1,point2,pointC2,path);
     }
     /**
+     * This creates and returns the Area that forms Rambley's open mouth.
+     * @param mouthCurve The Path2D object that forms the mouth curve (cannot be 
+     * null).
+     * @param mouthWidth A value between 0.0 and 1.0, inclusive, used to control 
+     * the width of Rambley's open mouth.
+     * @param mouthHeight A value between 0.0 and 1.0, inclusive, used to control 
+     * the height of Rambley's open mouth.
+     * @param snout An Ellipse2D object with the ellipse used to form Rambley's 
+     * snout (cannot be null).
+     * @param midPoint The Point2D object with the center point of the mouth 
+     * curve (cannot be null).
+     * @param point1 The Point2D object with the lowest point on the right side 
+     * of the mouth curve (cannot be null).
+     * @param pointC1 The Point2D object with the control point for the curve on 
+     * the mouth between {@code midPoint} and {@code point1} (cannot be null). 
+     * @param point2 The Point2D object with the end point for the the right 
+     * side of the mouth curve (cannot be null).
+     * @param pointC2 The Point2D object with the control point for the curve on 
+     * the mouth between {@code point1} and {@code point2} (cannot be null). 
+     * @param point A Point2D object to use to calculate the point on the right 
+     * side of the mouth curve to start the path that forms the open mouth 
+     * shape, or null.
+     * @param rect A Rectangle2D object to store the bounds of the path used to 
+     * create the open mouth, or null.
+     * @param path A Path2D object to use to calculate the path for the open 
+     * mouth, or null.
+     * @return The area that forms Rambley's open mouth.
+     */
+    private Area createRambleyOpenMouthShape(Path2D mouthCurve,double mouthWidth, 
+            double mouthHeight,Ellipse2D snout,Point2D midPoint,Point2D point1,
+            Point2D pointC1, Point2D point2, Point2D pointC2, Point2D point, 
+            Rectangle2D rect, Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // If the given scratch Point2D objects is null
+        if (point == null)
+            point = new Point2D.Double();
+           // If the given Rectangle2D object is null
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+            // Set the frame of the rectangle from the center to have the center 
+            // at the mid point of the mouth curve. It will be as wide as the 
+            // mouth curve and the maximum y-coordinate will be 3.5 pixels above 
+            // the bottom of the snout ellipse. The lower half of this forms the 
+            // maximum bounds of the open mouth
+        rect.setFrameFromCenter(midPoint.getX(), midPoint.getY(), 
+                point2.getX(), snout.getMaxY()-3.5);
+            // Set the frame of the rectangle again from the center with the 
+            // same center as before, but now set the x and y coordinates based 
+            // off the given width and height for the mouth. 
+        rect.setFrameFromCenter(rect.getCenterX(),rect.getCenterY(),
+                rect.getMinX()+((1-mouthWidth)*(rect.getWidth()/2.0)),
+                rect.getMinY()+((1-mouthHeight)*(rect.getHeight()/2.0)));
+            // If the x-coordinate of the rectangle is at or beyond the 
+            // left-most point on the mouth curve
+        if (rect.getMinX() <= point2.getX())
+            point.setLocation(point2);
+            // If the x-coordinate of the rectangle is at the point between the 
+            // two curves that form the right side of the mouth curve
+        else if (rect.getMinX() == point1.getX())
+            point.setLocation(point1);
+            // If the x-coordinate of the rectangle is at or beyond the center 
+            // of the mouth curve
+        else if (rect.getMinX() >= midPoint.getX())
+            point.setLocation(midPoint);
+        else {  // These are the three points that form the quadratic bezier 
+                // curve to get a point on. These are, in order, the starting 
+                // point, the ending point, and the control point.
+            Point2D p1, p2, pC;
+                // If the x-coordinate for the rectangle lies on the left-most 
+                // curve on the right side of the mouth. That is to say, if it 
+                // is in between point1 and point2
+            if (rect.getMinX()>=point2.getX()&&rect.getMinX()<=point1.getX()){
+                    // Use point1 as the starting point
+                p1 = point1;
+                    // Use point2 as the ending point
+                p2 = point2;
+                    // Use pointC2 as the control point
+                pC = pointC2;
+            }
+            else{   // Use midPoint as the starting point
+                p1 = midPoint;
+                    // Use point1 as the ending point
+                p2 = point1;
+                    // Use pointC1 as the control point
+                pC = pointC1;
+            }   // Get the t value for the x-coordinate of the rectangle on the 
+                // quadratic bezier curve that forms the mouth curve
+            double t = getQuadBezierT(p1.getX(),pC.getX(),p2.getX(),rect.getMinX())[0];
+                // Get the point on the quadratic bezier curve at the t value
+            point = getQuadBezierPoint(p1,pC,p2,t,point);
+        }
+            // Start the path at the point on the mouth curve
+        path.moveTo(point.getX(), point.getY());
+            // Add a quadratic bezier curve between the point on the mouth curve 
+            // and the point in the middle of the mouth curve and at the bottom 
+            // of the open mouth bounds. Use the the point between the starting 
+            // point and the mid-point as the control x-coordinate, and the 
+            // bottom of the open mouth bounds as the control y-coordinate
+        path.quadTo((point.getX()+midPoint.getX())/2.0,rect.getMaxY(),
+                midPoint.getX(), rect.getMaxY());
+            // Draw a vertical line from the previous point to the mid-point on 
+            // the mouth curve
+        path.lineTo(midPoint.getX(), midPoint.getY());
+            // Flip the path (which holds the right side of the open mouth) 
+            // horizontally to form the left side of the open mouth and then add 
+            // the left side of the open mouth to the path.
+        path = mirrorPathHorizontally(path,midPoint.getX());
+            // Add the mouth curve to the path to complete the shape
+        path.append(mouthCurve, false);
+            // Create an area with the path
+        Area mouthArea = new Area(path);
+            // Subtract the area formed by the mouth curve, since otherwise 
+            // Rambley gets a sort of moustache due to how the path is 
+            // interpretted
+        mouthArea.subtract(new Area(mouthCurve));
+        return mouthArea;
+    }
+    /**
+     * This creates and returns the Area that forms Rambley's tongue.
+     * @param xC The center x-coordinate for the tongue.
+     * @param x The x-coordiante for the top-left corner of the tongue.
+     * @param y The y-coordinate of the bottom of the mouth.
+     * @param openMouth The area that forms Rambley's open mouth.
+     * @param ellipse An Ellipse2D object to use to calculate the tongue, or 
+     * null.
+     * @return An area that forms Rambley's tongue.
+     */
+    private Area createRambleyTongueShape(double xC, double x, double y, 
+            Area openMouth, Ellipse2D ellipse){
+            // If the given Ellipse2D object is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+            // Shift the y-coordinate up by 11.75 pixels
+        y -= 11.75;
+            // Set the given ellipse from its center to a circle that is at the 
+            // given x-coordinate and shifted y-coordinate, and that has the 
+            // given center x-coordinate
+        ellipse.setFrameFromCenter(xC, y+(xC-x), x, y);
+            // Create an area from the ellipse
+        Area tongue = new Area(ellipse);
+            // Remove all but what lies within the mouth
+        tongue.intersect(openMouth);
+        return tongue;
+    }
+    /**
+     * This creates and returns the Area that forms Rambley's right fang.
+     * @param pointM1 The Point2D object with the lowest point on the right side 
+     * of the mouth curve (cannot be null).
+     * @param pointM2 The Point2D object with the end point for the the right 
+     * side of the mouth curve (cannot be null).
+     * @param point1 A Point2D object to use to calculate the starting point for 
+     * the curve that forms the fang, or null.
+     * @param point2 A Point2D object to use to calculate the end point for the 
+     * curve that forms the fang, or null.
+     * @param path A Path2D object to use to calculate the path for the fang, or 
+     * null.
+     * @return The area that forms Rambley's right fang.
+     */
+    private Area createRambleyFangShape(Point2D pointM1, Point2D pointM2, 
+           Point2D point1, Point2D point2, Path2D path){
+            // If the first of the two given scratch Point2D objects is null
+        if (point1 == null)
+            point1 = new Point2D.Double();
+            // If the second of the two given scratch Point2D objects is null
+        if (point2 == null)
+            point2 = new Point2D.Double();
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // Set the location of the starting point of the curve to be 8.5 
+            // pixels to the right of the left-most point on the mouth curve, 
+            // and to have the left-most point's y-coordinate
+        point1.setLocation(pointM2.getX()+8.5, pointM2.getY());
+            // Set the location of the ending point to be 4 pixels to the right 
+            // of the starting curve (the fang will be 8 pixels wide at its 
+            // widest point), and 8.75 pixels below the starting point
+        point2.setLocation(point1.getX()+4, pointM1.getY()+8.75);
+            // Move the path to the starting point
+        path.moveTo(point1.getX(), point1.getY());
+            // Add a quadratic bezier curve between the starting point and the 
+            // end point. Use the the point between the starting point and the 
+            // end point as the control x-coordinate, and the end point's 
+            // y-coordinate as the control y-coordinate
+        path.quadTo((point1.getX()+point2.getX())/2.0, point2.getY(), 
+                point2.getX(), point2.getY());
+            // Draw a vertical line to back to the top
+        path.lineTo(point2.getX(), point1.getY());
+            // Close the path
+        path.closePath();
+            // Flip the path (which holds the left part of the fang) 
+            // horizontally to form the right part of the fang and then add the 
+            // right part of the fang to the path.
+        path = mirrorPathHorizontally(path,point2.getX());
+        return new Area(path);
+    }
+    /**
      * 
      * @param g The graphics context to render to.
      * @param x The x-coordinate of the top-left corner of the area to fill.
@@ -3000,6 +3202,80 @@ public class RambleyPainter implements Painter<Component>{
                 // Draw Rambley's left eye
             paintRambleyEye(g,eyeWhiteL,getRambleyLeftEyeX(),getRambleyLeftEyeY(),
                     eyeWhiteL.getBounds2D(),-pupilX,0,iris,pupil);
+        }
+        
+            // If Rambley's open mouth's width and height are greater than zero
+        if (getRambleyOpenMouthHeight() > 0 && getRambleyOpenMouthWidth() > 0){
+                // Create the shape of Rambley's mouth when open
+            Area openMouth = createRambleyOpenMouthShape(mouthPath, 
+                    getRambleyOpenMouthWidth(), getRambleyOpenMouthHeight(), 
+                    snout,point1,point2,point3,point4,point5,point6,rect,path);
+                // Create the shape of Rambley's tongue
+            Area tongue = createRambleyTongueShape(rect.getCenterX(),point4.getX(),
+                    rect.getMaxY(),openMouth,ellipse1);
+            
+                // DEBUG: If we are showing the lines that make up Rambley 
+            if (getShowsLines()){
+                g.setColor(Color.ORANGE);
+                g.draw(rect);
+                g.setColor(Color.LIGHT_GRAY);
+                g.draw(path);
+                g.setColor(RAMBLEY_MAIN_BODY_COLOR);
+                g.draw(openMouth);
+                g.setColor(Color.CYAN);
+                g.draw(ellipse1);
+                g.setColor(Color.GREEN);
+                g.draw(tongue);
+            }
+            
+                // Create the shape of Rambley's right fang
+            Area fang = createRambleyFangShape(point2,point4,point7,point8,path);
+                // If Rambley is evil
+            if (isRambleyEvil())
+                    // Add a left fang to the area of the right fang
+                fang.add(createHorizontallyFlippedArea(fang));
+                // If Rambley's fang should be on the left
+            else if (getRambleyFangSide())
+                    // Flip the fang to get the left fang
+                fang = createHorizontallyFlippedArea(fang);
+                // Remove all but what lies within Rambley's mouth from the 
+            fang.intersect(openMouth);      // fang(s)
+
+                // DEBUG: If we are showing the lines that make up Rambley 
+            if (getShowsLines()){
+                g.setColor(Color.PINK);
+                g.draw(path);
+                g.setColor(Color.WHITE);
+                g.draw(fang);
+            }
+            
+                // DEBUG: If we are not showing the lines that make up Rambley 
+            if (!getShowsLines()){
+                    // Fill in the inside of Rambley's mouth
+                g.setColor(RAMBLEY_MOUTH_COLOR);
+                g.fill(openMouth);
+                    // Fill in Rambley's tongue
+                g.setColor(RAMBLEY_TONGUE_COLOR);
+                g.fill(tongue);
+                    // Draw the outline for Rambley's tongue
+                g.setColor(RAMBLEY_TONGUE_OUTLINE_COLOR);
+                g.draw(tongue);
+                    // Fill in Rambley's fang(s)
+                g.setColor(RAMBLEY_TEETH_COLOR);
+                g.fill(fang);
+                    // Draw the outline for Rambley's fang(s)
+                g.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                g.draw(fang);
+                    // Set the stroke to Rambley's detail stroke
+                g.setStroke(getRambleyDetailStroke());
+                    // Draw Rambley's mouth
+                g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
+                g.draw(openMouth);
+            }
+        }
+        
+            // DEBUG: If we are not showing the lines that make up Rambley 
+        if (!getShowsLines()){
                 // Set the stroke to Rambley's detail stroke
             g.setStroke(getRambleyDetailStroke());
                 // Draw Rambley's mouth
