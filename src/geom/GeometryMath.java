@@ -22,7 +22,7 @@ public final class GeometryMath {
      * @see getLineIntersection(double, double, double, double, 
      * DoubleUnaryOperator, DoubleUnaryOperator, Point2D)
      */
-    protected static final int DEFAULT_LINE_INTERSECTION_RESOLUTION = 25;
+    public static final int DEFAULT_LINE_INTERSECTION_RESOLUTION = 25;
     /**
      * This class cannot be constructed.
      */
@@ -612,18 +612,34 @@ public final class GeometryMath {
         }
     }
     /**
-     * 
+     * This approximates the point where the two lines represented by the 
+     * equations {@code getY1} and {@code getY2} intersect, using the given 
+     * {@code x1} and {@code x2} x-coordinates for the upper and lower bounds of 
+     * the range to check. This uses the {@code resolution} to determine how 
+     * precise the point of intersection will be.
      * @param x1 The first shared x-coordinate for the two lines.
      * @param x2 The second shared x-coordinate for the two lines.
      * @param getY1 The equation for the first line.
      * @param getY2 The equation for the second line.
-     * @param resolution
+     * @param resolution The resolution for the point to return. This determines 
+     * how precise the point of intersection will be. This must be a value 
+     * greater than 0.
      * @param point A Point2D object to store the results in, or null.
-     * @return A rough approximation of the point at which two lines intersect
+     * @return A rough approximation of the point at which two lines intersect.
+     * @throws IllegalArgumentException If the {@code resolution} is less than 
+     * or equal to zero.
+     * @throws NullPointerException If either {@code getY1} or {@code getY2} is 
+     * null.
+     * @see #getLineIntersection(double, double, DoubleUnaryOperator, 
+     * DoubleUnaryOperator, Point2D) 
      */
     public static Point2D getLineIntersection(double x1, double x2, 
             DoubleUnaryOperator getY1, DoubleUnaryOperator getY2,int resolution,
             Point2D point){
+            // If the resolution is less than or equal to zero
+        if (resolution <= 0)
+            throw new IllegalArgumentException("Line intersection resolution "
+                    + "must be greater than 0 ("+resolution+" <= 0)");
             // If the given Point2D object is null
         if (point == null)
             point = new Point2D.Double();
@@ -660,13 +676,28 @@ public final class GeometryMath {
         return point;
     }
     /**
-     * 
+     * his approximates the point where the two lines represented by the 
+     * equations {@code getY1} and {@code getY2} intersect, using the given 
+     * {@code x1} and {@code x2} x-coordinates for the upper and lower bounds of 
+     * the range to check. This uses a resolution of {@link 
+     * DEFAULT_LINE_INTERSECTION_RESOLUTION} to determine how precise the point 
+     * of intersection will be. This is equivalent to calling {@link 
+     * #getLineIntersection(double, double, DoubleUnaryOperator, 
+     * DoubleUnaryOperator, int, Point2D) getLineIntersection(x1, x2, getY1, 
+     * getY2, DEFAULT_LINE_INTERSECTION_RESOLUTION, point)}.
      * @param x1 The first shared x-coordinate for the two lines.
      * @param x2 The second shared x-coordinate for the two lines.
      * @param getY1 The equation for the first line.
      * @param getY2 The equation for the second line.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return A rough approximation of the point at which two lines intersect.
+     * @throws IllegalArgumentException If the {@code resolution} is less than 
+     * or equal to zero.
+     * @throws NullPointerException If either {@code getY1} or {@code getY2} is 
+     * null.
+     * @see #getLineIntersection(double, double, DoubleUnaryOperator, 
+     * DoubleUnaryOperator, int, Point2D) 
+     * @see #DEFAULT_LINE_INTERSECTION_RESOLUTION
      */
     public static Point2D getLineIntersection(double x1, double x2, 
             DoubleUnaryOperator getY1, DoubleUnaryOperator getY2,Point2D point){
