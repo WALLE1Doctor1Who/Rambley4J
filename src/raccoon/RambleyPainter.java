@@ -3226,13 +3226,15 @@ public class RambleyPainter implements Painter<Component>{
      * the curve that forms the fang, or null.
      * @param point2 A Point2D object to use to calculate the end point for the 
      * curve that forms the fang, or null.
+     * @param pointC A Point2D object to use to calculate the control point for 
+     * the curve that forms the fang, or null.
      * @param path A Path2D object to use to calculate the path for the fang, or 
      * null.
      * @return The area that forms Rambley's right fang.
      */
     private Area createRambleyFangShape(double mouthWidth, double mouthHeight, 
             Point2D pointM1, Point2D pointM2, Point2D pointM3, Point2D point1, 
-            Point2D point2, Path2D path){
+            Point2D point2, Point2D pointC, Path2D path){
             // If the first of the two given scratch Point2D objects is null
         if (point1 == null)
             point1 = new Point2D.Double();
@@ -3250,16 +3252,16 @@ public class RambleyPainter implements Painter<Component>{
         point1.setLocation(pointM3.getX()+8.5, pointM3.getY());
             // Set the location of the ending point to be 4 pixels to the right 
             // of the starting curve (the fang will be 8 pixels wide at its 
-            // widest point), and 8.75 pixels below the starting point
-        point2.setLocation(point1.getX()+4, pointM2.getY()+8.75);
+            // widest point), and 8 pixels below the starting point
+        point2.setLocation(point1.getX()+4, pointM2.getY()+8);
             // Move the path to the starting point
         path.moveTo(point1.getX(), point1.getY());
+            // Set the control point to be between the starting point and the 
+            // end point, and at the bottom of the fang.
+        pointC.setLocation((point1.getX()+point2.getX())/2.0, point2.getY());
             // Add a quadratic bezier curve between the starting point and the 
-            // end point. Use the the point between the starting point and the 
-            // end point as the control x-coordinate, and the end point's 
-            // y-coordinate as the control y-coordinate
-        path.quadTo((point1.getX()+point2.getX())/2.0, point2.getY(), 
-                point2.getX(), point2.getY());
+            // end point. Use the calculated control point
+        path.quadTo(pointC.getX(), pointC.getY(), point2.getX(), point2.getY());
             // Draw a vertical line to back to the top
         path.lineTo(point2.getX(), point1.getY());
             // Close the path
@@ -3479,7 +3481,7 @@ public class RambleyPainter implements Painter<Component>{
                 // Create the shape of Rambley's right fang
             Area fang = createRambleyFangShape(getRambleyOpenMouthWidth(), 
                     getRambleyOpenMouthHeight(),point1,point2,point4,point7,
-                    point8,path);
+                    point8,point6,path);
                 // If Rambley is evil
             if (isRambleyEvil())
                     // Add a left fang to the area of the right fang
