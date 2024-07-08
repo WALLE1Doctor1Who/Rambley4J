@@ -651,6 +651,18 @@ public class RambleyPainter implements Painter<Component>{
      * initially null and is initialized the first time it is used.
      */
     private AffineTransform horizFlip = null;
+    /**
+     * This is an AffineTransform used to flip shapes horizontally on a case by 
+     * case bases. This is initially null and is initialized the first time it 
+     * is used.
+     */
+    private AffineTransform horizTx = null;
+    /**
+     * This is an AffineTransform used to scale down the outer part of Rambley's 
+     * ears to get the inner part of his ears. This is initially null and is 
+     * initialized the first time it is used.
+     */
+    private AffineTransform inEarTx = null;
     
     // Dedicated scratch shape objects
     
@@ -1735,14 +1747,81 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @param dx The dx value by which to translate stuff, relative to the 
      * original coordinate space.
+     * @param tx An AffineTransform to store the results in, or null.
      * @return An AffineTransform used to flip things horizontally.
      */
-    protected AffineTransform getHorizontalFlipTransform(double dx){
-            // Get a transform that will flip things horizontally
-        AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+    protected AffineTransform getHorizontalFlipTransform(double dx, 
+            AffineTransform tx){
+            // If the given AffineTransform is null
+        if (tx == null)
+                // Get a transform that will flip things horizontally
+            tx = AffineTransform.getScaleInstance(-1, 1);
+        else    // Set the transform to one that will flip things horizontally
+            tx.setToScale(-1, 1);
             // Translate everything by dx
         tx.translate(-dx, 0);
         return tx;
+    }
+    /**
+     * This returns an AffineTransform object that flips shapes horizontally and 
+     * translates it by {@code dx} plus the maximum x-coordinate of the given 
+     * shape. If the given shape is null, then this is equivalent to calling 
+     * {@link #getHorizontalFlipTransform(double, AffineTransform) 
+     * getHorizontalFlipTransform(dx, tx)}. If the given shape is not null, then 
+     * this is equivalent to calling {@link getHorizontalFlipTransform(double, 
+     * AffineTransform) getHorizontalFlipTransform(dx + 
+     * shape.getBounds2D().getMaxX(), tx)}. 
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param dx The dx value by which to translate stuff, relative to the left 
+     * side of the image.
+     * @param shape The shape for which to get the x-coordinate to use to shift 
+     * stuff back into the image, or null.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to flip things horizontally.
+     */
+    protected AffineTransform getHorizontalFlipTransform(double dx,Shape shape, 
+            AffineTransform tx){
+            // If the given shape is null
+        if (shape == null)
+                // Return a regular horizontal flip transform
+            return getHorizontalFlipTransform(dx,tx);
+            // Return a horizontal flip transform that translates shapes by the 
+            // given shape's maximum x-coordinate to put it back on the image, 
+            // and then translated again by the given x offset
+        return getHorizontalFlipTransform(dx+getBoundsOfShape(shape).getMaxX(),
+                tx);
+    }
+    /**
+     * This returns an AffineTransform object that flips shapes horizontally and 
+     * translates it in such a way to appear as though it was mirrored over the 
+     * vertical line at the given x-coordinate. If the given shape is null, then 
+     * this is equivalent to calling {@link #getHorizontalFlipTransform(double, 
+     * AffineTransform) getHorizontalFlipTransform(x, tx)}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param x The x-coordinate of the line to mirror shapes over.
+     * @param shape The shape to use to calculate the x component of the 
+     * translation.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to mirror things horizontally over the 
+     * vertical line at the given x-coordinate.
+     */
+    protected AffineTransform getHorizontalMirrorTransform(double x,Shape shape,
+            AffineTransform tx){
+            // If the given shape is null
+        if (shape == null)
+            return getHorizontalFlipTransform(x,tx);
+            // Get the bounds of the shape
+        RectangularShape bounds = getBoundsOfShape(shape);
+            // Return a horizontal flip transform that translates shapes by the 
+            // given shape's maximum x-coordinate to put it back on the image, 
+            // and then translate it again in a way that appears as if the shape 
+            // was mirrored over the vertical line at the given x-coordinate
+        return getHorizontalFlipTransform(bounds.getMaxX()+(x-bounds.getMaxX())*2,
+                bounds,tx);
     }
     /**
      * This returns an AffineTransform to use to flip shapes horizontally when 
@@ -1752,11 +1831,11 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @return The AffineTransform used to flip things horizontally.
      */
-    protected AffineTransform getRambleyHorizontalFlipTransform(){
+    private AffineTransform getRambleyHorizontalFlipTransform(){
             // If the horizontal flip transform has not been initialized yet
         if (horizFlip == null){
                 // Get a transform that will flip things horizontally
-            horizFlip = getHorizontalFlipTransform(INTERNAL_RENDER_HEIGHT);
+            horizFlip = getHorizontalFlipTransform(INTERNAL_RENDER_HEIGHT,null);
         }
         return horizFlip;
     }
@@ -1774,6 +1853,23 @@ public class RambleyPainter implements Painter<Component>{
         return area.createTransformedArea(getRambleyHorizontalFlipTransform());
     }
     /**
+     * This mirrors the given area horizontally over the vertical line at the 
+     * given x-coordinate.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param area The area to mirror.
+     * @param x The x-coordinate of the vertical line to flip the mirror over.
+     * @return The horizontally mirrored area.
+     */
+    protected Area createHorizontallyMirroredArea(Area area, double x){
+            // Get an AffineTransform to flip the area horizontally and mirror 
+            // it over the vertical line at the given x coordinate
+        horizTx = getHorizontalMirrorTransform(x,area,horizTx);
+            // Mirror the area horizontally
+        return area.createTransformedArea(horizTx);
+    }
+    /**
      * This flips the given path horizontally over the vertical line at the 
      * given x-coordinate and adds the flipped path back to the given path.
      * 
@@ -1785,11 +1881,11 @@ public class RambleyPainter implements Painter<Component>{
      * version of it added to it.
      */
     protected Path2D mirrorPathHorizontally(Path2D path, double x){
-            // Flip the path horizontally and translate it by twice the given 
-            // x-coordinate in order to put where it where it should be when 
-            // mirrored.
-        path.append(path.createTransformedShape(getHorizontalFlipTransform(x*2)), 
-                false);
+            // Get an AffineTransform to flip the path horizontally and mirror 
+            // it over the vertical line at the given x coordinate
+        horizTx = getHorizontalMirrorTransform(x,path,horizTx);
+            // Mirror the path horizontally and add it to the original path
+        path.append(path.createTransformedShape(horizTx), false);
         return path;
     }
     
@@ -2516,9 +2612,13 @@ public class RambleyPainter implements Painter<Component>{
             // Get the inverse of the given scale.
         double scaleInv = 1/scale;
             // Get the bounds of the given ear
-        Rectangle2D temp = ear.getBounds2D();
-            // Create a scale transform to scale down the inner ear
-        AffineTransform inEarTx = AffineTransform.getScaleInstance(scale, scale);
+        RectangularShape temp = getBoundsOfShape(ear);
+            // If the inner ear AffineTransform has not been initialised yet
+        if (inEarTx == null)
+                // Create a scale transform to scale down the inner ear
+            inEarTx = AffineTransform.getScaleInstance(scale, scale);
+        else    // Set the transform to a scale transform to scale down the 
+            inEarTx.setToScale(scale, scale);   // inner ear
             // Translate the transform to be at the origin
         inEarTx.translate(-temp.getMinX(), -temp.getMinY());
             // Translate the transform to be at the center of the outer portion 
@@ -2593,7 +2693,7 @@ public class RambleyPainter implements Painter<Component>{
         Area temp = createHorizontallyFlippedArea(mask);
             // Get the bounds of the horizontally flipped version of the second 
             // ellipse, so that we can get some location data from it
-        Rectangle2D tempBounds = temp.getBounds2D();
+        RectangularShape tempBounds = getBoundsOfShape(temp);
             // Set the frame of the rectangle using a diagonal from the top 
             // center of the second ellipse to the bottom center of the 
             // horizontally flipped version of the second ellipse. This will be 
@@ -3489,7 +3589,17 @@ public class RambleyPainter implements Painter<Component>{
             // horizontally to form the right part of the fang and then add the 
             // right part of the fang to the path.
         path = mirrorPathHorizontally(path,point2.getX());
-        return new Area(path);
+            // If Rambley is evil
+        if (isRambleyEvil())
+                // Add a left fang to the path of the right fang
+            path = mirrorPathHorizontally(path,pointM1.getX());
+            // Create the area for the fang
+        Area fang = new Area(path);
+            // If Rambley is not evil and Rambley's fang should be on the left
+        if (!isRambleyEvil() && isRambleyFangOnLeft())
+                // Flip the fang to get the left fang
+            fang = createHorizontallyFlippedArea(fang);
+        return fang;
     }
     
         // Not finished yet, will be used to create the line on Rambley's teeth 
@@ -3714,14 +3824,6 @@ public class RambleyPainter implements Painter<Component>{
             Area fang = createRambleyFangShape(getRambleyOpenMouthWidth(), 
                     getRambleyOpenMouthHeight(),point1,point2,point4,point7,
                     point8,point6,path);
-                // If Rambley is evil
-            if (isRambleyEvil())
-                    // Add a left fang to the area of the right fang
-                fang.add(createHorizontallyFlippedArea(fang));
-                // If Rambley's fang should be on the left
-            else if (isRambleyFangOnLeft())
-                    // Flip the fang to get the left fang
-                fang = createHorizontallyFlippedArea(fang);
                 // Remove all but what lies within Rambley's mouth from the 
             fang.intersect(openMouth);      // fang(s)
 
@@ -4094,6 +4196,25 @@ public class RambleyPainter implements Painter<Component>{
             // Add the curve to the path
         path.quadTo(pC.getX(), pC.getY(), p2.getX(), p2.getY());
         return pC;
+    }
+    /**
+     * This returns the RectangularShape that represents the bounds of the given 
+     * shape. This method is mainly to help avoid the creation of unnecessary 
+     * Rectangle2D objects when getting the bounds of a shape in order to use 
+     * RectangularShape methods on a given shape that may or may not already be 
+     * a RectangularShape. 
+     * @param shape The shape to get the bounds of.
+     * @return The bounds of the given shape, or null if the shape is null. If 
+     * the given shape is a RectangularShape, then it is returned instead.
+     */
+    private static RectangularShape getBoundsOfShape(Shape shape){
+            // If the given shape is a RectangularShape
+        if (shape instanceof RectangularShape)
+            return (RectangularShape) shape;
+            // If the shape is null
+        else if (shape == null)
+            return null;
+        return shape.getBounds2D();
     }
     
     
