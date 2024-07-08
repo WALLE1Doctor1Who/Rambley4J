@@ -1442,25 +1442,28 @@ public class RambleyPainter implements Painter<Component>{
                 x1,(float)(y+h-1),BACKGROUND_GRADIENT_COLOR_2);
     }
     /**
-     * 
-     * @param size
-     * @return 
+     * This is used to calculate the offset for the background polka dots using 
+     * the given size value.
+     * @param size The value to use to get the offset.
+     * @return The offset for the background polka dots.
      */
-    protected double getBackgroundDotOffset(double size){
+    private double getBackgroundDotOffset(double size){
         return (size%getBackgroundDotSpacing())/2.0;
     }
     /**
-     * 
-     * @param width
-     * @return 
+     * This returns the x offset to use for the background polka dots. 
+     * @param width The width of the area to fill with the background.
+     * @return The offset for the x-coordinate of the background polka dots.
+     * @see #getBackgroundDotOffsetY 
      */
     protected double getBackgroundDotOffsetX(double width){
         return getBackgroundDotOffset(width);
     }
     /**
-     * 
-     * @param height
-     * @return 
+     * This returns the y offset to use for the background polka dots. 
+     * @param height The height of the area to fill with the background.
+     * @return The offset for the y-coordinate of the background polka dots.
+     * @see #getBackgroundDotOffsetX 
      */
     protected double getBackgroundDotOffsetY(double height){
         return getBackgroundDotOffset(height);
@@ -1525,12 +1528,37 @@ public class RambleyPainter implements Painter<Component>{
         return getBackgroundDot(rect,path,ellipse);
     }
     /**
-     * 
-     * @param size
-     * @return 
+     * This is used to calculate the offset for the pixel grid effect using the 
+     * given size value.
+     * @param size The value to use to get the offset.
+     * @return The offset for the pixel grid effect.
      */
-    protected double getPixelGridOffset(double size){
+    private double getPixelGridOffset(double size){
         return ((size-1)%getPixelGridLineSpacing())/2.0;
+    }
+    /**
+     * This returns the x offset to use for the pixel grid effect. 
+     * @param width The width of the area to fill with the pixel grid effect.
+     * @return The offset for the x-coordinate of the pixel grid effect.
+     * @see #getPixelGridOffsetY
+     * @see #getPixelGrid 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     */
+    protected double getPixelGridOffsetX(double width){
+        return getPixelGridOffset(width);
+    }
+    /**
+     * This returns the y offset to use for the pixel grid effect. 
+     * @param height The height of the area to fill with the pixel grid effect.
+     * @return The offset for the y-coordinate of the pixel grid effect.
+     * @see #getPixelGridOffsetY
+     * @see #getPixelGrid 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     */
+    protected double getPixelGridOffsetY(double height){
+        return getPixelGridOffset(height);
     }
     /**
      * 
@@ -1557,15 +1585,14 @@ public class RambleyPainter implements Painter<Component>{
             // Go through and generate the vertical lines, starting at the 
             // offset for the y-coordinate of the pixel grid and spacing them 
             // out by the pixel grid spacing
-        for (double y1 = getPixelGridOffset(h); y1 <= h; 
+        for (double y1 = getPixelGridOffsetY(h); y1 <= h; 
                 y1+=getPixelGridLineSpacing()){
             path.moveTo(x, y1+y);
             path.lineTo(x2, y1+y);
-        }
-            // Go through and generate the horizontal lines, starting at the 
+        }   // Go through and generate the horizontal lines, starting at the 
             // offset for the x-coordinate of the pixel grid and spacing them 
             // out by the pixel grid spacing
-        for (double x1 = getPixelGridOffset(w); x1 <= w; 
+        for (double x1 = getPixelGridOffsetX(w); x1 <= w; 
                 x1+=getPixelGridLineSpacing()){
             path.moveTo(x1+x, y);
             path.lineTo(x1+x, y2);
