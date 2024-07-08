@@ -40,7 +40,7 @@ public class RambleyPainter implements Painter<Component>{
      * This is the color which the background gradient fades into. This is a 
      * transparent color.
      */
-    public static final Color BACKGROUND_GRADIENT_COLOR_2 = 
+    protected static final Color BACKGROUND_GRADIENT_COLOR_2 = 
             new Color(BACKGROUND_GRADIENT_COLOR.getRGB()&0x00FFFFFF,true);
     /**
      * This is the color used to render the pixel grid effect that goes over 
@@ -202,9 +202,9 @@ public class RambleyPainter implements Painter<Component>{
     protected static final double DEFAULT_BACKGROUND_DOT_SIZE = 8.0;
     /**
      * This is the default diagonal spacing between the centers of the 
-     * background polka dots.
-     * 
-     * @todo Rework the documentation for this constant.
+     * background polka dots. Refer to the documentation for the {@link 
+     * #getBackgroundDotSpacing getBackgroundDotSpacing} method for a more in
+     * depth description on the background polka dot spacing.
      */
     protected static final double DEFAULT_BACKGROUND_DOT_SPACING = 12.0;
     /**
@@ -1426,12 +1426,17 @@ public class RambleyPainter implements Painter<Component>{
     
     
     /**
-     * This returns the gradient to use to paint the background gradient.
+     * This returns the gradient to use to paint the background gradient. The 
+     * gradient goes from {@link BACKGROUND_GRADIENT_COLOR} at the top to {@link 
+     * BACKGROUND_GRADIENT_COLOR_2} at the bottom throughout the area to fill.
      * @param x The x-coordinate of the top-left corner of the area to fill.
      * @param y The y-coordinate of the top-left corner of the area to fill.
      * @param w The width of the area to fill.
      * @param h The height of the area to fill.
      * @return The gradient to use to paint the background gradient.
+     * @see BACKGROUND_GRADIENT_COLOR
+     * @see BACKGROUND_GRADIENT_COLOR_2
+     * @see #paintBackground 
      */
     protected Paint getBackgroundGradient(double x,double y,double w,double h){
             // Get the center x-coordinate
@@ -1446,30 +1451,45 @@ public class RambleyPainter implements Painter<Component>{
      * the given size value.
      * @param size The value to use to get the offset.
      * @return The offset for the background polka dots.
+     * @see getBackgroundDotOffsetX
+     * @see getBackgroundDotOffsetY
+     * @see getBackgroundDotSpacing
      */
     private double getBackgroundDotOffset(double size){
         return (size%getBackgroundDotSpacing())/2.0;
     }
     /**
      * This returns the x offset to use for the background polka dots. 
+     * 
+     * @implSpec The default implementation is equivalent to {@code (width % }
+     * {@link getBackgroundDotSpacing() getBackgroundDotSpacing()}{@code )/2.0}.
+     * 
      * @param width The width of the area to fill with the background.
      * @return The offset for the x-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetY 
-     * @see #getBackgroundDotDiamond(RectangularShape, Path2D) 
-     * @see #getBackgroundDot(double, double, Path2D, Ellipse2D) 
-     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
+     * @see #getBackgroundDotDiamond 
+     * @see #getBackgroundDot 
+     * @see #paintBackgroundDots
+     * @see getBackgroundDotSpacing
+     * @see setBackgroundDotSpacing
      */
     protected double getBackgroundDotOffsetX(double width){
         return getBackgroundDotOffset(width);
     }
     /**
      * This returns the y offset to use for the background polka dots. 
+     * 
+     * @implSpec The default implementation is equivalent to {@code (height % }
+     * {@link getBackgroundDotSpacing() getBackgroundDotSpacing()}{@code )/2.0}.
+     * 
      * @param height The height of the area to fill with the background.
      * @return The offset for the y-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetX 
-     * @see #getBackgroundDotDiamond(RectangularShape, Path2D) 
-     * @see #getBackgroundDot(double, double, Path2D, Ellipse2D) 
-     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
+     * @see #getBackgroundDotDiamond 
+     * @see #getBackgroundDot 
+     * @see #paintBackgroundDots 
+     * @see getBackgroundDotSpacing
+     * @see setBackgroundDotSpacing
      */
     protected double getBackgroundDotOffsetY(double height){
         return getBackgroundDotOffset(height);
@@ -1482,10 +1502,10 @@ public class RambleyPainter implements Painter<Component>{
      * dot to return.
      * @param path A Path2D object to store the results in, or null.
      * @return The diamond shape object to use to draw a background polka dot.
-     * @see #getBackgroundDot(double, double, Path2D, Ellipse2D) 
+     * @see #getBackgroundDot 
      * @see #getCircularBackgroundDots
      * @see #setCircularBackgroundDots 
-     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
+     * @see #paintBackgroundDots 
      */
     protected Path2D getBackgroundDotDiamond(RectangularShape bounds,Path2D path){
             // If the given Path2D object is null
@@ -1517,11 +1537,12 @@ public class RambleyPainter implements Painter<Component>{
      * @param path A Path2D object to store the results in, or null.
      * @param ellipse An Ellipse2D object to store the results in, or null.
      * @return The shape object to use to draw a background polka dot.
-     * @see #getBackgroundDotDiamond(RectangularShape, Path2D) 
+     * @see #getBackgroundDotDiamond 
      * @see #getCircularBackgroundDots
      * @see #setCircularBackgroundDots 
      * @see #getBackgroundDotSize 
-     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
+     * @see #setBackgroundDotSize 
+     * @see #paintBackgroundDots 
      */
     protected Shape getBackgroundDot(double x, double y, Path2D path, 
             Ellipse2D ellipse){
@@ -1542,36 +1563,61 @@ public class RambleyPainter implements Painter<Component>{
      * given size value.
      * @param size The value to use to get the offset.
      * @return The offset for the pixel grid effect.
+     * @see getPixelGridOffsetX
+     * @see getPixelGridOffsetY
+     * @see getPixelGridLineSpacing
      */
     private double getPixelGridOffset(double size){
         return ((size-1)%getPixelGridLineSpacing())/2.0;
     }
     /**
-     * This returns the x offset to use for the pixel grid effect. 
+     * This returns the x offset to use for the horizontal lines of the pixel 
+     * grid effect.
+     * 
+     * @implSpec The default implementation is equivalent to {@code ((width-1) 
+     * %} {@link getPixelGridLineSpacing() 
+     * getPixelGridLineSpacing()}{@code )/2.0}.
+     * 
      * @param width The width of the area to fill with the pixel grid effect.
      * @return The offset for the x-coordinate of the pixel grid effect.
      * @see #getPixelGridOffsetY
      * @see #getPixelGrid 
      * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
      * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     * @see getPixelGridLineSpacing
+     * @see setPixelGridLineSpacing
      */
     protected double getPixelGridOffsetX(double width){
         return getPixelGridOffset(width);
     }
     /**
-     * This returns the y offset to use for the pixel grid effect. 
+     * This returns the y offset to use for the vertical lines of the pixel grid 
+     * effect. 
+     * 
+     * @implSpec The default implementation is equivalent to {@code ((height-1) 
+     * %} {@link getPixelGridLineSpacing() 
+     * getPixelGridLineSpacing()}{@code )/2.0}.
+     * 
      * @param height The height of the area to fill with the pixel grid effect.
      * @return The offset for the y-coordinate of the pixel grid effect.
      * @see #getPixelGridOffsetY
      * @see #getPixelGrid 
      * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
      * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     * @see getPixelGridLineSpacing
+     * @see setPixelGridLineSpacing
      */
     protected double getPixelGridOffsetY(double height){
         return getPixelGridOffset(height);
     }
     /**
-     * 
+     * This returns the Path2D object used to render the pixel grid effect. The 
+     * pixel grid effect is a set of horizontal and vertical lines that span the 
+     * whole image. The horizontal lines are offset by {@link 
+     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
+     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The horizontal and 
+     * vertical lines are spaced out by {@link getPixelGridLineSpacing 
+     * getPixelGridLineSpacing}.
      * @param x The x-coordinate of the top-left corner of the area to fill with 
      * the pixel grid effect.
      * @param y The y-coordinate of the top-left corner of the area to fill with 
@@ -1580,6 +1626,12 @@ public class RambleyPainter implements Painter<Component>{
      * @param h The height of the area to fill with the pixel grid effect.
      * @param path A Path2D object to store the results in, or null.
      * @return The Path2D object to use to render the pixel grid effect.
+     * @see getPixelGridOffsetX
+     * @see getPixelGridOffsetY
+     * @see getPixelGridLineSpacing
+     * @see setPixelGridLineSpacing
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
      */
     protected Path2D getPixelGrid(double x, double y, double w, double h, 
             Path2D path){
@@ -1610,9 +1662,18 @@ public class RambleyPainter implements Painter<Component>{
         return path;
     }
     /**
-     * This constructs a BasicStroke object to use when rendering Rambley
-     * @param width The line width
-     * @return 
+     * This constructs a BasicStroke object to use when rendering Rambley. The 
+     * BasicStroke will have the given line width, the ends of the lines will be 
+     * {@link BasicStroke#CAP_ROUND rounded}, and points where paths meet will 
+     * be {@link BasicStroke#JOIN_ROUND rounded}.
+     * @param width The line width for the stroke.
+     * @return A BasicStroke with the given line width.
+     * @see BasicStroke#BasicStroke(float, int, int) 
+     * @see BasicStroke.CAP_ROUND
+     * @see BasicStroke.JOIN_ROUND
+     * @see #getRambleyNormalStroke() 
+     * @see #getRambleyDetailStroke() 
+     * @see #getRambleyOutlineStroke() 
      */
     protected BasicStroke getRambleyStroke(float width){
         return new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
@@ -1620,7 +1681,9 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This returns a BasicStroke object to use for rendering most of Rambley. 
      * This stroke is mainly used when filling in shapes. This stroke has a line 
-     * width of 1.0.
+     * width of 1.0, the ends of the lines will be {@link BasicStroke#CAP_ROUND 
+     * rounded}, and points where paths meet will be {@link 
+     * BasicStroke#JOIN_ROUND rounded}.
      * @return The normal stroke used for drawing Rambley.
      * @see #getRambleyStroke
      * @see getRambleyDetailStroke
@@ -1634,7 +1697,9 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This returns a BasicStroke object to use for rendering the details and 
-     * finer outlines for Rambley. This stroke has a line width of 2.0.
+     * finer outlines for Rambley. This stroke has a line width of 2.0, the ends 
+     * of the lines will be {@link BasicStroke#CAP_ROUND rounded}, and points 
+     * where paths meet will be {@link BasicStroke#JOIN_ROUND rounded}.
      * @return The details stroke used for drawing Rambley.
      * @see #getRambleyStroke
      * @see getRambleyNormalStroke
@@ -1648,7 +1713,9 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This returns a BasicStroke object to use for rendering most of the 
-     * outlines for Rambley. This stroke has a line width of 3.0.
+     * outlines for Rambley. This stroke has a line width of 3.0, the ends 
+     * of the lines will be {@link BasicStroke#CAP_ROUND rounded}, and points 
+     * where paths meet will be {@link BasicStroke#JOIN_ROUND rounded}.
      * @return The outline stroke used for drawing Rambley.
      * @see #getRambleyStroke
      * @see getRambleyNormalStroke
@@ -1747,17 +1814,15 @@ public class RambleyPainter implements Painter<Component>{
             // render Rambley and the other stuff
         g = configureGraphics((Graphics2D)g.create());
             // If the background is to be painted
-        if (isBackgroundPainted()){
+        if (isBackgroundPainted())
                 // Paint the background
             paintBackground(g,0,0,width,height);
-        }
             // Paint Rambley
         paintRambley(g,0,0,width,height);
             // If the pixel grid effect is to be painted
-        if (isPixelGridPainted()){
+        if (isPixelGridPainted())
                 // Paint the pixel grid effect
             paintPixelGrid(g,0,0,width,height);
-        }
         g.dispose();
     }
     /**
@@ -1765,12 +1830,14 @@ public class RambleyPainter implements Painter<Component>{
      * It's assumed that the returned graphics context is the same as the given 
      * graphics context, or at least that the returned graphics context 
      * references the given graphics context in some way. 
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param g The graphics context to render to.
      * @return The given graphics context, now configured for rendering Rambley.
      * @see #paint 
+     * @see #paintBackground 
+     * @see #paintBackgroundDots 
+     * @see #paintRambley 
+     * @see #paintPixelGrid 
+     * @see #paintPixelGrid 
      */
     protected Graphics2D configureGraphics(Graphics2D g){
             // Enable antialiasing
@@ -1795,12 +1862,25 @@ public class RambleyPainter implements Painter<Component>{
         return g;
     }
     /**
-     * 
+     * This is used to render the background. The area is first filled with a 
+     * solid {@link BACKGROUND_COLOR light blue} color. After that, the 
+     * background polka dots are drawn using the {@link paintBackgroundDots 
+     * paintBackgroundDots} method. Finally, the {@link #getBackgroundGradient 
+     * background gradient} is drawn over everything in the area. This renders 
+     * to a copy of the given graphics context, so as to protect the rest of the 
+     * paint code from changes made to the graphics context while rendering the 
+     * background.
      * @param g The graphics context to render to.
      * @param x The x-coordinate of the top-left corner of the area to fill.
      * @param y The y-coordinate of the top-left corner of the area to fill.
      * @param w The width of the area to fill.
      * @param h The height of the area to fill.
+     * @see #paint 
+     * @see #paintBackgroundDots 
+     * @see BACKGROUND_COLOR
+     * @see #BACKGROUND_DOT_COLOR
+     * @see #BACKGROUND_GRADIENT_COLOR
+     * @see #getBackgroundGradient 
      */
     protected void paintBackground(Graphics2D g, int x, int y, int w, int h){
             // Create a copy of the given graphics context
@@ -1816,12 +1896,37 @@ public class RambleyPainter implements Painter<Component>{
         g.dispose();
     }
     /**
-     * 
+     * This is used to render the background polka dots. The background polka 
+     * dots will be drawn in a {@link BACKGROUND_DOT_COLOR dark blue} color. 
+     * Each polka dot will be {@link getBackgroundDot getBackgroundDot()} in 
+     * width and height, and will be spaced diagonally by {@link 
+     * #getBackgroundDotSpacing getBackgroundDotSpacing}. The polka dots will be 
+     * either circular or diamond-shaped, depending on whether {@link 
+     * #getCircularBackgroundDots getCircularBackgroundDots} is set to {@code 
+     * true} or not. Each polka dot is generated using the {@link 
+     * #getBackgroundDot getBackgroundDot} method. The polka dots will be offset 
+     * horizontally by {@link #getBackgroundDotOffsetX getBackgroundDotOffsetX} 
+     * and vertically by {@link #getBackgroundDotOffsetY 
+     * getBackgroundDotOffsetY}. This renders to a copy of the given graphics 
+     * context, so as to protect the rest of the paint code from changes made to 
+     * the graphics context while rendering the background polka dots.
      * @param g The graphics context to render to.
      * @param x The x-coordinate of the top-left corner of the area to fill.
      * @param y The y-coordinate of the top-left corner of the area to fill.
      * @param w The width of the area to fill.
      * @param h The height of the area to fill.
+     * @see #paint 
+     * @see #paintBackground 
+     * @see BACKGROUND_DOT_COLOR
+     * @see #getBackgroundDot 
+     * @see #getBackgroundDotOffsetX 
+     * @see #getBackgroundDotOffsetY 
+     * @see #getBackgroundDotSize 
+     * @see #getBackgroundDotSpacing 
+     * @see #getCircularBackgroundDots 
+     * @see #setCircularBackgroundDots 
+     * @see #isBackgroundPainted 
+     * @see #setBackgroundPainted 
      */
     protected void paintBackgroundDots(Graphics2D g, int x, int y, int w, int h){
             // Create a copy of the given graphics context over the given area
@@ -1858,6 +1963,23 @@ public class RambleyPainter implements Painter<Component>{
         g.dispose();
     }
     /**
+     * This is used to render the pixel grid effect over the area. The pixel 
+     * grid effect is drawn without antialiasing and in a {@link 
+     * PIXEL_GRID_COLOR transparent black} color. The pixel grid effect is 
+     * rendered as a grid of horizontal and vertical lines that cover the area, 
+     * with the spacing between the lines being {@link getPixelGridLineSpacing 
+     * getPixelGridLineSpacing}. The horizontal lines are offset by {@link 
+     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
+     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The path used to 
+     * draw the pixel grid effect is generated by the {@link #getPixelGrid 
+     * getPixelGrid} method. If a non-null {@code mask} is provided, then the 
+     * pixel grid will only be rendered within the given mask. This renders to a 
+     * copy of the given graphics context, so as to protect the rest of the 
+     * paint code from changes made to the graphics context while rendering the 
+     * pixel grid effect.
+     * 
+     * @todo Test the functionality to mask the pixel grid effect using the 
+     * given mask.
      * 
      * @param g The graphics context to render to.
      * @param x The x-coordinate of the top-left corner of the area to fill with 
@@ -1867,8 +1989,17 @@ public class RambleyPainter implements Painter<Component>{
      * @param w The width of the area to fill with the pixel grid effect.
      * @param h The height of the area to fill with the pixel grid effect.
      * @param mask An optional mask for the pixel grid effect, or null.
+     * @see #paint 
+     * @see #paintRambley 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     * @see PIXEL_GRID_COLOR
+     * @see #getPixelGrid 
+     * @see #getPixelGridLineSpacing 
+     * @see #setPixelGridLineSpacing 
+     * @see #getPixelGridOffsetX 
+     * @see #getPixelGridOffsetY 
      */
-    protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h, Shape mask){
+    protected void paintPixelGrid(Graphics2D g,int x,int y,int w,int h,Shape mask){
             // Create a copy of the given graphics context over the given area
         g = (Graphics2D) g.create(x, y, w, h);
             // Set the color to the pixel grid color
@@ -1877,9 +2008,9 @@ public class RambleyPainter implements Painter<Component>{
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_OFF);
             // If a mask has been provided for the pixel grid
-//        if (mask != null)
-//                // Clip the graphics context to only render within the given mask
-//            g.clip(mask);
+        if (mask != null)
+                // Clip the graphics context to only render within the given 
+            g.clip(mask);   // mask
             // Generate the pixel grid
         pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
             // Render the pixel grid
@@ -1887,6 +2018,23 @@ public class RambleyPainter implements Painter<Component>{
         g.dispose();
     }
     /**
+     * This is used to render the pixel grid effect over the area. The pixel 
+     * grid effect is drawn without antialiasing and in a {@link 
+     * PIXEL_GRID_COLOR transparent black} color. The pixel grid effect is 
+     * rendered as a grid of horizontal and vertical lines that cover the area, 
+     * with the spacing between the lines being {@link getPixelGridLineSpacing 
+     * getPixelGridLineSpacing}. The horizontal lines are offset by {@link 
+     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
+     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The path used to 
+     * draw the pixel grid effect is generated by the {@link #getPixelGrid 
+     * getPixelGrid} method. This renders to a copy of the given graphics 
+     * context, so as to protect the rest of the paint code from changes made to 
+     * the graphics context while rendering the pixel grid effect. <p>
+     * 
+     * This version of the method does not take in an optional mask for the 
+     * pixel grid effect. This is equivalent to calling {@link 
+     * paintPixelGrid(Graphics2D, int, int, int, int, Shape) paintPixelGrid(g, 
+     * x, y, w, h, null)}.
      * 
      * @param g The graphics context to render to.
      * @param x The x-coordinate of the top-left corner of the area to fill with 
@@ -1895,6 +2043,15 @@ public class RambleyPainter implements Painter<Component>{
      * the pixel grid effect.
      * @param w The width of the area to fill with the pixel grid effect.
      * @param h The height of the area to fill with the pixel grid effect.
+     * @see #paint 
+     * @see #paintRambley 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see PIXEL_GRID_COLOR
+     * @see #getPixelGrid 
+     * @see #getPixelGridLineSpacing 
+     * @see #setPixelGridLineSpacing 
+     * @see #getPixelGridOffsetX 
+     * @see #getPixelGridOffsetY 
      */
     protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h){
         paintPixelGrid(g,x,y,w,h,null);
@@ -2788,7 +2945,8 @@ public class RambleyPainter implements Painter<Component>{
                 x+RAMBLEY_PUPIL_HALF_SIZE, y+RAMBLEY_PUPIL_HALF_SIZE);
     }
     /**
-     * This paints Rambley's eye using the given eye white, iris, and pupil.
+     * This is used to render Rambley's eye using the given eye white, iris, and 
+     * pupil.
      * 
      * @todo Add references to other related methods.
      * 
@@ -2842,7 +3000,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This sets the location for the {@code iris} and {@code pupil} ellipses 
      * for Rambley's eyes to the given center x and y coordinates, and then 
-     * paints Rambley's eye Rambley's eye using the given eye white, iris, and 
+     * renders Rambley's eye Rambley's eye using the given eye white, iris, and 
      * pupil. This is equivalent to calling {@link #setRambleyEyeLocation 
      * setRambleyEyeLocation} before calling {@link #paintRambleyEye(Graphics2D, 
      * Shape, Ellipse2D, Ellipse2D) paintRambleyEye}.
@@ -3333,7 +3491,20 @@ public class RambleyPainter implements Painter<Component>{
         path = mirrorPathHorizontally(path,point2.getX());
         return new Area(path);
     }
+    
+        // Not finished yet, will be used to create the line on Rambley's teeth 
+        // when Rambley's jaw is closed.
+//    private Path2D createRambleyClosedTeethLine(double y, Area fang, 
+//            double mouthWidth, double mouthHeight, Path2D path){
+//        
+//    }
+    
     /**
+     * This is used to render Rambley the Raccoon.
+     * 
+     * This renders to a copy of the given graphics context, so as to 
+     * protect the rest of the paint code from changes made to the graphics 
+     * context while rendering Rambley.
      * 
      * @param g The graphics context to render to.
      * @param x The x-coordinate of the top-left corner of the area to fill.
