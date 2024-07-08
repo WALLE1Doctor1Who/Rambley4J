@@ -1240,21 +1240,29 @@ public class RambleyPainter implements Painter<Component>{
     
     /**
      * This returns the width and height used for the background polka dots.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @return The size of the background polka dots.
+     * @see #setBackgroundDotSize 
+     * @see #getBackgroundDotSpacing 
+     * @see #setBackgroundDotSpacing 
+     * @see #isBackgroundPainted 
+     * @see #setBackgroundPainted 
+     * @see #getCircularBackgroundDots 
+     * @see #setCircularBackgroundDots 
      */
     public double getBackgroundDotSize(){
         return dotSize;
     }
     /**
      * This sets the width and height used for the background polka dots. 
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param size The size for the background polka dots. 
      * @return This {@code RambleyPainter}.
+     * @see #getBackgroundDotSize 
+     * @see #getBackgroundDotSpacing 
+     * @see #setBackgroundDotSpacing 
+     * @see #isBackgroundPainted 
+     * @see #setBackgroundPainted 
+     * @see #getCircularBackgroundDots 
+     * @see #setCircularBackgroundDots 
      */
     public RambleyPainter setBackgroundDotSize(double size){
             // If the new size is different from the old size
@@ -1273,10 +1281,16 @@ public class RambleyPainter implements Painter<Component>{
      * getBackgroundDotSpacing()} pixels below the center of the previous 
      * background polka dot.
      * 
-     * @todo Rework the documentation for this method. Add references to other 
-     * related methods.
+     * @todo Rework the documentation for this method.
      * 
      * @return The diagonal spacing between the background polka dots.
+     * @see #getBackgroundDotSize 
+     * @see #setBackgroundDotSize 
+     * @see #setBackgroundDotSpacing 
+     * @see #isBackgroundPainted 
+     * @see #setBackgroundPainted 
+     * @see #getCircularBackgroundDots 
+     * @see #setCircularBackgroundDots 
      */
     public double getBackgroundDotSpacing(){
         return dotSpacing;
@@ -1288,11 +1302,17 @@ public class RambleyPainter implements Painter<Component>{
      * getBackgroundDotSpacing()} pixels below the center of the previous 
      * background polka dot.
      * 
-     * @todo Rework the documentation for this method. Add references to other 
-     * related methods.
+     * @todo Rework the documentation for this method.
      * 
      * @param spacing The diagonal spacing between the background polka dots.
      * @return This {@code RambleyPainter}.
+     * @see #getBackgroundDotSize 
+     * @see #setBackgroundDotSize 
+     * @see #getBackgroundDotSpacing 
+     * @see #isBackgroundPainted 
+     * @see #setBackgroundPainted 
+     * @see #getCircularBackgroundDots 
+     * @see #setCircularBackgroundDots 
      */
     public RambleyPainter setBackgroundDotSpacing(double spacing){
             // If the new spacing is different from the old spacing
@@ -1308,10 +1328,10 @@ public class RambleyPainter implements Painter<Component>{
      * This returns the spacing between the lines in the pixel grid. For the 
      * vertical lines, this is the horizontal spacing. For the horizontal lines, 
      * this is the vertical spacing.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @return The spacing between the lines in the pixel grid.
+     * @see #setPixelGridLineSpacing 
+     * @see #isPixelGridPainted 
+     * @see #setPixelGridPainted 
      */
     public double getPixelGridLineSpacing(){
         return lineSpacing;
@@ -1320,11 +1340,11 @@ public class RambleyPainter implements Painter<Component>{
      * This sets the spacing between the lines in the pixel grid. For the 
      * vertical lines, this is the horizontal spacing. For the horizontal lines, 
      * this is the vertical spacing.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code RambleyPainter}.
+     * @see #getPixelGridLineSpacing 
+     * @see #isPixelGridPainted 
+     * @see #setPixelGridPainted 
      */
     public RambleyPainter setPixelGridLineSpacing(double spacing){
             // If the new spacing is different from the old spacing
@@ -1489,331 +1509,6 @@ public class RambleyPainter implements Painter<Component>{
     
     
     /**
-     * This returns the gradient to use to paint the background gradient. The 
-     * gradient goes from {@link BACKGROUND_GRADIENT_COLOR} at the top to {@link 
-     * BACKGROUND_GRADIENT_COLOR_2} at the bottom throughout the area to fill.
-     * @param x The x-coordinate of the top-left corner of the area to fill.
-     * @param y The y-coordinate of the top-left corner of the area to fill.
-     * @param w The width of the area to fill.
-     * @param h The height of the area to fill.
-     * @return The gradient to use to paint the background gradient.
-     * @see BACKGROUND_GRADIENT_COLOR
-     * @see BACKGROUND_GRADIENT_COLOR_2
-     * @see #paintBackground 
-     */
-    protected Paint getBackgroundGradient(double x,double y,double w,double h){
-            // Get the center x-coordinate
-        float x1 = (float)((w / 2.0)+x);
-            // Create a vertical gradient that fades from the background 
-            // gradient color to transparency over the area to fill
-        return new GradientPaint(x1,(float)y,BACKGROUND_GRADIENT_COLOR,
-                x1,(float)(y+h-1),BACKGROUND_GRADIENT_COLOR_2);
-    }
-    /**
-     * This is used to calculate the offset for the background polka dots using 
-     * the given size value.
-     * @param size The value to use to get the offset.
-     * @return The offset for the background polka dots.
-     * @see getBackgroundDotOffsetX
-     * @see getBackgroundDotOffsetY
-     * @see getBackgroundDotSpacing
-     */
-    private double getBackgroundDotOffset(double size){
-        return (size%getBackgroundDotSpacing())/2.0;
-    }
-    /**
-     * This returns the x offset to use for the background polka dots. 
-     * 
-     * @implSpec The default implementation is equivalent to {@code (width % }
-     * {@link getBackgroundDotSpacing() getBackgroundDotSpacing()}{@code )/2.0}.
-     * 
-     * @param width The width of the area to fill with the background.
-     * @return The offset for the x-coordinate of the background polka dots.
-     * @see #getBackgroundDotOffsetY 
-     * @see #getBackgroundDotDiamond 
-     * @see #getBackgroundDot 
-     * @see #paintBackgroundDots
-     * @see getBackgroundDotSpacing
-     * @see setBackgroundDotSpacing
-     */
-    protected double getBackgroundDotOffsetX(double width){
-        return getBackgroundDotOffset(width);
-    }
-    /**
-     * This returns the y offset to use for the background polka dots. 
-     * 
-     * @implSpec The default implementation is equivalent to {@code (height % }
-     * {@link getBackgroundDotSpacing() getBackgroundDotSpacing()}{@code )/2.0}.
-     * 
-     * @param height The height of the area to fill with the background.
-     * @return The offset for the y-coordinate of the background polka dots.
-     * @see #getBackgroundDotOffsetX 
-     * @see #getBackgroundDotDiamond 
-     * @see #getBackgroundDot 
-     * @see #paintBackgroundDots 
-     * @see getBackgroundDotSpacing
-     * @see setBackgroundDotSpacing
-     */
-    protected double getBackgroundDotOffsetY(double height){
-        return getBackgroundDotOffset(height);
-    }
-    /**
-     * This creates and returns the shape to use to draw a diamond shaped 
-     * background polka dot, using the given {@code bounds} to determine the 
-     * size and position of the polka dot. 
-     * @param bounds A rectangle outlining the bounds for the background polka 
-     * dot to return.
-     * @param path A Path2D object to store the results in, or null.
-     * @return The diamond shape object to use to draw a background polka dot.
-     * @see #getBackgroundDot 
-     * @see #getCircularBackgroundDots
-     * @see #setCircularBackgroundDots 
-     * @see #paintBackgroundDots 
-     */
-    protected Path2D getBackgroundDotDiamond(RectangularShape bounds,Path2D path){
-            // If the given Path2D object is null
-        if (path == null)
-            path = new Path2D.Double();
-        else    // Reset the given Path2D object
-            path.reset();
-            // Move to the top center point of the dot
-        path.moveTo(bounds.getCenterX(), bounds.getMinY());
-            // Line to the center left point
-        path.lineTo(bounds.getMinX(), bounds.getCenterY());
-            // Line to the bottom center point
-        path.lineTo(bounds.getCenterX(), bounds.getMaxY());
-            // Line to the center right point
-        path.lineTo(bounds.getMaxX(), bounds.getCenterY());
-            // Close the path
-        path.closePath();
-        return path;
-    }
-    /**
-     * This creates and returns the shape to use to draw a background polka dot 
-     * centered at the given x and y coordinates. The background polka dot will 
-     * be the width and height set for the {@link #getBackgroundDotSize() 
-     * background polka dot size}. If the background polka dots are {@link 
-     * #getCircularBackgroundDots circular}, then the shape returned will be a 
-     * circle. Otherwise, the shape returned will be a diamond.
-     * @param x The x-coordinate for the center of the background polka dot.
-     * @param y The y-coordinate for the center of the background polka dot.
-     * @param path A Path2D object to store the results in, or null.
-     * @param ellipse An Ellipse2D object to store the results in, or null.
-     * @return The shape object to use to draw a background polka dot.
-     * @see #getBackgroundDotDiamond 
-     * @see #getCircularBackgroundDots
-     * @see #setCircularBackgroundDots 
-     * @see #getBackgroundDotSize 
-     * @see #setBackgroundDotSize 
-     * @see #paintBackgroundDots 
-     */
-    protected Shape getBackgroundDot(double x, double y, Path2D path, 
-            Ellipse2D ellipse){
-            // If the given Ellipse2D object is null
-        if (ellipse == null)
-            ellipse = new Ellipse2D.Double();
-            // Set the frame of the ellipse from the center to be the size of 
-            // a background polka dot.
-        ellipse.setFrameFromCenter(x, y, x-getBackgroundDotSize()/2.0, 
-                y-getBackgroundDotSize()/2.0);
-            // If the background dots should be circular
-        if (getCircularBackgroundDots())
-            return ellipse;
-        return getBackgroundDotDiamond(ellipse,path);
-    }
-    /**
-     * This is used to calculate the offset for the pixel grid effect using the 
-     * given size value.
-     * @param size The value to use to get the offset.
-     * @return The offset for the pixel grid effect.
-     * @see getPixelGridOffsetX
-     * @see getPixelGridOffsetY
-     * @see getPixelGridLineSpacing
-     */
-    private double getPixelGridOffset(double size){
-        return ((size-1)%getPixelGridLineSpacing())/2.0;
-    }
-    /**
-     * This returns the x offset to use for the horizontal lines of the pixel 
-     * grid effect.
-     * 
-     * @implSpec The default implementation is equivalent to {@code ((width-1) 
-     * %} {@link getPixelGridLineSpacing() 
-     * getPixelGridLineSpacing()}{@code )/2.0}.
-     * 
-     * @param width The width of the area to fill with the pixel grid effect.
-     * @return The offset for the x-coordinate of the pixel grid effect.
-     * @see #getPixelGridOffsetY
-     * @see #getPixelGrid 
-     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
-     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     */
-    protected double getPixelGridOffsetX(double width){
-        return getPixelGridOffset(width);
-    }
-    /**
-     * This returns the y offset to use for the vertical lines of the pixel grid 
-     * effect. 
-     * 
-     * @implSpec The default implementation is equivalent to {@code ((height-1) 
-     * %} {@link getPixelGridLineSpacing() 
-     * getPixelGridLineSpacing()}{@code )/2.0}.
-     * 
-     * @param height The height of the area to fill with the pixel grid effect.
-     * @return The offset for the y-coordinate of the pixel grid effect.
-     * @see #getPixelGridOffsetY
-     * @see #getPixelGrid 
-     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
-     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     */
-    protected double getPixelGridOffsetY(double height){
-        return getPixelGridOffset(height);
-    }
-    /**
-     * This returns the Path2D object used to render the pixel grid effect. The 
-     * pixel grid effect is a set of horizontal and vertical lines that span the 
-     * whole image. The horizontal lines are offset by {@link 
-     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
-     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The horizontal and 
-     * vertical lines are spaced out by {@link getPixelGridLineSpacing 
-     * getPixelGridLineSpacing}.
-     * @param x The x-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
-     * @param y The y-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
-     * @param w The width of the area to fill with the pixel grid effect.
-     * @param h The height of the area to fill with the pixel grid effect.
-     * @param path A Path2D object to store the results in, or null.
-     * @return The Path2D object to use to render the pixel grid effect.
-     * @see getPixelGridOffsetX
-     * @see getPixelGridOffsetY
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
-     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
-     */
-    protected Path2D getPixelGrid(double x, double y, double w, double h, 
-            Path2D path){
-            // If the given Path2D object is null
-        if (path == null)
-            path = new Path2D.Double();
-        else    // Reset the given Path2D object
-            path.reset();
-            // Get the maximum x-coordinate for the pixel grid
-        double x2 = x+w;
-            // Get the maximum y-coordinate for the pixel grid
-        double y2 = y+h;
-            // Go through and generate the vertical lines, starting at the 
-            // offset for the y-coordinate of the pixel grid and spacing them 
-            // out by the pixel grid spacing
-        for (double y1 = getPixelGridOffsetY(h); y1 <= h; 
-                y1+=getPixelGridLineSpacing()){
-            path.moveTo(x, y1+y);
-            path.lineTo(x2, y1+y);
-        }   // Go through and generate the horizontal lines, starting at the 
-            // offset for the x-coordinate of the pixel grid and spacing them 
-            // out by the pixel grid spacing
-        for (double x1 = getPixelGridOffsetX(w); x1 <= w; 
-                x1+=getPixelGridLineSpacing()){
-            path.moveTo(x1+x, y);
-            path.lineTo(x1+x, y2);
-        }
-        return path;
-    }
-    /**
-     * This constructs a BasicStroke object to use when rendering Rambley. The 
-     * BasicStroke will have the given line width, the ends of the lines will be 
-     * {@link BasicStroke#CAP_ROUND rounded}, and points where paths meet will 
-     * be {@link BasicStroke#JOIN_ROUND rounded}.
-     * @param width The line width for the stroke.
-     * @return A BasicStroke with the given line width.
-     * @see BasicStroke#BasicStroke(float, int, int) 
-     * @see BasicStroke.CAP_ROUND
-     * @see BasicStroke.JOIN_ROUND
-     * @see #getRambleyNormalStroke() 
-     * @see #getRambleyDetailStroke() 
-     * @see #getRambleyOutlineStroke() 
-     */
-    protected BasicStroke getRambleyStroke(float width){
-        return new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
-    }
-    /**
-     * This returns a BasicStroke object to use for rendering most of Rambley. 
-     * This stroke is mainly used when filling in shapes. This stroke has a line 
-     * width of 1.0, the ends of the lines will be {@link BasicStroke#CAP_ROUND 
-     * rounded}, and points where paths meet will be {@link 
-     * BasicStroke#JOIN_ROUND rounded}.
-     * @return The normal stroke used for drawing Rambley.
-     * @see #getRambleyStroke
-     * @see getRambleyDetailStroke
-     * @see getRambleyOutlineStroke
-     * @see #getRambleyBorderStroke 
-     */
-    protected BasicStroke getRambleyNormalStroke(){
-            // If the normal stroke for Rambley has not been initialized yet
-        if (normalStroke == null)
-            normalStroke = getRambleyStroke(1.0f);
-        return normalStroke;
-    }
-    /**
-     * This returns a BasicStroke object to use for rendering the details and 
-     * finer outlines for Rambley. This stroke has a line width of 2.0, the ends 
-     * of the lines will be {@link BasicStroke#CAP_ROUND rounded}, and points 
-     * where paths meet will be {@link BasicStroke#JOIN_ROUND rounded}.
-     * @return The details stroke used for drawing Rambley.
-     * @see #getRambleyStroke
-     * @see getRambleyNormalStroke
-     * @see getRambleyOutlineStroke
-     * @see #getRambleyBorderStroke 
-     */
-    protected BasicStroke getRambleyDetailStroke(){
-            // If the detail stroke for Rambley has not been initialized yet
-        if (detailStroke == null)
-            detailStroke = getRambleyStroke(2.0f);
-        return detailStroke;
-    }
-    /**
-     * This returns a BasicStroke object to use for rendering most of the 
-     * outlines for Rambley. This stroke has a line width of 3.0, the ends 
-     * of the lines will be {@link BasicStroke#CAP_ROUND rounded}, and points 
-     * where paths meet will be {@link BasicStroke#JOIN_ROUND rounded}.
-     * @return The outline stroke used for drawing Rambley.
-     * @see #getRambleyStroke
-     * @see getRambleyNormalStroke
-     * @see getRambleyDetailStroke
-     * @see #getRambleyBorderStroke 
-     */
-    protected BasicStroke getRambleyOutlineStroke(){
-            // If the outline stroke for Rambley has not been initialized yet
-        if (outlineStroke == null)
-            outlineStroke = getRambleyStroke(3.0f);
-        return outlineStroke;
-    }
-    /**
-     * This returns a BasicStroke object to use for rendering the border around 
-     * Rambley. This stroke has a line width of 2 * {@link 
-     * RAMBLEY_BORDER_THICKNESS} (in order to have the visible section to be 
-     * {@code RAMBLEY_BORDER_THICKNESS}), the ends of the lines will be {@link 
-     * BasicStroke#CAP_ROUND rounded}, and points where paths meet will be 
-     * {@link BasicStroke#JOIN_ROUND rounded}.
-     * @return The border stroke used for drawing the border around Rambley.
-     * @see #getRambleyStroke
-     * @see getRambleyNormalStroke
-     * @see getRambleyDetailStroke
-     * @see getRambleyOutlineStroke
-     * @see RAMBLEY_BORDER_THICKNESS
-     */
-    protected BasicStroke getRambleyBorderStroke(){
-            // If the border stroke for Rambley has not been initialized yet
-        if (borderStroke == null)
-            borderStroke = getRambleyStroke(RAMBLEY_BORDER_THICKNESS*2);
-        return borderStroke;
-    }
-    /**
      * This returns an AffineTransform object that flips shapes horizontally and 
      * translates it by {@code dx}.
      * 
@@ -1970,43 +1665,44 @@ public class RambleyPainter implements Painter<Component>{
         return tx;
     }
     /**
-     * This returns an AffineTransform object that translates shapes to become a 
-     * drop shadow.
-     * 
-     * @todo Add references to other related methods.
-     * 
-     * @param tx An AffineTransform to store the results in, or null.
-     * @return An AffineTransform used to turn shapes into drop shadows.
+     * This calculates the control point for a quadratic bezier curve that 
+     * starts at {@code p0}, passes through {@code p1}, and ends at {@code p2}, 
+     * and adds the resulting curve to the given path.
+     * @param p0 The starting point of the curve.
+     * @param p1 The point to pass through.
+     * @param p2 The ending point of the curve.
+     * @param pC A Point2D object to store the control point in, or null.
+     * @param path The Path2D object to add the curve to.
+     * @return  The control point for the curve.
+     * @see getQuadBezierControlPoint
      */
-    protected AffineTransform getDropShadowTransform(AffineTransform tx){
-            // If the given AffineTransform is null
-        if (tx == null)
-                // Return an AffineTransform to translate shapes 
-            return AffineTransform.getTranslateInstance(
-                    RAMBLEY_DROP_SHADOW_X_OFFSET, RAMBLEY_DROP_SHADOW_Y_OFFSET);
-            // Set the AffineTransform to one that translate shapes 
-        tx.setToTranslation(RAMBLEY_DROP_SHADOW_X_OFFSET, 
-                RAMBLEY_DROP_SHADOW_Y_OFFSET);
-        return tx;
+    protected static Point2D addQuadBezierCurve(Point2D p0, Point2D p1, 
+            Point2D p2, Point2D pC, Path2D path){
+            // Get the control point for the curve
+        pC = getQuadBezierControlPoint(p0,p1,p2,pC);
+            // Add the curve to the path
+        path.quadTo(pC.getX(), pC.getY(), p2.getX(), p2.getY());
+        return pC;
     }
     /**
-     * This creates and returns an Area that serves as a drop shadow of the 
-     * given area.
-     * 
-     * @todo Add references to other related methods.
-     * 
-     * @param area The area to get the drop shadow of.
-     * @return An area that represents the drop shadow of the given area.
+     * This returns the RectangularShape that represents the bounds of the given 
+     * shape. This method is mainly to help avoid the creation of unnecessary 
+     * Rectangle2D objects when getting the bounds of a shape in order to use 
+     * RectangularShape methods on a given shape that may or may not already be 
+     * a RectangularShape. 
+     * @param shape The shape to get the bounds of.
+     * @return The bounds of the given shape, or null if the shape is null. If 
+     * the given shape is a RectangularShape, then it is returned instead.
      */
-    protected Area getDropShadow(Area area){
-            // Get the AffineTransform for creating the drop shadow
-        afTx = getDropShadowTransform(afTx);
-            // Transform the area to get the drop shadow
-        return area.createTransformedArea(afTx);
+    private static RectangularShape getBoundsOfShape(Shape shape){
+            // If the given shape is a RectangularShape
+        if (shape instanceof RectangularShape)
+            return (RectangularShape) shape;
+            // If the shape is null
+        else if (shape == null)
+            return null;
+        return shape.getBounds2D();
     }
-    
-    
-    
     /**
      * 
      * @param g {@inheritDoc }
@@ -2072,6 +1768,142 @@ public class RambleyPainter implements Painter<Component>{
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
                 RenderingHints.VALUE_STROKE_PURE);
         return g;
+    }
+    
+    
+    
+    /**
+     * This returns the gradient to use to paint the background gradient. The 
+     * gradient goes from {@link BACKGROUND_GRADIENT_COLOR} at the top to {@link 
+     * BACKGROUND_GRADIENT_COLOR_2} at the bottom throughout the area to fill.
+     * @param x The x-coordinate of the top-left corner of the area to fill.
+     * @param y The y-coordinate of the top-left corner of the area to fill.
+     * @param w The width of the area to fill.
+     * @param h The height of the area to fill.
+     * @return The gradient to use to paint the background gradient.
+     * @see BACKGROUND_GRADIENT_COLOR
+     * @see BACKGROUND_GRADIENT_COLOR_2
+     * @see #paintBackground 
+     */
+    protected Paint getBackgroundGradient(double x,double y,double w,double h){
+            // Get the center x-coordinate
+        float x1 = (float)((w / 2.0)+x);
+            // Create a vertical gradient that fades from the background 
+            // gradient color to transparency over the area to fill
+        return new GradientPaint(x1,(float)y,BACKGROUND_GRADIENT_COLOR,
+                x1,(float)(y+h-1),BACKGROUND_GRADIENT_COLOR_2);
+    }
+    /**
+     * This is used to calculate the offset for the background polka dots using 
+     * the given size value.
+     * @param size The value to use to get the offset.
+     * @return The offset for the background polka dots.
+     * @see getBackgroundDotOffsetX
+     * @see getBackgroundDotOffsetY
+     * @see getBackgroundDotSpacing
+     */
+    private double getBackgroundDotOffset(double size){
+        return (size%getBackgroundDotSpacing())/2.0;
+    }
+    /**
+     * This returns the x offset to use for the background polka dots. 
+     * 
+     * @implSpec The default implementation is equivalent to {@code (width % }
+     * {@link getBackgroundDotSpacing() getBackgroundDotSpacing()}{@code )/2.0}.
+     * 
+     * @param width The width of the area to fill with the background.
+     * @return The offset for the x-coordinate of the background polka dots.
+     * @see #getBackgroundDotOffsetY 
+     * @see #getBackgroundDotDiamond 
+     * @see #getBackgroundDot 
+     * @see #paintBackgroundDots
+     * @see getBackgroundDotSpacing
+     * @see setBackgroundDotSpacing
+     */
+    protected double getBackgroundDotOffsetX(double width){
+        return getBackgroundDotOffset(width);
+    }
+    /**
+     * This returns the y offset to use for the background polka dots. 
+     * 
+     * @implSpec The default implementation is equivalent to {@code (height % }
+     * {@link getBackgroundDotSpacing() getBackgroundDotSpacing()}{@code )/2.0}.
+     * 
+     * @param height The height of the area to fill with the background.
+     * @return The offset for the y-coordinate of the background polka dots.
+     * @see #getBackgroundDotOffsetX 
+     * @see #getBackgroundDotDiamond 
+     * @see #getBackgroundDot 
+     * @see #paintBackgroundDots 
+     * @see getBackgroundDotSpacing
+     * @see setBackgroundDotSpacing
+     */
+    protected double getBackgroundDotOffsetY(double height){
+        return getBackgroundDotOffset(height);
+    }
+    /**
+     * This creates and returns the shape to use to draw a diamond shaped 
+     * background polka dot, using the given {@code bounds} to determine the 
+     * size and position of the polka dot. 
+     * @param bounds A rectangle outlining the bounds for the background polka 
+     * dot to return.
+     * @param path A Path2D object to store the results in, or null.
+     * @return The diamond shape object to use to draw a background polka dot.
+     * @see #getBackgroundDot 
+     * @see #getCircularBackgroundDots
+     * @see #setCircularBackgroundDots 
+     * @see #paintBackgroundDots 
+     */
+    protected Path2D getBackgroundDotDiamond(RectangularShape bounds,Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // Move to the top center point of the dot
+        path.moveTo(bounds.getCenterX(), bounds.getMinY());
+            // Line to the center left point
+        path.lineTo(bounds.getMinX(), bounds.getCenterY());
+            // Line to the bottom center point
+        path.lineTo(bounds.getCenterX(), bounds.getMaxY());
+            // Line to the center right point
+        path.lineTo(bounds.getMaxX(), bounds.getCenterY());
+            // Close the path
+        path.closePath();
+        return path;
+    }
+    /**
+     * This creates and returns the shape to use to draw a background polka dot 
+     * centered at the given x and y coordinates. The background polka dot will 
+     * be the width and height set for the {@link #getBackgroundDotSize() 
+     * background polka dot size}. If the background polka dots are {@link 
+     * #getCircularBackgroundDots circular}, then the shape returned will be a 
+     * circle. Otherwise, the shape returned will be a diamond.
+     * @param x The x-coordinate for the center of the background polka dot.
+     * @param y The y-coordinate for the center of the background polka dot.
+     * @param path A Path2D object to store the results in, or null.
+     * @param ellipse An Ellipse2D object to store the results in, or null.
+     * @return The shape object to use to draw a background polka dot.
+     * @see #getBackgroundDotDiamond 
+     * @see #getCircularBackgroundDots
+     * @see #setCircularBackgroundDots 
+     * @see #getBackgroundDotSize 
+     * @see #setBackgroundDotSize 
+     * @see #paintBackgroundDots 
+     */
+    protected Shape getBackgroundDot(double x, double y, Path2D path, 
+            Ellipse2D ellipse){
+            // If the given Ellipse2D object is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+            // Set the frame of the ellipse from the center to be the size of 
+            // a background polka dot.
+        ellipse.setFrameFromCenter(x, y, x-getBackgroundDotSize()/2.0, 
+                y-getBackgroundDotSize()/2.0);
+            // If the background dots should be circular
+        if (getCircularBackgroundDots())
+            return ellipse;
+        return getBackgroundDotDiamond(ellipse,path);
     }
     /**
      * This is used to render the background. The area is first filled with a 
@@ -2174,6 +2006,112 @@ public class RambleyPainter implements Painter<Component>{
         }
         g.dispose();
     }
+    
+    
+    
+    /**
+     * This is used to calculate the offset for the pixel grid effect using the 
+     * given size value.
+     * @param size The value to use to get the offset.
+     * @return The offset for the pixel grid effect.
+     * @see getPixelGridOffsetX
+     * @see getPixelGridOffsetY
+     * @see getPixelGridLineSpacing
+     */
+    private double getPixelGridOffset(double size){
+        return ((size-1)%getPixelGridLineSpacing())/2.0;
+    }
+    /**
+     * This returns the x offset to use for the horizontal lines of the pixel 
+     * grid effect.
+     * 
+     * @implSpec The default implementation is equivalent to {@code ((width-1) 
+     * %} {@link getPixelGridLineSpacing() 
+     * getPixelGridLineSpacing()}{@code )/2.0}.
+     * 
+     * @param width The width of the area to fill with the pixel grid effect.
+     * @return The offset for the x-coordinate of the pixel grid effect.
+     * @see #getPixelGridOffsetY
+     * @see #getPixelGrid 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     * @see getPixelGridLineSpacing
+     * @see setPixelGridLineSpacing
+     */
+    protected double getPixelGridOffsetX(double width){
+        return getPixelGridOffset(width);
+    }
+    /**
+     * This returns the y offset to use for the vertical lines of the pixel grid 
+     * effect. 
+     * 
+     * @implSpec The default implementation is equivalent to {@code ((height-1) 
+     * %} {@link getPixelGridLineSpacing() 
+     * getPixelGridLineSpacing()}{@code )/2.0}.
+     * 
+     * @param height The height of the area to fill with the pixel grid effect.
+     * @return The offset for the y-coordinate of the pixel grid effect.
+     * @see #getPixelGridOffsetY
+     * @see #getPixelGrid 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     * @see getPixelGridLineSpacing
+     * @see setPixelGridLineSpacing
+     */
+    protected double getPixelGridOffsetY(double height){
+        return getPixelGridOffset(height);
+    }
+    /**
+     * This returns the Path2D object used to render the pixel grid effect. The 
+     * pixel grid effect is a set of horizontal and vertical lines that span the 
+     * whole image. The horizontal lines are offset by {@link 
+     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
+     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The horizontal and 
+     * vertical lines are spaced out by {@link getPixelGridLineSpacing 
+     * getPixelGridLineSpacing}.
+     * @param x The x-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param y The y-coordinate of the top-left corner of the area to fill with 
+     * the pixel grid effect.
+     * @param w The width of the area to fill with the pixel grid effect.
+     * @param h The height of the area to fill with the pixel grid effect.
+     * @param path A Path2D object to store the results in, or null.
+     * @return The Path2D object to use to render the pixel grid effect.
+     * @see getPixelGridOffsetX
+     * @see getPixelGridOffsetY
+     * @see getPixelGridLineSpacing
+     * @see setPixelGridLineSpacing
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     */
+    protected Path2D getPixelGrid(double x, double y, double w, double h, 
+            Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // Get the maximum x-coordinate for the pixel grid
+        double x2 = x+w;
+            // Get the maximum y-coordinate for the pixel grid
+        double y2 = y+h;
+            // Go through and generate the vertical lines, starting at the 
+            // offset for the y-coordinate of the pixel grid and spacing them 
+            // out by the pixel grid spacing
+        for (double y1 = getPixelGridOffsetY(h); y1 <= h; 
+                y1+=getPixelGridLineSpacing()){
+            path.moveTo(x, y1+y);
+            path.lineTo(x2, y1+y);
+        }   // Go through and generate the horizontal lines, starting at the 
+            // offset for the x-coordinate of the pixel grid and spacing them 
+            // out by the pixel grid spacing
+        for (double x1 = getPixelGridOffsetX(w); x1 <= w; 
+                x1+=getPixelGridLineSpacing()){
+            path.moveTo(x1+x, y);
+            path.lineTo(x1+x, y2);
+        }
+        return path;
+    }
     /**
      * This is used to render the pixel grid effect over the area. The pixel 
      * grid effect is drawn without antialiasing and in a {@link 
@@ -2267,6 +2205,78 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected void paintPixelGrid(Graphics2D g, int x, int y, int w, int h){
         paintPixelGrid(g,x,y,w,h,null);
+    }
+    
+    
+    
+    /**
+     * This constructs a BasicStroke object to use when rendering Rambley. The 
+     * BasicStroke will have the given line width, the ends of the lines will be 
+     * {@link BasicStroke#CAP_ROUND rounded}, and points where paths meet will 
+     * be {@link BasicStroke#JOIN_ROUND rounded}.
+     * @param width The line width for the stroke.
+     * @return A BasicStroke with the given line width.
+     * @see BasicStroke#BasicStroke(float, int, int) 
+     * @see BasicStroke.CAP_ROUND
+     * @see BasicStroke.JOIN_ROUND
+     * @see #getRambleyNormalStroke() 
+     * @see #getRambleyDetailStroke() 
+     * @see #getRambleyOutlineStroke() 
+     */
+    protected BasicStroke getRambleyStroke(float width){
+        return new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
+    }
+    /**
+     * This returns a BasicStroke object to use for rendering most of Rambley. 
+     * This stroke is mainly used when filling in shapes. This stroke has a line 
+     * width of 1.0, the ends of the lines will be {@link BasicStroke#CAP_ROUND 
+     * rounded}, and points where paths meet will be {@link 
+     * BasicStroke#JOIN_ROUND rounded}.
+     * @return The normal stroke used for drawing Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyDetailStroke
+     * @see getRambleyOutlineStroke
+     * @see #getRambleyBorderStroke 
+     */
+    protected BasicStroke getRambleyNormalStroke(){
+            // If the normal stroke for Rambley has not been initialized yet
+        if (normalStroke == null)
+            normalStroke = getRambleyStroke(1.0f);
+        return normalStroke;
+    }
+    /**
+     * This returns a BasicStroke object to use for rendering the details and 
+     * finer outlines for Rambley. This stroke has a line width of 2.0, the ends 
+     * of the lines will be {@link BasicStroke#CAP_ROUND rounded}, and points 
+     * where paths meet will be {@link BasicStroke#JOIN_ROUND rounded}.
+     * @return The details stroke used for drawing Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyNormalStroke
+     * @see getRambleyOutlineStroke
+     * @see #getRambleyBorderStroke 
+     */
+    protected BasicStroke getRambleyDetailStroke(){
+            // If the detail stroke for Rambley has not been initialized yet
+        if (detailStroke == null)
+            detailStroke = getRambleyStroke(2.0f);
+        return detailStroke;
+    }
+    /**
+     * This returns a BasicStroke object to use for rendering most of the 
+     * outlines for Rambley. This stroke has a line width of 3.0, the ends 
+     * of the lines will be {@link BasicStroke#CAP_ROUND rounded}, and points 
+     * where paths meet will be {@link BasicStroke#JOIN_ROUND rounded}.
+     * @return The outline stroke used for drawing Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyNormalStroke
+     * @see getRambleyDetailStroke
+     * @see #getRambleyBorderStroke 
+     */
+    protected BasicStroke getRambleyOutlineStroke(){
+            // If the outline stroke for Rambley has not been initialized yet
+        if (outlineStroke == null)
+            outlineStroke = getRambleyStroke(3.0f);
+        return outlineStroke;
     }
     /**
      * This creates and returns an Area that forms the base shape of Rambley's 
@@ -4008,6 +4018,64 @@ public class RambleyPainter implements Painter<Component>{
         
         g.dispose();
     }
+    
+    
+    
+    /**
+     * This returns a BasicStroke object to use for rendering the border around 
+     * Rambley. This stroke has a line width of 2 * {@link 
+     * RAMBLEY_BORDER_THICKNESS} (in order to have the visible section to be 
+     * {@code RAMBLEY_BORDER_THICKNESS}), the ends of the lines will be {@link 
+     * BasicStroke#CAP_ROUND rounded}, and points where paths meet will be 
+     * {@link BasicStroke#JOIN_ROUND rounded}.
+     * @return The border stroke used for drawing the border around Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyNormalStroke
+     * @see getRambleyDetailStroke
+     * @see getRambleyOutlineStroke
+     * @see RAMBLEY_BORDER_THICKNESS
+     */
+    protected BasicStroke getRambleyBorderStroke(){
+            // If the border stroke for Rambley has not been initialized yet
+        if (borderStroke == null)
+            borderStroke = getRambleyStroke(RAMBLEY_BORDER_THICKNESS*2);
+        return borderStroke;
+    }
+    /**
+     * This returns an AffineTransform object that translates shapes to become a 
+     * drop shadow.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to turn shapes into drop shadows.
+     */
+    protected AffineTransform getDropShadowTransform(AffineTransform tx){
+            // If the given AffineTransform is null
+        if (tx == null)
+                // Return an AffineTransform to translate shapes 
+            return AffineTransform.getTranslateInstance(
+                    RAMBLEY_DROP_SHADOW_X_OFFSET, RAMBLEY_DROP_SHADOW_Y_OFFSET);
+            // Set the AffineTransform to one that translate shapes 
+        tx.setToTranslation(RAMBLEY_DROP_SHADOW_X_OFFSET, 
+                RAMBLEY_DROP_SHADOW_Y_OFFSET);
+        return tx;
+    }
+    /**
+     * This creates and returns an Area that serves as a drop shadow of the 
+     * given area.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param area The area to get the drop shadow of.
+     * @return An area that represents the drop shadow of the given area.
+     */
+    protected Area getDropShadow(Area area){
+            // Get the AffineTransform for creating the drop shadow
+        afTx = getDropShadowTransform(afTx);
+            // Transform the area to get the drop shadow
+        return area.createTransformedArea(afTx);
+    }
     /**
      * This is used to render the border around Rambley the Raccoon and his drop 
      * shadow.
@@ -4331,45 +4399,6 @@ public class RambleyPainter implements Painter<Component>{
             double newValue){
         firePropertyChange(propertyName,Double.valueOf(oldValue),
                 Double.valueOf(newValue));
-    }
-    /**
-     * This calculates the control point for a quadratic bezier curve that 
-     * starts at {@code p0}, passes through {@code p1}, and ends at {@code p2}, 
-     * and adds the resulting curve to the given path.
-     * @param p0 The starting point of the curve.
-     * @param p1 The point to pass through.
-     * @param p2 The ending point of the curve.
-     * @param pC A Point2D object to store the control point in, or null.
-     * @param path The Path2D object to add the curve to.
-     * @return  The control point for the curve.
-     * @see getQuadBezierControlPoint
-     */
-    protected static Point2D addQuadBezierCurve(Point2D p0, Point2D p1, 
-            Point2D p2, Point2D pC, Path2D path){
-            // Get the control point for the curve
-        pC = getQuadBezierControlPoint(p0,p1,p2,pC);
-            // Add the curve to the path
-        path.quadTo(pC.getX(), pC.getY(), p2.getX(), p2.getY());
-        return pC;
-    }
-    /**
-     * This returns the RectangularShape that represents the bounds of the given 
-     * shape. This method is mainly to help avoid the creation of unnecessary 
-     * Rectangle2D objects when getting the bounds of a shape in order to use 
-     * RectangularShape methods on a given shape that may or may not already be 
-     * a RectangularShape. 
-     * @param shape The shape to get the bounds of.
-     * @return The bounds of the given shape, or null if the shape is null. If 
-     * the given shape is a RectangularShape, then it is returned instead.
-     */
-    private static RectangularShape getBoundsOfShape(Shape shape){
-            // If the given shape is a RectangularShape
-        if (shape instanceof RectangularShape)
-            return (RectangularShape) shape;
-            // If the shape is null
-        else if (shape == null)
-            return null;
-        return shape.getBounds2D();
     }
     
     
