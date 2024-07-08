@@ -1455,6 +1455,9 @@ public class RambleyPainter implements Painter<Component>{
      * @param width The width of the area to fill with the background.
      * @return The offset for the x-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetY 
+     * @see #getBackgroundDotDiamond(RectangularShape, Path2D) 
+     * @see #getBackgroundDot(double, double, Path2D, Ellipse2D) 
+     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
      */
     protected double getBackgroundDotOffsetX(double width){
         return getBackgroundDotOffset(width);
@@ -1464,31 +1467,27 @@ public class RambleyPainter implements Painter<Component>{
      * @param height The height of the area to fill with the background.
      * @return The offset for the y-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetX 
+     * @see #getBackgroundDotDiamond(RectangularShape, Path2D) 
+     * @see #getBackgroundDot(double, double, Path2D, Ellipse2D) 
+     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
      */
     protected double getBackgroundDotOffsetY(double height){
         return getBackgroundDotOffset(height);
     }
     /**
-     * 
+     * This creates and returns the shape to use to draw a diamond shaped 
+     * background polka dot, using the given {@code bounds} to determine the 
+     * size and position of the polka dot. 
      * @param bounds A rectangle outlining the bounds for the background polka 
      * dot to return.
      * @param path A Path2D object to store the results in, or null.
-     * @param ellipse An Ellipse2D object to store the results in, or null.
-     * @return The shape object to use to draw a background polka dot.
+     * @return The diamond shape object to use to draw a background polka dot.
+     * @see #getBackgroundDot(double, double, Path2D, Ellipse2D) 
+     * @see #getCircularBackgroundDots
+     * @see #setCircularBackgroundDots 
+     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
      */
-    protected Shape getBackgroundDot(RectangularShape bounds, Path2D path, 
-            Ellipse2D ellipse){
-            // If the background dots should be circular
-        if (getCircularBackgroundDots()){
-                // If the given Ellipse2D object is null
-            if (ellipse == null)
-                ellipse = new Ellipse2D.Double();
-                // Set the frame of the ellipse to be the frame of the rectangle
-            ellipse.setFrame(bounds.getX(), bounds.getY(), bounds.getWidth(), 
-                    bounds.getHeight());
-                // Return the ellipse
-            return ellipse;
-        }
+    protected Path2D getBackgroundDotDiamond(RectangularShape bounds,Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -1507,25 +1506,36 @@ public class RambleyPainter implements Painter<Component>{
         return path;
     }
     /**
-     * 
+     * This creates and returns the shape to use to draw a background polka dot 
+     * centered at the given x and y coordinates. The background polka dot will 
+     * be the width and height set for the {@link #getBackgroundDotSize() 
+     * background polka dot size}. If the background polka dots are {@link 
+     * #getCircularBackgroundDots circular}, then the shape returned will be a 
+     * circle. Otherwise, the shape returned will be a diamond.
      * @param x The x-coordinate for the center of the background polka dot.
      * @param y The y-coordinate for the center of the background polka dot.
      * @param path A Path2D object to store the results in, or null.
      * @param ellipse An Ellipse2D object to store the results in, or null.
-     * @param rect A Rectangle2D object to temporarily store the bounds for the 
-     * background polka dot in, or null.
      * @return The shape object to use to draw a background polka dot.
+     * @see #getBackgroundDotDiamond(RectangularShape, Path2D) 
+     * @see #getCircularBackgroundDots
+     * @see #setCircularBackgroundDots 
+     * @see #getBackgroundDotSize 
+     * @see #paintBackgroundDots(Graphics2D, int, int, int, int) 
      */
     protected Shape getBackgroundDot(double x, double y, Path2D path, 
-            Ellipse2D ellipse, Rectangle2D rect){
-            // If the given Rectangle2D object is null
-        if (rect == null)
-            rect = new Rectangle2D.Double();
-            // Set the frame of the rectangle from the center to be the size of 
+            Ellipse2D ellipse){
+            // If the given Ellipse2D object is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+            // Set the frame of the ellipse from the center to be the size of 
             // a background polka dot.
-        rect.setFrameFromCenter(x, y, x-getBackgroundDotSize()/2.0, 
+        ellipse.setFrameFromCenter(x, y, x-getBackgroundDotSize()/2.0, 
                 y-getBackgroundDotSize()/2.0);
-        return getBackgroundDot(rect,path,ellipse);
+            // If the background dots should be circular
+        if (getCircularBackgroundDots())
+            return ellipse;
+        return getBackgroundDotDiamond(ellipse,path);
     }
     /**
      * This is used to calculate the offset for the pixel grid effect using the 
@@ -1818,9 +1828,6 @@ public class RambleyPainter implements Painter<Component>{
         g = (Graphics2D) g.create(x, y, w, h);
             // Set the color to the background polka dot color
         g.setColor(BACKGROUND_DOT_COLOR);
-            // If the scratch Rectangle2D object has not been initialized yet
-        if (rect == null)
-            rect = new Rectangle2D.Double();
             // If the first Ellipse2D scratch object has not been initialized 
         if (ellipse1 == null)   // yet
             ellipse1 = new Ellipse2D.Double();
@@ -1845,7 +1852,7 @@ public class RambleyPainter implements Painter<Component>{
             for (double xDot = getBackgroundDotSpacing() * (i % 2); xDot <= w; 
                     xDot+=getBackgroundDotSpacing()+getBackgroundDotSpacing()){
                     // Fill the current background polka dot
-                g.fill(getBackgroundDot(xDot+x1,yDot,path,ellipse1,rect));
+                g.fill(getBackgroundDot(xDot+x1,yDot,path,ellipse1));
             }
         }
         g.dispose();
