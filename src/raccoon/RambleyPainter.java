@@ -542,7 +542,11 @@ public class RambleyPainter implements Painter<Component>{
     public static final String RAMBLEY_OPEN_MOUTH_HEIGHT_PROPERTY_CHANGED = 
             "RambleyOpenMouthHeightPropertyChanged";
     
-    // Settings and listeners
+    /*                      Settings and Listeners
+    
+    These are fields that relate to controlling the settings for the painter and 
+    for listening to this painter.
+    */
     
     /**
      * This is an EventListenerList to store the listeners for this class.
@@ -609,7 +613,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     private double mouthOpenHeight;
     
-    // Commonly used objects for the rendering process
+    /*          Commonly used objects for the rendering process
+    
+    These are fields that don't change once initialized and are used each time 
+    Rambley is painted.
+    */
     
     /**
      * A BasicStroke object used to render most of Rambley. This is initially 
@@ -646,19 +654,14 @@ public class RambleyPainter implements Painter<Component>{
      * time it is used.
      */
     private DoubleUnaryOperator earEquationT = null;
-    /**
-     * This is an scratch AffineTransform used to flip shapes horizontally. This 
-     * is initially null and is initialized the first time it is used.
-     */
-    private AffineTransform horizTx = null;
-    /**
-     * This is an AffineTransform used to scale down the outer part of Rambley's 
-     * ears to get the inner part of his ears. This is initially null and is 
-     * initialized the first time it is used.
-     */
-    private AffineTransform inEarTx = null;
     
-    // Dedicated scratch shape objects
+    /*                      Dedicated scratch objects
+    
+    These fields are scratch objects used for doing or rendering specific 
+    things. These scratch objects have an intended use, and should not be used 
+    for much else, as this could cause issues with code that assumes something 
+    of these objects, and that assumption turns out to be wrong.
+    */
     
     /**
      * A Path2D object used to render the pixel grid effect. This is initially 
@@ -685,74 +688,124 @@ public class RambleyPainter implements Painter<Component>{
      * initially null and is initialized the first time it is used.
      */
     private Path2D mouthPath = null;
+    /**
+     * This is a scratch AffineTransform used to flip shapes horizontally. This 
+     * is initially null and is initialized the first time it is used.
+     */
+    private AffineTransform horizTx = null;
+    /**
+     * This is the AffineTransform used to scale down the outer part of 
+     * Rambley's ears to get the inner part of his ears. This is initially null 
+     * and is initialized the first time it is used.
+     */
+    private AffineTransform inEarTx = null;
     
-    // Generic scratch shape objects
+    /*                          Generic scratch objects
+    
+    These fields are scratch objects that are effectively free to use whenever 
+    and for whatever purpose, and are here to reduce the amount of objects that 
+    are created during the process of rendering Rambley. These scratch objects 
+    should not be assumed to be in a given state, or even initialized.
+    */
     
     /**
      * A scratch Rectangle2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Rectangle2D rect = null;
     /**
      * A scratch Ellipse2D object used for rendering the Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Ellipse2D ellipse1 = null;
     /**
      * A second scratch Ellipse2D object used for rendering the Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Ellipse2D ellipse2 = null;
     /**
      * A third scratch Ellipse2D object used for rendering the Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Ellipse2D ellipse3 = null;
     /**
      * A scratch Path2D object used for rendering Rambley. This is initialized 
-     * the first time it is used.
+     * the first time it is used. This scratch object may change at any time 
+     * during the rendering process, and should not be assumed to be in a known 
+     * state before being used.
      */
     private Path2D path = null;
     /**
      * A scratch Point2D object used for rendering Rambley. This is initialized 
-     * the first time it is used.
+     * the first time it is used. This scratch object may change at any time 
+     * during the rendering process, and should not be assumed to be in a known 
+     * state before being used.
      */
     private Point2D point1 = null;
     /**
      * A second scratch Point2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Point2D point2 = null;
     /**
      * A third scratch Point2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Point2D point3 = null;
     /**
      * A fourth scratch Point2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Point2D point4 = null;
     /**
      * A fifth scratch Point2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Point2D point5 = null;
     /**
      * A sixth scratch Point2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Point2D point6 = null;
     /**
      * A seventh scratch Point2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Point2D point7 = null;
     /**
      * A eighth scratch Point2D object used for rendering Rambley. This is 
-     * initialized the first time it is used.
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
      */
     private Point2D point8 = null;
+    /**
+     * This is a scratch AffineTransform used to transform shapes. This is 
+     * initially null and is initialized the first time it is used. This scratch 
+     * object may change at any time during the rendering process, and should 
+     * not be assumed to be in a known state before being used.
+     */
+    private AffineTransform afTx = null;
     
     
     
