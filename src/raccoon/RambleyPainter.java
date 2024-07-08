@@ -2864,9 +2864,6 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of the mask-like 
      * markings on Rambley's face.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param headBounds The bounds of Rambley's head.
      * @param ellipse1 An Ellipse2D object to use to store the general area for 
      * Rambley's facial markings, or null.
@@ -2880,7 +2877,7 @@ public class RambleyPainter implements Painter<Component>{
      * @return The area of Rambley's mask-like facial markings.
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
-     * 
+     * @see #getRambleyEar 
      */
     protected Area getRambleyMaskFaceMarkings(RectangularShape headBounds, 
             Ellipse2D ellipse1, Ellipse2D ellipse2, Ellipse2D ellipse3, 
@@ -2958,9 +2955,6 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of Rambley's snout 
      * area. That is to say, the area around Rambley's nose and mouth.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param headBounds The bounds of Rambley's head, or null if {@code head} 
      * is not null.
      * @param head The Area for the shape of Rambley's head to use to ensure the 
@@ -2968,6 +2962,9 @@ public class RambleyPainter implements Painter<Component>{
      * @param ellipse An Ellipse2D object to use to calculate the snout area, 
      * or null.
      * @return The area around Rambley's nose and mouth.
+     * @see #paintRambley 
+     * @see #getRambleyEarlessHead
+     * @see #getRambleyEar 
      */
     protected Area getRambleySnout(RectangularShape headBounds, Area head, 
             Ellipse2D ellipse){
@@ -3122,11 +3119,10 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns an Area that forms the shape of Rambley's right 
-     * eye. This uses the ellipse given to the {@link #createRambleyEyebrow 
-     * createRambleyEyebrow} method ({@code eyeBrow}) and the ellipse and three 
-     * points given to {@link #createRambleyEyeMarkings 
-     * createRambleyEyeMarkings} method ({@code eyeMarkEllipse}, {@code 
-     * eyeMarkP1}, {@code eyeMarkP2}, and {@code eyeMarkPC}).
+     * eye. This uses the ellipse and three points given to {@link 
+     * #createRambleyEyeMarkings createRambleyEyeMarkings} method ({@code 
+     * eyeMarkEllipse}, {@code eyeMarkP1}, {@code eyeMarkP2}, and {@code 
+     * eyeMarkPC}) to position and control the shape of the eye.
      * 
      * @todo Add references to other related methods.
      * 
@@ -3157,10 +3153,9 @@ public class RambleyPainter implements Painter<Component>{
      * @return The area that forms Rambley's right eye.
      */
     private Area createRambleyEyeShape(RectangularShape headBounds, 
-            Ellipse2D eyeBrow, Ellipse2D eyeMarkEllipse, Point2D eyeMarkP1, 
-            Point2D eyeMarkP2, Point2D eyeMarkPC, Ellipse2D ellipse, 
-            RectangularShape rect, Path2D path, Point2D point1, Point2D point2, 
-            Point2D point3){
+            Ellipse2D eyeMarkEllipse, Point2D eyeMarkP1, Point2D eyeMarkP2, 
+            Point2D eyeMarkPC, Ellipse2D ellipse, RectangularShape rect, 
+            Path2D path, Point2D point1, Point2D point2, Point2D point3){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -3182,19 +3177,19 @@ public class RambleyPainter implements Painter<Component>{
         if (point3 == null)
             point3 = new Point2D.Double();
             // Set the frame from the ellipse from its center, with its right 
-            // side lining up with the eyebrow ellipse, 12 pixels lower than 
-            // the eye marks ellipse, and is 32 x 47. This forms the top-right 
-            // part of the eye.
+            // side lining up with the eye markings ellipse, 12 pixels lower 
+            // than the eye marks ellipse, and is 32 x 47. This forms the 
+            // top-right part of the eye.
         ellipse.setFrameFromCenter(
-                eyeBrow.getCenterX()+4, eyeMarkEllipse.getCenterY()+11.5, 
-                eyeBrow.getMaxX(), eyeMarkEllipse.getMinY()+12);
+                eyeMarkEllipse.getCenterX()+5.5,eyeMarkEllipse.getCenterY()+11.5, 
+                eyeMarkEllipse.getMaxX(), eyeMarkEllipse.getMinY()+12);
             // Set the frame of the rectangular shape from its center, with its 
-            // right side lining up with the eyebrow ellipse, 14 pixels lower 
-            // than the eye marks ellipse, and is 39 x 48. This is used as a 
-            // reference for the curves that form the eye.
+            // right side lining up with the ellipse, 14 pixels lower than the 
+            // eye marks ellipse, and is 39 x 48. This is used as a reference 
+            // for the curves that form the eye.
         rect.setFrameFromCenter(
-                eyeBrow.getCenterX()+0.5, eyeMarkEllipse.getCenterY()+14, 
-                eyeBrow.getMaxX(), eyeMarkEllipse.getMinY()+14);
+                eyeMarkEllipse.getCenterX()+2, eyeMarkEllipse.getCenterY()+14, 
+                ellipse.getMaxX(), eyeMarkEllipse.getMinY()+14);
             // Start the path at the top-center of the ellipse
         path.moveTo(ellipse.getCenterX(), ellipse.getMinY());
             // Draw a horizontal line that stops halfway between the center of 
@@ -3247,15 +3242,17 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This sets the location for the {@code iris} and {@code pupil} ellipses 
      * for Rambley's eyes to the given center x and y coordinates.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param x The x-coordinate of the center of Rambley's eye.
      * @param y The y-coordinate of the center of Rambley's eye.
      * @param iris An Ellipse2D object to store Rambley's iris in.
      * @param pupil An Ellipse2D object to store Rambley's pupil in.
      * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
-     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, 
+     * Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Rectangle2D, 
+     * double, double, Ellipse2D, Ellipse2D) 
+     * @see #RAMBLEY_IRIS_SIZE
+     * @see #RAMBLEY_PUPIL_SIZE
      */
     protected void setRambleyEyeLocation(double x, double y, Ellipse2D iris, 
             Ellipse2D pupil){
@@ -3274,16 +3271,31 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is used to render Rambley's eye using the given eye white, iris, and 
      * pupil.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param g The graphics context to render to.
      * @param eyeWhite The shape to use to paint the eye white for Rambley's 
      * eye.
      * @param iris The Ellipse2D object representing Rambley's iris.
      * @param pupil The Ellipse2D object representing Rambley's pupil.
-     * @see #setRambleyEyeLocation(double, double, Ellipse2D, Ellipse2D) 
-     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, Ellipse2D) 
+     * @see #paintRambley 
+     * @see #setRambleyEyeLocation 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, 
+     * Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Rectangle2D, 
+     * double, double, Ellipse2D, Ellipse2D) 
+     * @see #createRambleyEyeShape
+     * @see #RAMBLEY_EYE_WHITE_COLOR
+     * @see #RAMBLEY_IRIS_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_COLOR
+     * @see #RAMBLEY_PUPIL_COLOR
+     * @see #RAMBLEY_IRIS_OUTLINE_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_OUTLINE_COLOR
+     * @see #RAMBLEY_EYE_OUTLINE_COLOR
+     * @see #RAMBLEY_IRIS_SIZE
+     * @see #RAMBLEY_PUPIL_SIZE
+     * @see #getRambleyDetailStroke 
+     * @see #getRambleyOutlineStroke 
+     * @see #isRambleyEvil 
+     * @see #setRambleyEvil 
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,Ellipse2D iris,
             Ellipse2D pupil){
@@ -3331,9 +3343,6 @@ public class RambleyPainter implements Painter<Component>{
      * pupil. This is equivalent to calling {@link #setRambleyEyeLocation 
      * setRambleyEyeLocation} before calling {@link #paintRambleyEye(Graphics2D, 
      * Shape, Ellipse2D, Ellipse2D) paintRambleyEye}.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param g The graphics context to render to.
      * @param eyeWhite The shape to use to paint the eye white for Rambley's 
      * eye.
@@ -3341,8 +3350,25 @@ public class RambleyPainter implements Painter<Component>{
      * @param y The y-coordinate of the center of Rambley's iris and pupil.
      * @param iris The Ellipse2D object representing Rambley's iris, or null.
      * @param pupil The Ellipse2D object representing Rambley's pupil, or null.
-     * @see #setRambleyEyeLocation(double, double, Ellipse2D, Ellipse2D) 
+     * @see #paintRambley 
+     * @see #setRambleyEyeLocation 
      * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Rectangle2D, 
+     * double, double, Ellipse2D, Ellipse2D) 
+     * @see #createRambleyEyeShape
+     * @see #RAMBLEY_EYE_WHITE_COLOR
+     * @see #RAMBLEY_IRIS_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_COLOR
+     * @see #RAMBLEY_PUPIL_COLOR
+     * @see #RAMBLEY_IRIS_OUTLINE_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_OUTLINE_COLOR
+     * @see #RAMBLEY_EYE_OUTLINE_COLOR
+     * @see #RAMBLEY_IRIS_SIZE
+     * @see #RAMBLEY_PUPIL_SIZE
+     * @see #getRambleyDetailStroke 
+     * @see #getRambleyOutlineStroke 
+     * @see #isRambleyEvil 
+     * @see #setRambleyEvil 
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, 
             double y,Ellipse2D iris,Ellipse2D pupil){
@@ -3370,6 +3396,25 @@ public class RambleyPainter implements Painter<Component>{
      * @param maxXOff The offset for the maximum x-coordinate.
      * @param iris The Ellipse2D object representing Rambley's iris, or null.
      * @param pupil The Ellipse2D object representing Rambley's pupil, or null.
+     * @see #paintRambley 
+     * @see #setRambleyEyeLocation 
+     * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
+     * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, 
+     * Ellipse2D) 
+     * @see #createRambleyEyeShape
+     * @see #RAMBLEY_EYE_WHITE_COLOR
+     * @see #RAMBLEY_IRIS_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_COLOR
+     * @see #RAMBLEY_PUPIL_COLOR
+     * @see #RAMBLEY_IRIS_OUTLINE_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_OUTLINE_COLOR
+     * @see #RAMBLEY_EYE_OUTLINE_COLOR
+     * @see #RAMBLEY_IRIS_SIZE
+     * @see #RAMBLEY_PUPIL_SIZE
+     * @see #getRambleyDetailStroke 
+     * @see #getRambleyOutlineStroke 
+     * @see #isRambleyEvil 
+     * @see #setRambleyEvil 
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x,
             double y,Rectangle2D bounds,double minXOff,double maxXOff,
@@ -3394,8 +3439,8 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of Rambley's nose. 
      * This uses the ellipse given to the {@link #getRambleySnout 
-     * createRambleySnoutArea} method ({@code snout}) to position and control 
-     * the form of the shape.
+     * getRambleySnout} method ({@code snout}) to position and control the form 
+     * of the shape.
      * 
      * @todo Add references to other related methods.
      * 
@@ -3407,6 +3452,9 @@ public class RambleyPainter implements Painter<Component>{
      * top of the nose, or null.
      * @param path A Path2D object to store the bottom of the nose, or null.
      * @return The area that forms Rambley's nose.
+     * @see #paintRambley 
+     * @see #getRambleySnout 
+     * 
      */
     private Area createRambleyNoseShape(Ellipse2D snout, Rectangle2D rect, 
             Ellipse2D ellipse, Path2D path){
@@ -3458,9 +3506,8 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates the path to use for the curve of the mouth. This uses the 
-     * ellipse given to the {@link #getRambleySnout 
-     * createRambleySnoutArea} method ({@code snout}) to position the outer 
-     * edges of the mouth.
+     * ellipse given to the {@link #getRambleySnout getRambleySnout} method 
+     * ({@code snout}) to position the outer edges of the mouth.
      * 
      * @todo Add references to other related methods.
      * 
@@ -3480,6 +3527,9 @@ public class RambleyPainter implements Painter<Component>{
      * the curve between {@code point1} and {@code point2}, or null. 
      * @param path A Path2D object to store the results in, or null.
      * @return A Path2D object with the mouth curve.
+     * @see #paintRambley 
+     * @see #getRambleySnout 
+     * 
      */
     private Path2D createRambleyMouthCurve(Ellipse2D snout, double x, double y, 
             Point2D point1, Point2D pointC1, Point2D point2, Point2D pointC2, 
@@ -3547,9 +3597,8 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates the path to use for the curve of the mouth. This uses the 
-     * ellipse given to the {@link #getRambleySnout 
-     * createRambleySnoutArea} method ({@code snout}) to position the outer 
-     * edges of the mouth.
+     * ellipse given to the {@link #getRambleySnout getRambleySnout} method 
+     * ({@code snout}) to position the outer edges of the mouth.
      * 
      * @todo Add references to other related methods.
      * 
@@ -3567,6 +3616,9 @@ public class RambleyPainter implements Painter<Component>{
      * the curve between {@code point1} and {@code point2}, or null. 
      * @param path A Path2D object to store the results in, or null.
      * @return A Path2D object with the mouth curve.
+     * @see #paintRambley 
+     * @see #getRambleySnout 
+     * 
      */
     private Path2D createRambleyMouthCurve(Ellipse2D snout, Point2D point, 
             Point2D point1, Point2D pointC1, Point2D point2, Point2D pointC2, 
@@ -3576,11 +3628,11 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns the Area that forms Rambley's open mouth. This 
-     * uses the ellipse given to the {@link #getRambleySnout 
-     * createRambleySnoutArea} method ({@code snout}) to control the maximum 
-     * height of the mouth. This also uses the path returned by and the points 
-     * given to the {@link #createRambleyMouthCurve(Ellipse2D, Point2D, Point2D, 
-     * Point2D, Point2D, Point2D, Path2D) createRambleyMouthCurve} 
+     * uses the ellipse given to the {@link #getRambleySnout getRambleySnout} 
+     * method ({@code snout}) to control the maximum height of the mouth. This 
+     * also uses the path returned by and the points given to the {@link 
+     * #createRambleyMouthCurve(Ellipse2D, Point2D, Point2D, Point2D, Point2D,
+     * Point2D, Path2D) createRambleyMouthCurve} 
      * method, those being {@code mouthCurve} (the path), {@code midPoint}, 
      * {@code point1}, {@code pointC1}, {@code point2}, and {@code pointC2} to 
      * control and position the mouth.
@@ -3613,6 +3665,9 @@ public class RambleyPainter implements Painter<Component>{
      * @param path A Path2D object to use to calculate the path for the open 
      * mouth, or null.
      * @return The area that forms Rambley's open mouth.
+     * @see #paintRambley 
+     * @see #getRambleySnout 
+     * 
      */
     private Area createRambleyOpenMouthShape(Path2D mouthCurve,double mouthWidth, 
             double mouthHeight,Ellipse2D snout,Point2D midPoint,Point2D point1,
@@ -3966,8 +4021,8 @@ public class RambleyPainter implements Painter<Component>{
         Area eyeSurroundL = createHorizontallyMirroredArea(eyeSurroundR,
                 headBounds.getCenterX());
             // Create the shape of Rambley's right eye
-        Area eyeWhiteR = createRambleyEyeShape(headBounds,ellipse2,ellipse3,
-                point1,point2,point3,ellipse1,rect,path,point4,point5,point6);
+        Area eyeWhiteR = createRambleyEyeShape(headBounds,ellipse3,point1,
+                point2,point3,ellipse1,rect,path,point4,point5,point6);
             // Flip to form the shape of Rambley's left eye
         Area eyeWhiteL = createHorizontallyMirroredArea(eyeWhiteR,
                 headBounds.getCenterX());
@@ -3984,6 +4039,8 @@ public class RambleyPainter implements Painter<Component>{
         if (getShowsLines()){
             printShape("headBounds",headBounds);
             printShape("headShape",headShape);
+            printShape("ellipse2",ellipse2);
+            printShape("ellipse3",ellipse3);
 //            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 //                    RenderingHints.VALUE_ANTIALIAS_OFF);
             g.setColor(Color.RED);
