@@ -3773,60 +3773,72 @@ public class RambleyPainter implements Painter<Component>{
             Area openMouth = createRambleyOpenMouthShape(mouthPath, 
                     getRambleyOpenMouthWidth(), getRambleyOpenMouthHeight(), 
                     snout,point1,point2,point3,point4,point5,point6,rect,path);
-                // Create the shape of Rambley's tongue
-            Area tongue = createRambleyTongueShape(rect.getCenterX(),point4.getX(),
-                    rect.getMaxY(),getRambleyOpenMouthWidth(), 
-                    getRambleyOpenMouthHeight(),openMouth,ellipse1);
-            
-                // DEBUG: If we are showing the lines that make up Rambley 
-            if (getShowsLines()){
-                g.setColor(Color.LIGHT_GRAY);
-                g.draw(path);
-                g.setColor(RAMBLEY_MAIN_BODY_COLOR);
-                g.draw(openMouth);
-                g.setColor(Color.GREEN);
-                g.draw(tongue);
-            }
-            
                 // Create the shape of Rambley's right fang
             Area fang = createRambleyFangShape(getRambleyOpenMouthWidth(), 
                     getRambleyOpenMouthHeight(),point1,point2,point4,point7,
                     point8,point6,path);
-                // Remove all but what lies within Rambley's mouth from the 
-            fang.intersect(openMouth);      // fang(s)
-
-                // DEBUG: If we are showing the lines that make up Rambley 
-            if (getShowsLines()){
-                printShape("fang",fang);
-                g.setColor(Color.PINK);
-                g.draw(path);
-                g.setColor(Color.WHITE);
-                g.draw(fang);
+                // If Rambley's jaw is closed
+            if (isRambleyJawClosed()){
+                
+                // Insert the code to generate the path for drawing the line 
+                // that separates Rambley's upper jaw from his lower jaw using 
+                // the open mouth shape and his fang(s)
+                
+                    // DEBUG: If we are showing the lines that make up Rambley 
+                if (getShowsLines()){
+                    printShape("fang",fang);
+                    g.setColor(RAMBLEY_MAIN_BODY_COLOR);
+                    g.draw(openMouth);
+                    g.setColor(Color.WHITE);
+                    g.draw(fang);
+                }
+                
+                    // DEBUG: If we are not showing the lines that make up Rambley 
+                if (!getShowsLines()){
+                        // Fill in the inside of Rambley's mouth
+                    g.setColor(RAMBLEY_TEETH_COLOR);
+                    g.fill(openMouth);
+                        // Draw the line that separates the top and bottom of 
+                        // Rambley's jaw
+//                    g.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                    // Insert the code to draw the line
+                }
+            } else {
+                    // Remove all but what lies within Rambley's mouth from the 
+                fang.intersect(openMouth);      // fang(s)
+                    // Create the shape of Rambley's tongue
+                Area tongue = createRambleyTongueShape(rect.getCenterX(),point4.getX(),
+                        rect.getMaxY(),getRambleyOpenMouthWidth(), 
+                        getRambleyOpenMouthHeight(),openMouth,ellipse1);
+                    // DEBUG: If we are not showing the lines that make up Rambley 
+                if (!getShowsLines()){
+                        // Fill in the inside of Rambley's mouth
+                    g.setColor(RAMBLEY_MOUTH_COLOR);
+                    g.fill(openMouth);
+                        // Fill in Rambley's tongue
+                    g.setColor(RAMBLEY_TONGUE_COLOR);
+                    g.fill(tongue);
+                        // Draw the outline for Rambley's tongue
+                    g.setColor(RAMBLEY_TONGUE_OUTLINE_COLOR);
+                    g.draw(tongue);
+                        // Fill in Rambley's fang(s)
+                    g.setColor(RAMBLEY_TEETH_COLOR);
+                    g.fill(fang);
+                        // Draw the outline for Rambley's fang(s)
+                    g.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                    g.draw(fang);
+                }
             }
             
                 // DEBUG: If we are not showing the lines that make up Rambley 
             if (!getShowsLines()){
-                    // Fill in the inside of Rambley's mouth
-                g.setColor(RAMBLEY_MOUTH_COLOR);
-                g.fill(openMouth);
-                    // Fill in Rambley's tongue
-                g.setColor(RAMBLEY_TONGUE_COLOR);
-                g.fill(tongue);
-                    // Draw the outline for Rambley's tongue
-                g.setColor(RAMBLEY_TONGUE_OUTLINE_COLOR);
-                g.draw(tongue);
-                    // Fill in Rambley's fang(s)
-                g.setColor(RAMBLEY_TEETH_COLOR);
-                g.fill(fang);
-                    // Draw the outline for Rambley's fang(s)
-                g.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
-                g.draw(fang);
-                    // Set the stroke to Rambley's detail stroke
+                // Set the stroke to Rambley's detail stroke
                 g.setStroke(getRambleyDetailStroke());
                     // Draw Rambley's mouth
                 g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
                 g.draw(openMouth);
             }
+            
         }
         
             // DEBUG: If we are not showing the lines that make up Rambley 
