@@ -16,8 +16,8 @@ import javax.swing.event.*;
 /**
  * This is a Painter that paints Rambley the Raccoon from Indigo Park. 
  * 
- * Special thanks to AnimalWave on Discord for help with the equations that the 
- * code is based off of.
+ * Special thanks to AnimalWave on Discord for help with the equations that some 
+ * of the code is based off of.
  * 
  * @author Milo Steier
  * @author AnimalWave on Discord
@@ -252,7 +252,10 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double RAMBLEY_PUPIL_HALF_SIZE = RAMBLEY_PUPIL_SIZE/2.0;
     /**
-     * 
+     * This is the offset for the x-coordinates in the equations used to 
+     * calculate the curves for Rambley's ears. This is effectively used to flip 
+     * the ear horizontally since the equations produce the left ear while the 
+     * program expects the right ear.
      */
     private static final double RAMBLEY_EAR_X_OFFSET = 1.5;
     /**
@@ -268,9 +271,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double RAMBLEY_EAR_MULTIPLIER = 42;
     /**
-     * This is the height at which Rambley's ears are rendered at. 
+     * This is the height at which Rambley's ears are rendered at. This is also 
+     * used to vertically flip the ears as otherwise they'd produce upside down 
+     * ears.
      */
-    private static final double RAMBLEY_EAR_HEIGHT = 1.8 * RAMBLEY_EAR_MULTIPLIER;
+    private static final double RAMBLEY_EAR_HEIGHT = 1.8*RAMBLEY_EAR_MULTIPLIER;
     /**
      * This is the offset for the y-coordinates when calculating the curve for 
      * the tip of Rambley's ears. The curve for the tip of Rambley's ears are 
@@ -283,18 +288,24 @@ public class RambleyPainter implements Painter<Component>{
      * Rambley's ears in order to more smoothly transition between the upper 
      * curve to the tip curve, and from the tip curve to the lower curve.
      */
-    private static final double RAMBLEY_EAR_TIP_ROUNDING = 2.0;
+    protected static final double RAMBLEY_EAR_TIP_ROUNDING = 2.0;
     /**
      * This is the scaling factor used when scaling the shapes that make up 
      * Rambley's ears in order to get the inner portion of his ears.
      */
-    private static final double RAMBLEY_INNER_EAR_SCALE = 2/3.0;
+    protected static final double RAMBLEY_INNER_EAR_SCALE = 2/3.0;
     /**
      * This converts the given y-coordinate in the image coordinate system to a 
      * y-coordinate in the coordinate system used by the equations used to 
      * calculate the curves that make up Rambley's ears. 
-     * @param y The y-coordinate 
-     * @return 
+     * @param y The y-coordinate in the image coordinate system to convert.
+     * @return The y-coordinate in the ear equation coordinate system.
+     * @see #earEquToGraphicsY 
+     * @see #earEquToGraphicsX 
+     * @see #graphicsToEarEquX 
+     * @see RAMBLEY_EAR_HEIGHT
+     * @see RAMBLEY_EAR_MULTIPLIER
+     * @see RAMBLEY_EAR_Y_OFFSET
      */
     private static double graphicsToEarEquY(double y){
         y = RAMBLEY_EAR_HEIGHT - y;
@@ -302,18 +313,34 @@ public class RambleyPainter implements Painter<Component>{
         return y + RAMBLEY_EAR_Y_OFFSET;
     }
     /**
-     * 
-     * @param x
-     * @return 
+     * This converts the given x-coordinate in the image coordinate system to a 
+     * X-coordinate in the coordinate system used by the equations used to 
+     * calculate the curves that make up Rambley's ears. 
+     * @param x The x-coordinate in the image coordinate system to convert.
+     * @return The x-coordinate in the ear equation coordinate system.
+     * @see #earEquToGraphicsX
+     * @see #earEquToGraphicsY 
+     * @see #graphicsToEarEquY 
+     * @see RAMBLEY_EAR_HEIGHT
+     * @see RAMBLEY_EAR_X_OFFSET
      */
     private static double graphicsToEarEquX(double x){
         x /= RAMBLEY_EAR_MULTIPLIER;
         return RAMBLEY_EAR_X_OFFSET-x;
     }
     /**
-     * 
-     * @param y
-     * @return 
+     * This converts the given y-coordinate in the coordinate system used by the 
+     * equations used to calculate the curves that make up Rambley's ears to a 
+     * y-coordinate in the image coordinate system.
+     * @param y The y-coordinate in the ear equation coordinate system to 
+     * convert.
+     * @return The y-coordinate in the image coordinate system.
+     * @see #graphicsToEarEquY 
+     * @see #graphicsToEarEquX 
+     * @see #earEquToGraphicsX 
+     * @see RAMBLEY_EAR_HEIGHT
+     * @see RAMBLEY_EAR_MULTIPLIER
+     * @see RAMBLEY_EAR_Y_OFFSET
      */
     private static double earEquToGraphicsY(double y){
         y -= RAMBLEY_EAR_Y_OFFSET;
@@ -321,16 +348,21 @@ public class RambleyPainter implements Painter<Component>{
         return (RAMBLEY_EAR_HEIGHT-y);
     }
     /**
-     * 
-     * @param x
-     * @return 
+     * This converts the given y-coordinate in the coordinate system used by the 
+     * equations used to calculate the curves that make up Rambley's ears to a 
+     * y-coordinate in the image coordinate system.
+     * @param y The y-coordinate in the ear equation coordinate system to 
+     * convert.
+     * @return The y-coordinate in the image coordinate system.
+     * @see #graphicsToEarEquX 
+     * @see #graphicsToEarEquY 
+     * @see #earEquToGraphicsY 
+     * @see RAMBLEY_EAR_HEIGHT
+     * @see RAMBLEY_EAR_X_OFFSET
      */
     private static double earEquToGraphicsX(double x){
         return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_EAR_MULTIPLIER;
     }
-    
-    
-    
     /**
      * This is the flag for whether the background will be painted.
      */
@@ -367,7 +399,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the flag which controls which side of Rambley's face his fang 
      * shows on when his mouth is open. This flag has no effect when Rambley's 
-     * mouth is closed, and has no effect when Rambley is Evil, since Evil 
+     * mouth is closed, and has no effect when Rambley is evil, since Evil 
      * Rambley shows both fangs. When set, Rambley's fang will show on the left 
      * side of his mouth instead of the right side.
      */
@@ -719,7 +751,10 @@ public class RambleyPainter implements Painter<Component>{
     
     
     /**
+     * This constructs a {@code RambleyPainter} object with the default 
+     * settings.
      * 
+     * @todo Describe the default settings.
      */
     public RambleyPainter(){
         flags = DEFAULT_FLAG_SETTINGS;
@@ -732,8 +767,12 @@ public class RambleyPainter implements Painter<Component>{
         changeSupport = new PropertyChangeSupport(this);
     }
     /**
+     * This constructs a {@code RambleyPainter} object with the given flags.
      * 
-     * @param flags 
+     * @todo Describe the default settings for this constructor, and describe 
+     * the limit for the flags when added.
+     * 
+     * @param flags The flags for this {@code RambleyPainter}.
      */
     public RambleyPainter(int flags){
         this();
@@ -742,6 +781,9 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This returns an integer storing the flags used to store the settings for 
      * this painter and control its state.
+     * 
+     * @todo Add references to other related methods.
+     * 
      * @return An integer containing the flags for this painter.
      * @see #getFlag
      * @see #setFlag
@@ -751,8 +793,15 @@ public class RambleyPainter implements Painter<Component>{
         return flags;
     }
     /**
+     * This sets an integer storing the flags used to store the settings for 
+     * this painter and control its state.
      * 
-     * @param flags
+     * @todo Add references to other related methods. Add a limit for the flags, 
+     * and add a description for the limits for the flags if and when that is 
+     * added. Either remove the firing of a state change or mention it in the 
+     * documentation.
+     * 
+     * @param flags The flags for this painter.
      * @return This {@code RambleyPainter}.
      */
     public RambleyPainter setFlags(int flags){
@@ -783,6 +832,9 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This returns whether the given flag is set for this painter.
+     * 
+     * @todo Add references to other related methods.
+     * 
      * @param flag The flag to check for.
      * @return Whether the given flag is set.
      * @see #getFlags
@@ -795,6 +847,10 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This sets whether the given flag is set for this painter based off the 
      * given value.
+     * 
+     * @todo Add references to other related methods. Add a description for the 
+     * limits for the flags if and when that is added.
+     * 
      * @param flag The flag to be set or cleared based off {@code value}.
      * @param value Whether the flag should be set or cleared.
      * @return This {@code RambleyPainter}.
@@ -809,6 +865,10 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This toggles whether the given flag is set for this painter.
+     * 
+     * @todo Add references to other related methods. Add a description for the 
+     * limits for the flags if and when that is added.
+     * 
      * @param flag The flag to be toggled.
      * @return This {@code RambleyPainter}.
      * @see #getFlags 
@@ -1041,31 +1101,73 @@ public class RambleyPainter implements Painter<Component>{
         return setFlag(CIRCULAR_BACKGROUND_DOTS_FLAG,value);
     }
     /**
+     * This returns whether Rambley's fang is on the left or right of his mouth. 
+     * When this is {@code true}, Rambley's fang shows on the left side of his 
+     * mouth. When this is {@code false}, Rambley's fang shows on the right side 
+     * of his mouth. This has no effect when Rambley's mouth is closed, nor does 
+     * it have any effect when Rambley is {@link #isRambleyEvil() evil}. The 
+     * latter is because Evil Rambley has fangs on both sides of his mouth. The 
+     * default value for this is {@code false}.
      * 
-     * @return 
+     * @todo Add references to other related methods.
+     * 
+     * @return {@true} if Rambley's fang is on the left side of his mouth, 
+     * {@code false} if Rambley's fang is on the right side of his mouth.
+     * @see RAMBLEY_FANG_SIDE_FLAG
+     * @see #getFlag 
+     * @see setRambleyFangOnLeft
      */
-    public boolean getRambleyFangSide(){
+    public boolean isRambleyFangOnLeft(){
         return getFlag(RAMBLEY_FANG_SIDE_FLAG);
     }
     /**
+     * This sets whether Rambley's fang is on the left or right of his mouth. 
+     * When this is {@code true}, Rambley's fang shows on the left side of his 
+     * mouth. When this is {@code false}, Rambley's fang shows on the right side 
+     * of his mouth. This has no effect when Rambley's mouth is closed, nor does 
+     * it have any effect when Rambley is {@link #isRambleyEvil() evil}. The 
+     * latter is because Evil Rambley has fangs on both sides of his mouth. The 
+     * default value for this is {@code false}.
      * 
-     * @param value
-     * @return 
+     * @todo Add references to other related methods.
+     * 
+     * @param value {@true} if Rambley's fang is on the left side of his mouth, 
+     * {@code false} if Rambley's fang is on the right side of his mouth.
+     * @return This {@code RambleyPainter}.
+     * @see RAMBLEY_FANG_SIDE_FLAG
+     * @see setFlag 
+     * @see isRambleyFangOnLeft
      */
-    public RambleyPainter setRambleyFangSide(boolean value){
+    public RambleyPainter setRambleyFangOnLeft(boolean value){
         return setFlag(RAMBLEY_FANG_SIDE_FLAG,value);
     }
     /**
+     * This returns whether Rambley's jaw is closed when his mouth is opened. 
+     * This does not have any effect when Rambley's mouth is closed. The default 
+     * value for this is {@code false}.
      * 
-     * @return 
+     * @todo Add references to other related methods.
+     * 
+     * @return Whether Rambley's jaw is closed.
+     * @see RAMBLEY_JAW_CLOSED_FLAG
+     * @see #getFlag 
+     * @see setRambleyJawClosed
      */
     public boolean isRambleyJawClosed(){
         return getFlag(RAMBLEY_JAW_CLOSED_FLAG);
     }
     /**
+     * This sets whether Rambley's jaw is closed when his mouth is opened. This 
+     * does not have any effect when Rambley's mouth is closed. The default 
+     * value for this is {@code false}.
      * 
-     * @param value
-     * @return 
+     * @todo Add references to other related methods.
+     * 
+     * @param value Whether Rambley's jaw is closed.
+     * @return This {@code RambleyPainter}.
+     * @see RAMBLEY_JAW_CLOSED_FLAG
+     * @see #setFlag 
+     * @see isRambleyJawClosed
      */
     public RambleyPainter setRambleyJawClosed(boolean value){
         return setFlag(RAMBLEY_JAW_CLOSED_FLAG,value);
@@ -1108,8 +1210,8 @@ public class RambleyPainter implements Painter<Component>{
      * getBackgroundDotSpacing()} pixels below the center of the previous 
      * background polka dot.
      * 
-     * @todo Rework the documentation for this method.
-     * @todo Add references to other related methods.
+     * @todo Rework the documentation for this method. Add references to other 
+     * related methods.
      * 
      * @return The diagonal spacing between the background polka dots.
      */
@@ -1123,8 +1225,8 @@ public class RambleyPainter implements Painter<Component>{
      * getBackgroundDotSpacing()} pixels below the center of the previous 
      * background polka dot.
      * 
-     * @todo Rework the documentation for this method.
-     * @todo Add references to other related methods.
+     * @todo Rework the documentation for this method. Add references to other 
+     * related methods.
      * 
      * @param spacing The diagonal spacing between the background polka dots.
      * @return This {@code RambleyPainter}.
@@ -2927,7 +3029,15 @@ public class RambleyPainter implements Painter<Component>{
                 pointC1,point2,pointC2,path);
     }
     /**
-     * This creates and returns the Area that forms Rambley's open mouth.
+     * This creates and returns the Area that forms Rambley's open mouth. This 
+     * uses the ellipse given to the {@link #createRambleySnoutArea 
+     * createRambleySnoutArea} method ({@code snout}) to control the maximum 
+     * height of the mouth. This also uses the path returned by and the points 
+     * given to the {@link #createRambleyMouthCurve(Ellipse2D, Point2D, Point2D, 
+     * Point2D, Point2D, Point2D, Path2D) createRambleyMouthCurve} 
+     * method, those being {@code mouthCurve} (the path), {@code midPoint}, 
+     * {@code point1}, {@code pointC1}, {@code point2}, and {@code pointC2} to 
+     * control and position the mouth.
      * 
      * @todo Add references to other related methods.
      * 
@@ -3051,8 +3161,11 @@ public class RambleyPainter implements Painter<Component>{
         return mouthArea;
     }
     /**
-     * This creates and returns the Area that forms Rambley's tongue.
-     * 
+     * This creates and returns the Area that forms Rambley's tongue. This uses 
+     * the shape of the mouth returned by {@link createRambleyOpenMouthShape
+     * createRambleyOpenMouthShape} method ({@code openMouth}) to ensure that 
+     * the tongue does not escape the mouth.
+    * 
      * @todo Add references to other related methods.
      * 
      * @param xC The center x-coordinate for the tongue.
@@ -3087,9 +3200,17 @@ public class RambleyPainter implements Painter<Component>{
         return tongue;
     }
     /**
-     * This creates and returns the Area that forms Rambley's right fang.
+     * This creates and returns the Area that forms Rambley's right fang. This 
+     * uses three of the five points provided to the {@link 
+     * #createRambleyMouthCurve(Ellipse2D, Point2D, Point2D, Point2D, Point2D, 
+     * Point2D, Path2D) createRambleyMouthCurve} method ({@code pointM1}, {@code 
+     * pointM2}, and {@code pointM3}, the three non-control points) to control 
+     * the size and position of the fang.
      * 
-     * @todo Add references to other related methods.
+     * @todo Add references to other related methods. Also, possibly make it so 
+     * the fang's position is dependent on the width of the mouth (i.e. move the 
+     * fang inwards when the mouth is thinner), though not completely to the 
+     * point where the fang is visible when the mouth is thin.
      * 
      * @param mouthWidth A value between 0.0 and 1.0, inclusive, used to control 
      * the width of Rambley's open mouth.
@@ -3364,7 +3485,7 @@ public class RambleyPainter implements Painter<Component>{
                     // Add a left fang to the area of the right fang
                 fang.add(createHorizontallyFlippedArea(fang));
                 // If Rambley's fang should be on the left
-            else if (getRambleyFangSide())
+            else if (isRambleyFangOnLeft())
                     // Flip the fang to get the left fang
                 fang = createHorizontallyFlippedArea(fang);
                 // Remove all but what lies within Rambley's mouth from the 
