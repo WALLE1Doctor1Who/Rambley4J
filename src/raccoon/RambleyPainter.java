@@ -364,6 +364,18 @@ public class RambleyPainter implements Painter<Component>{
         return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_EAR_MULTIPLIER;
     }
     /**
+     * This is the thickness of the border around Rambley.
+     */
+    protected static final float RAMBLEY_BORDER_THICKNESS = 6.0f;
+    /**
+     * This is the x offset for Rambley's drop shadow.
+     */
+    protected static final double RAMBLEY_DROP_SHADOW_X_OFFSET = 4.5;
+    /**
+     * This is the y offset for Rambley's drop shadow.
+     */
+    protected static final double RAMBLEY_DROP_SHADOW_Y_OFFSET = 6.0;
+    /**
      * This is the flag for whether the background will be painted.
      */
     public static final int PAINT_BACKGROUND_FLAG =         0x00000001;
@@ -374,11 +386,8 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the flag for whether the border around Rambley and Rambley's 
      * shadow will be painted.
-     * 
-     * @todo Finalize the name for this flag and make it public instead of 
-     * protected.
      */
-    protected static final int PAINT_BORDER_AND_SHADOW_FLAG =  0x00000004;
+    public static final int PAINT_BORDER_AND_SHADOW_FLAG =  0x00000004;
     /**
      * This is the flag for ignoring Rambley's aspect ratio when rendering 
      * Rambley.
@@ -431,8 +440,6 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This identifies that a change has been made to whether Rambley's border 
      * and shadow should be painted.
-     * 
-     * @todo Finalize the name for this flag.
      */
     public static final String BORDER_AND_SHADOW_PAINTED_PROPERTY_CHANGED = 
             "BorderShadowPaintedPropertyChanged";
@@ -635,6 +642,11 @@ public class RambleyPainter implements Painter<Component>{
      * is initially null and is initialized the first time it is used.
      */
     private BasicStroke outlineStroke = null;
+    /**
+     * A BasicStroke object used to render the outline around Rambley. This is 
+     * initially null and is initialized the first time it is used.
+     */
+    private BasicStroke borderStroke = null;
     /**
      * This is the function to get the y-coordinate for a given x-coordinate for 
      * a point on the line that produces the upper curve on Rambley's right ear. 
@@ -1093,27 +1105,19 @@ public class RambleyPainter implements Painter<Component>{
      * This returns whether the border around Rambley and Rambley's shadow will 
      * be painted by this {@code RambleyPainter}. The default value for this is 
      * {@code true}.
-     * 
-     * @todo Finalize the name for the flag and make it public instead of 
-     * protected. Add references to other related methods.
-     * 
      * @return Whether the border around Rambley and Rambley's shadow will be 
      * painted.
      * @see PAINT_BORDER_AND_SHADOW_FLAG
      * @see #getFlag 
      * @see setBorderAndShadowPainted
      */
-    protected boolean isBorderAndShadowPainted(){
+    public boolean isBorderAndShadowPainted(){
         return getFlag(PAINT_BORDER_AND_SHADOW_FLAG);
     }
     /**
      * This sets whether the border around Rambley and Rambley's shadow will be 
      * painted by this {@code RambleyPainter}. The default value for this is 
      * {@code true}.
-     * 
-     * @todo Finalize the name for the flag and make it public instead of 
-     * protected. Add references to other related methods.
-     * 
      * @param enabled Whether the border around Rambley and Rambley's shadow 
      * should be painted.
      * @return This {@code RambleyPainter}.
@@ -1121,7 +1125,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #setFlag 
      * @see isBorderAndShadowPainted
      */
-    protected RambleyPainter setBorderAndShadowPainted(boolean enabled){
+    public RambleyPainter setBorderAndShadowPainted(boolean enabled){
         return setFlag(PAINT_BORDER_AND_SHADOW_FLAG,enabled);
     }
     /**
@@ -1747,6 +1751,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyStroke
      * @see getRambleyDetailStroke
      * @see getRambleyOutlineStroke
+     * @see #getRambleyBorderStroke 
      */
     protected BasicStroke getRambleyNormalStroke(){
             // If the normal stroke for Rambley has not been initialized yet
@@ -1763,6 +1768,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyStroke
      * @see getRambleyNormalStroke
      * @see getRambleyOutlineStroke
+     * @see #getRambleyBorderStroke 
      */
     protected BasicStroke getRambleyDetailStroke(){
             // If the detail stroke for Rambley has not been initialized yet
@@ -1779,12 +1785,33 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyStroke
      * @see getRambleyNormalStroke
      * @see getRambleyDetailStroke
+     * @see #getRambleyBorderStroke 
      */
     protected BasicStroke getRambleyOutlineStroke(){
             // If the outline stroke for Rambley has not been initialized yet
         if (outlineStroke == null)
             outlineStroke = getRambleyStroke(3.0f);
         return outlineStroke;
+    }
+    /**
+     * This returns a BasicStroke object to use for rendering the border around 
+     * Rambley. This stroke has a line width of 2 * {@link 
+     * RAMBLEY_BORDER_THICKNESS} (in order to have the visible section to be 
+     * {@code RAMBLEY_BORDER_THICKNESS}), the ends of the lines will be {@link 
+     * BasicStroke#CAP_ROUND rounded}, and points where paths meet will be 
+     * {@link BasicStroke#JOIN_ROUND rounded}.
+     * @return The border stroke used for drawing the border around Rambley.
+     * @see #getRambleyStroke
+     * @see getRambleyNormalStroke
+     * @see getRambleyDetailStroke
+     * @see getRambleyOutlineStroke
+     * @see RAMBLEY_BORDER_THICKNESS
+     */
+    protected BasicStroke getRambleyBorderStroke(){
+            // If the border stroke for Rambley has not been initialized yet
+        if (borderStroke == null)
+            borderStroke = getRambleyStroke(RAMBLEY_BORDER_THICKNESS*2);
+        return borderStroke;
     }
     /**
      * This returns an AffineTransform object that flips shapes horizontally and 
@@ -1941,6 +1968,41 @@ public class RambleyPainter implements Painter<Component>{
             // being centered within the given shape
         tx.translate(-bounds.getWidth()/2, -bounds.getHeight()/2);
         return tx;
+    }
+    /**
+     * This returns an AffineTransform object that translates shapes to become a 
+     * drop shadow.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to turn shapes into drop shadows.
+     */
+    protected AffineTransform getDropShadowTransform(AffineTransform tx){
+            // If the given AffineTransform is null
+        if (tx == null)
+                // Return an AffineTransform to translate shapes 
+            return AffineTransform.getTranslateInstance(
+                    RAMBLEY_DROP_SHADOW_X_OFFSET, RAMBLEY_DROP_SHADOW_Y_OFFSET);
+            // Set the AffineTransform to one that translate shapes 
+        tx.setToTranslation(RAMBLEY_DROP_SHADOW_X_OFFSET, 
+                RAMBLEY_DROP_SHADOW_Y_OFFSET);
+        return tx;
+    }
+    /**
+     * This creates and returns an Area that serves as a drop shadow of the 
+     * given area.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param area The area to get the drop shadow of.
+     * @return An area that represents the drop shadow of the given area.
+     */
+    protected Area getDropShadow(Area area){
+            // Get the AffineTransform for creating the drop shadow
+        afTx = getDropShadowTransform(afTx);
+            // Transform the area to get the drop shadow
+        return area.createTransformedArea(afTx);
     }
     
     
@@ -3802,6 +3864,11 @@ public class RambleyPainter implements Painter<Component>{
         
             // DEBUG: If we are not showing the lines that make up Rambley 
         if (!getShowsLines()){
+                // If the border around Rambley and Rambley's drop shadow are 
+            if (isBorderAndShadowPainted())     // painted
+                    // Render his border and shadow.
+                paintRambleyBorderAndShadow(g,headShape,0,0,INTERNAL_RENDER_WIDTH,
+                        INTERNAL_RENDER_HEIGHT);
                 // Fill the shape of Rambley's head
             g.setColor(RAMBLEY_MAIN_BODY_COLOR);
             g.fill(headShape);
@@ -3939,6 +4006,46 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(nose);
         }
         
+        g.dispose();
+    }
+    /**
+     * This is used to render the border around Rambley the Raccoon and his drop 
+     * shadow.
+     * 
+     * This renders to a copy of the given graphics context, so as to 
+     * protect the rest of the paint code from changes made to the graphics 
+     * context while rendering Rambley.
+     * 
+     * @param g The graphics context to render to.
+     * @param rambleyShape The Area that forms the outline of Rambley.
+     * @param x The x-coordinate of the top-left corner of the area to fill.
+     * @param y The y-coordinate of the top-left corner of the area to fill.
+     * @param w The width of the area to fill.
+     * @param h The height of the area to fill.
+     */
+    protected void paintRambleyBorderAndShadow(Graphics2D g, Area rambleyShape, 
+            double x, double y, double w, double h){
+            // Create a copy of the given graphics context
+        g = (Graphics2D) g.create();
+            // If the Rectangle2D scratch object has not been initialized yet
+        if (rect == null)
+            rect = new Rectangle2D.Double();
+            // Set the frame of the rectangle to be the given rectangle
+        rect.setFrame(x, y, w, h);
+            // Clip the graphics to be within the rectangle
+        g.clip(rect);
+            // Get the area to use to draw Rambley's drop shadow
+        Area shadow = getDropShadow(rambleyShape);
+            // Set the stroke to use to the border stroke
+        g.setStroke(getRambleyBorderStroke());
+            // Fill the area for Rambley's drop shadow
+        g.setColor(RAMBLEY_DROP_SHADOW_COLOR);
+        g.fill(shadow);
+            // Draw the drop shadow so as to match the thickness of the border
+        g.draw(shadow);
+            // Fill the area for the border around rambley
+        g.setColor(RAMBLEY_BORDER_COLOR);
+        g.draw(rambleyShape);
         g.dispose();
     }
     /**
