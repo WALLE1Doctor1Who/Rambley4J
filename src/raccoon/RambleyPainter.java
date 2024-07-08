@@ -4,7 +4,7 @@
  */
 package raccoon;
 
-import static geom.GeometryMath.*;
+import geom.GeometryMath;
 import java.awt.*;
 import java.awt.geom.*;
 import java.beans.*;
@@ -1549,13 +1549,14 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This returns an AffineTransform object that flips shapes horizontally and 
      * translates it by {@code dx}.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param dx The dx value by which to translate stuff, relative to the 
      * original coordinate space.
      * @param tx An AffineTransform to store the results in, or null.
      * @return An AffineTransform used to flip things horizontally.
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
      */
     protected AffineTransform getHorizontalFlipTransform(double dx, 
             AffineTransform tx){
@@ -1578,15 +1579,16 @@ public class RambleyPainter implements Painter<Component>{
      * this is equivalent to calling {@link getHorizontalFlipTransform(double, 
      * AffineTransform) getHorizontalFlipTransform(dx + 
      * shape.getBounds2D().getMaxX(), tx)}. 
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param dx The dx value by which to translate stuff, relative to the left 
      * side of the image.
      * @param shape The shape for which to get the x-coordinate to use to shift 
      * stuff back into the image, or null.
      * @param tx An AffineTransform to store the results in, or null.
      * @return An AffineTransform used to flip things horizontally.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
      */
     protected AffineTransform getHorizontalFlipTransform(double dx,Shape shape, 
             AffineTransform tx){
@@ -1606,15 +1608,16 @@ public class RambleyPainter implements Painter<Component>{
      * vertical line at the given x-coordinate. If the given shape is null, then 
      * this is equivalent to calling {@link #getHorizontalFlipTransform(double, 
      * AffineTransform) getHorizontalFlipTransform(x, tx)}.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param x The x-coordinate of the line to mirror shapes over.
      * @param shape The shape to use to calculate the x component of the 
      * translation.
      * @param tx An AffineTransform to store the results in, or null.
      * @return An AffineTransform used to mirror things horizontally over the 
      * vertical line at the given x-coordinate.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
      */
     protected AffineTransform getHorizontalMirrorTransform(double x,Shape shape,
             AffineTransform tx){
@@ -1633,12 +1636,14 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This mirrors the given area horizontally over the vertical line at the 
      * given x-coordinate.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param area The area to mirror.
      * @param x The x-coordinate of the vertical line to flip the mirror over.
      * @return The horizontally mirrored area.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #mirrorPathHorizontally 
+     * @see Area#createTransformedArea 
      */
     protected Area createHorizontallyMirroredArea(Area area, double x){
             // Get an AffineTransform to flip the area horizontally and mirror 
@@ -1650,13 +1655,15 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This flips the given path horizontally over the vertical line at the 
      * given x-coordinate and adds the flipped path back to the given path.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param path The Path2D object to flip horizontally and add to.
      * @param x The x-coordinate of the vertical line to flip the path over.
      * @return The given Path2D object, now with the horizontally flipped 
      * version of it added to it.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see Path2D#createTransformedShape 
      */
     protected Path2D mirrorPathHorizontally(Path2D path, double x){
             // Get an AffineTransform to flip the path horizontally and mirror 
@@ -1670,9 +1677,6 @@ public class RambleyPainter implements Painter<Component>{
      * This returns an AffineTransform object that scales shapes by the given 
      * {@code scale} value and positions it in the center of the given shape 
      * object. 
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param shape The shape to be scaled.
      * @param scale The scale factor for the transform. 
      * @param tx An AffineTransform to store the results in, or null.
@@ -1717,7 +1721,7 @@ public class RambleyPainter implements Painter<Component>{
     protected static Point2D addQuadBezierCurve(Point2D p0, Point2D p1, 
             Point2D p2, Point2D pC, Path2D path){
             // Get the control point for the curve
-        pC = getQuadBezierControlPoint(p0,p1,p2,pC);
+        pC = GeometryMath.getQuadBezierControlPoint(p0,p1,p2,pC);
             // Add the curve to the path
         path.quadTo(pC.getX(), pC.getY(), p2.getX(), p2.getY());
         return pC;
@@ -1742,6 +1746,8 @@ public class RambleyPainter implements Painter<Component>{
         return shape.getBounds2D();
     }
     /**
+     * {@inheritDoc }
+     * 
      * 
      * @param g {@inheritDoc }
      * @param c
@@ -2347,9 +2353,6 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the base shape of Rambley's 
      * head without his ears.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param x The x-coordinate of the top-left corner of Rambley's head 
      * without his ears.
      * @param y The y-coordinate of the top-left corner of Rambley's head 
@@ -2363,6 +2366,11 @@ public class RambleyPainter implements Painter<Component>{
      * @param ellipse2 An Ellipse2D object to use to store Rambley's cheeks, or 
      * null.
      * @return The area of Rambley's head without his ears.
+     * @see #paintRambley 
+     * @see #getRambleyX 
+     * @see #getRambleyY
+     * @see RAMBLEY_CHEEK_TRIANGLE_HEIGHT
+     * @see #getRambleyEar 
      */
     protected Area getRambleyEarlessHead(double x, double y, Rectangle2D rect, 
             Path2D path, Ellipse2D ellipse1, Ellipse2D ellipse2){
@@ -2598,30 +2606,55 @@ public class RambleyPainter implements Painter<Component>{
         return earEquationT;
     }
     /**
-     * 
+     * This calculatess and returns the point at which the upper curve and tip 
+     * curve used to form Rambley's right ear intersect.
      * @param x The x-coordinate for the top-left corner of the ear.
      * @param y The y-coordinate for the top-left corner of the ear.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point at which the upper curve and tip curve of Rambley's 
+     * right ear intersect.
+     * @see #getRambleyEar 
+     * @see GeometryMath#getLineIntersection(double, double, 
+     * DoubleUnaryOperator, DoubleUnaryOperator, Point2D) 
+     * @see getRambleyUpperEarEquation 
+     * @see getRambleyEarTipEquation 
+     * @see #getRambleyUpperEarX 
+     * @see #getRambleyUpperEarY 
+     * @see #getRambleyEarTipX 
+     * @see #getRambleyEarTipY 
      */
     protected Point2D getRambleyEarUpperTip(double x, double y, Point2D point){
-            // Get the point of intersection
-        point = getLineIntersection(9,10.5,getRambleyUpperEarEquation(),
-                getRambleyEarTipEquation(),point);
+            // Get the point of intersection. They intersect somewhere between 
+            // x-coordinates 9 and 10.5
+        point = GeometryMath.getLineIntersection(9,10.5,
+                getRambleyUpperEarEquation(),getRambleyEarTipEquation(),point);
             // Offset the point of intersection by the given x and y coordinates
         point.setLocation(x+point.getX(), y+point.getY());
         return point;
     }
     /**
-     * 
+     * This calculatess and returns the point at which the lower curve and tip 
+     * curve used to form Rambley's right ear intersect.
      * @param x The x-coordinate for the top-left corner of the ear.
      * @param y The y-coordinate for the top-left corner of the ear.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point at which the lower curve and tip curve of Rambley's 
+     * right ear intersect.
+     * @see #getRambleyEar 
+     * @see GeometryMath#getLineIntersection(double, double, 
+     * DoubleUnaryOperator, DoubleUnaryOperator, Point2D) 
+     * @see getRambleyEarTipEquation 
+     * @see getRambleyLowerEarEquation 
+     * @see #getRambleyLowerEarX 
+     * @see #getRambleyLowerEarY 
+     * @see #getRambleyEarTipX 
+     * @see #getRambleyEarTipY 
      */
     protected Point2D getRambleyEarLowerTip(double x, double y, Point2D point){
-            // Get the point of intersection
-        point = getLineIntersection(getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
+            // Get the point of intersection They intersect somewhere between 
+            // the end of the tip curve and an x-coordinate of 1
+        point = GeometryMath.getLineIntersection(
+                getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
                 getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
             // Offset the point of intersection by the given x and y coordinates
         point.setLocation(x+point.getX(), y+point.getY());
@@ -2630,13 +2663,24 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of Rambley's right 
      * ear.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param x The x-coordinate for the top-left corner of the ear.
      * @param y The y-coordinate for the top-left corner of the ear.
      * @param path A Path2D object to use to construct the ear, or null.
      * @return The area of Rambley's right ear.
+     * @see #paintRambley 
+     * @see #getRambleyEarlessHead
+     * @see #getRambleyInnerEar 
+     * @see getRambleyUpperEarEquation 
+     * @see getRambleyEarTipEquation 
+     * @see getRambleyLowerEarEquation 
+     * @see #getRambleyUpperEarX 
+     * @see #getRambleyUpperEarY 
+     * @see #getRambleyEarTipX 
+     * @see #getRambleyEarTipY 
+     * @see #getRambleyLowerEarX 
+     * @see #getRambleyLowerEarY 
+     * @see #getRambleyEarUpperTip
+     * @see #getRambleyEarLowerTip
      */
     protected Area getRambleyEar(double x, double y, Path2D path){
             // If the given Path2D object is null
@@ -2794,14 +2838,16 @@ public class RambleyPainter implements Painter<Component>{
      * #RAMBLEY_INNER_EAR_SCALE scale factor for the inner ear}. The inner ear 
      * will be centered within the given Area for the outer ear. The given Area 
      * for the head is used to subtract the head shape from the inner ear.
-     * 
-     * @todo Add references to other related methods.
-     * 
      * @param ear The Area representing the outer ear to derive the inner ear 
      * from.
      * @param head The Area for the shape of Rambley's head to use to subtract 
      * from the inner ear, or null.
      * @return The Area for the inner portion of Rambley's ear.
+     * @see #paintRambley 
+     * @see #getRambleyEarlessHead
+     * @see #getRambleyEar 
+     * @see #getCenteredScaleTransform 
+     * @see RAMBLEY_INNER_EAR_SCALE
      */
     protected Area getRambleyInnerEar(Area ear, Area head){
             // Get the AffineTransform to scale the outer ear to get the inner 
@@ -3029,12 +3075,12 @@ public class RambleyPainter implements Painter<Component>{
             // Get the points of intersection between the top-right part of the 
             // markings and the eyebrows. The left-most one (point2) will be 
             // used to transition between the ellipse and the path.
-        getCircleIntersections(ellipse,eyeBrow,point2,point1);
+        GeometryMath.getCircleIntersections(ellipse,eyeBrow,point2,point1);
             // Make sure to use a point of intersection is actually on the 
             // ellipse by calculating the point on the ellipse for the 
             // left-most point of intersection. The top-most one (point2) will 
             // be used to transition between the ellipse and the path.
-        getEllipseY(ellipse,point2.getX(),point2,point1);
+        GeometryMath.getEllipseY(ellipse,point2.getX(),point2,point1);
             // Start the path at the left-most point of intersection
         path.moveTo(point2.getX(), point2.getY());
             // Move the first point to where the path should stop going to the 
@@ -3154,8 +3200,8 @@ public class RambleyPainter implements Painter<Component>{
             // This will get the point on the bottom-left bezier curve for the 
             // eye markings. This should be around 4 pixels to the left of the 
             // rectangular shape.
-        point1 = getQuadBezierPointForX(eyeMarkP1,eyeMarkPC,eyeMarkP2,
-                rect.getMinX()-4,point1);
+        point1 = GeometryMath.getQuadBezierPointForX(eyeMarkP1,eyeMarkPC,
+                eyeMarkP2,rect.getMinX()-4,point1);
             // Add a quadratic bezier curve from the previous point to point1, 
             // using a control point that is at the point formed by the 
             // left-most x-coordinate of the rectangular shape and the top 
@@ -3179,7 +3225,7 @@ public class RambleyPainter implements Painter<Component>{
         path.quadTo(x, rect.getMaxY(), (x+(ellipse.getMaxX()*2))/3, ellipse.getMaxY());
             // Calculate the points where the ellipse intersects the horizontal 
             // line one pixel above the center of the ellipse
-        getEllipseX(ellipse,ellipse.getCenterY()-1,point3,point2);
+        GeometryMath.getEllipseX(ellipse,ellipse.getCenterY()-1,point3,point2);
             // Add a quadratic bezier curve from the previous point to point2 
             // (the right-most intersection point), and using a control point 
             // that is 1 pixel to the right of the rectangular shape, and is 
@@ -3461,7 +3507,7 @@ public class RambleyPainter implements Painter<Component>{
             // line 2.5 pixels above the first point.
             // (A variation with a slight smile may be possible by adding 2.5 
             // instead of subtracting)
-        getEllipseX(snout,y-2.5,point2,point1);
+        GeometryMath.getEllipseX(snout,y-2.5,point2,point1);
             // Shift the left-most point 7.5 pixels to the right. This will be 
             // the end point of the right side of the mouth curve.
         point2.setLocation(point2.getX()+7.5, point2.getY());
@@ -3619,8 +3665,7 @@ public class RambleyPainter implements Painter<Component>{
                 p2 = point2;
                     // Use pointC2 as the control point
                 pC = pointC2;
-            }
-            else{   // Use midPoint as the starting point
+            } else{   // Use midPoint as the starting point
                 p1 = midPoint;
                     // Use point1 as the ending point
                 p2 = point1;
@@ -3629,9 +3674,9 @@ public class RambleyPainter implements Painter<Component>{
             }   // Get the point on the quadratic bezier curve at the 
                 // x-coordinate of the rectangle on the quadratic bezier curve 
                 // that forms the mouth curve
-            point = getQuadBezierPointForX(p1,pC,p2,rect.getMinX(),point);
-        }
-            // Start the path at the point on the mouth curve
+            point = GeometryMath.getQuadBezierPointForX(p1,pC,p2,rect.getMinX(),
+                    point);
+        }   // Start the path at the point on the mouth curve
         path.moveTo(point.getX(), point.getY());
             // Add a quadratic bezier curve between the point on the mouth curve 
             // and the point in the middle of the mouth curve and at the bottom 
