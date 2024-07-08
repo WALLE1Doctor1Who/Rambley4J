@@ -2605,8 +2605,12 @@ public class RambleyPainter implements Painter<Component>{
      * @return 
      */
     protected Point2D getRambleyEarUpperTip(double x, double y, Point2D point){
-        return getLineIntersection(x,y,9,10.5,
-                getRambleyUpperEarEquation(),getRambleyEarTipEquation(),point);
+            // Get the point of intersection
+        point = getLineIntersection(9,10.5,getRambleyUpperEarEquation(),
+                getRambleyEarTipEquation(),point);
+            // Offset the point of intersection by the given x and y coordinates
+        point.setLocation(x+point.getX(), y+point.getY());
+        return point;
     }
     /**
      * 
@@ -2616,8 +2620,12 @@ public class RambleyPainter implements Painter<Component>{
      * @return 
      */
     protected Point2D getRambleyEarLowerTip(double x, double y, Point2D point){
-        return getLineIntersection(x,y,getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
+            // Get the point of intersection
+        point = getLineIntersection(getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
                 getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
+            // Offset the point of intersection by the given x and y coordinates
+        point.setLocation(x+point.getX(), y+point.getY());
+        return point;
     }
     /**
      * This creates and returns an Area that forms the shape of Rambley's right 

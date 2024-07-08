@@ -613,8 +613,6 @@ public final class GeometryMath {
     }
     /**
      * 
-     * @param x The x-coordinate to offset the point by.
-     * @param y The y-coordinate to offset the point by.
      * @param x1 The first shared x-coordinate for the two lines.
      * @param x2 The second shared x-coordinate for the two lines.
      * @param getY1 The equation for the first line.
@@ -623,9 +621,9 @@ public final class GeometryMath {
      * @param point A Point2D object to store the results in, or null.
      * @return A rough approximation of the point at which two lines intersect
      */
-    public static Point2D getLineIntersection(double x, double y, double x1, 
-            double x2, DoubleUnaryOperator getY1, DoubleUnaryOperator getY2, 
-            int resolution, Point2D point){
+    public static Point2D getLineIntersection(double x1, double x2, 
+            DoubleUnaryOperator getY1, DoubleUnaryOperator getY2,int resolution,
+            Point2D point){
             // If the given Point2D object is null
         if (point == null)
             point = new Point2D.Double();
@@ -657,14 +655,12 @@ public final class GeometryMath {
             // Set the point of intersection to be the average of the lines'
             // x-coordinates, and the average of the y-coordinates at the 
             // average of the x-coordinates.
-        point.setLocation(tempX+x, 
-                (getY1.applyAsDouble(tempX)+getY2.applyAsDouble(tempX))/2.0+y);
+        point.setLocation(tempX, 
+                (getY1.applyAsDouble(tempX)+getY2.applyAsDouble(tempX))/2.0);
         return point;
     }
     /**
      * 
-     * @param x The x-coordinate to offset the point by.
-     * @param y The y-coordinate to offset the point by.
      * @param x1 The first shared x-coordinate for the two lines.
      * @param x2 The second shared x-coordinate for the two lines.
      * @param getY1 The equation for the first line.
@@ -672,10 +668,9 @@ public final class GeometryMath {
      * @param point A Point2D object to store the results in, or null.
      * @return 
      */
-    public static Point2D getLineIntersection(double x, double y, double x1, 
-            double x2, DoubleUnaryOperator getY1, DoubleUnaryOperator getY2, 
-            Point2D point){
-        return getLineIntersection(x,y,x1,x2,getY1,getY2,
+    public static Point2D getLineIntersection(double x1, double x2, 
+            DoubleUnaryOperator getY1, DoubleUnaryOperator getY2,Point2D point){
+        return getLineIntersection(x1,x2,getY1,getY2,
                 DEFAULT_LINE_INTERSECTION_RESOLUTION,point);
     }
     /**
