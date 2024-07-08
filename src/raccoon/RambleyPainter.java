@@ -1274,6 +1274,29 @@ public class RambleyPainter implements Painter<Component>{
         return this;
     }
     /**
+     * This checks the given value to see if it is different from the old value 
+     * and is between 0 and 1
+     * 
+     * @todo Rework the documentation for this method.
+     * 
+     * @param value The new value
+     * @param oldValue The old value
+     * @param name The name of the value
+     * @return Whether the value has changed.
+     * @IllegalArgumentException If the given new value is either less than zero 
+     * or greater than one.
+     */
+    private boolean checkControlDouble(double value,double oldValue,String name){
+            // If the old and new values are the same
+        if (value == oldValue)
+            return false;
+            // If the value is less than 0 or greater than 1
+        if (value < 0.0 || value > 1.0)
+            throw new IllegalArgumentException(name+" must be between 0 and 1, "
+                    + "inclusive (0.0 <= "+value+" <= 1.0)");
+        return true;
+    }
+    /**
      * 
      * @return 
      */
@@ -1292,10 +1315,13 @@ public class RambleyPainter implements Painter<Component>{
      * @param x
      * @param y
      * @return 
+     * @IllegalArgumentException If either the right x or y are either less than 
+     * zero or greater than one.
      */
     public RambleyPainter setRambleyRightEye(double x, double y){
-            // If the x position or the y position has changed
-        if (x != eyeRightX || y != eyeRightY){
+            // If either the x position or the y position has changed
+        if (checkControlDouble(x,eyeRightX,"Right eye x value") || 
+                checkControlDouble(y,eyeRightY,"Right eye y value")){
             eyeRightX = x;
             eyeRightY = y;
                 // Fire a change in the state
@@ -1322,10 +1348,13 @@ public class RambleyPainter implements Painter<Component>{
      * @param x
      * @param y
      * @return 
+     * @IllegalArgumentException If either the left x or y are either less than 
+     * zero or greater than one.
      */
     public RambleyPainter setRambleyLeftEye(double x, double y){
-            // If the x position or the y position has changed
-        if (x != eyeLeftX || y != eyeLeftY){
+            // If either the x position or the y position has changed
+        if (checkControlDouble(x,eyeLeftX,"Left eye x value") || 
+                checkControlDouble(y,eyeLeftY,"Left eye y value")){
             eyeLeftX = x;
             eyeLeftY = y;
                 // Fire a change in the state
@@ -1338,6 +1367,8 @@ public class RambleyPainter implements Painter<Component>{
      * @param x
      * @param y
      * @return 
+     * @IllegalArgumentException If either the x or y are either less than zero 
+     * or greater than one.
      */
     public RambleyPainter setRambleyEyes(double x, double y){
             // Set the position for both the right and left eyes
@@ -1354,14 +1385,12 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @param width
      * @return 
+     * @IllegalArgumentException If the given height is either less than zero or 
+     * greater than one.
      */
     public RambleyPainter setRambleyOpenMouthWidth(double width){
-            // If the given width is less than zero or greater than 1
-        if (width < 0.0 || width > 1.0)
-            throw new IllegalArgumentException("Open mouth width must be "
-                    + "between 0 and 1, inclusive (0.0 <= "+width+" <= 1.0)");
             // If the width value would change
-        if (width != mouthOpenWidth){
+        if (checkControlDouble(width,mouthOpenWidth,"Open mouth width")){
                 // Get the old width value
             double old = mouthOpenWidth;
             mouthOpenWidth = width;
@@ -1380,14 +1409,12 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @param height
      * @return 
+     * @IllegalArgumentException If the given height is either less than zero or 
+     * greater than one.
      */
     public RambleyPainter setRambleyOpenMouthHeight(double height){
-            // If the given height is less than zero or greater than 1
-        if (height < 0.0 || height > 1.0)
-            throw new IllegalArgumentException("Open mouth height must be "
-                    + "between 0 and 1, inclusive (0.0 <= "+height+" <= 1.0)");
             // If the height value would change
-        if (height != mouthOpenHeight){
+        if (checkControlDouble(height,mouthOpenHeight,"Open mouth height")){
                 // Get the old height value
             double old = mouthOpenHeight;
             mouthOpenHeight = height;
