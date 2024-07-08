@@ -1906,6 +1906,42 @@ public class RambleyPainter implements Painter<Component>{
         path.append(path.createTransformedShape(horizTx), false);
         return path;
     }
+    /**
+     * This returns an AffineTransform object that scales shapes by the given 
+     * {@code scale} value and positions it in the center of the given shape 
+     * object. 
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param shape The shape to be scaled.
+     * @param scale The scale factor for the transform. 
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to scale and position shapes.
+     */
+    protected AffineTransform getCenteredScaleTransform(Shape shape, 
+            double scale, AffineTransform tx){
+            // Get the bounds of the given shape
+        RectangularShape bounds = getBoundsOfShape(shape);
+            // Get the inverse of the given scale.
+        double scaleInv = 1/scale;
+            // If the given AffineTransform is null
+        if (tx == null)
+                // Create a scale transform to scale stuff
+            tx = AffineTransform.getScaleInstance(scale, scale);
+        else    // Set the transform to a scale transform to scale stuff
+            tx.setToScale(scale, scale);
+            // Translate the transform to be at the origin
+        tx.translate(-bounds.getMinX(), -bounds.getMinY());
+            // Translate the transform to be at the center of the outer portion 
+            // of the shape (accounting for the earler scale transform)
+        tx.translate(bounds.getCenterX()*scaleInv,bounds.getCenterY()*scaleInv);
+            // Translate the transform left by half the shape's width, and up by 
+            // half the shape's height. When combined with the earlier scale 
+            // transform and translations, this will result in the scaled shape 
+            // being centered within the given shape
+        tx.translate(-bounds.getWidth()/2, -bounds.getHeight()/2);
+        return tx;
+    }
     
     
     
@@ -2607,62 +2643,24 @@ public class RambleyPainter implements Painter<Component>{
         return new Area(path);
     }
     /**
-     * This returns an AffineTransform object that scales Rambley's outer ear to 
-     * create the inner ear. This transform scales shapes by the given {@code 
-     * scale} value and then centers the scaled shape in the given shape object.
-     * 
-     * @todo Add references to other related methods.
-     * 
-     * @param ear The shape of the outer ear.
-     * @param scale The scale factor for the transform. 
-     * @param tx An AffineTransform to store the results in, or null.
-     * @return An AffineTransform used to scale the outer ear to get the inner 
-     * ear.
-     */
-    protected AffineTransform getRambleyInnerEarTransform(Shape ear, 
-            double scale, AffineTransform tx){
-            // Get the bounds of the given ear
-        RectangularShape bounds = getBoundsOfShape(ear);
-            // Get the inverse of the given scale.
-        double scaleInv = 1/scale;
-            // If the given AffineTransform is null
-        if (tx == null)
-                // Create a scale transform to scale down the inner ear
-            tx = AffineTransform.getScaleInstance(scale, scale);
-        else    // Set the transform to a scale transform to scale down the 
-            tx.setToScale(scale, scale);   // inner ear
-            // Translate the transform to be at the origin
-        tx.translate(-bounds.getMinX(), -bounds.getMinY());
-            // Translate the transform to be at the center of the outer portion 
-            // of the ear (accounting for the earler scale transform)
-        tx.translate(bounds.getCenterX()*scaleInv,bounds.getCenterY()*scaleInv);
-            // Translate the transform left by half the ear's width, and up by 
-            // half the ear's height. When combined with the earlier scale 
-            // transform and translations, this will result in the inner ear 
-            // being centered within the outer ear
-        tx.translate(-bounds.getWidth()/2, -bounds.getHeight()/2);
-        return tx;
-    }
-    /**
      * This gets the Area to use to render the inner portion of Rambley's ear, 
-     * based off the Area of the given ear and the given scale factor for the 
-     * inner ear. The inner ear will be scaled by the given scale factor and 
-     * centered within the given Area for the outer ear. The given Area for the 
-     * head is used to subtract the head shape from the inner ear.
+     * based off the Area of the given ear and the {@link 
+     * #RAMBLEY_INNER_EAR_SCALE scale factor for the inner ear}. The inner ear 
+     * will be centered within the given Area for the outer ear. The given Area 
+     * for the head is used to subtract the head shape from the inner ear.
      * 
      * @todo Add references to other related methods.
      * 
      * @param ear The Area representing the outer ear to derive the inner ear 
      * from.
-     * @param scale The scale factor for the inner ear. 
      * @param head The Area for the shape of Rambley's head to use to subtract 
      * from the inner ear, or null.
      * @return The Area for the inner portion of Rambley's ear.
      */
-    protected Area getRambleyInnerEar(Area ear, double scale, Area head){
+    protected Area getRambleyInnerEar(Area ear, Area head){
             // Get the AffineTransform to scale the outer ear to get the inner 
             // ear and center the inner ear in the outer ear
-        inEarTx = getRambleyInnerEarTransform(ear,scale,inEarTx);
+        inEarTx = getCenteredScaleTransform(ear,RAMBLEY_INNER_EAR_SCALE,inEarTx);
             // Transform the outer ear to get the inner ear
         Area earIn = ear.createTransformedArea(inEarTx);
             // If the area of the head was given
@@ -3744,9 +3742,9 @@ public class RambleyPainter implements Painter<Component>{
             // Flip the area for Rambley's right ear to get his left ear
         Area earL = createHorizontallyMirroredArea(earR,headBounds.getCenterX());
             // Get the area for the inner portion of Rambley's right ear
-        Area earInR = getRambleyInnerEar(earR,RAMBLEY_INNER_EAR_SCALE,headShape);
+        Area earInR = getRambleyInnerEar(earR,headShape);
             // Get the area for the inner portion of Rambley's left ear
-        Area earInL = getRambleyInnerEar(earL,RAMBLEY_INNER_EAR_SCALE,headShape);
+        Area earInL = getRambleyInnerEar(earL,headShape);
             // Add Rambley's right ear to the shape of his head
         headShape.add(earR);
             // Add Rambley's left ear to the shape of his head.
