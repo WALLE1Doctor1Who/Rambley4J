@@ -647,14 +647,8 @@ public class RambleyPainter implements Painter<Component>{
      */
     private DoubleUnaryOperator earEquationT = null;
     /**
-     * This is an AffineTransform used to flip shapes horizontally. This is 
-     * initially null and is initialized the first time it is used.
-     */
-    private AffineTransform horizFlip = null;
-    /**
-     * This is an AffineTransform used to flip shapes horizontally on a case by 
-     * case bases. This is initially null and is initialized the first time it 
-     * is used.
+     * This is an scratch AffineTransform used to flip shapes horizontally. This 
+     * is initially null and is initialized the first time it is used.
      */
     private AffineTransform horizTx = null;
     /**
@@ -1824,35 +1818,6 @@ public class RambleyPainter implements Painter<Component>{
                 bounds,tx);
     }
     /**
-     * This returns an AffineTransform to use to flip shapes horizontally when 
-     * painting Rambley.
-     * 
-     * @todo Add references to other related methods.
-     * 
-     * @return The AffineTransform used to flip things horizontally.
-     */
-    private AffineTransform getRambleyHorizontalFlipTransform(){
-            // If the horizontal flip transform has not been initialized yet
-        if (horizFlip == null){
-                // Get a transform that will flip things horizontally
-            horizFlip = getHorizontalFlipTransform(INTERNAL_RENDER_HEIGHT,null);
-        }
-        return horizFlip;
-    }
-    /**
-     * This flips the given area horizontally.
-     * 
-     * @todo Add references to other related methods.
-     * 
-     * @param area The area to flip.
-     * @return The horizontally flipped area.
-     * @see getRambleyHorizontalFlipTransform
-     * @see Area#createTransformedArea
-     */
-    protected Area createHorizontallyFlippedArea(Area area){
-        return area.createTransformedArea(getRambleyHorizontalFlipTransform());
-    }
-    /**
      * This mirrors the given area horizontally over the vertical line at the 
      * given x-coordinate.
      * 
@@ -2690,7 +2655,7 @@ public class RambleyPainter implements Painter<Component>{
         Area mask = new Area(ellipse2);
             // Flip the second ellipse horizontally to form the right part of 
             // the bottom of the facial markings mask
-        Area temp = createHorizontallyFlippedArea(mask);
+        Area temp = createHorizontallyMirroredArea(mask,ellipse1.getCenterX());
             // Get the bounds of the horizontally flipped version of the second 
             // ellipse, so that we can get some location data from it
         RectangularShape tempBounds = getBoundsOfShape(temp);
@@ -3598,7 +3563,7 @@ public class RambleyPainter implements Painter<Component>{
             // If Rambley is not evil and Rambley's fang should be on the left
         if (!isRambleyEvil() && isRambleyFangOnLeft())
                 // Flip the fang to get the left fang
-            fang = createHorizontallyFlippedArea(fang);
+            fang = createHorizontallyMirroredArea(fang,pointM1.getX());
         return fang;
     }
     
@@ -3707,7 +3672,7 @@ public class RambleyPainter implements Painter<Component>{
             // Get the area for Rambley's right ear
         Area earR = getRambleyEar(headBounds.getCenterX()-84,headBounds.getMinY()-31.5,path);
             // Flip the area for Rambley's right ear to get his left ear
-        Area earL = createHorizontallyFlippedArea(earR);
+        Area earL = createHorizontallyMirroredArea(earR,headBounds.getCenterX());
             // Get the area for the inner portion of Rambley's right ear
         Area earInR = getRambleyInnerEar(earR,RAMBLEY_INNER_EAR_SCALE,headShape);
             // Get the area for the inner portion of Rambley's left ear
@@ -3726,17 +3691,20 @@ public class RambleyPainter implements Painter<Component>{
         Area eyeBrowR = createRambleyEyebrow(headBounds,ellipse2);
             // Flip to form the Left eyebrow (this will intersect with the 
             // other eye markings)
-        Area eyeBrowL = createHorizontallyFlippedArea(eyeBrowR);
+        Area eyeBrowL = createHorizontallyMirroredArea(eyeBrowR,
+                headBounds.getCenterX());
             // Create the area around Rambley's right eye
         Area eyeSurroundR = createRambleyEyeMarkings(ellipse2,snout,ellipse3,
                 path,point1,point2,point3);
             // Flip to form the area around Rambley's left eye
-        Area eyeSurroundL = createHorizontallyFlippedArea(eyeSurroundR);
+        Area eyeSurroundL = createHorizontallyMirroredArea(eyeSurroundR,
+                headBounds.getCenterX());
             // Create the shape of Rambley's right eye
         Area eyeWhiteR = createRambleyEyeShape(headBounds,ellipse2,ellipse3,
                 point1,point2,point3,ellipse1,rect,path,point4,point5,point6);
             // Flip to form the shape of Rambley's left eye
-        Area eyeWhiteL = createHorizontallyFlippedArea(eyeWhiteR);
+        Area eyeWhiteL = createHorizontallyMirroredArea(eyeWhiteR,
+                headBounds.getCenterX());
             // Create the shape of Rambley's nose
         Area nose = createRambleyNoseShape(snout,rect,ellipse1,path);
             // Set the location of the point to the bottom center of the nose
