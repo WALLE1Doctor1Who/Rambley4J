@@ -2123,6 +2123,10 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @todo Add references to other related methods.
      * 
+     * @param x The x-coordinate of the top-left corner of Rambley's head 
+     * without his ears.
+     * @param y The y-coordinate of the top-left corner of Rambley's head 
+     * without his ears.
      * @param rect A Rectangle2D object to use to store the mask for the lower 
      * half of the cheeks, or null.
      * @param path A Path2D object to use to store the mask for the cheeks, or 
@@ -2133,8 +2137,8 @@ public class RambleyPainter implements Painter<Component>{
      * null.
      * @return The area of Rambley's head without his ears.
      */
-    private Area createRambleyHeadArea(Rectangle2D rect, Path2D path, 
-            Ellipse2D ellipse1, Ellipse2D ellipse2){
+    protected Area getRambleyEarlessHead(double x, double y, Rectangle2D rect, 
+            Path2D path, Ellipse2D ellipse1, Ellipse2D ellipse2){
             // If the given Rectangle is null
         if (rect == null)
             rect = new Rectangle2D.Double();
@@ -2149,17 +2153,10 @@ public class RambleyPainter implements Painter<Component>{
             // If the second of the two ellipses are null
         if (ellipse2 == null)
             ellipse2 = new Ellipse2D.Double();
-            // Set the frame of the rectangle temporarily to be the entire width 
-            // of the area being rendered, and with the right y-coordinate and 
-            // height
-        rect.setFrame(0, RAMBLEY_Y_OFFSET+84, INTERNAL_RENDER_WIDTH, 92);
-            // Set the frame of the rectangle again, this time from the center, 
-            // to set the x-coordinate and width. This produces a horizontally 
-            // centered rectangle that is 84 pixels below the y offset with a 
-            // width of 200 and a height of 92. This will form the lower half 
-            // of the mask for the cheeks
-        rect.setFrameFromCenter(rect.getCenterX(), rect.getCenterY(), 
-                rect.getCenterX()-100, rect.getMinY());
+            // Set the frame of the rectangle to be at the given x-coordinate, 
+            // 84 pixels below the given y-coordinate, and that is 200 x 92.
+            // his will form the lower half of the mask for the cheeks
+        rect.setFrame(x, y+84, 200, 92);
             // Append the rectangle to the path
         path.append(rect, false);
             // Line to the top-left corner of the rectangle
@@ -2172,11 +2169,10 @@ public class RambleyPainter implements Painter<Component>{
             // Close the path to form the mask for the cheeks
         path.closePath();
             // Set the frame of the first ellipse from the center to get a 
-            // horizontally centered ellipse with a y-coordinate at the 
-            // y-offset,and that is 152 x 176. This will form the top of 
-            // Rambley's head
-        ellipse1.setFrameFromCenter(rect.getCenterX(), RAMBLEY_Y_OFFSET+88, 
-                rect.getMinX()+24, RAMBLEY_Y_OFFSET);
+            // horizontally centered ellipse with the given y-coordinate, and 
+            // that is 152 x 176. This will form the top of Rambley's head
+        ellipse1.setFrameFromCenter(rect.getCenterX(), y+88, 
+                rect.getMinX()+24, y);
             // Set the frame of the second ellipse from the center to get a 
             // horizontally centered ellipse that is 18 pixels below the first 
             // ellipse, and that is 200 x 116. This will form Rambley's cheeks 
@@ -3665,7 +3661,8 @@ public class RambleyPainter implements Painter<Component>{
             snout = new Ellipse2D.Double();
         
             // Create the shape for Rambley's head (without his ears for now)
-        Area headShape = createRambleyHeadArea(rect,path,ellipse1,ellipse2);
+        Area headShape = getRambleyEarlessHead(RAMBLEY_X_OFFSET,RAMBLEY_Y_OFFSET,
+                rect,path,ellipse1,ellipse2);
             // Get the bounds for the head, so that we can base the facial 
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
