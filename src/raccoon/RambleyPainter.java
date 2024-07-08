@@ -216,11 +216,11 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * The offset for the x-coordinate of the top-left corner of Rambley.
      */
-    protected static final double RAMBLEY_X_OFFSET = 28;
+    private static final double RAMBLEY_X_OFFSET = 28;
     /**
      * The offset for the y-coordinate of the top-left corner of Rambley.
      */
-    protected static final double RAMBLEY_Y_OFFSET = 60;
+    private static final double RAMBLEY_Y_OFFSET = 60;
     /**
      * This is the angle of elevation for Rambley's cheeks.
      */
@@ -424,7 +424,23 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG | 
             PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG;
-    // Maximum flag value goes here
+    /**
+     * This stores the maximum value a {@code RambleyPainter}'s flags can be and 
+     * still be considered valid.
+     * @see PAINT_BACKGROUND_FLAG
+     * @see PAINT_PIXEL_GRID_FLAG
+     * @see PAINT_BORDER_AND_SHADOW_FLAG
+     * @see IGNORE_ASPECT_RATIO_FLAG
+     * @see EVIL_RAMBLEY_FLAG
+     * @see CIRCULAR_BACKGROUND_DOTS_FLAG
+     * @see RAMBLEY_FANG_SIDE_FLAG
+     * @see RAMBLEY_JAW_CLOSED_FLAG
+     */
+    public static final int MAXIMUM_VALID_FLAGS = PAINT_BACKGROUND_FLAG | 
+            PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG | 
+            IGNORE_ASPECT_RATIO_FLAG | EVIL_RAMBLEY_FLAG | 
+            CIRCULAR_BACKGROUND_DOTS_FLAG | RAMBLEY_FANG_SIDE_FLAG | 
+            RAMBLEY_JAW_CLOSED_FLAG;
     /**
      * This identifies that a change has been made to whether the background 
      * should be painted.
@@ -843,11 +859,28 @@ public class RambleyPainter implements Painter<Component>{
      * @todo Describe the default settings for this constructor, and describe 
      * the limit for the flags when added.
      * 
-     * @param flags The flags for this {@code RambleyPainter}.
+     * @param flags The flags for this {@code RambleyPainter} (must be a 
+     * positive integer between 0 and {@link #MAXIMUM_VALID_FLAGS}, inclusive).
+     * @throws IllegalArgumentException If the given flags are negative or 
+     * greater than {@code MAXIMUM_VALID_FLAGS}.
      */
     public RambleyPainter(int flags){
         this();
         RambleyPainter.this.setFlags(flags);
+    }
+    /**
+     * This checks to see if the given flags are valid, and if not, throws an 
+     * IllegalArgumentException.
+     * @param flags The flags to check.
+     * @throws IllegalArgumentException If the flags is negative or greater than 
+     * {@link MAXIMUM_VALID_FLAGS}.
+     * @see #MAXIMUM_VALID_FLAGS
+     * @see #setFlags
+     */
+    protected void checkFlags(int flags){
+            // If any of the flags are invalid
+        if ((flags & MAXIMUM_VALID_FLAGS) != flags)
+            throw new IllegalArgumentException("Invalid flags: " + flags);
     }
     /**
      * This returns an integer storing the flags used to store the settings for 
@@ -867,17 +900,20 @@ public class RambleyPainter implements Painter<Component>{
      * This sets an integer storing the flags used to store the settings for 
      * this painter and control its state.
      * 
-     * @todo Add references to other related methods. Add a limit for the flags, 
-     * and add a description for the limits for the flags if and when that is 
-     * added. Either remove the firing of a state change or mention it in the 
-     * documentation.
+     * @todo Add references to other related methods. Either remove the firing 
+     * of a state change or mention it in the documentation.
      * 
-     * @param flags The flags for this painter.
+     * @param flags The flags for this painter (must be a positive integer 
+     * between 0 and {@link #MAXIMUM_VALID_FLAGS}, inclusive).
      * @return This {@code RambleyPainter}.
+     * @throws IllegalArgumentException If the given flags are negative or 
+     * greater than {@code MAXIMUM_VALID_FLAGS}.
      */
     public RambleyPainter setFlags(int flags){
             // If the flags would change
         if (flags != this.flags){
+                // Check the flags 
+            checkFlags(flags);
                 // This gets the flags that will be changed. The old and new 
                 // flags are XOR'd to get the flags that will be changed.
             int changed = this.flags ^ flags;
@@ -919,12 +955,13 @@ public class RambleyPainter implements Painter<Component>{
      * This sets whether the given flag is set for this painter based off the 
      * given value.
      * 
-     * @todo Add references to other related methods. Add a description for the 
-     * limits for the flags if and when that is added.
+     * @todo Add references to other related methods.
      * 
      * @param flag The flag to be set or cleared based off {@code value}.
      * @param value Whether the flag should be set or cleared.
      * @return This {@code RambleyPainter}.
+     * @throws IllegalArgumentException If the flags would exceed {@link 
+     * MAXIMUM_VALID_FLAGS} because of setting the given flag.
      * @see #getFlags 
      * @see #getFlag 
      * @see #toggleFlag 
@@ -937,11 +974,12 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This toggles whether the given flag is set for this painter.
      * 
-     * @todo Add references to other related methods. Add a description for the 
-     * limits for the flags if and when that is added.
+     * @todo Add references to other related methods.
      * 
      * @param flag The flag to be toggled.
      * @return This {@code RambleyPainter}.
+     * @throws IllegalArgumentException If the flags would exceed {@link 
+     * MAXIMUM_VALID_FLAGS} because of setting the given flag.
      * @see #getFlags 
      * @see #getFlag 
      * @see #setFlag 
@@ -2277,6 +2315,34 @@ public class RambleyPainter implements Painter<Component>{
         if (outlineStroke == null)
             outlineStroke = getRambleyStroke(3.0f);
         return outlineStroke;
+    }
+    /**
+     * This returns the x-coordinate for the top-left corner for Rambley's head 
+     * without his ears.
+     * @return The offset for the x-coordinate of the top-left corner of 
+     * Rambley.
+     * @see #getRambleyY 
+     * @see #paintRambley 
+     * @see #getRambleyEarlessHead
+     * @see #INTERNAL_RENDER_WIDTH
+     * @see #INTERNAL_RENDER_HEIGHT
+     */
+    protected double getRambleyX(){
+        return RAMBLEY_X_OFFSET;
+    }
+    /**
+     * This returns the y-coordinate for the top-left corner for Rambley's head 
+     * without his ears.
+     * @return The offset for the y-coordinate of the top-left corner of 
+     * Rambley.
+     * @see #getRambleyX
+     * @see #paintRambley 
+     * @see #getRambleyEarlessHead
+     * @see #INTERNAL_RENDER_WIDTH
+     * @see #INTERNAL_RENDER_HEIGHT
+     */
+    protected double getRambleyY(){
+        return RAMBLEY_Y_OFFSET;
     }
     /**
      * This creates and returns an Area that forms the base shape of Rambley's 
@@ -3804,7 +3870,7 @@ public class RambleyPainter implements Painter<Component>{
             snout = new Ellipse2D.Double();
         
             // Create the shape for Rambley's head (without his ears for now)
-        Area headShape = getRambleyEarlessHead(RAMBLEY_X_OFFSET,RAMBLEY_Y_OFFSET,
+        Area headShape = getRambleyEarlessHead(getRambleyX(),getRambleyY(),
                 rect,path,ellipse1,ellipse2);
             // Get the bounds for the head, so that we can base the facial 
             // features off it
