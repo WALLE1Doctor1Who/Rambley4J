@@ -2607,6 +2607,43 @@ public class RambleyPainter implements Painter<Component>{
         return new Area(path);
     }
     /**
+     * This returns an AffineTransform object that scales Rambley's outer ear to 
+     * create the inner ear. This transform scales shapes by the given {@code 
+     * scale} value and then centers the scaled shape in the given shape object.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param ear The shape of the outer ear.
+     * @param scale The scale factor for the transform. 
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to scale the outer ear to get the inner 
+     * ear.
+     */
+    protected AffineTransform getRambleyInnerEarTransform(Shape ear, 
+            double scale, AffineTransform tx){
+            // Get the bounds of the given ear
+        RectangularShape bounds = getBoundsOfShape(ear);
+            // Get the inverse of the given scale.
+        double scaleInv = 1/scale;
+            // If the given AffineTransform is null
+        if (tx == null)
+                // Create a scale transform to scale down the inner ear
+            tx = AffineTransform.getScaleInstance(scale, scale);
+        else    // Set the transform to a scale transform to scale down the 
+            tx.setToScale(scale, scale);   // inner ear
+            // Translate the transform to be at the origin
+        tx.translate(-bounds.getMinX(), -bounds.getMinY());
+            // Translate the transform to be at the center of the outer portion 
+            // of the ear (accounting for the earler scale transform)
+        tx.translate(bounds.getCenterX()*scaleInv,bounds.getCenterY()*scaleInv);
+            // Translate the transform left by half the ear's width, and up by 
+            // half the ear's height. When combined with the earlier scale 
+            // transform and translations, this will result in the inner ear 
+            // being centered within the outer ear
+        tx.translate(-bounds.getWidth()/2, -bounds.getHeight()/2);
+        return tx;
+    }
+    /**
      * This gets the Area to use to render the inner portion of Rambley's ear, 
      * based off the Area of the given ear and the given scale factor for the 
      * inner ear. The inner ear will be scaled by the given scale factor and 
@@ -2623,26 +2660,9 @@ public class RambleyPainter implements Painter<Component>{
      * @return The Area for the inner portion of Rambley's ear.
      */
     protected Area getRambleyInnerEar(Area ear, double scale, Area head){
-            // Get the inverse of the given scale.
-        double scaleInv = 1/scale;
-            // Get the bounds of the given ear
-        RectangularShape temp = getBoundsOfShape(ear);
-            // If the inner ear AffineTransform has not been initialised yet
-        if (inEarTx == null)
-                // Create a scale transform to scale down the inner ear
-            inEarTx = AffineTransform.getScaleInstance(scale, scale);
-        else    // Set the transform to a scale transform to scale down the 
-            inEarTx.setToScale(scale, scale);   // inner ear
-            // Translate the transform to be at the origin
-        inEarTx.translate(-temp.getMinX(), -temp.getMinY());
-            // Translate the transform to be at the center of the outer portion 
-            // of the ear (accounting for the earler scale transform)
-        inEarTx.translate(temp.getCenterX()*scaleInv, temp.getCenterY()*scaleInv);
-            // Translate the transform left by half the ear's width, and up by 
-            // half the ear's height. When combined with the earlier scale 
-            // transform and translations, this will result in the inner ear 
-            // being centered within the outer ear
-        inEarTx.translate(-temp.getWidth()/2, -temp.getHeight()/2);
+            // Get the AffineTransform to scale the outer ear to get the inner 
+            // ear and center the inner ear in the outer ear
+        inEarTx = getRambleyInnerEarTransform(ear,scale,inEarTx);
             // Transform the outer ear to get the inner ear
         Area earIn = ear.createTransformedArea(inEarTx);
             // If the area of the head was given
