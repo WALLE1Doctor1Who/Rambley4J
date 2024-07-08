@@ -5,7 +5,7 @@
 package geom;
 
 import java.awt.geom.*;
-import java.util.List;
+import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 
 /**
@@ -41,11 +41,17 @@ public final class GeometryMath {
         return (c.getWidth() + c.getHeight()) / 4.0;
     }
     /**
-     * This solves the 
-     * @param a
-     * @param b
-     * @param c
-     * @return 
+     * This solves the quadratic equation for the given a, b, and c 
+     * coefficients. For reminder, a quadratic equation is in the form {@code 
+     * ax^2 + bx + c = 0}.
+     * @param a The a coefficient in the quadratic equation.
+     * @param b The b coefficient in the quadratic equation.
+     * @param c The c coefficient in the quadratic equation.
+     * @return An array with the two roots of the quadratic equation, sorted 
+     * from smallest to largest. If there is only one root, then both locations 
+     * in the array will be the same value. If there are no roots or the 
+     * quadratic equation was a constant, then this returns null.
+     * @see QuadCurve2D#solveQuadratic(double[], double[]) 
      */
     private static double[] solveQuadraticEquation(double a, double b, double c){
             // This will get the roots of the quadratic equation
@@ -59,24 +65,26 @@ public final class GeometryMath {
         else if (rootNum == 1)
                 // Use the same root for both
             roots[1] = roots[0];
-        else {
-                // Temporarily store the first root.
-            double temp = roots[0];
-                // Make sure the first root is the lower of the two
-            roots[0] = Math.min(roots[0], roots[1]);
-                // Make sure the second root is the higher of the two
-            roots[1] = Math.max(temp, roots[1]);
-        }
+        else    // Sort the roots 
+            Arrays.sort(roots, 0, roots.length);
         return roots;
     }
     /**
      * This calculates the x-coordinates for points on the given ellipse for the 
-     * given y-coordinate
+     * given y-coordinate, and stores them in the given Point2D objects {@code 
+     * p0} and {@code p1}. This is equivalent to determining the points where 
+     * the ellipse intersects with a horizontal line at the given y-coordinate. 
+     * If the given y-coordinate does not lie on the given ellipse, then the 
+     * points will be set to ({@link Double#NaN Double.NaN}, {@link Double#NaN 
+     * Double.NaN}) and this will return false.
      * @param ellipse The ellipse to calculate the points on
      * @param y The y-coordinate to get the points for
      * @param p0 The Point2D object that the left-most point will be stored in.
      * @param p1 The Point2D object that the right-most point will be stored in.
      * @return Whether the y-coordinate lies on the ellipse.
+     * @see #getEllipseY 
+     * @see #getCircleIntersections(Ellipse2D, double, double, double, double, 
+     * Point2D, Point2D) 
      */
     public static boolean getEllipseX(Ellipse2D ellipse, double y,Point2D p0, 
             Point2D p1){
@@ -99,20 +107,27 @@ public final class GeometryMath {
             p0.setLocation(ellipse.getMinX(),y);
             p1.setLocation(ellipse.getMaxX(),y);
             return true;
-        }
-            // Get the intersections of the horizontal line at the given 
+        }   // Get the intersections of the horizontal line at the given 
             // y-coordinate
         return getCircleIntersections(ellipse,ellipse.getMinX(),y,
                 ellipse.getMaxX(),y,p0,p1);
     }
     /**
      * This calculates the y-coordinates for points on the given ellipse for the 
-     * given x-coordinate
+     * given x-coordinate, and stores them in the given Point2D objects {@code 
+     * p0} and {@code p1}. This is equivalent to determining the points where 
+     * the ellipse intersects with a vertical line at the given x-coordinate. 
+     * If the given x-coordinate does not lie on the given ellipse, then the 
+     * points will be set to ({@link Double#NaN Double.NaN}, {@link Double#NaN 
+     * Double.NaN}) and this will return false.
      * @param ellipse The ellipse to calculate the points on
      * @param x The x-coordinate to get the points for
      * @param p0 The Point2D object that the upper point will be stored in.
      * @param p1 The Point2D object that the lower point will be stored in.
      * @return Whether the x-coordinate lies on the ellipse.
+     * @see #getEllipseX 
+     * @see #getCircleIntersections(Ellipse2D, double, double, double, double, 
+     * Point2D, Point2D) 
      */
     public static boolean getEllipseY(Ellipse2D ellipse, double x,Point2D p0, 
             Point2D p1){
@@ -135,8 +150,7 @@ public final class GeometryMath {
             p0.setLocation(x, ellipse.getMinY());
             p1.setLocation(x, ellipse.getMaxY());
             return true;
-        }
-            // Calculate half of the width of the ellipse
+        }   // Calculate half of the width of the ellipse
         double a = ellipse.getWidth()/2.0;
             // Let b be half the height of the ellipse
             // Relative to the center of the ellipse, y = (b/a)*sqrt(a^2-x^2)
@@ -157,8 +171,8 @@ public final class GeometryMath {
      * 
      * 
      * 
-     * @param c0 One of the two circles
-     * @param c1 The other circle
+     * @param circle1 One of the two circles
+     * @param circle2 The other circle
      * @param p0 The Point2D object that the first point of intersection will be 
      * stored in.
      * @param p1 The Point2D object that the second point of intersection will 
@@ -168,18 +182,18 @@ public final class GeometryMath {
      * other, or the circles are coincident and there are an infinite number of 
      * solutions.
      */
-    public static boolean getCircleIntersections(Ellipse2D c0, Ellipse2D c1, 
-            Point2D p0, Point2D p1){
+    public static boolean getCircleIntersections(Ellipse2D circle1, 
+            Ellipse2D circle2, Point2D p0, Point2D p1){
             // Store the location of the center of the first circle in the 
             // first point
-        p0.setLocation(c0.getCenterX(), c0.getCenterY());
+        p0.setLocation(circle1.getCenterX(), circle1.getCenterY());
             // Store the location of the center of the second circle in the 
             // second point
-        p1.setLocation(c1.getCenterX(), c1.getCenterY());
+        p1.setLocation(circle2.getCenterX(), circle2.getCenterY());
             // Get the radius of the first circle
-        double r0 = getRadius(c0);
+        double r0 = getRadius(circle1);
             // Get the radius of the second circle
-        double r1 = getRadius(c1);
+        double r1 = getRadius(circle2);
             // Get the distance between the centers of the two circles
         double d = p0.distance(p1);
             // If the distance is greater than the sum of the radiuses (the 
@@ -230,8 +244,11 @@ public final class GeometryMath {
     }
     /**
      * This gets the points at which the given line intersects with the given 
-     * ellipse.
-     * @param e
+     * ellipse and stores them in the Point2D objects {@code point1} and {@code 
+     * point2}. If the line does not intersect with the ellipse, then the points 
+     * will be set to ({@link Double#NaN Double.NaN}, {@link Double#NaN 
+     * Double.NaN}) and this will return false.
+     * @param ellipse The ellipse to intersect with the line.
      * @param x1 The x-coordinate for the first point on the line
      * @param y1 The y-coordinate for the first point on the line
      * @param x2 The x-coordinate for the second point on the line
@@ -241,8 +258,14 @@ public final class GeometryMath {
      * @param point2 The Point2D object that the second point of intersection 
      * will be stored in.
      * @return Whether the line intersects the ellipse.
+     * @see #getCircleIntersections(Ellipse2D, Point2D, Point2D, Point2D, 
+     * Point2D) 
+     * @see #getCircleIntersections(Ellipse2D, Line2D, Point2D, Point2D) 
+     * @see #getCircleIntersections(Ellipse2D, Ellipse2D, Point2D, Point2D) 
+     * @see #getEllipseX 
+     * @see #getEllipseY 
      */
-    public static boolean getCircleIntersections(Ellipse2D e, 
+    public static boolean getCircleIntersections(Ellipse2D ellipse, 
             double x1, double y1, double x2, double y2, Point2D point1, 
             Point2D point2){
             // Function breaks for vertical lines
@@ -254,21 +277,22 @@ public final class GeometryMath {
                 point2.setLocation(point1);
                 return false;
             }   // Get the points on the ellipse for the given x-coordinates
-            return getEllipseY(e,x1,point1,point2);
+            return getEllipseY(ellipse,x1,point1,point2);
         }   // Get the slope of the line
         double k = (y2 - y1) / (x2 - x1);
             // Get the coefficient for the line
         double m = y2 - k * x2;
             // Get half of the ellipse's width, squared
-        double w = Math.pow(e.getWidth()/2, 2);
+        double w = Math.pow(ellipse.getWidth()/2, 2);
             // Get half of the ellipse's height, squared
-        double h = Math.pow(e.getHeight()/2, 2);
+        double h = Math.pow(ellipse.getHeight()/2, 2);
             // Get the a coefficient for the quadratic equation
         double a = 1/w + Math.pow(k, 2)/h;
             // Get the b coefficient for the quadratic equation
-        double b = (2*k*(m-e.getCenterY()))/h - (2*e.getCenterX())/w;
+        double b = (2*k*(m-ellipse.getCenterY()))/h - (2*ellipse.getCenterX())/w;
             // Get the c coefficient for the quadratic equation
-        double c = Math.pow(m-e.getCenterY(), 2)/h - 1 + Math.pow(e.getCenterX(), 2)/w;
+        double c = Math.pow(m-ellipse.getCenterY(), 2)/h - 1 + 
+                Math.pow(ellipse.getCenterX(), 2)/w;
             // Get the roots of the quadratic equation
         double[] roots = solveQuadraticEquation(a,b,c);
             // If there are no roots or the quadratic equation was a constant
@@ -283,53 +307,75 @@ public final class GeometryMath {
         return true;
     }
     /**
-     * 
-     * @param e
-     * @param p1 The first point on the line
-     * @param p2 The second point on the line
+     * This gets the points at which the given line intersects with the given 
+     * ellipse and stores them in the Point2D objects {@code point1} and {@code 
+     * point2}. If the line does not intersect with the ellipse, then the return 
+     * points will be set to ({@link Double#NaN Double.NaN}, {@link Double#NaN 
+     * Double.NaN}) and this will return false.
+     * @param ellipse The ellipse to intersect with the line.
+     * @param p1 The first point on the line.
+     * @param p2 The second point on the line.
      * @param point1 The Point2D object that the first point of intersection 
      * will be stored in.
      * @param point2 The Point2D object that the second point of intersection 
      * will  be stored in.
      * @return Whether the line intersects the ellipse.
+     * @see #getCircleIntersections(Ellipse2D, double, double, double, double, 
+     * Point2D, Point2D) 
+     * @see #getCircleIntersections(Ellipse2D, Line2D, Point2D, Point2D) 
+     * @see #getCircleIntersections(Ellipse2D, Ellipse2D, Point2D, Point2D) 
+     * @see #getEllipseX 
+     * @see #getEllipseY 
      */
-    public static boolean getCircleIntersections(Ellipse2D e, Point2D p1, 
+    public static boolean getCircleIntersections(Ellipse2D ellipse, Point2D p1, 
             Point2D p2, Point2D point1, Point2D point2){
-        return getCircleIntersections(e,p1.getX(),p1.getY(),p2.getX(),p2.getY(),
-                point1,point2);
+        return getCircleIntersections(ellipse,p1.getX(),p1.getY(),
+                p2.getX(),p2.getY(),point1,point2);
     }
     /**
-     * 
-     * @param e
-     * @param line
+     * This gets the points at which the given line intersects with the given 
+     * ellipse and stores them in the Point2D objects {@code point1} and {@code 
+     * point2}. If the line does not intersect with the ellipse, then the points 
+     * will be set to ({@link Double#NaN Double.NaN}, {@link Double#NaN 
+     * Double.NaN}) and this will return false.
+     * @param ellipse The ellipse to intersect with the line.
+     * @param line The line to intersect with the ellipse.
      * @param point1 The Point2D object that the first point of intersection 
      * will be stored in.
      * @param point2 The Point2D object that the second point of intersection 
      * will  be stored in.
      * @return Whether the line intersects the ellipse.
+     * @see #getCircleIntersections(Ellipse2D, double, double, double, double, 
+     * Point2D, Point2D) 
+     * @see #getCircleIntersections(Ellipse2D, Point2D, Point2D, Point2D, 
+     * Point2D) 
+     * @see #getCircleIntersections(Ellipse2D, Ellipse2D, Point2D, Point2D) 
+     * @see #getEllipseX 
+     * @see #getEllipseY 
      */
-    public static boolean getCircleIntersections(Ellipse2D e, Line2D line, 
+    public static boolean getCircleIntersections(Ellipse2D ellipse, Line2D line, 
             Point2D point1, Point2D point2){
-        return getCircleIntersections(e,line.getX1(),line.getY1(),line.getX2(),
-                line.getY2(),point1,point2);
+        return getCircleIntersections(ellipse,line.getX1(),line.getY1(),
+                line.getX2(),line.getY2(),point1,point2);
     }
     /**
      * 
-     * @param p0 The starting point of the curve
+     * @param p0 The starting point of the curve.
      * @param p1 The control point for the curve.
-     * @param p2 The end point of the curve
-     * @param t
-     * @return 
+     * @param p2 The end point of the curve.
+     * @param t The t value of the point to get on the curve.
+     * @return The point on the curve at the given t.
      */
-    private static double getQuadBezierPoint(double p0, double p1, double p2, double t){
-        return (Math.pow(1-t, 2) * p0) + (2 * t * (1-t)*p1) + (Math.pow(t, 2)*p2);
+    private static double getQuadBezierPoint(double p0, double p1, double p2, 
+            double t){
+        return (Math.pow(1-t, 2) * p0)+(2 * t * (1-t)*p1)+(Math.pow(t, 2)*p2);
     }
     /**
      * 
-     * @param p0 The starting point of the curve
+     * @param p0 The starting point of the curve.
      * @param p1 The control point for the curve.
-     * @param p2 The end point of the curve
-     * @param t
+     * @param p2 The end point of the curve.
+     * @param t A value between 0 and 1, inclusive, 
      * @param point A Point2D object to store the results in, or null.
      * @return 
      */
@@ -511,11 +557,8 @@ public final class GeometryMath {
                     2*ctrlPt1.getX()-knots.get(0).getX(),
                     2*ctrlPt1.getY()-knots.get(0).getY()));
             return;
-        }
-        
-            // Right hand side vector
+        }   // Right hand side vector
         double[][] rhs = new double[2][n];
-        
             // Set right hand side values
         rhs[0][0] = knots.get(0).getX()+2*knots.get(1).getX();
         rhs[1][0] = knots.get(0).getY()+2*knots.get(1).getY();
@@ -533,6 +576,7 @@ public final class GeometryMath {
         
             // Temporary workspace 
         double[] tmp = new double[n];
+            // Value to use to divide the next right hand side coordinates
         double b = 2.0;
             // The coordinates
         double[][] coords = new double[2][n];
@@ -544,15 +588,13 @@ public final class GeometryMath {
             b = ((i < n-1)?4.0:3.5)-tmp[i];
             coords[0][i] = (rhs[0][i] - coords[0][i-1]) / b;
             coords[1][i] = (rhs[1][i] - coords[1][i-1]) / b;
-        }
-            // Backsubstitution
+        }   // Go through the coordinate arrays
         for (double[] arr : coords){
+                // Backsubstitution
             for (int i = 1; i < n; i++){
                 arr[n-i-1] -= tmp[n-i] * arr[n-i];
             }
-        }
-        
-            // Populate the control point arrays
+        }   // Populate the control point arrays
         for (int i = 0; i < n; i++){
                 // First control point
             ctrlPts1.add(new Point2D.Double(coords[0][i],coords[1][i]));
