@@ -2878,8 +2878,11 @@ public class RambleyPainter implements Painter<Component>{
      * @param rect A Rectangle2D object to use to calculate the area for 
      * Rambley's facial markings, or null.
      * @return The area of Rambley's mask-like facial markings.
+     * @see #paintRambley 
+     * @see #getRambleyEarlessHead
+     * 
      */
-    private Area createRambleyMaskFaceMarkings(RectangularShape headBounds, 
+    protected Area getRambleyMaskFaceMarkings(RectangularShape headBounds, 
             Ellipse2D ellipse1, Ellipse2D ellipse2, Ellipse2D ellipse3, 
             Rectangle2D rect){
             // If the given Rectangle is null
@@ -2966,8 +2969,8 @@ public class RambleyPainter implements Painter<Component>{
      * or null.
      * @return The area around Rambley's nose and mouth.
      */
-    private Area createRambleySnoutArea(RectangularShape headBounds, 
-            Area head, Ellipse2D ellipse){
+    protected Area getRambleySnout(RectangularShape headBounds, Area head, 
+            Ellipse2D ellipse){
             // If the ellipse is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -3022,7 +3025,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of the markings 
      * around Rambley's right eye. This uses the ellipse given to the {@link 
-     * #createRambleySnoutArea createRambleySnoutArea} method ({@code snout}) 
+     * #getRambleySnout createRambleySnoutArea} method ({@code snout}) 
      * and the ellipse given to the {@link #createRambleyEyebrow 
      * createRambleyEyebrow} method ({@code eyeBrow}) to position and control 
      * the form of the shape.
@@ -3390,7 +3393,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns an Area that forms the shape of Rambley's nose. 
-     * This uses the ellipse given to the {@link #createRambleySnoutArea 
+     * This uses the ellipse given to the {@link #getRambleySnout 
      * createRambleySnoutArea} method ({@code snout}) to position and control 
      * the form of the shape.
      * 
@@ -3455,7 +3458,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates the path to use for the curve of the mouth. This uses the 
-     * ellipse given to the {@link #createRambleySnoutArea 
+     * ellipse given to the {@link #getRambleySnout 
      * createRambleySnoutArea} method ({@code snout}) to position the outer 
      * edges of the mouth.
      * 
@@ -3544,7 +3547,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates the path to use for the curve of the mouth. This uses the 
-     * ellipse given to the {@link #createRambleySnoutArea 
+     * ellipse given to the {@link #getRambleySnout 
      * createRambleySnoutArea} method ({@code snout}) to position the outer 
      * edges of the mouth.
      * 
@@ -3573,7 +3576,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns the Area that forms Rambley's open mouth. This 
-     * uses the ellipse given to the {@link #createRambleySnoutArea 
+     * uses the ellipse given to the {@link #getRambleySnout 
      * createRambleySnoutArea} method ({@code snout}) to control the maximum 
      * height of the mouth. This also uses the path returned by and the points 
      * given to the {@link #createRambleyMouthCurve(Ellipse2D, Point2D, Point2D, 
@@ -3819,9 +3822,13 @@ public class RambleyPainter implements Painter<Component>{
             // Create the area for the fang
         Area fang = new Area(path);
             // If Rambley is not evil and Rambley's fang should be on the left
-        if (!isRambleyEvil() && isRambleyFangOnLeft())
+        if (!isRambleyEvil() && isRambleyFangOnLeft()){
+                // Get an AffineTransform to flip the area horizontally and 
+                // mirror it over the vertical line at the center of the mouth
+            afTx = getHorizontalMirrorTransform(pointM1.getX(),fang,afTx);
                 // Flip the fang to get the left fang
-            fang = createHorizontallyMirroredArea(fang,pointM1.getX());
+            fang.transform(afTx);
+        }
         return fang;
     }
     
@@ -3941,10 +3948,10 @@ public class RambleyPainter implements Painter<Component>{
             // Add Rambley's left ear to the shape of his head.
         headShape.add(earL);
             // Create the shape for the face markings around his eyes
-        Area faceMarkings = createRambleyMaskFaceMarkings(headBounds,ellipse1,
+        Area faceMarkings = getRambleyMaskFaceMarkings(headBounds,ellipse1,
                 ellipse2,ellipse3,rect);
             // Create the area around Rambley's nose and mouth
-        Area snoutArea = createRambleySnoutArea(headBounds,headShape,snout);
+        Area snoutArea = getRambleySnout(headBounds,headShape,snout);
             // Create Rambley's right eyebrow (this will intersect with the 
             // other eye markings)
         Area eyeBrowR = createRambleyEyebrow(headBounds,ellipse2);
