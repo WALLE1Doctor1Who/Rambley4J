@@ -2961,16 +2961,23 @@ public class RambleyPainter implements Painter<Component>{
      * snout area lies within the head shape, or null.
      * @param ellipse An Ellipse2D object to use to calculate the snout area, 
      * or null.
+     * @param path A Path2D object to use to form the mask for the snout, or 
+     * null.
      * @return The area around Rambley's nose and mouth.
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
      */
     protected Area getRambleySnout(RectangularShape headBounds, Area head, 
-            Ellipse2D ellipse){
+            Ellipse2D ellipse, Path2D path){
             // If the ellipse is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
             // If the bounds for the head are null but the area for the head is 
         if (headBounds == null && head != null)     // not
                 // Get the bounds for the head
@@ -2983,8 +2990,30 @@ public class RambleyPainter implements Painter<Component>{
         ellipse.setFrameFromCenter(
                 headBounds.getCenterX(), headBounds.getMaxY()-28, 
                 headBounds.getMinX()+63, headBounds.getMaxY());
+            // Start the path at the left center of the ellipse
+        path.moveTo(ellipse.getMaxX(), ellipse.getCenterY()-2);
+            // Get the current point from the path
+        Point2D tempPoint = path.getCurrentPoint();
+            // Add a quadratic bezier curve to the top center of the ellipse, 
+            // using a control point that is 1/10th of the way to the left 
+            // there, and 5/6ths of the way up.
+        path.quadTo((tempPoint.getX()*9+ellipse.getCenterX())/10, 
+                (tempPoint.getY()+ellipse.getMinY()*5)/6, 
+                ellipse.getCenterX(), ellipse.getMinY());
+            // Draw a vertical line down to the bottom of the ellipse
+        path.lineTo(ellipse.getCenterX(), ellipse.getMaxY());
+            // Draw a horizontal line to the left side of the ellipse
+        path.lineTo(ellipse.getMaxX(), ellipse.getMaxY());
+            // Close the path to complete the right side of the mask
+        path.closePath();
+            // Flip the path (which holds the right side of the mask) 
+            // horizontally to form the left side of the mask and then add the 
+            // left side of the mask to the path.
+        path = mirrorPathHorizontally(path,ellipse.getCenterX());
             // Create an area for the snout area
         Area mouthArea = new Area(ellipse);
+            // Mask the snout area using the mask
+        mouthArea.intersect(new Area(path));
             // If the area of the head was given
         if (head != null)
                 // Make sure the snout area is fully within the head area
@@ -3733,10 +3762,11 @@ public class RambleyPainter implements Painter<Component>{
         path.moveTo(point.getX(), point.getY());
             // Add a quadratic bezier curve between the point on the mouth curve 
             // and the point in the middle of the mouth curve and at the bottom 
-            // of the open mouth bounds. Use the the point between the starting 
-            // point and the mid-point as the control x-coordinate, and the 
-            // bottom of the open mouth bounds as the control y-coordinate
-        path.quadTo((point.getX()+midPoint.getX())/2.0,rect.getMaxY(),
+            // of the open mouth bounds. Use the the point 1/3rd of the way from 
+            // the starting point to the mid-point as the control x-coordinate, 
+            // and the bottom of the open mouth bounds as the control 
+            // y-coordinate
+        path.quadTo((point.getX()*2+midPoint.getX())/3.0,rect.getMaxY(),
                 midPoint.getX(), rect.getMaxY());
             // Draw a vertical line from the previous point to the mid-point on 
             // the mouth curve
@@ -3899,9 +3929,15 @@ public class RambleyPainter implements Painter<Component>{
         // when Rambley's jaw is closed.
 //    private Path2D createRambleyClosedTeethLine(double y, Area fang, 
 //            double mouthWidth, double mouthHeight, Path2D path){
+//            double mouthWidth, double mouthHeight, Area mouthOpen, 
+//            Rectangle2D rect, Path2D path){
+//            // If the given Path2D object is null
+//        if (path == null)
+//            path = new Path2D.Double();
+//        else    // Reset the given Path2D object
+//            path.reset();
 //        
 //    }
-    
     /**
      * This is used to render Rambley the Raccoon.
      * 
@@ -4012,7 +4048,7 @@ public class RambleyPainter implements Painter<Component>{
         Area faceMarkings = getRambleyMaskFaceMarkings(headBounds,ellipse1,
                 ellipse2,ellipse3,rect);
             // Create the area around Rambley's nose and mouth
-        Area snoutArea = getRambleySnout(headBounds,headShape,snout);
+        Area snoutArea = getRambleySnout(headBounds,headShape,snout,path);
             // Create Rambley's right eyebrow (this will intersect with the 
             // other eye markings)
         Area eyeBrowR = createRambleyEyebrow(headBounds,ellipse2);
