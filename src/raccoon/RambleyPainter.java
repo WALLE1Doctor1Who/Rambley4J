@@ -3661,8 +3661,8 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @see #getRambleyOpenMouthWidth 
      * @see #setRambleyOpenMouthWidth 
-     * @see #getRambleyOpenMouthWidth 
-     * @see #setRambleyOpenMouthWidth 
+     * @see #getRambleyOpenMouthHeight
+     * @see #setRambleyOpenMouthHeight
      */
     private Area createRambleyOpenMouthShape(Path2D mouthCurve,double mouthWidth, 
             double mouthHeight,Ellipse2D snout,Point2D midPoint,Point2D point1,
@@ -3777,8 +3777,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see createRambleyFangShape
      * @see #getRambleyOpenMouthWidth 
      * @see #setRambleyOpenMouthWidth 
-     * @see #getRambleyOpenMouthWidth 
-     * @see #setRambleyOpenMouthWidth 
+     * @see #getRambleyOpenMouthHeight
+     * @see #setRambleyOpenMouthHeight
      */
     private Area createRambleyTongueShape(double xC, double x, double y, 
             double mouthWidth, double mouthHeight, Area openMouth, 
@@ -3837,8 +3837,8 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @see #getRambleyOpenMouthWidth 
      * @see #setRambleyOpenMouthWidth 
-     * @see #getRambleyOpenMouthWidth 
-     * @see #setRambleyOpenMouthWidth 
+     * @see #getRambleyOpenMouthHeight
+     * @see #setRambleyOpenMouthHeight
      */
     private Area createRambleyFangShape(double mouthWidth, double mouthHeight, 
             Point2D pointM1, Point2D pointM2, Point2D pointM3, Point2D point1, 
@@ -3928,8 +3928,7 @@ public class RambleyPainter implements Painter<Component>{
             g.translate(x, y);
                 // Scale it to fit the internal rendering size
             g.scale(scaleX, scaleY);
-        } else {
-                // Get the smaller of the two scale factors (this will be what 
+        } else {// Get the smaller of the two scale factors (this will be what 
                 // we use to scale the x and y coordinates)
             double scale = Math.min(scaleX, scaleY);
                 // Get the width of the area that will actually be rendered
@@ -3940,8 +3939,7 @@ public class RambleyPainter implements Painter<Component>{
             g.translate((w-width)/2.0+x, (h-height)/2.0+y);
                 // Scale it, preserving the aspect ratio
             g.scale(scale,scale);
-        }
-            // Set the stroke to use to the normal stroke
+        }   // Set the stroke to use to the normal stroke
         g.setStroke(getRambleyNormalStroke());
             // If the Rectangle2D scratch object has not been initialized yet
         if (rect == null)
@@ -4127,10 +4125,8 @@ public class RambleyPainter implements Painter<Component>{
                     g.draw(openMouth);
                     g.setColor(Color.WHITE);
                     g.draw(fang);
-                }
-                
-                    // DEBUG: If we are not showing the lines that make up Rambley 
-                if (!getShowsLines()){
+                }   // DEBUG: If we are not showing the lines that make up Rambley 
+                else {
                         // Fill in the inside of Rambley's mouth
                     g.setColor(RAMBLEY_TEETH_COLOR);
                     g.fill(openMouth);
@@ -4168,7 +4164,7 @@ public class RambleyPainter implements Painter<Component>{
             
                 // DEBUG: If we are not showing the lines that make up Rambley 
             if (!getShowsLines()){
-                // Set the stroke to Rambley's detail stroke
+                    // Set the stroke to Rambley's detail stroke
                 g.setStroke(getRambleyDetailStroke());
                     // Draw Rambley's mouth
                 g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
