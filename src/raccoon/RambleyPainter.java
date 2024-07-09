@@ -821,12 +821,19 @@ public class RambleyPainter implements Painter<Component>{
      */
     private Point2D point7 = null;
     /**
-     * A eighth scratch Point2D object used for rendering Rambley. This is 
+     * An eighth scratch Point2D object used for rendering Rambley. This is 
      * initialized the first time it is used. This scratch object may change at 
      * any time during the rendering process, and should not be assumed to be in 
      * a known state before being used.
      */
     private Point2D point8 = null;
+    /**
+     * A ninth scratch Point2D object used for rendering Rambley. This is 
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
+     */
+    private Point2D point9 = null;
     /**
      * This is a scratch AffineTransform used to transform shapes. This is 
      * initially null and is initialized the first time it is used. This scratch 
@@ -4068,6 +4075,9 @@ public class RambleyPainter implements Painter<Component>{
             // If the eighth Point2D scratch object has not been initialized yet
         if (point8 == null)
             point8 = new Point2D.Double();
+            // If the ninth Point2D scratch object has not been initialized yet
+        if (point9 == null)
+            point9 = new Point2D.Double();
             // If the iris Ellipse2D object has not been initialized yet
         if (iris == null)
             iris = new Ellipse2D.Double();
