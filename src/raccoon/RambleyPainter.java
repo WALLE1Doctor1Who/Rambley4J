@@ -540,6 +540,12 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final String PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED = 
             "PixelGridSpacingPropertyChanged"; 
+    /**
+     * This identifies that a change has been made to the thickness of the lines 
+     * in the pixel grid.
+     */
+    public static final String PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED = 
+            "PixelGridThicknessPropertyChanged"; 
     
 //    public static final String RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED = 
 //            "RambleyRightEyeXPropertyChanged";
@@ -600,7 +606,11 @@ public class RambleyPainter implements Painter<Component>{
      * lines, this is the horizontal spacing. For the horizontal lines, this is 
      * the vertical spacing.
      */
-    private double lineSpacing;
+    private double gridSpacing;
+    /**
+     * This is the thickness of the lines in the pixel grid.
+     */
+    private float gridThickness;
     /**
      * The x component for the location of the center of Rambley's right iris and 
      * pupil. 0.5 is the default position, 0.0 is the left-most bounds for Rambley's right eye 
@@ -854,7 +864,8 @@ public class RambleyPainter implements Painter<Component>{
         flags = DEFAULT_FLAG_SETTINGS;
         dotSize = DEFAULT_BACKGROUND_DOT_SIZE;
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
-        lineSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
+        gridSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
+        gridThickness = 1.0f;
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.5;
         mouthOpenWidth = 1.0;
         mouthOpenHeight = 0.0;
@@ -1375,11 +1386,13 @@ public class RambleyPainter implements Painter<Component>{
      * this is the vertical spacing.
      * @return The spacing between the lines in the pixel grid.
      * @see #setPixelGridLineSpacing 
+     * @see #getPixelGridLineThickness 
+     * @see #setPixelGridLineThickness 
      * @see #isPixelGridPainted 
      * @see #setPixelGridPainted 
      */
     public double getPixelGridLineSpacing(){
-        return lineSpacing;
+        return gridSpacing;
     }
     /**
      * This sets the spacing between the lines in the pixel grid. For the 
@@ -1388,16 +1401,54 @@ public class RambleyPainter implements Painter<Component>{
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code RambleyPainter}.
      * @see #getPixelGridLineSpacing 
+     * @see #getPixelGridLineThickness 
+     * @see #setPixelGridLineThickness 
      * @see #isPixelGridPainted 
      * @see #setPixelGridPainted 
      */
     public RambleyPainter setPixelGridLineSpacing(double spacing){
             // If the new spacing is different from the old spacing
-        if (spacing != lineSpacing){
+        if (spacing != gridSpacing){
                 // Get the old line spacing
-            double old = lineSpacing;
-            lineSpacing = spacing;
+            double old = gridSpacing;
+            gridSpacing = spacing;
             firePropertyChange(PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED,old,spacing);
+        }
+        return this;
+    }
+    /**
+     * This returns the thickness of the lines in the pixel grid.
+     * @return The thickness for the lines in the pixel grid.
+     * @see #setPixelGridLineThickness 
+     * @see #getPixelGridLineSpacing 
+     * @see #setPixelGridLineSpacing 
+     * @see #isPixelGridPainted 
+     * @see #setPixelGridPainted 
+     */
+    public float getPixelGridLineThickness(){
+        return gridThickness;
+    }
+    /**
+     * This sets the thickness of the lines in the pixel grid.
+     * @param thickness The thickness for the lines in the pixel grid.
+     * @return This {@code RambleyPainter}.
+     * @throws IllegalArgumentException If the given line thickness is negative.
+     * @see #getPixelGridLineThickness 
+     * @see #getPixelGridLineSpacing 
+     * @see #getPixelGridLineSpacing 
+     * @see #isPixelGridPainted 
+     * @see #setPixelGridPainted 
+     */
+    public RambleyPainter setPixelGridLineThickness(float thickness){
+        if (thickness < 0.0f)
+            throw new IllegalArgumentException("Pixel Grid line thickness must "
+                    + "be greater than or equal to zero ("+thickness+ " < 0)");
+            // If the new thickness is different from the old thickness
+        if (thickness != gridThickness){
+                // Get the old line thickness
+            float old = gridThickness;
+            gridThickness = thickness;
+            firePropertyChange(PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED,old,thickness);
         }
         return this;
     }
@@ -2166,18 +2217,19 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is used to render the pixel grid effect over the area. The pixel 
      * grid effect is drawn without antialiasing and in a {@link 
-     * PIXEL_GRID_COLOR transparent black} color. The pixel grid effect is 
-     * rendered as a grid of horizontal and vertical lines that cover the area, 
-     * with the spacing between the lines being {@link getPixelGridLineSpacing 
-     * getPixelGridLineSpacing}. The horizontal lines are offset by {@link 
-     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
-     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The path used to 
-     * draw the pixel grid effect is generated by the {@link #getPixelGrid 
-     * getPixelGrid} method. If a non-null {@code mask} is provided, then the 
-     * pixel grid will only be rendered within the given mask. This renders to a 
-     * copy of the given graphics context, so as to protect the rest of the 
-     * paint code from changes made to the graphics context while rendering the 
-     * pixel grid effect.
+     * PIXEL_GRID_COLOR transparent black} color and will have a line thickness 
+     * of {@link #getPixelGridLineThickness getPixelGridLineThickness}. The 
+     * pixel grid effect is rendered as a grid of horizontal and vertical lines 
+     * that cover the area, with the spacing between the lines being {@link 
+     * getPixelGridLineSpacing getPixelGridLineSpacing}. The horizontal lines 
+     * are offset by {@link #getPixelGridOffsetX getPixelGridOffsetX} and 
+     * vertical lines are offset by {@link #getPixelGridOffsetY 
+     * getPixelGridOffsetY}. The path used to draw the pixel grid effect is 
+     * generated by the {@link #getPixelGrid getPixelGrid} method. If a non-null 
+     * {@code mask} is provided, then the pixel grid will only be rendered 
+     * within the given mask. This renders to a copy of the given graphics 
+     * context, so as to protect the rest of the paint code from changes made to 
+     * the graphics context while rendering the pixel grid effect.
      * 
      * @todo Test the functionality to mask the pixel grid effect using the 
      * given mask.
@@ -2197,6 +2249,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getPixelGrid 
      * @see #getPixelGridLineSpacing 
      * @see #setPixelGridLineSpacing 
+     * @see #getPixelGridLineThickness 
+     * @see #setPixelGridLineThickness 
      * @see #getPixelGridOffsetX 
      * @see #getPixelGridOffsetY 
      */
@@ -2205,6 +2259,9 @@ public class RambleyPainter implements Painter<Component>{
         g = (Graphics2D) g.create(x, y, w, h);
             // Set the color to the pixel grid color
         g.setColor(PIXEL_GRID_COLOR);
+            // Set the stroke to use to draw the pixel grid to use the set line 
+            // thickness
+        g.setStroke(new BasicStroke(getPixelGridLineThickness()));
             // Turn off antialiasing for the pixel grid
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -2228,9 +2285,18 @@ public class RambleyPainter implements Painter<Component>{
      * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
      * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The path used to 
      * draw the pixel grid effect is generated by the {@link #getPixelGrid 
-     * getPixelGrid} method. This renders to a copy of the given graphics 
-     * context, so as to protect the rest of the paint code from changes made to 
-     * the graphics context while rendering the pixel grid effect. <p>
+     * getPixelGrid} methodand will have a line thickness 
+     * of {@link #getPixelGridLineThickness getPixelGridLineThickness}. The 
+     * pixel grid effect is rendered as a grid of horizontal and vertical lines 
+     * that cover the area, with the spacing between the lines being {@link 
+     * getPixelGridLineSpacing getPixelGridLineSpacing}. The horizontal lines 
+     * are offset by {@link #getPixelGridOffsetX getPixelGridOffsetX} and 
+     * vertical lines are offset by {@link #getPixelGridOffsetY 
+     * getPixelGridOffsetY}. The path used to draw the pixel grid effect is 
+     * generated by the {@link #getPixelGrid getPixelGrid} method. This renders 
+     * to a copy of the given graphics context, so as to protect the rest of the 
+     * paint code from changes made to the graphics context while rendering the 
+     * pixel grid effect. <p>
      * 
      * This version of the method does not take in an optional mask for the 
      * pixel grid effect. This is equivalent to calling {@link 
@@ -2251,6 +2317,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getPixelGrid 
      * @see #getPixelGridLineSpacing 
      * @see #setPixelGridLineSpacing 
+     * @see #getPixelGridLineThickness 
+     * @see #setPixelGridLineThickness 
      * @see #getPixelGridOffsetX 
      * @see #getPixelGridOffsetY 
      */
@@ -2267,6 +2335,7 @@ public class RambleyPainter implements Painter<Component>{
      * be {@link BasicStroke#JOIN_ROUND rounded}.
      * @param width The line width for the stroke.
      * @return A BasicStroke with the given line width.
+     * @throws IllegalArgumentException If the given line width is negative.
      * @see BasicStroke#BasicStroke(float, int, int) 
      * @see BasicStroke.CAP_ROUND
      * @see BasicStroke.JOIN_ROUND
@@ -4427,7 +4496,8 @@ public class RambleyPainter implements Painter<Component>{
         return "flags="+getFlags()+
                 ",dotSize="+getBackgroundDotSize()+
                 ",dotSpacing="+getBackgroundDotSpacing()+
-                ",lineSpacing="+getPixelGridLineSpacing()+
+                ",gridSpacing="+getPixelGridLineSpacing()+
+                ",gridThickness="+getPixelGridLineThickness()+
                 ",rightEye=("+getRambleyRightEyeX()+","+getRambleyRightEyeY()+")"+
                 ",leftEye=("+getRambleyLeftEyeX()+","+getRambleyLeftEyeY()+")"+
                 ",mouthOpen="+getRambleyOpenMouthWidth()+"x"+
