@@ -2367,8 +2367,8 @@ public class RambleyPainter implements Painter<Component>{
      * @return A BasicStroke with the given line width.
      * @throws IllegalArgumentException If the given line width is negative.
      * @see BasicStroke#BasicStroke(float, int, int) 
-     * @see BasicStroke.CAP_ROUND
-     * @see BasicStroke.JOIN_ROUND
+     * @see BasicStroke#CAP_ROUND
+     * @see BasicStroke#JOIN_ROUND
      * @see #getRambleyNormalStroke() 
      * @see #getRambleyDetailStroke() 
      * @see #getRambleyOutlineStroke() 
@@ -2387,6 +2387,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see getRambleyDetailStroke
      * @see getRambleyOutlineStroke
      * @see #getRambleyBorderStroke 
+     * @see BasicStroke#CAP_ROUND
+     * @see BasicStroke#JOIN_ROUND
      */
     protected BasicStroke getRambleyNormalStroke(){
             // If the normal stroke for Rambley has not been initialized yet
@@ -2404,6 +2406,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see getRambleyNormalStroke
      * @see getRambleyOutlineStroke
      * @see #getRambleyBorderStroke 
+     * @see BasicStroke#CAP_ROUND
+     * @see BasicStroke#JOIN_ROUND
      */
     protected BasicStroke getRambleyDetailStroke(){
             // If the detail stroke for Rambley has not been initialized yet
@@ -2421,6 +2425,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see getRambleyNormalStroke
      * @see getRambleyDetailStroke
      * @see #getRambleyBorderStroke 
+     * @see BasicStroke#CAP_ROUND
+     * @see BasicStroke#JOIN_ROUND
      */
     protected BasicStroke getRambleyOutlineStroke(){
             // If the outline stroke for Rambley has not been initialized yet
@@ -2534,7 +2540,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * 
-     * ln(x)/10ln(2) + 2.3
+     * {@code y = ln(x)/10ln(2) + 2.3}
      * 
      * Thank you AnimalWave on Discord
      * 
@@ -2558,7 +2564,7 @@ public class RambleyPainter implements Painter<Component>{
      * curve for Rambley's right ear, and returns the corresponding x-coordinate 
      * for that point. 
      * 
-     * 2^(10y-23)
+     * {@code x = 2^(10y-23)}
      * 
      * Thank you AnimalWave on Discord
      * 
@@ -2590,7 +2596,7 @@ public class RambleyPainter implements Painter<Component>{
         return earEquationU;
     }
     /**
-     * -(ln(1.5-x)/ln(2) - 5.2) / 8
+     * {@code y = -(ln(1.5-x)/ln(2) - 5.2) / 8}
      * 
      * Thank you AnimalWave on Discord
      * 
@@ -2603,7 +2609,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * 
-     * -(ln(1.5-x)/ln(2) - 5.2) / 8
+     * {@code y = -(ln(1.5-x)/ln(2) - 5.2) / 8}
      * 
      * Thank you AnimalWave on Discord
      * 
@@ -2619,7 +2625,7 @@ public class RambleyPainter implements Painter<Component>{
         return earEquToGraphicsY(getRambleyEarOffset(graphicsToEarEquX(x)));
     }
     /**
-     * -2^(-8y+5.2) + 1.5
+     * {@code x = -2^(-8y+5.2) + 1.5}
      * 
      * Thank you AnimalWave on Discord
      * 
@@ -2651,7 +2657,7 @@ public class RambleyPainter implements Painter<Component>{
         return earEquationL;
     }
     /**
-     * (0.01/(x-1.5)) + 2.4
+     * {@code y = (0.01/(x-1.5)) + 2.4}
      * 
      * Thank you AnimalWave on Discord
      * 
@@ -2674,7 +2680,7 @@ public class RambleyPainter implements Painter<Component>{
                 RAMBLEY_EAR_HEIGHT);
     }
     /**
-     * (0.01/(y-2.4)) + 1.5
+     * {@code x = (0.01/(y-2.4)) + 1.5}
      * 
      * Thank you AnimalWave on Discord
      * 
@@ -4484,6 +4490,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see getRambleyDetailStroke
      * @see getRambleyOutlineStroke
      * @see RAMBLEY_BORDER_THICKNESS
+     * @see BasicStroke#CAP_ROUND
+     * @see BasicStroke#JOIN_ROUND
      */
     protected BasicStroke getRambleyBorderStroke(){
             // If the border stroke for Rambley has not been initialized yet
