@@ -398,7 +398,7 @@ public class RambleyPainter implements Painter<Component>{
      * This is the height of the visible portion of Rambley's fangs at their 
      * center.
      */
-    protected static final double RAMBLEY_FANG_VISIBLE_HEIGHT = 8.0;
+    protected static final double RAMBLEY_FANG_VISIBLE_HEIGHT = 9.5;
     /**
      * This is the height of the portion of Rambley's fangs that is obscured by 
      * the top of Rambley's mouth.
@@ -3773,11 +3773,20 @@ public class RambleyPainter implements Painter<Component>{
             // Shift the left-most point 7.5 pixels to the right. This will be 
             // the end point of the right side of the mouth curve.
         point2.setLocation(point2.getX()+7.5, point2.getY());
+            // This is the amount to add to the y-coordinate for the mid-point 
+            // to get the lowest point on the curve. When Rambley's mouth is 
+            // closed, the point is 9 pixels below the first point
+        double yOff = 9;
+            // If Rambley's mouth is open
+        if (isRambleyMouthOpen())
+                // Raise the lowest point by up to 3 pixels. If the height of 
+                // the open mouth is less than 25%, then raise it by less to 
+                // transition between raised and lowered
+            yOff -= 3*Math.min(1.0, getRambleyOpenMouthHeight()*4);
             // Set the second point to be in between the starting point and 
-            // end point,and 9 pixels below the first point. This will be the 
-            // mid-point of the right side of the mouth curve
-            // Shorten the y-coordinate if the mouth is open?
-        point1.setLocation((point.getX()+point2.getX())/2, point.getY()+9);
+            // end point, and below the first point. This will be the mid-point 
+            // of the right side of the mouth curve
+        point1.setLocation((point.getX()+point2.getX())/2, point.getY()+yOff);
             // Set the first quadratic bezier curve to start at the given point 
             // and end at point1. Set the control point for the curve to be 
             // halfway between the starting point and mid-point of the curve, 
@@ -4151,9 +4160,9 @@ public class RambleyPainter implements Painter<Component>{
         else    // Reset the given Path2D object
             path.reset();
             // Calculate the points for the curve that forms Rambley's right 
-            // fang. Rambley's right fang is 0.5 pixels to the left of the 
+            // fang. Rambley's right fang is 1.5 pixels to the left of the 
             // bottom point of the mouth curve
-        quadCurve = getRambleyFangCurve(mouthQuad2.getX1()-0.5, 
+        quadCurve = getRambleyFangCurve(mouthQuad2.getX1()-1.5, 
                 mouthQuad2.getY1(),mouthWidth,mouthHeight,false,quadCurve);
             // Start the path at the top center of the fang
         path.moveTo(quadCurve.getX2(), quadCurve.getY1());
