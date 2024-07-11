@@ -271,11 +271,13 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double RAMBLEY_EAR_MULTIPLIER = 42;
     /**
-     * This is the height at which Rambley's ears are rendered at. This is also 
-     * used to vertically flip the ears as otherwise they'd produce upside down 
-     * ears.
+     * This is the height at which Rambley's ears are rendered at. This is not 
+     * necessarily the final height of Rambley's ears, as the ears may be 
+     * shorter or taller than this due to the nature of how the shape of the 
+     * ears is created. This is also used to vertically flip the ears as 
+     * otherwise they'd produce upside down ears. 
      */
-    private static final double RAMBLEY_EAR_HEIGHT = 1.8*RAMBLEY_EAR_MULTIPLIER;
+    protected static final double RAMBLEY_EAR_HEIGHT = 1.8*RAMBLEY_EAR_MULTIPLIER;
     /**
      * This is the offset for the y-coordinates when calculating the curve for 
      * the tip of Rambley's ears. The curve for the tip of Rambley's ears are 
@@ -2757,6 +2759,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyLowerEarY 
      * @see #getRambleyEarUpperTip
      * @see #getRambleyEarLowerTip
+     * @see #RAMBLEY_EAR_HEIGHT
+     * @see #RAMBLEY_EAR_TIP_ROUNDING
      */
     protected Area getRambleyEar(double x, double y, Path2D path){
             // If the given Path2D object is null
@@ -4503,6 +4507,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getDropShadowTransform 
      * @see RAMBLEY_DROP_SHADOW_COLOR
      * @see RAMBLEY_BORDER_COLOR
+     * @see RAMBLEY_DROP_SHADOW_X_OFFSET
+     * @see RAMBLEY_DROP_SHADOW_Y_OFFSET
      * @see getRambleyBorderStroke 
      * @see #isBorderAndShadowPainted 
      * @see #setBorderAndShadowPainted 
