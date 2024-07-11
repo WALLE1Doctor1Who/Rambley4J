@@ -565,6 +565,42 @@ public final class GeometryMath {
      * 
      * https://microbians.com/math/Gabriel_Suchowolski_Quadratic_bezier_through_three_points_and_the_-equivalent_quadratic_bezier_(theorem)-.pdf
      * 
+     * @param x0 The x-coordinate of the starting point of the curve.
+     * @param y0 The y-coordinate of the starting point of the curve.
+     * @param x1 The x-coordinate of the point on the curve to pass through.
+     * @param y1 The y-coordinate of the point on the curve to pass through.
+     * @param x2 The x-coordinate of the end point of the curve.
+     * @param y2 The y-coordinate of the end point of the curve.
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    public static Point2D getQuadBezierControlPoint(double x0, double y0, 
+            double x1, double y1, double x2, double y2, Point2D point){
+            // If the given Point2D object is null
+        if (point == null)
+            point = new Point2D.Double();
+            // Get the difference between the first and second points' 
+        double tx1 = x0 - x1;   // x-coordinates
+            // Get the difference between the first and second points' 
+        double ty1 = y0 - y1;   // y-coordinates
+            // Get the difference between the second and third points' 
+        double tx2 = x2 - x1;   // x-coordinates
+            // Get the difference between the second and third points' 
+        double ty2 = y2 - y1;   // y-coordinates
+            // Get the distance between the first and second points
+        double d1 = Math.sqrt(Math.pow(tx1, 2)+Math.pow(ty1, 2));
+            // Get the distance between the second and third points
+        double d2 = Math.sqrt(Math.pow(tx2, 2)+Math.pow(ty2, 2));
+            // Multiply the distance between first and second points by the 
+            // distance between the second and third points, and get the square 
+        double d3 = Math.sqrt(d1*d2);   // root of the result
+        point.setLocation(x1-(d3*(tx1/d1+tx2/d2))/2,y1-(d3*(ty1/d1+ty2/d2))/2);
+        return point;
+    }
+    /**
+     * 
+     * https://microbians.com/math/Gabriel_Suchowolski_Quadratic_bezier_through_three_points_and_the_-equivalent_quadratic_bezier_(theorem)-.pdf
+     * 
      * @param p0 The starting point of the curve.
      * @param p1 The point on the curve to pass through.
      * @param p2 The end point of the curve.
@@ -573,27 +609,8 @@ public final class GeometryMath {
      */
     public static Point2D getQuadBezierControlPoint(Point2D p0, Point2D p1, 
             Point2D p2, Point2D point){
-            // If the given Point2D object is null
-        if (point == null)
-            point = new Point2D.Double();
-            // Get the difference between the first and second points' 
-        double tx1 = p0.getX() - p1.getX();     // x-coordinates
-            // Get the difference between the first and second points' 
-        double ty1 = p0.getY() - p1.getY();     // y-coordinates
-            // Get the difference between the second and third points' 
-        double tx2 = p2.getX() - p1.getX();     // x-coordinates
-            // Get the difference between the second and third points' 
-        double ty2 = p2.getY() - p1.getY();     // y-coordinates
-            // Get the distance between the first and second points
-        double d1 = p0.distance(p1);
-            // Get the distance between the second and third points
-        double d2 = p2.distance(p1);
-            // Multiply the distance between first and second points by the 
-            // distance between the second and third points, and get the square 
-        double d3 = Math.sqrt(d1*d2);   // root of the result
-        point.setLocation(p1.getX()-(d3*(tx1/d1+tx2/d2))/2,
-                p1.getY()-(d3*(ty1/d1+ty2/d2))/2);
-        return point;
+        return getQuadBezierControlPoint(p0.getX(),p0.getY(),
+                p1.getX(),p1.getY(),p2.getX(),p2.getY(),point);
     }
     /**
      * 
