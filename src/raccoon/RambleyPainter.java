@@ -1660,6 +1660,16 @@ public class RambleyPainter implements Painter<Component>{
         }
         return this;
     }
+    /**
+     * This returns whether Rambley's mouth is open.
+     * 
+     * @todo Rework the documentation for this method.
+     * 
+     * @return Whether Rambley's mouth is open.
+     */
+    public boolean isRambleyMouthOpen(){
+        return getRambleyOpenMouthHeight() > 0&&getRambleyOpenMouthWidth() > 0;
+    }
     
     
     
@@ -3720,10 +3730,10 @@ public class RambleyPainter implements Painter<Component>{
      * curve on the right side of the mouth, or null. This will be the curve 
      * from the lowest point on the right side of the curve of the mouth to the 
      * end point for the the right side of the curve of the mouth.
-     * @param point1 A Point2D object to use to calculate the lowest point on 
-     * the right side of the curve of the mouth, or null.
-     * @param point2 A Point2D object to use to calculate the end point for the 
-     * the right side of the curve of the mouth, or null.
+     * @param point1 A Point2D object to use to calculate points on the right 
+     * side of the curve of the mouth, or null.
+     * @param point2 A Point2D object to use to calculate points on the right 
+     * side of the curve of the mouth, or null.
      * @param path A Path2D object to store the results in, or null.
      * @return A Path2D object with the mouth curve.
      * @see #paintRambley 
@@ -3756,11 +3766,9 @@ public class RambleyPainter implements Painter<Component>{
             point2 = new Point2D.Double();
         
             // Form the right curve of Rambley's mouth
-           
+            
             // Calculate the points where the snout intersects the horizontal 
             // line 2.5 pixels above the first point.
-            // (A variation with a slight smile may be possible by adding 2.5 
-            // instead of subtracting)
         GeometryMath.getEllipseX(snout,point.getY()-2.5,point2,point1);
             // Shift the left-most point 7.5 pixels to the right. This will be 
             // the end point of the right side of the mouth curve.
@@ -3768,6 +3776,7 @@ public class RambleyPainter implements Painter<Component>{
             // Set the second point to be in between the starting point and 
             // end point,and 9 pixels below the first point. This will be the 
             // mid-point of the right side of the mouth curve
+            // Shorten the y-coordinate if the mouth is open?
         point1.setLocation((point.getX()+point2.getX())/2, point.getY()+9);
             // Set the first quadratic bezier curve to start at the given point 
             // and end at point1. Set the control point for the curve to be 
@@ -3790,15 +3799,19 @@ public class RambleyPainter implements Painter<Component>{
         path.append(quadCurve2, true);
         
             // Form the line at the right edge of his mouth
-            // Perhaps make this a curve from the two points and passes through 
-            // the end point of the mouth?
         
-            // Move to two pixels to the right and two pixels up from the end of 
-            // the curve
-        path.moveTo(point2.getX()+2, point2.getY()-2);
-            // Draw a line that is 4.5 pixels to the left and 4.5 pixels up
-        path.lineTo(point2.getX()-2.5, point2.getY()+2.5);
-        
+            // Move to three pixels to the right and two pixels up from the end 
+            // of the curve
+        path.moveTo(quadCurve2.getX2()+3, quadCurve2.getY2()-2);
+            // Move the second point to 2.5 pixels to the left and 3.5 pixels 
+            // below the end of the curve
+        point2.setLocation(quadCurve2.getX2()-2.5, quadCurve2.getY2()+3.5);
+            // Get the control point for the curve at the edge of his mouth
+        point1 = GeometryMath.getQuadBezierControlPoint(path.getCurrentPoint(),
+                quadCurve2.getP2(),point2,point1);
+            // Draw a quadratic bezier curve to the end of the edge curve, using 
+            // the calculated control point in point1
+        path.quadTo(point1.getX(), point1.getY(), point2.getX(), point2.getY());
             // Flip the path (which holds the right side of the mouth) 
             // horizontally to form the left side of the mouth and then add the 
             // left side of the mouth to the path.
@@ -3832,9 +3845,11 @@ public class RambleyPainter implements Painter<Component>{
      * right side of the mouth curve (cannot be null). This is the curve from 
      * the lowest point of the right side of the mouth curve to the end of the 
      * right side of the mouth curve.
-     * @param point A Point2D object to use to calculate the point on the right 
+     * @param point1 A Point2D object to use to calculate the point on the right 
      * side of the mouth curve to start the path that forms the open mouth 
      * shape, or null.
+     * @param point2 A Point2D object to use to calculate some points used to 
+     * create the open mouth, or null.
      * @param quadCurve A QuadCurve2D object to use to store the curve for the 
      * right side of the open mouth, or null.
      * @param rect A Rectangle2D object to store the bounds of the path used to 
@@ -3857,8 +3872,9 @@ public class RambleyPainter implements Painter<Component>{
      */
     private Area createRambleyOpenMouthShape(Path2D mouthCurve,
             double mouthWidth, double mouthHeight, Ellipse2D snout,
-            QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, Point2D point, 
-            QuadCurve2D quadCurve, Rectangle2D rect, Path2D path){
+            QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, Point2D point1, 
+            Point2D point2, QuadCurve2D quadCurve, Rectangle2D rect, 
+            Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -3868,8 +3884,8 @@ public class RambleyPainter implements Painter<Component>{
         if (rect == null)
             rect = new Rectangle2D.Double();
             // If the given scratch Point2D object is null
-        if (point == null)
-            point = new Point2D.Double();
+        if (point1 == null)
+            point1 = new Point2D.Double();
             // If the given QuadCurve2D object is null
         if (quadCurve == null)
             quadCurve = new QuadCurve2D.Double();
@@ -3886,60 +3902,74 @@ public class RambleyPainter implements Painter<Component>{
         rect.setFrameFromCenter(rect.getCenterX(),rect.getCenterY(),
                 rect.getMinX()+((1-mouthWidth)*(rect.getWidth()/2.0)),
                 rect.getMinY()+((1-mouthHeight)*(rect.getHeight()/2.0)));
+            // If the x-coordinate of the rectangle is at or beyond the point 
+            // between the two curves that form the right side of the mouth 
+        if (rect.getMinX() <= mouthQuad1.getX2())   // curve
+                // Add the first part of the curve to the path
+            path.append(mouthQuad1, false);
             // If the x-coordinate of the rectangle is at or beyond the 
             // left-most point on the mouth curve
-        if (rect.getMinX() <= mouthQuad2.getX2())
-            point.setLocation(mouthQuad2.getX2(),mouthQuad2.getY2());
-            // If the x-coordinate of the rectangle is at the point between the 
+        if (rect.getMinX() <= mouthQuad2.getX2()){
+            point1.setLocation(mouthQuad2.getX2(),mouthQuad2.getY2());
+                // Add the second part of the curve to the path
+            path.append(mouthQuad2, true);
+        }   // If the x-coordinate of the rectangle is at the point between the 
             // two curves that form the right side of the mouth curve
-        else if (rect.getMinX() == mouthQuad1.getX2())
-            point.setLocation(mouthQuad1.getX2(), mouthQuad1.getY2());
-            // If the x-coordinate of the rectangle is at or beyond the center 
+        else if (rect.getMinX() == mouthQuad1.getX2()){
+            point1.setLocation(mouthQuad1.getX2(), mouthQuad1.getY2());
+        }   // If the x-coordinate of the rectangle is at or beyond the center 
             // of the mouth curve
-        else if (rect.getMinX() >= mouthQuad1.getX1())
-            point.setLocation(mouthQuad1.getX1(), mouthQuad1.getY1());
-        else {  // This is the curve to get a point on
-            QuadCurve2D curve;
-                // If the x-coordinate for the rectangle lies on the left-most 
-                // curve on the right side of the mouth. That is to say, if it 
-                // is in between point1 and point2
-            if (rect.getMinX()>= mouthQuad2.getX2() && 
-                    rect.getMinX()<= mouthQuad2.getX1())
-                    // Get a point on the second mouth curve
-                curve = mouthQuad2;
-             else   // Get a point on the first mouth curve
-                curve = mouthQuad1;
+        else if (rect.getMinX() >= mouthQuad1.getX1()){
+            point1.setLocation(mouthQuad1.getX1(), mouthQuad1.getY1());
+                // Move the path to the current point
+            path.moveTo(point1.getX(),point1.getY());
+        } else {// Get if the x-coordinate for the rectangle lies on the 
+                // left-most curve on the right side of the mouth. That is to 
+                // say, if it lies on the second mouth curve
+            boolean useCurve2 = rect.getMinX() >= mouthQuad2.getX2() && 
+                    rect.getMinX() <= mouthQuad2.getX1();
+                // This is the curve to get a point on. If the x-coordinate of 
+                // the rectangle lies on the left-most curve on the right side 
+                // of the mouth, then use the second mouth curve. Otherwise, use 
+                // the first mouth curve
+            QuadCurve2D curve = (useCurve2) ? mouthQuad2 : mouthQuad1;
                 // Get the point on the quadratic bezier curve at the 
                 // x-coordinate of the rectangle on the quadratic bezier curve 
                 // that forms the mouth curve
-            point = GeometryMath.getQuadBezierPointForX(curve,rect.getMinX(),
-                    point);
+            point1 = GeometryMath.getQuadBezierPointForX(curve,rect.getMinX(),
+                    point1);
+                // Get the point on the quadratic bezier curve in between the 
+                // start of the curve and point1
+            point2 = GeometryMath.getQuadBezierPointForX(curve, 
+                    (point1.getX()+curve.getX1())/2.0, point2);
+                // Get the control point for the segment of the mouth curve that 
+                // ends at point1
+            point2 = GeometryMath.getQuadBezierControlPoint(
+                    curve.getX1(),curve.getY1(),point2.getX(),point2.getY(),
+                    point1.getX(),point1.getY(),point2);
+                // If this is not using the second mouth curve
+            if (!useCurve2)
+                    // Move to the start of the mouth curve
+                path.moveTo(curve.getX1(),curve.getY1());
+                // Add the segment of the mouth curve up until point1
+            path.quadTo(point2.getX(),point2.getY(),point1.getX(),point1.getY());
         }   // Set the quadratic bezier curve for the open mouth curve to start 
             // at the point on the closed mouth curve and end at the bottom 
             // center of the open mouth bounds. Use a control point that is 
             // 1/3rd of the way left from the starting point to the end point, 
             // and at the bottom of the curve
-        quadCurve.setCurve(point.getX(), point.getY(), 
-                (point.getX()*2+rect.getCenterX())/3.0, rect.getMaxY(), 
+        quadCurve.setCurve(point1.getX(), point1.getY(), 
+                (point1.getX()*2+rect.getCenterX())/3.0, rect.getMaxY(), 
                 rect.getCenterX(), rect.getMaxY());
             // Add the quadratic bezier curve to the path
-        path.append(quadCurve, false);
-            // Draw a vertical line from the previous point to the mid-point on 
-            // the mouth curve
-        path.lineTo(quadCurve.getX2(), mouthQuad1.getY1());
+        path.append(quadCurve, true);
+            // Close the path
+        path.closePath();
             // Flip the path (which holds the right side of the open mouth) 
             // horizontally to form the left side of the open mouth and then add 
             // the left side of the open mouth to the path.
         path = mirrorPathHorizontally(path,quadCurve.getX2());
-            // Add the mouth curve to the path to complete the shape
-        path.append(mouthCurve, false);
-            // Create an area with the path
-        Area mouthArea = new Area(path);
-            // Subtract the area formed by the mouth curve, since otherwise 
-            // Rambley gets a sort of moustache due to how the path is 
-            // interpretted
-        mouthArea.subtract(new Area(mouthCurve));
-        return mouthArea;
+        return new Area(path);
     }
     /**
      * This creates and returns the Area that forms Rambley's tongue. This uses 
@@ -4529,15 +4559,16 @@ public class RambleyPainter implements Painter<Component>{
                     eyeWhiteL.getBounds2D(),-pupilX,0,iris,pupil);
         }
         
-            // If Rambley's open mouth's width and height are greater than zero
-        if (getRambleyOpenMouthHeight() > 0 && getRambleyOpenMouthWidth() > 0){
+            // If Rambley's open mouth is open
+        if (isRambleyMouthOpen()){
                 // If the third mouth QuadCurve2D scratch object has not been  
             if (mouthCurve3 == null)     // initialized yet
                 mouthCurve3 = new QuadCurve2D.Double();
                 // Create the shape of Rambley's mouth when open
             Area openMouth = createRambleyOpenMouthShape(mouthPath, 
                     getRambleyOpenMouthWidth(), getRambleyOpenMouthHeight(), 
-                    snout,mouthCurve1,mouthCurve2,point4,mouthCurve3,rect,path);
+                    snout,mouthCurve1,mouthCurve2,point4,point5,mouthCurve3,
+                    rect,path);
             
                 // If Rambley's jaw is closed
             if (isRambleyJawClosed()){
@@ -4566,9 +4597,10 @@ public class RambleyPainter implements Painter<Component>{
                 }
             } else {
                     // Create the shape of Rambley's tongue
-                Area tongue = createRambleyTongueShape(rect.getCenterX(),point4.getX(),
-                        rect.getMaxY(),getRambleyOpenMouthWidth(), 
-                        getRambleyOpenMouthHeight(),openMouth,ellipse1);
+                Area tongue = createRambleyTongueShape(rect.getCenterX(),
+                        mouthCurve2.getX2(),rect.getMaxY(),
+                        getRambleyOpenMouthWidth(), getRambleyOpenMouthHeight(),
+                        openMouth,ellipse1);
                     // Create the shape of Rambley's right fang
                 Area fang = createRambleyFangShape(getRambleyOpenMouthWidth(), 
                         getRambleyOpenMouthHeight(),mouthCurve1,mouthCurve2,
@@ -4594,6 +4626,8 @@ public class RambleyPainter implements Painter<Component>{
                     // DEBUG: If we are showing the lines that make up Rambley 
                     printShape("fang",fang);
                     printPathIterator(path);
+                    g.setColor(Color.GREEN);
+                    g.draw(ellipse1);
                     g.setColor(RAMBLEY_MAIN_BODY_COLOR);
                     g.draw(openMouth);
                     g.setColor(Color.LIGHT_GRAY);
