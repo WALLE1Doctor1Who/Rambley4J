@@ -616,6 +616,31 @@ public final class GeometryMath {
      * 
      * https://microbians.com/math/Gabriel_Suchowolski_Quadratic_bezier_through_three_points_and_the_-equivalent_quadratic_bezier_(theorem)-.pdf
      * 
+     * @param x0 The x-coordinate of the starting point of the curve.
+     * @param y0 The y-coordinate of the starting point of the curve.
+     * @param x1 The x-coordinate of the point on the curve to pass through.
+     * @param y1 The y-coordinate of the point on the curve to pass through.
+     * @param x2 The x-coordinate of the end point of the curve.
+     * @param y2 The y-coordinate of the end point of the curve.
+     * @param curve A QuadCurve2D object to store the results in, or null.
+     * @return 
+     */
+    public static QuadCurve2D getQuadBezierCurve(double x0, double y0, 
+            double x1, double y1, double x2, double y2, QuadCurve2D curve){
+            // If the given QuadCurve2D object is null
+        if (curve == null)
+            curve = new QuadCurve2D.Double();
+            // Get the control point for the curve
+        Point2D point = getQuadBezierControlPoint(x0,y0,x1,y1,x2,y2,null);
+            // Set the curve to be between the start and end points, along with 
+            // the calculated control point
+        curve.setCurve(x0,y0,point.getX(),point.getY(),x2,y2);
+        return curve;
+    }
+    /**
+     * 
+     * https://microbians.com/math/Gabriel_Suchowolski_Quadratic_bezier_through_three_points_and_the_-equivalent_quadratic_bezier_(theorem)-.pdf
+     * 
      * @param p0 The starting point of the curve.
      * @param p1 The point on the curve to pass through.
      * @param p2 The end point of the curve.
@@ -624,13 +649,8 @@ public final class GeometryMath {
      */
     public static QuadCurve2D getQuadBezierCurve(Point2D p0, Point2D p1, 
             Point2D p2, QuadCurve2D curve){
-            // If the given QuadCurve2D object is null
-        if (curve == null)
-            curve = new QuadCurve2D.Double();
-            // Set the curve to be between points p0 and p2, and get the control 
-            // point of the curve that passes through p0, p1, and p2.
-        curve.setCurve(p0, getQuadBezierControlPoint(p0,p1,p2,null), p2);
-        return curve;
+        return getQuadBezierCurve(p0.getX(),p0.getY(),p1.getX(),p1.getY(),
+                p2.getX(),p2.getY(),curve);
     }
     /**
      * 
