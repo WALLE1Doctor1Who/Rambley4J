@@ -378,6 +378,34 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected static final double RAMBLEY_DROP_SHADOW_Y_OFFSET = 6.0;
     /**
+     * This is the width of Rambley's fangs at their base. It is worth 
+     * mentioning that the base of Rambley's fangs are not visible, and are 
+     * covered by the curve of his mouth.
+     */
+    protected static final double RAMBLEY_FANG_WIDTH = 8.0;
+    /**
+     * This is half the width of Rambley's fangs at their base. This is used to 
+     * calculate the curve used to produce Rambley's fangs.
+     */
+    private static final double RAMBLEY_FANG_HALF_WIDTH =RAMBLEY_FANG_WIDTH/2.0;
+    /**
+     * This is the total height of Rambley's fangs. This includes the visible 
+     * portion of Rambley's fangs and the portion of Rambley's fangs that is 
+     * obscured by the top of Rambley's mouth.
+     */
+    protected static final double RAMBLEY_FANG_HEIGHT = 19.5;
+    /**
+     * This is the height of the visible portion of Rambley's fangs at their 
+     * center.
+     */
+    protected static final double RAMBLEY_FANG_VISIBLE_HEIGHT = 8.0;
+    /**
+     * This is the height of the portion of Rambley's fangs that is obscured by 
+     * the top of Rambley's mouth.
+     */
+    private static final double RAMBLEY_FANG_OBSCURED_HEIGHT = 
+            RAMBLEY_FANG_HEIGHT - RAMBLEY_FANG_VISIBLE_HEIGHT;
+    /**
      * This is the flag for whether the background will be painted.
      */
     public static final int PAINT_BACKGROUND_FLAG =         0x00000001;
@@ -3939,34 +3967,29 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This calculates the start, end, and control points for the curve that 
-     * forms Rambley's right fang. This uses the center, lowest, and left-most 
-     * (left of the image, right on Rambley's face) points of the curve that 
-     * forms the right side of Rambley's mouth, as calculated by the {@link 
-     * #createRambleyMouthCurve createRambleyMouthCurve} method (these being the 
-     * points {@code pointM1}, {@code pointM2}, and {@code pointM3} (the three 
-     * non-control points)), to control the size and position of the fang.
+     * forms Rambley's fang located at the given top center coordinate of the 
+     * visible portion of the fang. The portion of the fang above the given 
+     * y-coordinate is intended to be obscured by the top of the mouth, while 
+     * the portion of the fang below the given y-coordinate is intended to be 
+     * visible in the open mouth.
      * 
-     * @todo Add references to other related methods. Also, possibly make it so 
-     * the fang's position is dependent on the width of the mouth (i.e. move the 
-     * fang inwards when the mouth is thinner), though not completely to the 
-     * point where the fang is visible when the mouth is thin.
+     * @todo Add references to other related methods. 
      * 
+     * @param x The x-coordinate of the center of the fang.
+     * @param y The y-coordinate of the top of the visible portion of the fang.
      * @param mouthWidth A value between 0.0 and 1.0, inclusive, used to control 
      * the width of Rambley's open mouth.
      * @param mouthHeight A value between 0.0 and 1.0, inclusive, used to 
      * control the height of Rambley's open mouth.
-     * @param pointM1 The Point2D object with the center point of the mouth 
-     * curve (cannot be null).
-     * @param pointM2 The Point2D object with the lowest point on the right side 
-     * of the mouth curve (cannot be null).
-     * @param pointM3 The Point2D object with the end point for the the right 
-     * side of the mouth curve (cannot be null).
      * @param point1 The Point2D object to store the starting point for the 
      * curve that forms the fang (cannot be null).
      * @param point2 The Point2D object to store the end point for the curve 
      * that forms the fang (cannot be null).
      * @param pointC The Point2D object to store the control point for the curve 
      * that forms the fang (cannot be null).
+     * @param flipped {@code true} to get the curve for the (screen) right side 
+     * of the fang, {@code false} to get the curve for the (screen) left side of 
+     * the fang.
      * @see #paintRambley 
      * @see createRambleyMouthCurve
      * @see #createRambleyFangShape
@@ -3979,42 +4002,52 @@ public class RambleyPainter implements Painter<Component>{
      * @see #setRambleyEvil 
      * @see #isRambleyFangOnLeft 
      * @see #setRambleyFangOnLeft 
+     * @see #RAMBLEY_FANG_WIDTH
+     * @see #RAMBLEY_FANG_HEIGHT
+     * @see RAMBLEY_FANG_VISIBLE_HEIGHT
      */
-    private void getRambleyFangCurve(double mouthWidth, double mouthHeight, 
-            Point2D pointM1, Point2D pointM2, Point2D pointM3, 
-            Point2D point1, Point2D point2, Point2D pointC){
-            // Set the location of the starting point of the curve to be 8.5 
-            // pixels to the right of the left-most point on the mouth curve, 
-            // and to have the left-most point's y-coordinate
-        point1.setLocation(pointM3.getX()+8.5, pointM3.getY());
-            // Set the location of the ending point to be 4 pixels to the right 
-            // of the starting curve (the fang will be 8 pixels wide at its 
-            // widest point), and 8 pixels below the starting point
-        point2.setLocation(point1.getX()+4, pointM2.getY()+8);
+    protected void getRambleyFangCurve(double x, double y, double mouthWidth, 
+            double mouthHeight, Point2D point1, Point2D point2, Point2D pointC, 
+            boolean flipped){
+            // Set the location of the starting point of the curve to be at the 
+            // top left/right corner of the fang. Subtract the obscured height 
+            // from the given y-coordinate to get the top of the fang. If we are 
+            // getting the left side of the fang, subtract half the fang's width 
+            // from the given x-coordinate to get the top-left corner. If we are 
+            // getting the right side of the fang, add half of the fang's width 
+            // to the given x-coordinate to get the top-right corner. 
+        point1.setLocation(x+(flipped?RAMBLEY_FANG_HALF_WIDTH:-RAMBLEY_FANG_HALF_WIDTH),
+                y-RAMBLEY_FANG_OBSCURED_HEIGHT);
+            // Set the location of the ending point to be at the center bottom 
+            // of the fang. The bottom of the fang is calculated by adding the 
+            // height of the visible portion of the fang to the given 
+            // y-coordinate
+        point2.setLocation(x, y+RAMBLEY_FANG_VISIBLE_HEIGHT);
             // Set the control point to be between the starting point and the 
             // end point, and at the bottom of the fang.
         pointC.setLocation((point1.getX()+point2.getX())/2.0, point2.getY());
     }
     /**
      * This creates and returns the Area that forms Rambley's fangs. This uses 
-     * the points for the curve that forms Rambley's right fang, as calculated 
-     * by the {@link #getRambleyFangCurve getRambleyFangCurve} method ({@code 
-     * point1}, {@code point2}, and {@code pointC}), to form Rambley's right 
-     * fang. This also uses the center, lowest, and left-most (left of the 
-     * image, right on Rambley's face) points of the curve that forms the right 
-     * side of Rambley's mouth, as calculated by the {@link 
-     * #createRambleyMouthCurve createRambleyMouthCurve} method (these being the 
-     * points {@code pointM1}, {@code pointM2}, and {@code pointM3} 
-     * (the three non-control points)), to control the location of Rambley's 
-     * right fang. If either Rambley is {@link #isRambleyEvil evil} or Rambley's 
-     * fang is to be on the {@link #isRambleyFangOnLeft left side of his face}, 
-     * then his right fang will be mirrored to produce his left fang. If Rambley 
-     * is evil, then the left fang will be added to the right fang to give 
-     * Rambley fangs on either side of his face. If Rambley is not evil, but his 
-     * fang is to be on his left, then the left fang will be returned instead of 
-     * the right fang. Finally, this uses the shape of the mouth returned by the 
-     * {@link createRambleyOpenMouthShape createRambleyOpenMouthShape} method 
-     * ({@code openMouth}) to ensure that the fang(s) do not escape the mouth.
+     * the center, lowest, and left-most (left of the image, right on Rambley's 
+     * face) points of the curve that forms the right side of Rambley's mouth, 
+     * as calculated by the {@link #createRambleyMouthCurve 
+     * createRambleyMouthCurve} method (these being the points {@code pointM1}, 
+     * {@code pointM2}, and {@code pointM3} (the three non-control points)), to 
+     * control the size and position of Rambley's right fang. The points for the 
+     * curve that forms Rambley's right fang are calculated using the {@link 
+     * #getRambleyFangCurve getRambleyFangCurve} method, with the top center of 
+     * the visible portion of the right fang being located around the lowest 
+     * point on the right side of the mouth curve. If either Rambley is {@link 
+     * #isRambleyEvil evil} or Rambley's fang is to be on the {@link 
+     * #isRambleyFangOnLeft left side of his face}, then his right fang will be 
+     * mirrored to produce his left fang. If Rambley is evil, then the left fang 
+     * will be added to the right fang to give Rambley fangs on either side of 
+     * his face. If Rambley is not evil, but his fang is to be on his left, then 
+     * the left fang will be returned instead of the right fang. Finally, this 
+     * uses the shape of the mouth returned by the {@link 
+     * createRambleyOpenMouthShape createRambleyOpenMouthShape} method ({@code 
+     * openMouth}) to ensure that the fang(s) do not escape the mouth.
      * 
      * @todo Add references to other related methods. Also, possibly make it so 
      * the fang's position is dependent on the width of the mouth (i.e. move the 
@@ -4031,13 +4064,12 @@ public class RambleyPainter implements Painter<Component>{
      * of the mouth curve (cannot be null).
      * @param pointM3 The Point2D object with the end point for the the right 
      * side of the mouth curve (cannot be null).
-     * @param openMouth The area that forms Rambley's open mouth.
-     * @param point1 The Point2D object with the starting point for the curve 
-     * that forms the fang (cannot be null).
-     * @param point2 The Point2D object with the end point for the curve that 
-     * forms the fang (cannot be null).
-     * @param pointC The Point2D object with the control point for the curve 
-     * that forms the fang (cannot be null).
+     * @param point1 A Point2D object to use to store the starting point for the 
+     * curve that forms the fang, or null.
+     * @param point2 A Point2D object to use to store the end point for the 
+     * curve that forms the fang, or null.
+     * @param pointC A Point2D object to use to store the control point for the 
+     * curve that forms the fang, or null.
      * @param path A Path2D object to use to calculate the path for the fang, or 
      * null.
      * @return The area that forms Rambley's fang(s).
@@ -4055,6 +4087,9 @@ public class RambleyPainter implements Painter<Component>{
      * @see #setRambleyEvil 
      * @see #isRambleyFangOnLeft 
      * @see #setRambleyFangOnLeft 
+     * @see #RAMBLEY_FANG_WIDTH
+     * @see #RAMBLEY_FANG_HEIGHT
+     * @see RAMBLEY_FANG_VISIBLE_HEIGHT
      */
     private Area createRambleyFangShape(double mouthWidth, double mouthHeight, 
             Point2D pointM1, Point2D pointM2, Point2D pointM3, Area openMouth,
@@ -4064,6 +4099,20 @@ public class RambleyPainter implements Painter<Component>{
             path = new Path2D.Double();
         else    // Reset the given Path2D object
             path.reset();
+            // If the first of the three given scratch Point2D objects is null
+        if (point1 == null)
+            point1 = new Point2D.Double();
+            // If the second of the three given scratch Point2D objects is null
+        if (point2 == null)
+            point2 = new Point2D.Double();
+            // If the third of the three given scratch Point2D objects is null
+        if (pointC == null)
+            pointC = new Point2D.Double();
+            // Calculate the points for the curve that forms Rambley's fang. 
+            // Rambley's fang is 0.5 pixels to the left of the bottom point of 
+            // the mouth curve
+        getRambleyFangCurve(pointM2.getX()-0.5, pointM2.getY(),mouthWidth,
+                mouthHeight,point1,point2,pointC,false);
             // Move the path to the starting point
         path.moveTo(point1.getX(), point1.getY());
             // Add a quadratic bezier curve between the starting point and the 
@@ -4318,11 +4367,6 @@ public class RambleyPainter implements Painter<Component>{
                     getRambleyOpenMouthWidth(), getRambleyOpenMouthHeight(), 
                     snout,point1,point2,point3,point4,point5,point6,point7,
                     point8,rect,path);
-                // Get the starting point, ending point, and control point for 
-                // the fang curve
-            getRambleyFangCurve(getRambleyOpenMouthWidth(),
-                    getRambleyOpenMouthHeight(),point1,point2,point4,point3,
-                    point5,point9);
                 // If Rambley's jaw is closed
             if (isRambleyJawClosed()){
                 
