@@ -795,8 +795,8 @@ public final class GeometryMath {
      * {@code x1} and {@code x2} x-coordinates for the upper and lower bounds of 
      * the range to check. This uses the {@code resolution} to determine how 
      * precise the point of intersection will be.
-     * @param x1 The first shared x-coordinate for the two lines.
-     * @param x2 The second shared x-coordinate for the two lines.
+     * @param x1 The x-coordinate of the start points of the two line segments.
+     * @param x2 The x-coordinate of the end points of the two line segments.
      * @param getY1 The equation for the first line.
      * @param getY2 The equation for the second line.
      * @param resolution The resolution for the point to return. This determines 
@@ -863,8 +863,8 @@ public final class GeometryMath {
      * #getLineIntersection(double, double, DoubleUnaryOperator, 
      * DoubleUnaryOperator, int, Point2D) getLineIntersection(x1, x2, getY1, 
      * getY2, DEFAULT_LINE_INTERSECTION_RESOLUTION, point)}.
-     * @param x1 The first shared x-coordinate for the two lines.
-     * @param x2 The second shared x-coordinate for the two lines.
+     * @param x1 The x-coordinate of the start points of the two line segments.
+     * @param x2 The x-coordinate of the end points of the two line segments.
      * @param getY1 The equation for the first line.
      * @param getY2 The equation for the second line.
      * @param point A Point2D object to store the results in, or null.
@@ -915,5 +915,84 @@ public final class GeometryMath {
         else
                 // Set line 1 to the second half
             line1.setLine(l2);
+    }
+    /**
+     * 
+     * @param x1 The x-coordinate of the start point of the first specified 
+     * line segment.
+     * @param y1 The y-coordinate of the start point of the first specified 
+     * line segment.
+     * @param x2 The x-coordinate of the end point of the first specified 
+     * line segment.
+     * @param y2 The y-coordinate of the end point of the first specified 
+     * line segment.
+     * @param x3 The x-coordinate of the start point of the second specified 
+     * line segment.
+     * @param y3 The y-coordinate of the start point of the second specified 
+     * line segment.
+     * @param x4 The x-coordinate of the end point of the second specified 
+     * line segment.
+     * @param y4 The y-coordinate of the end point of the second specified 
+     * line segment.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point at which the two given lines intersect, or null if the 
+     * two lines do not intersect.
+     */
+    public static Point2D getLineIntersection(double x1, double y1, double x2, 
+            double y2, double x3, double y3, double x4,double y4,Point2D point){
+            // If the two lines do not intersect
+        if (!Line2D.linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4)){
+                // If the given Point2D object is not null
+            if (point != null)
+                        // Set the point to return to NaN
+                    point.setLocation(Double.NaN, Double.NaN);
+                    // Return null
+                return null;
+        }   // If the given Point2D object is null
+        if (point == null)
+            point = new Point2D.Double();
+            // Get the difference between the x-coordinates of the first line 
+        double dx1 = x1 - x2;   // segment
+            // Get the difference between the x-coordinates of the second line 
+        double dx2 = x3 - x4;   // segment
+            // Get the difference between the y-coordinates of the first line 
+        double dy1 = y1 - y2;   // segment
+            // Get the difference between the y-coordinates of the second line 
+        double dy2 = y3 - y4;   // segment
+            
+        double l1 = (x1 * y2) - (y1 * x2);
+        double l2 = (x3 * y4) - (y3 * x4);
+        double a = (dx1 * dy2) - (dy1 * dx2);
+        point.setLocation(((l1*dx2)-(dx1*l2))/a, ((l1*dy2)-(dy1*l2))/a);
+        return point;
+    }
+    /**
+     * 
+     * @param p1 The start point of the first specified line segment.
+     * @param p2 The end point of the first specified line segment.
+     * @param p3 The start point of the second specified line segment.
+     * @param p4 The end point of the second specified line segment.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point at which the two given lines intersect, or null if the 
+     * two lines do not intersect.
+     */
+    public static Point2D getLineIntersection(Point2D p1, Point2D p2, 
+            Point2D p3, Point2D p4, Point2D point){
+        return getLineIntersection(p1.getX(),p1.getY(),p2.getX(),p2.getY(),
+                p3.getX(),p3.getY(),p4.getX(),p4.getY(),point);
+    }
+    /**
+     * 
+     * @param line1 The first specified line segment.
+     * @param line2 The second specified line segment.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point at which the two given lines intersect, or null if the 
+     * two lines do not intersect.
+     */
+    public static Point2D getLineIntersection(Line2D line1, Line2D line2, 
+            Point2D point){
+        return getLineIntersection(
+                line1.getX1(),line1.getY1(),line1.getX2(),line1.getY2(),
+                line2.getX1(),line2.getY1(),line2.getX2(),line2.getY2(),point);
     }
 }
