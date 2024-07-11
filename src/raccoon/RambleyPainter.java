@@ -3969,7 +3969,13 @@ public class RambleyPainter implements Painter<Component>{
             // horizontally to form the left side of the open mouth and then add 
             // the left side of the open mouth to the path.
         path = mirrorPathHorizontally(path,quadCurve.getX2());
-        return new Area(path);
+            // Create an area with the path
+        Area mouthArea = new Area(path);
+            // Subtract the area formed by the mouth curve, since otherwise 
+            // Rambley gets a sort of moustache due to how the path is 
+            // interpretted
+        mouthArea.subtract(new Area(mouthCurve));
+        return mouthArea;
     }
     /**
      * This creates and returns the Area that forms Rambley's tongue. This uses 
