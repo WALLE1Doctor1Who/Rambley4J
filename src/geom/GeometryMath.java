@@ -372,21 +372,50 @@ public final class GeometryMath {
     }
     /**
      * 
-     * @param p0 The starting point of the curve.
-     * @param p1 The control point for the curve.
+     * @param x1 The x-coordinate of the starting point of the curve.
+     * @param y1 The y-coordinate of the starting point of the curve.
+     * @param xC The x-coordinate of the control point for the curve.
+     * @param yC The y-coordinate of the control point for the curve.
+     * @param x2 The x-coordinate of the end point of the curve.
+     * @param y2 The y-coordinate of the end point of the curve.
+     * @param t A value between 0 and 1, inclusive, 
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    public static Point2D getQuadBezierPoint(double x1, double y1, double xC, 
+            double yC, double x2, double y2, double t, Point2D point){
+            // If the given Point2D object is null
+        if (point == null)
+            point = new Point2D.Double();
+        point.setLocation(getQuadBezierPoint(x1,xC,x2,t),
+                getQuadBezierPoint(y1,yC,y2,t));
+        return point;
+    }
+    /**
+     * 
+     * @param p1 The starting point of the curve.
+     * @param pC The control point for the curve.
      * @param p2 The end point of the curve.
      * @param t A value between 0 and 1, inclusive, 
      * @param point A Point2D object to store the results in, or null.
      * @return 
      */
-    public static Point2D getQuadBezierPoint(Point2D p0, Point2D p1, 
+    public static Point2D getQuadBezierPoint(Point2D p1, Point2D pC, 
             Point2D p2, double t, Point2D point){
-            // If the given Point2D object is null
-        if (point == null)
-            point = new Point2D.Double();
-        point.setLocation(getQuadBezierPoint(p0.getX(),p1.getX(),p2.getX(),t),
-                getQuadBezierPoint(p0.getY(),p1.getY(),p2.getY(),t));
-        return point;
+        return getQuadBezierPoint(p1.getX(),p1.getY(),pC.getX(),pC.getY(),
+                p2.getX(),p2.getY(),t,point);
+    }
+    /**
+     * 
+     * @param curve The curve to get the point on.
+     * @param t A value between 0 and 1, inclusive, 
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    public static Point2D getQuadBezierPoint(QuadCurve2D curve, double t, 
+            Point2D point){
+        return getQuadBezierPoint(curve.getX1(),curve.getY1(),curve.getCtrlX(),
+                curve.getCtrlY(),curve.getX2(),curve.getY2(),t,point);
     }
     /**
      * 
@@ -428,17 +457,73 @@ public final class GeometryMath {
     }
     /**
      * 
-     * @param p0 The starting point of the curve
-     * @param p1 The control point for the curve
+     * @param x1 The x-coordinate of the starting point of the curve.
+     * @param y1 The y-coordinate of the starting point of the curve.
+     * @param xC The x-coordinate of the control point for the curve.
+     * @param yC The y-coordinate of the control point for the curve.
+     * @param x2 The x-coordinate of the end point of the curve.
+     * @param y2 The y-coordinate of the end point of the curve.
+     * @param x The x-coordinate of the point to get
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    public static Point2D getQuadBezierPointForX(double x1, double y1,double xC, 
+            double yC, double x2, double y2, double x, Point2D point){
+            // Get the t-value for the x-coordinate
+        double t = getQuadBezierT(x1,xC,x2,x);
+            // If the t value is not a number or out of range (i.e. the point is 
+            // not on the curve
+        if (t == Double.NaN || t < 0 || t > 1){
+                // Set the point to return to NaN
+            point.setLocation(Double.NaN, Double.NaN);
+                // Return null
+            return null;
+        }
+        return getQuadBezierPoint(x1,y1,xC,yC,x2,y2,t,point);
+    }
+    /**
+     * 
+     * @param p1 The starting point of the curve
+     * @param pC The control point for the curve
      * @param p2 The end point of the curve
      * @param x The x-coordinate of the point to get
      * @param point A Point2D object to store the results in, or null.
      * @return 
      */
-    public static Point2D getQuadBezierPointForX(Point2D p0, Point2D p1, 
+    public static Point2D getQuadBezierPointForX(Point2D p1, Point2D pC, 
             Point2D p2, double x, Point2D point){
-            // Get the t-value for the x-coordinate
-        double t = getQuadBezierT(p0.getX(),p1.getX(),p2.getX(),x);
+        return getQuadBezierPointForX(p1.getX(),p1.getY(),pC.getX(),pC.getY(),
+                p2.getX(),p2.getY(),x,point);
+    }
+    /**
+     * 
+     * @param curve The curve to get the point on.
+     * @param x The x-coordinate of the point to get
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    public static Point2D getQuadBezierPointForX(QuadCurve2D curve,double x, 
+            Point2D point){
+        return getQuadBezierPointForX(curve.getX1(),curve.getY1(),
+                curve.getCtrlX(),curve.getCtrlY(),curve.getX2(),curve.getY2(),x,
+                point);
+    }
+    /**
+     * 
+     * @param x1 The x-coordinate of the starting point of the curve.
+     * @param y1 The y-coordinate of the starting point of the curve.
+     * @param xC The x-coordinate of the control point for the curve.
+     * @param yC The y-coordinate of the control point for the curve.
+     * @param x2 The x-coordinate of the end point of the curve.
+     * @param y2 The y-coordinate of the end point of the curve.
+     * @param y The y-coordinate of the point to get
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    public static Point2D getQuadBezierPointForY(double x1, double y1,double xC, 
+            double yC, double x2, double y2, double y, Point2D point){
+            // Get the t-value for the y-coordinate
+        double t = getQuadBezierT(y1,yC,y2,y);
             // If the t value is not a number or out of range (i.e. the point is 
             // not on the curve
         if (t == Double.NaN || t < 0 || t > 1){
@@ -447,38 +532,42 @@ public final class GeometryMath {
                 // Return null
             return null;
         }
-        return getQuadBezierPoint(p0,p1,p2,t,point);
+        return getQuadBezierPoint(x1,y1,xC,yC,x2,y2,t,point);
     }
     /**
      * 
-     * @param p0 The starting point of the curve
-     * @param p1 The control point for the curve
+     * @param p1 The starting point of the curve
+     * @param pC The control point for the curve
      * @param p2 The end point of the curve
      * @param y The y-coordinate of the point to get
      * @param point A Point2D object to store the results in, or null.
      * @return 
      */
-    public static Point2D getQuadBezierPointForY(Point2D p0, Point2D p1, 
+    public static Point2D getQuadBezierPointForY(Point2D p1, Point2D pC, 
             Point2D p2, double y, Point2D point){
-            // Get the t-value for the y-coordinate
-        double t = getQuadBezierT(p0.getY(),p1.getY(),p2.getY(),y);
-            // If the t value is not a number or out of range (i.e. the point is 
-            // not on the curve
-        if (t == Double.NaN || t < 0 || t > 1){
-                // Set the point to return to NaN
-            point.setLocation(Double.NaN, Double.NaN);
-                // Return null
-            return null;
-        }
-        return getQuadBezierPoint(p0,p1,p2,t,point);
+        return getQuadBezierPointForY(p1.getX(),p1.getY(),pC.getX(),pC.getY(),
+                p2.getX(),p2.getY(),y,point);
+    }
+    /**
+     * 
+     * @param curve The curve to get the point on.
+     * @param y The y-coordinate of the point to get
+     * @param point A Point2D object to store the results in, or null.
+     * @return 
+     */
+    public static Point2D getQuadBezierPointForY(QuadCurve2D curve,double y, 
+            Point2D point){
+        return getQuadBezierPointForY(curve.getX1(),curve.getY1(),
+                curve.getCtrlX(),curve.getCtrlY(),curve.getX2(),curve.getY2(),y,
+                point);
     }
     /**
      * 
      * https://microbians.com/math/Gabriel_Suchowolski_Quadratic_bezier_through_three_points_and_the_-equivalent_quadratic_bezier_(theorem)-.pdf
      * 
-     * @param p0 The starting point of the curve
-     * @param p1 The point on the curve to pass through
-     * @param p2 The end point of the curve
+     * @param p0 The starting point of the curve.
+     * @param p1 The point on the curve to pass through.
+     * @param p2 The end point of the curve.
      * @param point A Point2D object to store the results in, or null.
      * @return 
      */
@@ -508,12 +597,32 @@ public final class GeometryMath {
     }
     /**
      * 
+     * https://microbians.com/math/Gabriel_Suchowolski_Quadratic_bezier_through_three_points_and_the_-equivalent_quadratic_bezier_(theorem)-.pdf
+     * 
+     * @param p0 The starting point of the curve.
+     * @param p1 The point on the curve to pass through.
+     * @param p2 The end point of the curve.
+     * @param curve A QuadCurve2D object to store the results in, or null.
+     * @return 
+     */
+    public static QuadCurve2D getQuadBezierCurve(Point2D p0, Point2D p1, 
+            Point2D p2, QuadCurve2D curve){
+            // If the given QuadCurve2D object is null
+        if (curve == null)
+            curve = new QuadCurve2D.Double();
+            // Set the curve to be between points p0 and p2, and get the control 
+            // point of the curve that passes through p0, p1, and p2.
+        curve.setCurve(p0, getQuadBezierControlPoint(p0,p1,p2,null), p2);
+        return curve;
+    }
+    /**
+     * 
      * https://web.archive.org/web/20131225210855/http://people.sc.fsu.edu/~jburkardt/html/bezier_interpolation.html
      * 
-     * @param p0 The starting point of the curve
+     * @param p0 The starting point of the curve.
      * @param p1 The first point on the curve to pass through
      * @param p2 The second point on the curve to pass through
-     * @param p3 The end point of the curve
+     * @param p3 The end point of the curve.
      * @param controlP1 The Point2D object that the first control point will be 
      * stored in.
      * @param controlP2 The Point2D object that the second control point will be 
@@ -529,22 +638,53 @@ public final class GeometryMath {
         controlP2.setLocation(p2.getX(),y2);
     }
     /**
+     * 
+     * https://web.archive.org/web/20131225210855/http://people.sc.fsu.edu/~jburkardt/html/bezier_interpolation.html
+     * 
+     * @param p0 The starting point of the curve.
+     * @param p1 The first point on the curve to pass through
+     * @param p2 The second point on the curve to pass through
+     * @param p3 The end point of the curve.
+     * @param curve A CubicCurve2D object to store the results in, or null.
+     * @return 
+     */
+    public static CubicCurve2D getCubicBezierCurve(Point2D p0, Point2D p1, 
+            Point2D p2, Point2D p3, CubicCurve2D curve){
+            // If the given CubicCurve2D object is null
+        if (curve == null)
+            curve = new CubicCurve2D.Double();
+            // This will get the first control point for the curve
+        Point2D pC1 = new Point2D.Double();
+            // This will get the second control point for the curve
+        Point2D pC2 = new Point2D.Double();
+            // Get the control points for the curve
+        getCubicBezierControlPoints(p0,p1,p2,p3,pC1,pC2);
+            // Set the curve to be between points p0 and p3, using the control 
+            // points pC1 and pC2.
+        curve.setCurve(p0, pC1, pC2, p3);
+        return curve;
+    }
+    /**
      * https://www.codeproject.com/Articles/31859/Draw-a-Smooth-Curve-through-a-Set-of-2D-Points-wit
+     * 
+     * @todo Make this reuse any points in the two control point arrays
+     * 
      * @param knots A list containing all the knots in the spline
      * @param ctrlPts1 A list to get the first control points
      * @param ctrlPts2 A list to get the second control points
+     * @return The number of splines
      */
-    public static void getCubicBezierSplineControlPoints(List<Point2D> knots,
+    public static int getCubicBezierSplineControlPoints(List<Point2D> knots,
             List<Point2D> ctrlPts1, List<Point2D> ctrlPts2){
             // If the knots list is null or there are less than two knots
         if (knots == null || knots.size() < 2)
             throw new IllegalArgumentException("There must be at least 2 knots");
+            // The number of control points is the number of knots - 1
+        int n = knots.size()-1;
             // Clear the first control points list
         ctrlPts1.clear();
             // Clear the second control points list
         ctrlPts2.clear();
-            // The number of control points is the number of knots - 1
-        int n = knots.size()-1;
             // Only 2 points, straight line.
         if (n == 1){
                 // 3P1 = 2P0 + P3
@@ -556,7 +696,7 @@ public final class GeometryMath {
             ctrlPts2.add(new Point2D.Double(
                     2*ctrlPt1.getX()-knots.get(0).getX(),
                     2*ctrlPt1.getY()-knots.get(0).getY()));
-            return;
+            return n;
         }   // Right hand side vector
         double[][] rhs = new double[2][n];
             // Set right hand side values
@@ -610,6 +750,44 @@ public final class GeometryMath {
             }
             ctrlPts2.add(new Point2D.Double(x,y));
         }
+        return n;
+    }
+    /**
+     * 
+     * https://www.codeproject.com/Articles/31859/Draw-a-Smooth-Curve-through-a-Set-of-2D-Points-wit
+     * 
+     * @todo Make this reuse any curves that are already in the curves list
+     * 
+     * @param knots A list containing all the knots in the spline
+     * @param curves A list to store the curves in the spline, or null
+     * @return 
+     */
+    public static List<CubicCurve2D> getCubicBezierSplineCurves(
+            List<Point2D> knots, List<CubicCurve2D> curves){
+            // This will get the first control points
+        ArrayList<Point2D> ctrlPts1 = new ArrayList<>();
+            // This will get the second control points
+        ArrayList<Point2D> ctrlPts2 = new ArrayList<>();
+            // Calculate the first and second control points of the splines, and 
+            // get the number of control points
+        int n = getCubicBezierSplineControlPoints(knots,ctrlPts1,ctrlPts2);
+            // If the given list to store the curves is null
+        if (curves == null)
+                curves = new ArrayList<>();
+        else    // Clear the list
+            curves.clear();
+            // Go through the control points
+        for (int i = 0; i < n; i++){
+                // Create a cubic curve to store the current curve
+            CubicCurve2D curve = new CubicCurve2D.Double();
+                // Set the curve to be from the current knot to the next knot, 
+                // using the current first and second control points
+            curve.setCurve(knots.get(i), ctrlPts1.get(i), ctrlPts2.get(i), 
+                    knots.get(i+1));
+                // Add the curve to the list
+            curves.add(curve);
+        }
+        return curves;
     }
     /**
      * This approximates the point where the two lines represented by the 
