@@ -3836,7 +3836,7 @@ public class RambleyPainter implements Painter<Component>{
      * side of the mouth curve to start the path that forms the open mouth 
      * shape, or null.
      * @param quadCurve A QuadCurve2D object to use to store the curve for the 
-     * right side of the open mouth.
+     * right side of the open mouth, or null.
      * @param rect A Rectangle2D object to store the bounds of the path used to 
      * create the open mouth, or null.
      * @param path A Path2D object to use to calculate the path for the open 
@@ -4148,18 +4148,175 @@ public class RambleyPainter implements Painter<Component>{
         return fang;
     }
     
-        // Not finished yet, will be used to create the line on Rambley's teeth 
-        // when Rambley's jaw is closed.
-//    private Path2D createRambleyClosedTeethLine(double y, Area fang, 
-//            double mouthWidth, double mouthHeight, Area mouthOpen, 
-//            Rectangle2D rect, Path2D path){
-//            // If the given Path2D object is null
-//        if (path == null)
-//            path = new Path2D.Double();
-//        else    // Reset the given Path2D object
-//            path.reset();
-//        
-//    }
+    private Path2D createRambleyClosedTeethLine(double mouthWidth, 
+            double mouthHeight, QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, 
+            Path2D mouthCurve, QuadCurve2D openQuad, Area mouthOpen, 
+            Point2D point1, Point2D point2, Point2D point3, 
+            Point2D point4, Point2D point5, Point2D point6, 
+            QuadCurve2D quadCurve1, QuadCurve2D quadCurve2, Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // Get the bounds of the open mouth
+        RectangularShape bounds = getBoundsOfShape(mouthOpen);
+            // Get the bounds of the mouth curve
+        RectangularShape mBounds = getBoundsOfShape(mouthCurve);
+        
+            // This contains the y-coordinate for the top of the line
+        double y = mBounds.getMaxY()+getTestDouble6();
+            // This contains the amount by which the line is offset from the 
+            // curve of the mouth
+        double xOff = getTestDouble5()*100;
+        
+            // Get the point on the curve for the open mouth at the y-coordinate 
+            // for the top of the line. This will be the screen left-most point 
+            // of the line, i.e. the starting point of the line
+        point1 = GeometryMath.getQuadBezierPointForY(openQuad, y, point1);
+            // Make sure the y-coordinate used is the y-coordinate of the point
+        y = point1.getY();
+            // Get the x-coordinate of the actual starting point of the line
+        double x = point1.getX()+xOff;
+        
+            // This is the x-coordinate for the top center of the visible 
+            // portion of Rambley's fangs
+        double fangX = getTestDouble1()*100+mouthQuad2.getX2();
+            // This is the y-coordinate for the top center of the visible 
+            // portion of Rambley's fangs
+        double fangY = y+getTestDouble2()*100-RAMBLEY_FANG_VISIBLE_HEIGHT;
+        
+        printShape("mouthOpen",mouthOpen);
+        printShape("mouthCurve",mouthCurve);
+        System.out.println("fangX: " + fangX);
+        System.out.println("fangY: " + fangY);
+        point1.setLocation(x, y);
+        System.out.println("point1: " + point1);
+        
+            // If the (screen) left side of the right fang will appear
+        if (fangX > x){
+                // Get the curve for the (screen) left side of the rigt fang
+            quadCurve1 = getRambleyFangCurve(fangX,fangY,mouthWidth,mouthHeight,
+                    false,quadCurve1);
+            
+            point2.setLocation(quadCurve1.getP1());
+            point3.setLocation(quadCurve1.getP2());
+            point4.setLocation(quadCurve1.getCtrlPt());
+            
+            System.out.println("Left Side: ");
+            System.out.println("point2: " + point2);
+            System.out.println("point3: " + point3);
+            System.out.println("point4: " + point4);
+            
+                // Calculate the starting point on the curve for Rambley's fang 
+                // that is at the top of the curve on the teeth line
+            point5 = GeometryMath.getQuadBezierPointForY(quadCurve1, y, point5);
+//                // If the fang curve starts before the teeth line
+//            if (point5.getX() < x){
+//                System.out.println("point5: " + point5);
+//                    // Recalculate the starting point on the curve for Rambley's 
+//                    // fang to start at the start of the teeth curve
+//                point5 = GeometryMath.getQuadBezierPointForX(quadCurve1, x, point5);
+//            }
+                // Calculate the point on the curve for Rambley's fang that is 
+                // in between the top and bottom of the curve used for the teeth 
+                // line
+            point6 = GeometryMath.getQuadBezierPointForY(quadCurve1, 
+                    (point5.getY()+point3.getY())/2, point6);
+                // Calculate the control point for the segment of the curve for 
+                // Rambley's fang that starts at point5, passes through point6, 
+                // and ends at point3
+            point4 = GeometryMath.getQuadBezierControlPoint(point5,point6,
+                    point3, point4);
+            
+            System.out.println("point5: " + point5);
+            System.out.println("point6: " + point6);
+            System.out.println("point4: " + point4);
+            
+            if (point5.getX() > x){
+                path.moveTo(x, y);
+                path.lineTo(point5.getX(), point5.getY());
+            } else {
+                path.moveTo(point5.getX(), point5.getY());
+            }
+            path.quadTo(point4.getX(), point4.getY(), 
+                    point3.getX(), point3.getY());
+        }
+        
+            // Get the curve for the (screen) right side of the rigt fang
+        quadCurve2 = getRambleyFangCurve(fangX,fangY,mouthWidth,mouthHeight,
+                true, quadCurve2);
+        
+        point2.setLocation(quadCurve2.getP1());
+        point3.setLocation(quadCurve2.getP2());
+        point4.setLocation(quadCurve2.getCtrlPt());
+        
+            // Calculate the starting point on the right curve for Rambley's 
+            // fang that is at the top of the curve on the teeth line
+        point5 = GeometryMath.getQuadBezierPointForY(quadCurve2, y, point5);
+        
+        System.out.println("Right Side: ");
+        System.out.println("point2: " + point2);
+        System.out.println("point3: " + point3);
+        System.out.println("point4: " + point4);
+        System.out.println("point5: " + point5);
+        
+        if (point5.getX() > x){
+            
+                // Calculate the point on the curve for Rambley's fang that is 
+                // in between the top and bottom of the curve used for the teeth 
+                // line
+            point6 = GeometryMath.getQuadBezierPointForY(quadCurve2, 
+                    (point5.getY()+point3.getY())/2, point6);
+                // Calculate the control point for the segment of the curve for 
+                // Rambley's fang that starts at point5, passes through point6, 
+                // and ends at point3
+            point4 = GeometryMath.getQuadBezierControlPoint(point5,point6,
+                    point3, point4);
+            
+            
+            
+            if (bounds.getCenterX() > point5.getX()){
+                path.moveTo(bounds.getCenterX(), y);
+                path.lineTo(point5.getX(), point5.getY());
+            } else {
+                path.moveTo(point5.getX(), point5.getY());
+            }
+            path.quadTo(point4.getX(), point4.getY(), 
+                    point3.getX(), point3.getY());
+            path.moveTo(bounds.getCenterX(), y);
+        } else {
+            path.moveTo(x, y);
+                // Draw a line from the right of the fang to the center of the 
+            path.lineTo(bounds.getCenterX(), y);    // mouth
+        }
+        
+        printPathIterator(path);
+        
+            // If Rambley is evil
+        if (isRambleyEvil())
+                // Mirror the path to form the left half which also has a fang
+            return mirrorPathHorizontally(path,bounds.getCenterX());
+            // Draw a line from the center of the line to the end of the line on 
+            // Rambley's left side. 
+        path.lineTo(bounds.getMaxX()-(x-bounds.getMinX()), y);
+            // If Rambley's fang is to be on his left
+        if (isRambleyFangOnLeft()){
+                // Get an AffineTransform to flip the path horizontally and 
+                // mirror it over the vertical line at the center of the mouth 
+                // to flip it horizontally in place
+            afTx = getHorizontalMirrorTransform(bounds.getCenterX(),path,afTx);
+                // Create a shape that is the mirrored image of the path in the 
+                // same location as the path
+            Shape temp = path.createTransformedShape(afTx);
+                // Reset the path
+            path.reset();
+                // Add the mirrored path to the path to make it contain the 
+                // horizontally flipped version of the path
+            path.append(temp, false);
+        }
+        return path;
+    }      
     /**
      * This is used to render Rambley the Raccoon.
      * 
@@ -4384,24 +4541,28 @@ public class RambleyPainter implements Painter<Component>{
             
                 // If Rambley's jaw is closed
             if (isRambleyJawClosed()){
-                
-                // Insert the code to generate the path for drawing the line 
-                // that separates Rambley's upper jaw from his lower jaw using 
-                // the open mouth shape and his fang(s)
-                
+                path = createRambleyClosedTeethLine(getRambleyOpenMouthWidth(),
+                        getRambleyOpenMouthHeight(),mouthCurve1,mouthCurve2,
+                        mouthPath,mouthCurve3,openMouth,
+                        point1,point2,point3,point4,point5,point9,
+                        quadCurve1,quadCurve2,path);
                     // DEBUG: If we are showing the lines that make up Rambley 
                 if (getShowsLines()){
                     g.setColor(RAMBLEY_MAIN_BODY_COLOR);
                     g.draw(openMouth);
+                    g.setColor(Color.BLACK);
+                    g.draw(path);
                 }   // DEBUG: If we are not showing the lines that make up Rambley 
                 else {
                         // Fill in the inside of Rambley's mouth
                     g.setColor(RAMBLEY_TEETH_COLOR);
                     g.fill(openMouth);
+                        // Set the stroke to Rambley's detail stroke
+//                    g.setStroke(getRambleyDetailStroke());
                         // Draw the line that separates the top and bottom of 
                         // Rambley's jaw
-//                    g.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
-                    // Insert the code to draw the line
+                    g.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                    g.draw(path);
                 }
             } else {
                     // Create the shape of Rambley's tongue
