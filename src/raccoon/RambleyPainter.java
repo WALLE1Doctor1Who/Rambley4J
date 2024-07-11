@@ -875,6 +875,20 @@ public class RambleyPainter implements Painter<Component>{
      */
     private Point2D point9 = null;
     /**
+     * A scratch QuadCurve2D object used for rendering Rambley. This is 
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
+     */
+    private QuadCurve2D quadCurve1 = null;
+    /**
+     * A second scratch QuadCurve2D object used for rendering Rambley. This is 
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
+     */
+    private QuadCurve2D quadCurve2 = null;
+    /**
      * This is a scratch AffineTransform used to transform shapes. This is 
      * initially null and is initialized the first time it is used. This scratch 
      * object may change at any time during the rendering process, and should 
@@ -3194,12 +3208,14 @@ public class RambleyPainter implements Painter<Component>{
      * portion of the markings, or null.
      * @param path A Path2D object to use to form the portion of the markings 
      * that will not be formed by {@code ellipse}, or null.
-     * @param point1 A Point2D object to store the top-left most point (starting 
-     * point) of the bottom-left curve, or null.
-     * @param point2 A Point2D object to store the bottom-right most point (end 
-     * point) of the bottom-left curve, or null.
-     * @param pointC A Point2D object to store the control point of the 
-     * bottom-left curve, or null.
+     * @param point1 A Point2D object to use to calculate the points where the 
+     * eyebrow ellipse intersects with the top-right portion of the eye 
+     * markings, or null.
+     * @param point2 A disposable Point2D object to use to calculate the points 
+     * where the eyebrow ellipse intersects with the top-right portion of the 
+     * eye markings, or null.
+     * @param quadCurve A QuadCurve2D object to store the bottom-left quadratic 
+     * bezier curve, or null.
      * @return The area that forms the markings around Rambley's right eye.
      * @see #paintRambley 
      * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
@@ -3214,8 +3230,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #createRambleyEyeShape
      */
     private Area createRambleyEyeMarkings(Ellipse2D eyeBrow, Ellipse2D snout, 
-            Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2, 
-            Point2D pointC){
+            Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2,
+            QuadCurve2D quadCurve){
             // If the given Ellipse2D object is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -3224,15 +3240,15 @@ public class RambleyPainter implements Painter<Component>{
             path = new Path2D.Double();
         else    // Reset the given Path2D object
             path.reset();
-            // If the first of the three given Point2D objects is null
+            // If the first of the two given Point2D objects is null
         if (point1 == null)
             point1 = new Point2D.Double();
-            // If the second of the three given Point2D objects is null
+            // If the second of the two given Point2D objects is null
         if (point2 == null)
             point2 = new Point2D.Double();
-            // If the third of the three given Point2D objects is null
-        if (pointC == null)
-            pointC = new Point2D.Double();
+            // If the given QuadCurve2D object is null
+        if (quadCurve == null)
+            quadCurve = new QuadCurve2D.Double();
             // Set the frame for the ellipse from the center, with its right 
             // side aligned with Rambley's eyebrows, 4 pixels lower than the 
             // eyebrows, and it should be 43 x 48. This forms the top-right part 
@@ -3241,40 +3257,39 @@ public class RambleyPainter implements Painter<Component>{
                 eyeBrow.getCenterX()-1.5, eyeBrow.getCenterY()+8, 
                 eyeBrow.getMaxX(), eyeBrow.getMinY()+4);
             // Get the points of intersection between the top-right part of the 
-            // markings and the eyebrows. The left-most one (point2) will be 
+            // markings and the eyebrows. The left-most one (point1) will be 
             // used to transition between the ellipse and the path.
-        GeometryMath.getCircleIntersections(ellipse,eyeBrow,point2,point1);
+        GeometryMath.getCircleIntersections(ellipse,eyeBrow,point1,point2);
             // Make sure to use a point of intersection is actually on the 
             // ellipse by calculating the point on the ellipse for the 
-            // left-most point of intersection. The top-most one (point2) will 
+            // left-most point of intersection. The top-most one (point1) will 
             // be used to transition between the ellipse and the path.
-        GeometryMath.getEllipseY(ellipse,point2.getX(),point2,point1);
+        GeometryMath.getEllipseY(ellipse,point1.getX(),point1,point2);
             // Start the path at the left-most point of intersection
-        path.moveTo(point2.getX(), point2.getY());
-            // Move the first point to where the path should stop going to the 
-        point1.setLocation(ellipse.getMinX()-8, eyeBrow.getMaxY()+2);   // left
-            // Add a bezier curve from point2 on the ellipse to point1. In order 
-            // to curve correctly, use a control point that is 2/3 left of the 
-            // way to point1, and 1/3 of the way down to point1 and shifted down 
-            // by 5 pixels
-        path.quadTo((point2.getX()+(point1.getX()*2))/3, 
-                ((point1.getY()+(point2.getY()*2))/3)+5, 
-                point1.getX(), point1.getY());
-            // Get the location that the next curve will end, making it end in 
-            // the horrizontal center of the ellipse, and 14 pixels below the 
-            // ellipse
-        point2.setLocation(ellipse.getCenterX(), ellipse.getMaxY()+14);
-            // The control point is 2 pixels to the left of the ellipse, and at 
-            // the same y-coordinate as the end of the curve (14 pixels below 
-            // the ellipse)
-        pointC.setLocation(ellipse.getMinX()+2, point2.getY());
-            // Add a bezier curve from point1 to point2, using point3 as the 
-            // control point.
-        path.quadTo(pointC.getX(), pointC.getY(), point2.getX(), point2.getY());
-            // Add a bezier control point from point2 to the right-center of the 
-            // ellipse. Use the ellipse's right-most x-coordinate and the 
-            // snout's y-coordinate as the control. This curve will mostly be 
-            // covered up by the eyes.
+        path.moveTo(point1.getX(), point1.getY());
+            // Set the bottom-left quadratic bezier curve. 
+            // Start at where the path should stop going to the left.
+            // Use a control point that is 2 pixels to the left of the ellipse, 
+            // and that is 14 pixels below the ellipse.
+            // End the curve in the horizontal center of the ellipse, and 14 
+            // pixels below the ellipse
+        quadCurve.setCurve(ellipse.getMinX()-8, eyeBrow.getMaxY()+2, 
+                ellipse.getMinX()+2, ellipse.getMaxY()+14, 
+                ellipse.getCenterX(), ellipse.getMaxY()+14);
+            // Add a bezier curve from point1 on the ellipse to the start of the 
+            // bottom-left curve. In order to curve correctly, use a control 
+            // point that is 2/3 left of the way to the start of the curve, and 
+            // 1/3 of the way down to the start of the curve and shifted down by 
+            // 5 pixels
+        path.quadTo((point1.getX()+(quadCurve.getX1()*2))/3, 
+                ((quadCurve.getY1()+(point1.getY()*2))/3)+5, 
+                quadCurve.getX1(), quadCurve.getY1());
+            // Add the bottom-left quadratic bezier curve to the path
+        path.append(quadCurve, true);
+            // Add a bezier control point from the end of the bottom-left curve 
+            // to the right-center of the ellipse. Use the ellipse's right-most 
+            // x-coordinate and the snout's y-coordinate as the control. This 
+            // curve will mostly be covered up by the eyes.
         path.quadTo(ellipse.getMaxX(), snout.getMinY(), 
                 ellipse.getMaxX(), ellipse.getCenterY());
             // Close the path
@@ -3287,22 +3302,18 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns an Area that forms the shape of Rambley's right 
-     * eye. This uses the ellipse and three points given to {@link 
-     * #createRambleyEyeMarkings createRambleyEyeMarkings} method ({@code 
-     * eyeMarkEllipse}, {@code eyeMarkP1}, {@code eyeMarkP2}, and {@code 
-     * eyeMarkPC}) to position and control the shape of the eye.
+     * eye. This uses the ellipse and quadratic curve given to {@link 
+     * #createRambleyEyeMarkings createRambleyEyeMarkings} method 
+     * ({@code eyeMarkEllipse} and {@code eyeMarkCurve}) to position and control 
+     * the shape of the eye.
      * @param headBounds The bounds of Rambley's head to position and control 
      * the form of the shape.
      * @param eyeBrow An Ellipse2D object with the ellipse used to form 
      * Rambley's right eyebrow.
      * @param eyeMarkEllipse An Ellipse2D object with the ellipse used to form 
      * the markings around Rambley's right eye.
-     * @param eyeMarkP1 The top-left most point (starting point) of the 
-     * bottom-left curve of the eye markings, or null.
-     * @param eyeMarkP2 The bottom-right most point (end point) of the 
-     * bottom-left curve of the eye markings, or null.
-     * @param eyeMarkPC The control point of the bottom-left curve of the eye 
-     * markings, or null.
+     * @param eyeMarkCurve A QuadCurve2D object with the bottom-left quadratic 
+     * bezier curve of the eye markings (cannot be null).
      * @param ellipse An Ellipse2D object to use to calculate the top-right 
      * portion of the eye, or null.
      * @param rect A rectangular shape to use to calculate a reference for the 
@@ -3328,9 +3339,9 @@ public class RambleyPainter implements Painter<Component>{
      * @see #createRambleyEyeMarkings
      */
     private Area createRambleyEyeShape(RectangularShape headBounds, 
-            Ellipse2D eyeMarkEllipse, Point2D eyeMarkP1, Point2D eyeMarkP2, 
-            Point2D eyeMarkPC, Ellipse2D ellipse, RectangularShape rect, 
-            Path2D path, Point2D point1, Point2D point2, Point2D point3){
+            Ellipse2D eyeMarkEllipse,QuadCurve2D eyeMarkCurve,Ellipse2D ellipse, 
+            RectangularShape rect, Path2D path, Point2D point1, Point2D point2, 
+            Point2D point3){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -3373,8 +3384,8 @@ public class RambleyPainter implements Painter<Component>{
             // This will get the point on the bottom-left bezier curve for the 
             // eye markings. This should be around 4 pixels to the left of the 
             // rectangular shape.
-        point1 = GeometryMath.getQuadBezierPointForX(eyeMarkP1,eyeMarkPC,
-                eyeMarkP2,rect.getMinX()-4,point1);
+        point1 = GeometryMath.getQuadBezierPointForX(eyeMarkCurve,
+                rect.getMinX()-4,point1);
             // Add a quadratic bezier curve from the previous point to point1, 
             // using a control point that is at the point formed by the 
             // left-most x-coordinate of the rectangular shape and the top 
@@ -3388,8 +3399,7 @@ public class RambleyPainter implements Painter<Component>{
                 rect.getCenterX(), rect.getMaxY());
             // Get the x-coordinate to use for the control point of the next 
             // quadratic bezier curve. This is 14 pixels left of the center of 
-            // the face
-        double x = headBounds.getCenterX()-14;
+        double x = headBounds.getCenterX()-14;  // the face
             // Add a quadratic bezier curve from the previous point to 2/3rds of 
             // the way between the control point of this curve and the 
             // right-most point of the ellipse, and at the bottom of the 
@@ -4244,6 +4254,12 @@ public class RambleyPainter implements Painter<Component>{
             // If the ninth Point2D scratch object has not been initialized yet
         if (point9 == null)
             point9 = new Point2D.Double();
+            // If the first QuadCurve2D scratch object has not been initialized 
+        if (quadCurve1 == null)     // yet
+            quadCurve1 = new QuadCurve2D.Double();
+            // If the second QuadCurve2D scratch object has not been initialized 
+        if (quadCurve2 == null)     // yet
+            quadCurve2 = new QuadCurve2D.Double();
             // If the iris Ellipse2D object has not been initialized yet
         if (iris == null)
             iris = new Ellipse2D.Double();
@@ -4287,13 +4303,13 @@ public class RambleyPainter implements Painter<Component>{
                 headBounds.getCenterX());
             // Create the area around Rambley's right eye
         Area eyeSurroundR = createRambleyEyeMarkings(ellipse2,snout,ellipse3,
-                path,point1,point2,point3);
+                path,point1,point2,quadCurve1);
             // Flip to form the area around Rambley's left eye
         Area eyeSurroundL = createHorizontallyMirroredArea(eyeSurroundR,
                 headBounds.getCenterX());
             // Create the shape of Rambley's right eye
-        Area eyeWhiteR = createRambleyEyeShape(headBounds,ellipse3,point1,
-                point2,point3,ellipse1,rect,path,point4,point5,point6);
+        Area eyeWhiteR = createRambleyEyeShape(headBounds,ellipse3,quadCurve1,
+                ellipse1,rect,path,point4,point5,point6);
             // Flip to form the shape of Rambley's left eye
         Area eyeWhiteL = createHorizontallyMirroredArea(eyeWhiteR,
                 headBounds.getCenterX());
@@ -4303,8 +4319,8 @@ public class RambleyPainter implements Painter<Component>{
         point1.setLocation(rect.getCenterX(),rect.getMaxY());
             // Get the curve for Rambley's mouth, using the bottom center of the 
             // nose to position the mouth.
-        mouthPath = createRambleyMouthCurve(snout,point1,point2,point3,point4,
-                point5,mouthPath);
+        mouthPath = createRambleyMouthCurve(snout,point1,mouthCurve1,
+                mouthCurve2,point2,point3,mouthPath);
         
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
@@ -4324,10 +4340,7 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(nose);
             g.setColor(Color.BLUE);
             g.draw(mouthPath);
-        }
-        
-            // DEBUG: If we are not showing the lines that make up Rambley 
-        if (!getShowsLines()){
+        } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // If the border around Rambley and Rambley's drop shadow are 
             if (isBorderAndShadowPainted())     // painted
                     // Render his border and shadow.
