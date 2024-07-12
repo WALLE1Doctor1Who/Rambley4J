@@ -449,11 +449,16 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000080;
     /**
+     * This is the flag for whether Rambley's scarf will be painted.
+     */
+    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000100;
+    /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
      */
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG | 
-            PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG;
+            PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG | 
+            PAINT_RAMBLEY_SCARF_FLAG;
     /**
      * This stores the maximum value a {@code RambleyPainter}'s flags can be and 
      * still be considered valid.
@@ -465,12 +470,13 @@ public class RambleyPainter implements Painter<Component>{
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
      * @see RAMBLEY_FANG_SIDE_FLAG
      * @see RAMBLEY_JAW_CLOSED_FLAG
+     * @see PAINT_RAMBLEY_SCARF_FLAG
      */
     public static final int MAXIMUM_VALID_FLAGS = PAINT_BACKGROUND_FLAG | 
             PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG | 
             IGNORE_ASPECT_RATIO_FLAG | EVIL_RAMBLEY_FLAG | 
             CIRCULAR_BACKGROUND_DOTS_FLAG | RAMBLEY_FANG_SIDE_FLAG | 
-            RAMBLEY_JAW_CLOSED_FLAG;
+            RAMBLEY_JAW_CLOSED_FLAG | PAINT_RAMBLEY_SCARF_FLAG;
     /**
      * This identifies that a change has been made to whether the background 
      * should be painted.
@@ -519,6 +525,12 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final String RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED = 
             "RambleyJawClosedPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley's scarf 
+     * should be painted.
+     */
+    public static final String RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED = 
+            "RambleyScarfPaintedPropertyChanged";
     // Any more flag property names go here
     /**
      * This generates a map that maps flags for controlling {@code 
@@ -541,6 +553,8 @@ public class RambleyPainter implements Painter<Component>{
         nameMap.put(RAMBLEY_FANG_SIDE_FLAG, RAMBLEY_FANG_SIDE_PROPERTY_CHANGED);
         nameMap.put(RAMBLEY_JAW_CLOSED_FLAG, 
                 RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED);
+        nameMap.put(PAINT_RAMBLEY_SCARF_FLAG, 
+                RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED);
         
             // Return an unmodifiable verion of the map
         return Collections.unmodifiableNavigableMap(nameMap);
@@ -1328,6 +1342,35 @@ public class RambleyPainter implements Painter<Component>{
      */
     public boolean isRambleyJawClosed(){
         return getFlag(RAMBLEY_JAW_CLOSED_FLAG);
+    }
+    /**
+     * This returns whether Rambley's scarf will be painted by this {@code 
+     * RambleyPainter}. The default value for this is {@code true}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @return Whether Rambley's scarf will be painted.
+     * @see #PAINT_RAMBLEY_SCARF_FLAG
+     * @see #getFlag 
+     * @see #setRambleyScarfPainted 
+     */
+    public boolean isRambleyScarfPainted(){
+        return getFlag(PAINT_RAMBLEY_SCARF_FLAG);
+    }
+    /**
+     * This sets whether Rambley's scarf will be painted by this {@code 
+     * RambleyPainter}. The default value for this is {@code true}.
+     * 
+     * @todo Add references to other related methods.
+     * 
+     * @param enabled Whether Rambley's scarf should be painted.
+     * @return This {@code RambleyPainter}.
+     * @see #PAINT_RAMBLEY_SCARF_FLAG
+     * @see #setFlag 
+     * @see #isRambleyScarfPainted 
+     */
+    public RambleyPainter setRambleyScarfPainted(boolean enabled){
+        return setFlag(PAINT_RAMBLEY_SCARF_FLAG,enabled);
     }
     /**
      * This sets whether Rambley's jaw is closed when his mouth is opened. This 
