@@ -3151,10 +3151,8 @@ public class RambleyPainter implements Painter<Component>{
      * start on Rambley's snout, or null.
      * @param point2 A Point2D object to use to calculate some points used for 
      * Rambley's snout, or null.
-     * @param quadCurve1 A QuadCurve2D object used to calculate part of the 
-     * tampering curve on Rambley's snout, or null.
-     * @param quadCurve2 A QuadCurve2D object used to calculate part of the 
-     * tampering curve on Rambley's snout, or null.
+     * @param quadCurve A QuadCurve2D object used to calculate the tampering 
+     * curve for Rambley's snout, or null.
      * @return The area around Rambley's nose and mouth.
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
@@ -3162,7 +3160,7 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected Area getRambleySnout(RectangularShape headBounds, Area head, 
             Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2, 
-            QuadCurve2D quadCurve1, QuadCurve2D quadCurve2){
+            QuadCurve2D quadCurve){
             // If the ellipse is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -3178,8 +3176,8 @@ public class RambleyPainter implements Painter<Component>{
         if (point2 == null)
             point2 = new Point2D.Double();
             // If the second given QuadCurve2D object is null
-        if (quadCurve2 == null)
-            quadCurve2 = new QuadCurve2D.Double();
+        if (quadCurve == null)
+            quadCurve = new QuadCurve2D.Double();
             // If the bounds for the head are null but the area for the head is 
         if (headBounds == null && head != null)     // not
                 // Get the bounds for the head
@@ -3199,44 +3197,19 @@ public class RambleyPainter implements Painter<Component>{
             // Set the curve to start at the left point of the intersection and 
             // end at the top center of the ellipse. Use a control point that is 
             // 1/10th of the way to the left there, and 5/6ths of the way up.
-        quadCurve2.setCurve(point1.getX(), point1.getY(), 
+        quadCurve.setCurve(point1.getX(), point1.getY(), 
                 (point1.getX()*9+ellipse.getCenterX())/10, 
                 (point1.getY()+ellipse.getMinY()*5)/6, 
                 ellipse.getCenterX(), ellipse.getMinY());
-            // Get the point on the curve that is 16.5 pixels above the bottom 
-            // of the curve
-        point2 = GeometryMath.getQuadBezierPointForY(quadCurve2, 
-                quadCurve2.getY1()-16.5, point2);
-            // Get the bottom-left segment of the curve starting at the start of 
-            // the original curve and ending at point2
-        quadCurve1 = GeometryMath.getQuadBezierCurveSegment(
-                quadCurve2.getX1(), quadCurve2.getY1(), point2.getX(), 
-                point2.getY(), quadCurve2, quadCurve1);
-            // Get the point on the curve that is 11 pixels to the right of the 
-            // end of the curve
-        point2 = GeometryMath.getQuadBezierPointForX(quadCurve2, 
-                quadCurve2.getX2()-11, point2);
-            // Get the top-right segment of the curve starting at point2 and 
-            // ending at the end of the original curve
-        quadCurve2 = GeometryMath.getQuadBezierCurveSegment(
-                point2.getX(),point2.getY(), quadCurve2.getX2(), 
-                quadCurve2.getY2(),quadCurve2, quadCurve2);
-            // Add the bottom-left curve segment to the path
-        path.append(quadCurve1, false);
-            // Add a quadratic bezier curve to the start of the top-right curve 
-            // segment. Use a control point that is 2/3rds of the way on its 
-            // x-coordinate, and 1/4th of the way up
-        path.quadTo((quadCurve1.getX2()+quadCurve2.getX1()*2)/3,
-                (quadCurve1.getY2()*3+quadCurve2.getY1())/4,
-                quadCurve2.getX1(), quadCurve2.getY1());
-            // Add the top-right curve segment to the path
-        path.append(quadCurve2, true);
+            // Start the path at the left-most point of the ellipse at the 
+            // y-coordinate of where the curve starts
+        path.moveTo(ellipse.getMinX(), quadCurve.getY1());
+            // Add the tampering curve to the path
+        path.append(quadCurve, true);
             // Draw a vertical line down to the bottom of the ellipse
         path.lineTo(ellipse.getCenterX(), ellipse.getMaxY());
             // Draw a horizontal line to the left side of the ellipse
         path.lineTo(ellipse.getMinX(), ellipse.getMaxY());
-            // Draw a vertical line up to next to where the curve starts
-        path.lineTo(ellipse.getMinX(), quadCurve2.getY1());
             // Close the path to complete the right side of the mask
         path.closePath();
             // Flip the path (which holds the right side of the mask) 
@@ -3352,12 +3325,12 @@ public class RambleyPainter implements Painter<Component>{
             // Set the bottom-left quadratic bezier curve. 
             // Start at where the path should stop going to the left.
             // Use a control point that is 2 pixels to the left of the ellipse, 
-            // and that is 12 pixels below the ellipse.
-            // End the curve in the horizontal center of the ellipse, and 12 
+            // and that is 14 pixels below the ellipse.
+            // End the curve in the horizontal center of the ellipse, and 14 
             // pixels below the ellipse
         quadCurve.setCurve(ellipse.getMinX()-8, ellipse.getMaxY()-10, 
-                ellipse.getMinX()+2, ellipse.getMaxY()+12, 
-                ellipse.getCenterX(), ellipse.getMaxY()+12);
+                ellipse.getMinX()+2, ellipse.getMaxY()+14, 
+                ellipse.getCenterX(), ellipse.getMaxY()+14);
             // Add a bezier curve from point1 on the ellipse to the start of the 
             // bottom-left curve. In order to curve correctly, use a control 
             // point that is 2/3 left of the way to the start of the curve, and 
@@ -4483,7 +4456,7 @@ public class RambleyPainter implements Painter<Component>{
                 ellipse2,ellipse3,rect);
             // Create the area around Rambley's nose and mouth
         Area snoutArea = getRambleySnout(headBounds,headShape,snout,path,point1,
-                point2,quadCurve1,quadCurve2);
+                point2,quadCurve1);
             // Create Rambley's right eyebrow (this will intersect with the 
             // other eye markings)
         Area eyeBrowR = createRambleyEyebrow(headBounds,ellipse2);
