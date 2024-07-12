@@ -1933,6 +1933,7 @@ public class RambleyPainter implements Painter<Component>{
         if (isPixelGridPainted())
                 // Paint the pixel grid effect
             paintPixelGrid(g,0,0,width,height);
+            // Dispose of the copy of the graphics context
         g.dispose();
     }
     /**
@@ -2139,6 +2140,7 @@ public class RambleyPainter implements Painter<Component>{
             // Render the background gradient
         g.setPaint(getBackgroundGradient(x,y,w,h));
         g.fillRect(x, y, w, h);
+            // Dispose of the copy of the graphics context
         g.dispose();
     }
     /**
@@ -2205,7 +2207,7 @@ public class RambleyPainter implements Painter<Component>{
                     // Fill the current background polka dot
                 g.fill(getBackgroundDot(xDot+x1,yDot,path,ellipse1));
             }
-        }
+        }   // Dispose of the copy of the graphics context
         g.dispose();
     }
     
@@ -2373,6 +2375,7 @@ public class RambleyPainter implements Painter<Component>{
         pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
             // Render the pixel grid
         g.draw(pixelGrid);
+            // Dispose of the copy of the graphics context
         g.dispose();
     }
     /**
@@ -4370,9 +4373,7 @@ public class RambleyPainter implements Painter<Component>{
             g.translate((w-width)/2.0+x, (h-height)/2.0+y);
                 // Scale it, preserving the aspect ratio
             g.scale(scale,scale);
-        }   // Set the stroke to use to the normal stroke
-        g.setStroke(getRambleyNormalStroke());
-            // If the Rectangle2D scratch object has not been initialized yet
+        }   // If the Rectangle2D scratch object has not been initialized yet
         if (rect == null)
             rect = new Rectangle2D.Double();
             // If the first Ellipse2D scratch object has not been initialized 
@@ -4417,21 +4418,6 @@ public class RambleyPainter implements Painter<Component>{
             // If the second QuadCurve2D scratch object has not been initialized 
         if (quadCurve2 == null)     // yet
             quadCurve2 = new QuadCurve2D.Double();
-            // If the iris Ellipse2D object has not been initialized yet
-        if (iris == null)
-            iris = new Ellipse2D.Double();
-            // If the pupil Ellipse2D object has not been initialized yet
-        if (pupil == null)
-            pupil = new Ellipse2D.Double();
-            // If the snout Ellipse2D object has not been initialized yet
-        if (snout == null)
-            snout = new Ellipse2D.Double();
-            // If the first mouth QuadCurve2D scratch object has not been 
-        if (mouthCurve1 == null)    // initialized yet
-            mouthCurve1 = new QuadCurve2D.Double();
-            // If the second mouth QuadCurve2D scratch object has not been  
-        if (mouthCurve2 == null)     // initialized yet
-            mouthCurve2 = new QuadCurve2D.Double();
         
             // Create the shape for Rambley's head (without his ears for now)
         Area headShape = getRambleyEarlessHead(getRambleyX(),getRambleyY(),
@@ -4451,12 +4437,89 @@ public class RambleyPainter implements Painter<Component>{
         headShape.add(earR);
             // Add Rambley's left ear to the shape of his head.
         headShape.add(earL);
-            // Create the shape for the face markings around his eyes
-        Area faceMarkings = getRambleyMaskFaceMarkings(headBounds,ellipse1,
-                ellipse2,ellipse3,rect);
-            // Create the area around Rambley's nose and mouth
-        Area snoutArea = getRambleySnout(headBounds,headShape,snout,path,point1,
-                point2,quadCurve1);
+        
+        // Code for creating the scarf goes here. The scarf will consist of two 
+        // parts, one that is drawn behind Rambley's body and one that is drawn 
+        // in front of Rambley's body, but behind his head
+        
+            // This is an area that contains the entire shape of Rambley's 
+            // outline. Start this area with the shape of his head.
+        Area rambleyShape = new Area(headShape);
+        
+            // Add Rambley's scarf to the rambleyShape area
+        
+            // Set the stroke to use to the normal stroke
+        g.setStroke(getRambleyNormalStroke());
+            
+            // DEBUG: If we are showing the lines that make up Rambley 
+        if (getShowsLines()){
+            printShape("headBounds",headBounds);
+            printShape("headShape",headShape);
+            printShape("rambleyShape",rambleyShape);
+//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+//                    RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setColor(RAMBLEY_OUTLINE_COLOR);
+            g.draw(rambleyShape);
+            g.setColor(Color.RED);
+            g.draw(headShape);
+            g.setColor(Color.ORANGE);
+            g.draw(headBounds);
+            
+        } else {    // DEBUG: If we are not showing the lines that make up Rambley 
+                // If the border around Rambley and Rambley's drop shadow are 
+            if (isBorderAndShadowPainted())     // painted
+                    // Render his border and shadow.
+                paintRambleyBorderAndShadow(g,rambleyShape,0,0,
+                        INTERNAL_RENDER_WIDTH,INTERNAL_RENDER_HEIGHT);
+                // If Rambley's scarf is to be painted
+            if (isRambleyScarfPainted()){
+                    // Create a copy of the graphics context to draw the scarf
+                Graphics2D gScarf = (Graphics2D) g.create();
+                
+                    // Draw the back part of Rambley's scarf here
+                    
+                    // Dispose of the scarf graphics context
+                gScarf.dispose();
+            }
+            
+                // Draw Rambley's body here. 
+            
+                // If Rambley's scarf is to be painted
+            if (isRambleyScarfPainted()){
+                    // Create a copy of the graphics context to draw the scarf
+                Graphics2D gScarf = (Graphics2D) g.create();
+                
+                    // Draw the front part of Rambley's scarf here
+                    
+                    // Dispose of the scarf graphics context
+                gScarf.dispose();
+            }
+            
+                // Draw Rambley's head and face
+            paintRambleyHead(g,headBounds,headShape,earR,earL,earInR,earInL);
+            
+            // Draw Rambley's conductor hat here
+            
+            // Draw any parts that cover Rambley's face here
+            
+        }
+            // Dispose of the copy of the graphics context
+        g.dispose();
+    }
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param headBounds The bounds of Rambley's head.
+     * @param headShape The shape of Rambley's head.
+     */
+    protected void paintRambleyEyes(Graphics2D g, RectangularShape headBounds, 
+            Area headShape){
+            // If the iris Ellipse2D object has not been initialized yet
+        if (iris == null)
+            iris = new Ellipse2D.Double();
+            // If the pupil Ellipse2D object has not been initialized yet
+        if (pupil == null)
+            pupil = new Ellipse2D.Double();
             // Create Rambley's right eyebrow (this will intersect with the 
             // other eye markings)
         Area eyeBrowR = createRambleyEyebrow(headBounds,ellipse2);
@@ -4476,6 +4539,52 @@ public class RambleyPainter implements Painter<Component>{
             // Flip to form the shape of Rambley's left eye
         Area eyeWhiteL = createHorizontallyMirroredArea(eyeWhiteR,
                 headBounds.getCenterX());
+            // Create a copy of the graphics context
+        g = (Graphics2D) g.create();
+            // Set the color to Rambley's eye brow color
+        g.setColor(RAMBLEY_EYEBROW_COLOR);
+            // Fill in Rambley's eyebrows
+        g.fill(eyeBrowR);
+        g.fill(eyeBrowL);
+            // Set the color to use to Rambley's secondary body color
+        g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
+            // Fill in the area arround Rambley's eyes
+        g.fill(eyeSurroundR);
+        g.fill(eyeSurroundL);
+            // Get the bounds for the right eye
+        Rectangle2D eyeBounds = eyeWhiteR.getBounds2D();
+            // Get the offset to use to shift the iris and pupil to their 
+            // default positions
+        double pupilX = ((headBounds.getCenterX()-25)-eyeBounds.getCenterX())*2;
+            // Draw Rambley's right eye
+        paintRambleyEye(g,eyeWhiteR,getRambleyRightEyeX(),getRambleyRightEyeY(),
+                eyeBounds,0,pupilX,iris,pupil);
+            // Draw Rambley's left eye
+        paintRambleyEye(g,eyeWhiteL,getRambleyLeftEyeX(),getRambleyLeftEyeY(),
+                eyeWhiteL.getBounds2D(),-pupilX,0,iris,pupil);
+            // Dispose of the copy of the graphics context
+        g.dispose();
+    }
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param headBounds The bounds of Rambley's head.
+     * @param headShape The shape of Rambley's head.
+     */
+    protected void paintRambleySnout(Graphics2D g, RectangularShape headBounds, 
+            Area headShape){
+            // If the snout Ellipse2D object has not been initialized yet
+        if (snout == null)
+            snout = new Ellipse2D.Double();
+            // If the first mouth QuadCurve2D scratch object has not been 
+        if (mouthCurve1 == null)    // initialized yet
+            mouthCurve1 = new QuadCurve2D.Double();
+            // If the second mouth QuadCurve2D scratch object has not been  
+        if (mouthCurve2 == null)     // initialized yet
+            mouthCurve2 = new QuadCurve2D.Double();
+            // Create the area around Rambley's nose and mouth
+        Area snoutArea = getRambleySnout(headBounds,headShape,snout,path,point1,
+                point2,quadCurve1);
             // Create the shape of Rambley's nose
         Area nose = createRambleyNoseShape(snout,rect,ellipse1,path);
             // Set the location of the point to the bottom center of the nose
@@ -4484,199 +4593,136 @@ public class RambleyPainter implements Painter<Component>{
             // nose to position the mouth.
         mouthPath = createRambleyMouthCurve(snout,point1,mouthCurve1,
                 mouthCurve2,point2,point3,mouthPath);
-        
-        // Code for creating the scarf goes here. The scarf will consist of two 
-        // parts, one that is drawn behind Rambley's body and one that is drawn 
-        // in front of Rambley's body, but behind his head
-        
-            // This is an area that contains the entire shape of Rambley's 
-            // outline. Start this area with the shape of his head.
-        Area rambleyShape = new Area(headShape);
-        
-            // Add Rambley's scarf to the area
-        
-            // DEBUG: If we are showing the lines that make up Rambley 
-        if (getShowsLines()){
-            printShape("headBounds",headBounds);
-            printShape("headShape",headShape);
-            printShape("rambleyShape",rambleyShape);
-            printShape("snout",snout);
-//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-//                    RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setColor(RAMBLEY_OUTLINE_COLOR);
-            g.draw(rambleyShape);
-            g.setColor(Color.RED);
-            g.draw(headShape);
-            g.setColor(Color.ORANGE);
-            g.draw(headBounds);
-            g.setColor(Color.BLACK);
-            g.draw(snout);
-            g.setColor(Color.GREEN);
-            g.draw(snoutArea);
-            g.setColor(Color.MAGENTA);
-            g.draw(nose);
-            
-        } else {    // DEBUG: If we are not showing the lines that make up Rambley 
-                // If the border around Rambley and Rambley's drop shadow are 
-            if (isBorderAndShadowPainted())     // painted
-                    // Render his border and shadow.
-                paintRambleyBorderAndShadow(g,rambleyShape,0,0,
-                        INTERNAL_RENDER_WIDTH,INTERNAL_RENDER_HEIGHT);
-                // If Rambley's scarf is to be painted
-            if (isRambleyScarfPainted()){
-                    // Create a copy of the graphics context to draw the scarf
-                Graphics2D gScarf = (Graphics2D) g.create();
-                
-                    // Draw the back part of Rambley's scarf here
-                    
-                    // Dispose of the scarf graphics context
-                gScarf.dispose();
-            }
-            
-                // Draw Rambley's body here. Possibly 
-            
-                // If Rambley's scarf is to be painted
-            if (isRambleyScarfPainted()){
-                    // Create a copy of the graphics context to draw the scarf
-                Graphics2D gScarf = (Graphics2D) g.create();
-                
-                    // Draw the front part of Rambley's scarf here
-                    
-                    // Dispose of the scarf graphics context
-                gScarf.dispose();
-            }
-            
-                // Draw Rambley's head and face
-                // Create a copy of the graphics context to draw Rambley's head 
-                // and face
-            Graphics2D gHead = (Graphics2D) g.create();
-                // Fill the shape of Rambley's head
-            gHead.setColor(RAMBLEY_MAIN_BODY_COLOR);
-            gHead.fill(headShape);
-                // Fill the shape of Rambley's mask-like facial markings
-            gHead.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
-            gHead.fill(faceMarkings);
-                // Fill in Rambley's eyebrows
-            gHead.setColor(RAMBLEY_EYEBROW_COLOR);
-            gHead.fill(eyeBrowR);
-            gHead.fill(eyeBrowL);
-                // Set the color to use to Rambley's secondary body color
-            gHead.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
-                // Fill in Rambley's snout area
-            gHead.fill(snoutArea);
-                // Fill in the area arround Rambley's eyes
-            gHead.fill(eyeSurroundR);
-            gHead.fill(eyeSurroundL);
-                // Fill in the inner portion of Rambley's ears
-            gHead.fill(earInR);
-            gHead.fill(earInL);
-                // Get the bounds for the right eye
-            Rectangle2D eyeBounds = eyeWhiteR.getBounds2D();
-                // Get the offset to use to shift the iris and pupil to their 
-                // default positions
-            double pupilX = ((headBounds.getCenterX()-25)-eyeBounds.getCenterX())*2;
-                // Draw Rambley's right eye
-            paintRambleyEye(gHead,eyeWhiteR,
-                    getRambleyRightEyeX(),getRambleyRightEyeY(),eyeBounds,0,
-                    pupilX,iris,pupil);
-                // Draw Rambley's left eye
-            paintRambleyEye(gHead,eyeWhiteL,
-                    getRambleyLeftEyeX(),getRambleyLeftEyeY(),
-                    eyeWhiteL.getBounds2D(),-pupilX,0,iris,pupil);
-                // If Rambley's open mouth is open
-            if (isRambleyMouthOpen()){
-                    // Create the shape of Rambley's mouth when open
-                Area openMouth = createRambleyOpenMouthShape(mouthPath, 
-                        getRambleyOpenMouthWidth(), getRambleyOpenMouthHeight(), 
-                        snout,mouthCurve1,mouthCurve2,point4,point5,quadCurve2,
-                        rect,path);
-                    // Set the color to use for drawing the area for Rambley's open
-                    // mouth. If Rambley's jaw is closed, use Rambley's teeth color 
-                    // since we can only see Rambley's teeth. Otherwise, use the 
-                    // color of the inside of Rambley's mouth
-                gHead.setColor(isRambleyJawClosed()?RAMBLEY_TEETH_COLOR:
-                        RAMBLEY_MOUTH_COLOR);
-                    // Fill in the area for Rambley's open mouth
-                gHead.fill(openMouth);
-                    // Create a copy of the graphics context to draw the inner mouth
-                Graphics2D gMouth = (Graphics2D) gHead.create();
-                    // Clip the graphics context to the open mouth
-                gMouth.clip(openMouth);
-                    // If Rambley's jaw is closed
-                if (isRambleyJawClosed()){
-                        // Create the path to use to draw the line that separates 
-                        // the upper and lower teeth.
-                    path = createRambleyClosedTeethLine(getRambleyOpenMouthWidth(),
-                            getRambleyOpenMouthHeight(),mouthCurve1,mouthCurve2,
-                            mouthPath,quadCurve2,openMouth,point1,quadCurve1,
-                            path);
-                        // Draw the line that separates the top and bottom of 
-                        // Rambley's jaw
-                    gMouth.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
-                    gMouth.draw(path);
-                } else {
-                        // Create the shape of Rambley's tongue
-                    Area tongue = createRambleyTongueShape(rect.getCenterX(),
-                            mouthCurve2.getX2(),rect.getMaxY(),
-                            getRambleyOpenMouthWidth(), getRambleyOpenMouthHeight(),
-                            openMouth,ellipse1);
-                        // Create the shape of Rambley's right fang
-                    Area fang = createRambleyFangShape(getRambleyOpenMouthWidth(), 
-                            getRambleyOpenMouthHeight(),mouthCurve1,mouthCurve2,
-                            openMouth,quadCurve1,path);
-                        // Fill in Rambley's tongue
-                    gMouth.setColor(RAMBLEY_TONGUE_COLOR);
-                    gMouth.fill(tongue);
-                        // Draw the outline for Rambley's tongue
-                    gMouth.setColor(RAMBLEY_TONGUE_OUTLINE_COLOR);
-                    gMouth.draw(tongue);
-                        // Fill in Rambley's fang(s)
-                    gMouth.setColor(RAMBLEY_TEETH_COLOR);
-                    gMouth.fill(fang);
-                        // Draw the outline for Rambley's fang(s)
-                    gMouth.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
-                    gMouth.draw(fang);
-                }   // Dispose of the mouth graphics context
-                gMouth.dispose();
-                    // Set the stroke to Rambley's detail stroke
-                gHead.setStroke(getRambleyDetailStroke());
-                    // Draw Rambley's mouth
-                gHead.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
-                gHead.draw(openMouth);
-            }   // Set the stroke to Rambley's detail stroke
-            gHead.setStroke(getRambleyDetailStroke());
-                // Draw Rambley's mouth
-            gHead.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
-            gHead.draw(mouthPath);
-                // Set the stroke to Rambley's normal stroke
-            gHead.setStroke(getRambleyNormalStroke());
-                // Draw Rambley's nose
-            gHead.setColor(RAMBLEY_NOSE_COLOR);
-            gHead.fill(nose);
-                // Set the color to Rambley's main outline color
-            gHead.setColor(RAMBLEY_OUTLINE_COLOR);
-                // Set the stroke to Rambley's outline stroke
-            gHead.setStroke(getRambleyOutlineStroke());
-                // Draw the outline for Rambley's head
-            gHead.draw(headShape);
+            // Create a copy of the graphics context
+        g = (Graphics2D) g.create();
+            // Set the color to use to Rambley's secondary body color
+        g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
+            // Fill in Rambley's snout area
+        g.fill(snoutArea);
+            // If Rambley's open mouth is open
+        if (isRambleyMouthOpen()){
+                // Get how wide the mouth should be
+            double mouthWidth = getRambleyOpenMouthWidth();
+                // Get the height of the open mouth
+            double mouthHeight = getRambleyOpenMouthHeight();
+                // Create the shape of Rambley's mouth when open
+            Area openMouth = createRambleyOpenMouthShape(mouthPath, mouthWidth, 
+                    mouthHeight, snout,mouthCurve1,mouthCurve2,point4,point5,
+                    quadCurve2,rect,path);
+                // Set the color to use for drawing the area for Rambley's open
+                // mouth. If Rambley's jaw is closed, use Rambley's teeth color 
+                // since we can only see Rambley's teeth. Otherwise, use the 
+                // color of the inside of Rambley's mouth
+            g.setColor(isRambleyJawClosed()?RAMBLEY_TEETH_COLOR:RAMBLEY_MOUTH_COLOR);
+                // Fill in the area for Rambley's open mouth
+            g.fill(openMouth);
+                // Create a copy of the graphics context to draw the inner mouth
+            Graphics2D gMouth = (Graphics2D) g.create();
+                // Clip the graphics context to the open mouth
+            gMouth.clip(openMouth);
+                // If Rambley's jaw is closed
+            if (isRambleyJawClosed()){
+                    // Create the path to use to draw the line that separates 
+                    // the upper and lower teeth.
+                path = createRambleyClosedTeethLine(mouthWidth, mouthHeight, 
+                        mouthCurve1,mouthCurve2,mouthPath,quadCurve2,openMouth,
+                        point1,quadCurve1,path);
+                    // Draw the line that separates the top and bottom of 
+                    // Rambley's jaw
+                gMouth.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                gMouth.draw(path);
+            } else {
+                    // Create the shape of Rambley's tongue
+                Area tongue = createRambleyTongueShape(rect.getCenterX(),
+                        mouthCurve2.getX2(),rect.getMaxY(),mouthWidth, 
+                        mouthHeight, openMouth,ellipse1);
+                    // Create the shape of Rambley's right fang
+                Area fang = createRambleyFangShape(mouthWidth, mouthHeight, 
+                        mouthCurve1,mouthCurve2,openMouth,quadCurve1,path);
+                    // Fill in Rambley's tongue
+                gMouth.setColor(RAMBLEY_TONGUE_COLOR);
+                gMouth.fill(tongue);
+                    // Draw the outline for Rambley's tongue
+                gMouth.setColor(RAMBLEY_TONGUE_OUTLINE_COLOR);
+                gMouth.draw(tongue);
+                    // Fill in Rambley's fang(s)
+                gMouth.setColor(RAMBLEY_TEETH_COLOR);
+                gMouth.fill(fang);
+                    // Draw the outline for Rambley's fang(s)
+                gMouth.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                gMouth.draw(fang);
+            }   // Dispose of the mouth graphics context
+            gMouth.dispose();
                 // Set the stroke to Rambley's detail stroke
-            gHead.setStroke(getRambleyDetailStroke());
-                // Draw the outline for Rambley's inner right ear
-            gHead.draw(earInR);
-                // Draw the outline for Rambley's inner left ear
-            gHead.draw(earInL);
-                // Set the color to the outline color for Rambley's nose
-            gHead.setColor(RAMBLEY_NOSE_OUTLINE_COLOR);
-                // Draw the outline for Rambley's nose
-            gHead.draw(nose);
-                // Dispose of the head graphics context
-            gHead.dispose();
-            
-            // Draw Rambley's conductor hat here
-            
-            // Draw any parts that cover Rambley's face here
-            
-        }
+            g.setStroke(getRambleyDetailStroke());
+                // Draw Rambley's mouth
+            g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
+            g.draw(openMouth);
+        }   // Set the stroke to Rambley's detail stroke
+        g.setStroke(getRambleyDetailStroke());
+            // Draw Rambley's mouth
+        g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
+        g.draw(mouthPath);
+            // Set the stroke to Rambley's normal stroke
+        g.setStroke(getRambleyNormalStroke());
+            // Draw Rambley's nose
+        g.setColor(RAMBLEY_NOSE_COLOR);
+        g.fill(nose);
+            // Set the stroke to Rambley's detail stroke
+        g.setStroke(getRambleyDetailStroke());
+            // Set the color to the outline color for Rambley's nose
+        g.setColor(RAMBLEY_NOSE_OUTLINE_COLOR);
+            // Draw the outline for Rambley's nose
+        g.draw(nose);
+            // Dispose of the copy of the graphics context
+        g.dispose();
+    }
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param headBounds The bounds of Rambley's head.
+     * @param headShape The shape of Rambley's head.
+     * @param earR The shape of Rambley's right ear.
+     * @param earL The shape of Rambley's left ear.
+     * @param earInR The shape of the inner portion of Rambley's right ear.
+     * @param earInL The shape of the inner portion of Rambley's left ear.
+     */
+    protected void paintRambleyHead(Graphics2D g, RectangularShape headBounds, 
+            Area headShape, Area earR, Area earL, Area earInR, Area earInL){
+            // If the given bounds for the head is null
+        if (headBounds == null)
+            headBounds = getBoundsOfShape(headShape);
+            // Create a copy of the graphics context
+        g = (Graphics2D) g.create();
+            // Fill the shape of Rambley's head
+        g.setColor(RAMBLEY_MAIN_BODY_COLOR);
+        g.fill(headShape);
+            // Create and fill the shape of Rambley's mask-like facial markings
+        g.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
+        g.fill(getRambleyMaskFaceMarkings(headBounds,ellipse1,ellipse2,ellipse3,
+                rect));
+            // Set the color to use to Rambley's secondary body color
+        g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
+            // Fill in the inner portion of Rambley's ears
+        g.fill(earInR);
+        g.fill(earInL);
+            // Paint Rambley's snout, nose, and mouth
+        paintRambleySnout(g,headBounds,headShape);
+            // Paint Rambley's eyes 
+        paintRambleyEyes(g,headBounds,headShape);
+            // Set the color to Rambley's main outline color
+        g.setColor(RAMBLEY_OUTLINE_COLOR);
+            // Set the stroke to Rambley's outline stroke
+        g.setStroke(getRambleyOutlineStroke());
+            // Draw the outline for Rambley's head
+        g.draw(headShape);
+            // Set the stroke to Rambley's detail stroke
+        g.setStroke(getRambleyDetailStroke());
+            // Draw the outline for Rambley's inner right ear
+        g.draw(earInR);
+            // Draw the outline for Rambley's inner left ear
+        g.draw(earInL);
+            // Dispose of the copy of the graphics context
         g.dispose();
     }
     
@@ -4793,6 +4839,7 @@ public class RambleyPainter implements Painter<Component>{
             // Fill the area for the border around rambley
         g.setColor(RAMBLEY_BORDER_COLOR);
         g.draw(rambleyShape);
+            // Dispose of the copy of the graphics context
         g.dispose();
     }
     /**
