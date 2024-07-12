@@ -189,13 +189,21 @@ public class RambleyPainter implements Painter<Component>{
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
      */
-    protected static final double INTERNAL_RENDER_WIDTH = 256;
+    protected static final double INTERNAL_RENDER_WIDTH = 320;
     /**
      * This is the height at which Rambley is rendered at internally. Rambley is 
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
      */
-    protected static final double INTERNAL_RENDER_HEIGHT = 256;
+    protected static final double INTERNAL_RENDER_HEIGHT = 320;
+    /**
+     * The offset for the x-coordinate of the top-left corner of Rambley.
+     */
+    private static final double RAMBLEY_X_OFFSET = (INTERNAL_RENDER_WIDTH-200)/2.0;
+    /**
+     * The offset for the y-coordinate of the top-left corner of Rambley.
+     */
+    private static final double RAMBLEY_Y_OFFSET = 80;
     /**
      * This is the default width and height of the background polka dots.
      */
@@ -213,14 +221,6 @@ public class RambleyPainter implements Painter<Component>{
      * this is the vertical spacing.
      */
     protected static final double DEFAULT_PIXEL_GRID_LINE_SPACING = 5;
-    /**
-     * The offset for the x-coordinate of the top-left corner of Rambley.
-     */
-    private static final double RAMBLEY_X_OFFSET = (INTERNAL_RENDER_WIDTH-200)/2.0;
-    /**
-     * The offset for the y-coordinate of the top-left corner of Rambley.
-     */
-    private static final double RAMBLEY_Y_OFFSET = 60;
     /**
      * This is the angle of elevation for Rambley's cheeks.
      */
@@ -4460,7 +4460,7 @@ public class RambleyPainter implements Painter<Component>{
         
             // Create the shape for Rambley's head (without his ears for now)
         Area headShape = getRambleyEarlessHead(getRambleyX(),getRambleyY(),
-                rect,path,headEllipse,ellipse2);
+                rect,path,headEllipse,ellipse1);
             // Get the bounds for the head, so that we can base the facial 
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
@@ -4481,11 +4481,79 @@ public class RambleyPainter implements Painter<Component>{
         // parts, one that is drawn behind Rambley's body and one that is drawn 
         // in front of Rambley's body, but behind his head
         
+        double d1 = getTestDouble1();
+        double d2 = getTestDouble2();
+        double d3 = getTestDouble3();
+        double d4 = getTestDouble4();
+        double d5 = getTestDouble5();
+        double d6 = getTestDouble6();
+        double d7 = getTestDouble7();
+        double d8 = getTestDouble8();
+        
+//        double xC = (x1*d1+x2*d2)/(d1+d2);
+//        double yC = (y1*d3+y2*d4)/(d3+d4);
+
+            // Create the front part of the scarf
+        
+        double x2 = headBounds.getCenterX();
+        double y2 = headEllipse.getMaxY()+6;
+        double x1 = x2-40;
+        double y1 = y2-28;
+        
+        CubicCurve2D cubicCurve1 = new CubicCurve2D.Double();
+        CubicCurve2D cubicCurve2 = new CubicCurve2D.Double();
+        
+        cubicCurve1.setCurve(x1, y1, x1, y1+7.5, x2-15, y2, x2, y2);
+        cubicCurve2.setCurve(
+                cubicCurve1.getX2(), cubicCurve1.getY1()-(cubicCurve1.getY2()-cubicCurve1.getY1()), 
+                cubicCurve1.getCtrlX2(), cubicCurve1.getY1()-(cubicCurve1.getCtrlY2()-cubicCurve1.getY1()), 
+                cubicCurve1.getCtrlX1(), cubicCurve1.getY1()-(cubicCurve1.getCtrlY1()-cubicCurve1.getY1()), 
+                cubicCurve1.getX1(), cubicCurve1.getY1());
+        
+        Path2D scarfPath1 = new Path2D.Double();
+        scarfPath1.append(cubicCurve2, false);
+        scarfPath1.append(cubicCurve1, true);
+        scarfPath1.closePath();
+        scarfPath1 = mirrorPathHorizontally(scarfPath1,headBounds.getCenterX());
+        Area scarf1 = new Area(scarfPath1);
+        if (afTx == null)
+            afTx = AffineTransform.getTranslateInstance(0, -23);
+        else 
+            afTx.setToTranslation(0, -23);
+        scarf1.add(scarf1.createTransformedArea(afTx));
+        
+        cubicCurve1.setCurve(cubicCurve1.getX1(), cubicCurve1.getY1()+afTx.getTranslateY(), 
+                cubicCurve1.getCtrlX1(), cubicCurve1.getCtrlY1()+afTx.getTranslateY(), 
+                cubicCurve1.getCtrlX2(), cubicCurve1.getCtrlY2()+afTx.getTranslateY(), 
+                cubicCurve1.getX2(), cubicCurve1.getY2()+afTx.getTranslateY());
+        
+        scarfPath1.reset();
+        
+        cubicCurve1.subdivide(cubicCurve1, cubicCurve2);
+        scarfPath1.append(cubicCurve1, false);
+        cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
+        cubicCurve1.subdivide(cubicCurve1, cubicCurve2);
+        scarfPath1.append(cubicCurve1, true);
+        cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
+        scarfPath1.append(cubicCurve1, true);
+        
+        scarfPath1.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
+        
+        scarfPath1 = mirrorPathHorizontally(scarfPath1,headBounds.getCenterX());
+        
+        
             // This is an area that contains the entire shape of Rambley's 
             // outline. Start this area with the shape of his head.
         Area rambleyShape = new Area(headShape);
-        
+            // If Rambley's scarf is to be painted
+        if (isRambleyScarfPainted()){
             // Add Rambley's scarf to the rambleyShape area
+            
+            rambleyShape.add(scarf1);
+            
+        }
+        
+            // Code for adding other parts of Rambley's outline goes here
         
             // Set the stroke to use to the normal stroke
         g.setStroke(getRambleyNormalStroke());
@@ -4504,7 +4572,8 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(headShape);
             g.setColor(Color.ORANGE);
             g.draw(headBounds);
-            
+            g.setColor(Color.BLUE);
+            g.draw(scarfPath1);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // If the border around Rambley and Rambley's drop shadow are 
             if (isBorderAndShadowPainted())     // painted
@@ -4529,8 +4598,13 @@ public class RambleyPainter implements Painter<Component>{
                     // Create a copy of the graphics context to draw the scarf
                 Graphics2D gScarf = (Graphics2D) g.create();
                 
-                    // Draw the front part of Rambley's scarf here
-                    
+                gScarf.setColor(RAMBLEY_SCARF_COLOR);
+                gScarf.fill(scarf1);
+                gScarf.setStroke(getRambleyDetailStroke());
+                gScarf.setColor(RAMBLEY_SCARF_OUTLINE_COLOR);
+                gScarf.draw(scarfPath1);
+                gScarf.setStroke(getRambleyOutlineStroke());
+                gScarf.draw(scarf1);
                     // Dispose of the scarf graphics context
                 gScarf.dispose();
             }
@@ -5193,6 +5267,12 @@ public class RambleyPainter implements Painter<Component>{
     double getTestDouble6(){
         return 0.0;
     }
+    double getTestDouble7(){
+        return 0.0;
+    }
+    double getTestDouble8(){
+        return 0.0;
+    }
     
     static void printPathIterator(PathIterator pathItr){
         HashMap<Integer,String> segTypes = new HashMap<>();
@@ -5220,5 +5300,17 @@ public class RambleyPainter implements Painter<Component>{
         System.out.println(shapeName+": " + bounds + ", Center=(" + 
                 bounds.getCenterX() + ", " + bounds.getCenterY()+"), Max=("+
                 bounds.getMaxX() + ", " + bounds.getMaxY()+")");
+    }
+    
+    static void printQuadCurve(String name, QuadCurve2D curve){
+        System.out.println(name+": P1=" + curve.getP1()+
+                ", CtrlPt="+curve.getCtrlPt()+", P2="+curve.getP2());
+    }
+    
+    static void printCubicCurve(String name, CubicCurve2D curve){
+        System.out.println(name+": P1=" + curve.getP1()+
+                ", CtrlP1="+curve.getCtrlP1()+
+                ", CtrlP2="+curve.getCtrlP2()+
+                ", P2="+curve.getP2());
     }
 }
