@@ -3258,7 +3258,7 @@ public class RambleyPainter implements Painter<Component>{
      * eyebrow. This is flipped to produce the left eyebrow. The eyebrows are 
      * intended to be covered up by the markings around Rambley's eyes and the 
      * eyes themselves.
-     * @param headBounds The bounds of Rambley's head without his ears.
+     * @param headBounds The bounds of Rambley's head.
      * @param ellipse An Ellipse2D object to use to calculate the eyebrow, or 
      * null.
      * @return The area that forms Rambley's right eyebrow.
@@ -3280,21 +3280,18 @@ public class RambleyPainter implements Painter<Component>{
             ellipse = new Ellipse2D.Double();
             // Set the ellipse's frame from the center so that it is around 49 
             // pixels to the left of center, 20 pixels lower than the top of the 
-            // head, and is 40 x 40. This forms the eyebrow area, and is 
-            // intended to be covered up by the markings around the eyes and the 
-            // eyes themselves.
+            // head (without ears), and is 40 x 40. This forms the eyebrow area, 
+            // and is intended to be covered up by the markings around the eyes 
+            // and the eyes themselves.
         ellipse.setFrameFromCenter(
-                headBounds.getCenterX()-29, headBounds.getMinY()+40, 
-                headBounds.getCenterX()-9, headBounds.getMinY()+20);
+                headBounds.getCenterX()-29, headBounds.getMaxY()-94, 
+                headBounds.getCenterX()-9, headBounds.getMaxY()-74);
         return new Area(ellipse);
     }
     /**
      * This creates and returns an Area that forms the shape of the markings 
-     * around Rambley's right eye. This uses the ellipse given to the {@link 
-     * #createRambleyEyebrow createRambleyEyebrow} method ({@code eyeBrow}) to 
-     * position and control the form of the shape.
-     * @param eyeBrow An Ellipse2D object with the ellipse used to form 
-     * Rambley's right eyebrow (cannot be null).
+     * around Rambley's right eye.
+     * @param headBounds The bounds of Rambley's head.
      * @param ellipse An Ellipse2D object to use to calculate the top-right 
      * portion of the markings, or null.
      * @param path A Path2D object to use to form the portion of the markings 
@@ -3319,8 +3316,9 @@ public class RambleyPainter implements Painter<Component>{
      * @see #createRambleyEyebrow 
      * @see #createRambleyEyeShape
      */
-    private Area createRambleyEyeMarkings(Ellipse2D eyeBrow, Ellipse2D ellipse, 
-            Path2D path, Point2D point1, Point2D point2, QuadCurve2D quadCurve){
+    private Area createRambleyEyeMarkings(RectangularShape headBounds, 
+            Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2, 
+            QuadCurve2D quadCurve){
             // If the given Ellipse2D object is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -3338,22 +3336,17 @@ public class RambleyPainter implements Painter<Component>{
             // If the given QuadCurve2D object is null
         if (quadCurve == null)
             quadCurve = new QuadCurve2D.Double();
-            // Set the frame for the ellipse from the center, with its right 
-            // side aligned with Rambley's eyebrows, 4 pixels lower than the 
-            // eyebrows, and it should be 43 x 48. This forms the top-right part 
-            // of the markings.
+            // Set the ellipse's frame from the center so that it is around 30.5 
+            // pixels to the left of center, 24 pixels lower than the top of the 
+            // head (without ears), and is 43 x 48. This forms the top-right 
+            // part of the markings.
         ellipse.setFrameFromCenter(
-                eyeBrow.getCenterX()-1.5, eyeBrow.getCenterY()+8, 
-                eyeBrow.getMaxX(), eyeBrow.getMinY()+4);
-            // Get the points of intersection between the top-right part of the 
-            // markings and the eyebrows. The left-most one (point1) will be 
+                headBounds.getCenterX()-30.5, headBounds.getMaxY()-86, 
+                headBounds.getCenterX()-9, headBounds.getMaxY()-62);
+            // Get the points on the ellipse that are 4 pixels to the right of 
+            // the left side of the ellipse. The top-most one (point1) will be 
             // used to transition between the ellipse and the path.
-        GeometryMath.getCircleIntersections(ellipse,eyeBrow,point1,point2);
-            // Make sure to use a point of intersection is actually on the 
-            // ellipse by calculating the point on the ellipse for the 
-            // left-most point of intersection. The top-most one (point1) will 
-            // be used to transition between the ellipse and the path.
-        GeometryMath.getEllipseY(ellipse,point1.getX(),point1,point2);
+        GeometryMath.getEllipseY(ellipse,ellipse.getMinX()+4,point1,point2);
             // Start the path at the left-most point of intersection
         path.moveTo(point1.getX(), point1.getY());
             // Set the bottom-left quadratic bezier curve. 
@@ -3362,7 +3355,7 @@ public class RambleyPainter implements Painter<Component>{
             // and that is 12 pixels below the ellipse.
             // End the curve in the horizontal center of the ellipse, and 12 
             // pixels below the ellipse
-        quadCurve.setCurve(ellipse.getMinX()-8, eyeBrow.getMaxY()+2, 
+        quadCurve.setCurve(ellipse.getMinX()-8, ellipse.getMaxY()-10, 
                 ellipse.getMinX()+2, ellipse.getMaxY()+12, 
                 ellipse.getCenterX(), ellipse.getMaxY()+12);
             // Add a bezier curve from point1 on the ellipse to the start of the 
@@ -4499,7 +4492,7 @@ public class RambleyPainter implements Painter<Component>{
         Area eyeBrowL = createHorizontallyMirroredArea(eyeBrowR,
                 headBounds.getCenterX());
             // Create the area around Rambley's right eye
-        Area eyeSurroundR = createRambleyEyeMarkings(ellipse2,ellipse3,path,
+        Area eyeSurroundR = createRambleyEyeMarkings(headBounds,ellipse3,path,
                 point1,point2,quadCurve1);
             // Flip to form the area around Rambley's left eye
         Area eyeSurroundL = createHorizontallyMirroredArea(eyeSurroundR,
@@ -4534,8 +4527,6 @@ public class RambleyPainter implements Painter<Component>{
             printShape("headBounds",headBounds);
             printShape("headShape",headShape);
             printShape("rambleyShape",rambleyShape);
-            printShape("ellipse2",ellipse2);
-            printShape("ellipse3",ellipse3);
             printShape("snout",snout);
 //            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 //                    RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -4549,11 +4540,9 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(snout);
             g.setColor(Color.GREEN);
             g.draw(snoutArea);
-            g.setColor(Color.BLUE);
-            g.draw(eyeSurroundR);
-            g.draw(eyeSurroundL);
             g.setColor(Color.MAGENTA);
             g.draw(nose);
+            
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // If the border around Rambley and Rambley's drop shadow are 
             if (isBorderAndShadowPainted())     // painted
