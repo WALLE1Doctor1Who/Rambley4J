@@ -5046,88 +5046,28 @@ public class RambleyPainter implements Painter<Component>{
         // Some debug settings that will be removed when finished
     
     boolean getShowsLines(){
-        return showLines;
+        return false;
     }
-    
-    void setShowsLines(boolean value){
-        if (showLines == value)
-            return;
-        showLines = value;
-        fireStateChanged();
-    }
-    
     boolean getABTesting(){
-        return abTesting;
+        return false;
     }
-    
-    void setABTesting(boolean value){
-        if (abTesting == value)
-            return;
-        abTesting = value;
-        fireStateChanged();
-    }
-    
-    private boolean showLines = false;
-    private boolean abTesting = false;
-    private double testDouble1 = 1.0;
-    private double testDouble2 = 1.0;
-    private double testDouble3 = 1.0;
-    private double testDouble4 = 1.0;
-    private double testDouble5 = 1.0;
-    private double testDouble6 = 0.0;
-    
     double getTestDouble1(){
-        return testDouble1;
+        return 0.0;
     }
-    
-    void setTestDouble1(double value){
-        testDouble1 = value;
-        fireStateChanged();
-    }
-    
     double getTestDouble2(){
-        return testDouble2;
+        return 0.0;
     }
-    
-    void setTestDouble2(double value){
-        testDouble2 = value;
-        fireStateChanged();
-    }
-    
     double getTestDouble3(){
-        return testDouble3;
+        return 0.0;
     }
-    
-    void setTestDouble3(double value){
-        testDouble3 = value;
-        fireStateChanged();
-    }
-    
     double getTestDouble4(){
-        return testDouble4;
+        return 0.0;
     }
-    
-    void setTestDouble4(double value){
-        testDouble4 = value;
-        fireStateChanged();
-    }
-    
     double getTestDouble5(){
-        return testDouble5;
+        return 0.0;
     }
-    
-    void setTestDouble5(double value){
-        testDouble5 = value;
-        fireStateChanged();
-    }
-    
     double getTestDouble6(){
-        return testDouble6;
-    }
-    
-    void setTestDouble6(double value){
-        testDouble6 = value;
-        fireStateChanged();
+        return 0.0;
     }
     
     static void printPathIterator(PathIterator pathItr){
