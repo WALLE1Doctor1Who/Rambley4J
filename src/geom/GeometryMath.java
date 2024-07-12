@@ -654,6 +654,44 @@ public final class GeometryMath {
     }
     /**
      * 
+     * @param x1 The x-coordinate of the starting point of the curve segment.
+     * @param y1 The y-coordinate of the starting point of the curve segment.
+     * @param x2 The x-coordinate of the end point of the curve segment.
+     * @param y2 The y-coordinate of the end point of the curve segment.
+     * @param src The original quadratic Bezier curve.
+     * @param curve A QuadCurve2D object to store the results in, or null.
+     * @return 
+     */
+    public static QuadCurve2D getQuadBezierCurveSegment(double x1, double y1, 
+            double x2, double y2, QuadCurve2D src, QuadCurve2D curve){
+            // This will get a point on the curve
+        Point2D point = null;
+            // If the difference between the x-coordinates is greater than or 
+            // equal to the difference between the y-coordinates
+        if (Math.abs(x2 - x1) >= Math.abs(y2 - y1))
+                // Get the point on the curve in between the two x-coordinates
+            point = getQuadBezierPointForX(src,(x1+x2)/2,point);
+        else    // Get the point on the curve in between the two y-coordinates
+            point = getQuadBezierPointForY(src,(y1+y2)/2,point);
+            // Return the curve that starts at the given first point, ends at 
+            // the second given point, and passes through the calculated point
+        return getQuadBezierCurve(x1,y1,point.getX(),point.getY(),x2,y2,curve);
+    }
+    /**
+     * 
+     * @param p1 The starting point of the curve segment.
+     * @param p2 The end point of the curve segment.
+     * @param src The original quadratic Bezier curve.
+     * @param curve A QuadCurve2D object to store the results in, or null.
+     * @return 
+     */
+    public static QuadCurve2D getQuadBezierCurveSegment(Point2D p1, Point2D p2, 
+            QuadCurve2D src, QuadCurve2D curve){
+        return getQuadBezierCurveSegment(p1.getX(),p1.getY(),
+                p2.getX(),p2.getY(),src,curve);
+    }
+    /**
+     * 
      * https://web.archive.org/web/20131225210855/http://people.sc.fsu.edu/~jburkardt/html/bezier_interpolation.html
      * 
      * @param p0 The starting point of the curve.
