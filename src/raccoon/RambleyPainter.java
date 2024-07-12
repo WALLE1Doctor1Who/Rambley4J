@@ -436,13 +436,12 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000020;
     /**
-     * This is the flag which controls which side of Rambley's face his fang 
-     * shows on when his mouth is open. This flag has no effect when Rambley's 
-     * mouth is closed, and has no effect when Rambley is evil, since Evil 
-     * Rambley shows both fangs. When set, Rambley's fang will show on the left 
-     * side of his mouth instead of the right side.
+     * This is the flag which controls which side certain elements of Rambley 
+     * will appear on. This includes which side of Rambley's face his fang will 
+     * show on when his mouth is open, and which side the knot on Rambley's 
+     * scarf will appear on.
      */
-    public static final int RAMBLEY_FANG_SIDE_FLAG =        0x00000040;
+    public static final int RAMBLEY_FLIPPED_FLAG =          0x00000040;
     /**
      * This is the flag which controls whether Rambley's jaw is closed when his 
      * mouth is open.
@@ -468,66 +467,75 @@ public class RambleyPainter implements Painter<Component>{
      * @see IGNORE_ASPECT_RATIO_FLAG
      * @see EVIL_RAMBLEY_FLAG
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
-     * @see RAMBLEY_FANG_SIDE_FLAG
+     * @see RAMBLEY_FLIPPED_FLAG
      * @see RAMBLEY_JAW_CLOSED_FLAG
      * @see PAINT_RAMBLEY_SCARF_FLAG
      */
     public static final int MAXIMUM_VALID_FLAGS = PAINT_BACKGROUND_FLAG | 
             PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG | 
             IGNORE_ASPECT_RATIO_FLAG | EVIL_RAMBLEY_FLAG | 
-            CIRCULAR_BACKGROUND_DOTS_FLAG | RAMBLEY_FANG_SIDE_FLAG | 
+            CIRCULAR_BACKGROUND_DOTS_FLAG | RAMBLEY_FLIPPED_FLAG | 
             RAMBLEY_JAW_CLOSED_FLAG | PAINT_RAMBLEY_SCARF_FLAG;
     /**
      * This identifies that a change has been made to whether the background 
      * should be painted.
+     * @see PAINT_BACKGROUND_FLAG
      */
     public static final String BACKGROUND_PAINTED_PROPERTY_CHANGED = 
             "BackgroundPaintedPropertyChanged";
     /**
      * This identifies that a change has been made to whether the pixel grid 
      * should be painted.
+     * @see PAINT_PIXEL_GRID_FLAG
      */
     public static final String PIXEL_GRID_PAINTED_PROPERTY_CHANGED = 
             "PixelGridPaintedPropertyChanged";
     /**
      * This identifies that a change has been made to whether Rambley's border 
      * and shadow should be painted.
+     * @see PAINT_BORDER_AND_SHADOW_FLAG
      */
     public static final String BORDER_AND_SHADOW_PAINTED_PROPERTY_CHANGED = 
             "BorderShadowPaintedPropertyChanged";
     /**
      * This identifies that a change has been made to whether the aspect ratio 
      * for Rambley will be ignored.
+     * @see IGNORE_ASPECT_RATIO_FLAG
      */
     public static final String IGNORE_ASPECT_RATIO_PROPERTY_CHANGED = 
             "IgnoreAspectRatioPropertyChanged";
     /**
      * This identifies that a change has been made to whether Rambley is evil or 
      * not.
+     * @see EVIL_RAMBLEY_FLAG
      */
     public static final String EVIL_RAMBLEY_PROPERTY_CHANGED = 
             "EvilRambleyPropertyChanged";
     /**
      * This identifies that a change has been made to whether the background 
      * polka dots are circular or diamonds.
+     * @see CIRCULAR_BACKGROUND_DOTS_FLAG
      */
     public static final String CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED = 
             "CircularDotsPropertyChanged";
     /**
-     * This identifies that a change has been made to which side Rambley's fang 
-     * will be on when his mouth is open.
+     * This identifies that a change has been made to which side of Rambley 
+     * certain elements will appear on.
+     * @see RAMBLEY_FLIPPED_FLAG
      */
-    public static final String RAMBLEY_FANG_SIDE_PROPERTY_CHANGED = 
-            "RambleyFangSidePropertyChanged";
+    public static final String RAMBLEY_FLIPPED_PROPERTY_CHANGED = 
+            "RambleyFlippedPropertyChanged";
     /**
      * This identifies that a change has been made to whether Rambley's jaw is 
      * closed when his mouth is open.
+     * @see RAMBLEY_JAW_CLOSED_FLAG
      */
     public static final String RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED = 
             "RambleyJawClosedPropertyChanged";
     /**
      * This identifies that a change has been made to whether Rambley's scarf 
      * should be painted.
+     * @see PAINT_RAMBLEY_SCARF_FLAG
      */
     public static final String RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED = 
             "RambleyScarfPaintedPropertyChanged";
@@ -550,7 +558,7 @@ public class RambleyPainter implements Painter<Component>{
         nameMap.put(EVIL_RAMBLEY_FLAG, EVIL_RAMBLEY_PROPERTY_CHANGED);
         nameMap.put(CIRCULAR_BACKGROUND_DOTS_FLAG, 
                 CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED);
-        nameMap.put(RAMBLEY_FANG_SIDE_FLAG, RAMBLEY_FANG_SIDE_PROPERTY_CHANGED);
+        nameMap.put(RAMBLEY_FLIPPED_FLAG, RAMBLEY_FLIPPED_PROPERTY_CHANGED);
         nameMap.put(RAMBLEY_JAW_CLOSED_FLAG, 
                 RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED);
         nameMap.put(PAINT_RAMBLEY_SCARF_FLAG, 
@@ -1015,7 +1023,7 @@ public class RambleyPainter implements Painter<Component>{
                     firePropertyChange(FLAG_PROPERTY_NAMES_MAP.get(flag),
                             getFlag(flag));
                     // If this is the last bit that changed in the flags
-                if (Integer.highestOneBit(flag) >= Integer.highestOneBit(changed))
+                if (Integer.highestOneBit(flag)>=Integer.highestOneBit(changed))
                     break;
             }
         }
@@ -1286,45 +1294,48 @@ public class RambleyPainter implements Painter<Component>{
         return setFlag(CIRCULAR_BACKGROUND_DOTS_FLAG,value);
     }
     /**
-     * This returns whether Rambley's fang is on the left or right of his mouth. 
-     * When this is {@code true}, Rambley's fang shows on the left side of his 
-     * mouth. When this is {@code false}, Rambley's fang shows on the right side 
-     * of his mouth. This has no effect when Rambley's mouth is closed, nor does 
-     * it have any effect when Rambley is {@link #isRambleyEvil() evil}. The 
-     * latter is because Evil Rambley has fangs on both sides of his mouth. The 
-     * default value for this is {@code false}.
+     * This returns whether certain elements of Rambley will appear on the 
+     * opposite side they typically appear on. When this is {@code true}, 
+     * Rambley's fang will show on the left side of his mouth and the knot on 
+     * Rambley's scarf will appear on Rambley's left. When this is {@code 
+     * false}, Rambley's fang will show on the right side of his mouth and the 
+     * knot on Rambley's scarf will appear on Rambley's right. The default value 
+     * for this is {@code false}.
      * 
-     * @todo Add references to other related methods.
+     * @todo Add references to other related methods. State which elements are 
+     * effected as they are added, and which sides they appear on for which 
+     * values.
      * 
-     * @return {@true} if Rambley's fang is on the left side of his mouth, 
-     * {@code false} if Rambley's fang is on the right side of his mouth.
-     * @see RAMBLEY_FANG_SIDE_FLAG
+     * @return {@true} if Rambley's sides are flipped, {@code false} otherwise.
+     * @see RAMBLEY_FLIPPED_FLAG
      * @see #getFlag 
-     * @see setRambleyFangOnLeft
+     * @see setRambleyFlipped
      */
-    public boolean isRambleyFangOnLeft(){
-        return getFlag(RAMBLEY_FANG_SIDE_FLAG);
+    public boolean isRambleyFlipped(){
+        return getFlag(RAMBLEY_FLIPPED_FLAG);
     }
     /**
-     * This sets whether Rambley's fang is on the left or right of his mouth. 
-     * When this is {@code true}, Rambley's fang shows on the left side of his 
-     * mouth. When this is {@code false}, Rambley's fang shows on the right side 
-     * of his mouth. This has no effect when Rambley's mouth is closed, nor does 
-     * it have any effect when Rambley is {@link #isRambleyEvil() evil}. The 
-     * latter is because Evil Rambley has fangs on both sides of his mouth. The 
-     * default value for this is {@code false}.
+     * This sets whether certain elements of Rambley will appear on the opposite 
+     * side they typically appear on. When this is {@code true}, 
+     * Rambley's fang will show on the left side of his mouth and the knot on 
+     * Rambley's scarf will appear on Rambley's left. When this is {@code 
+     * false}, Rambley's fang will show on the right side of his mouth and the 
+     * knot on Rambley's scarf will appear on Rambley's right. The default value 
+     * for this is {@code false}.
      * 
-     * @todo Add references to other related methods.
+     * @todo Add references to other related methods. State which elements are 
+     * effected as they are added, and which sides they appear on for which 
+     * values.
      * 
-     * @param value {@true} if Rambley's fang is on the left side of his mouth, 
-     * {@code false} if Rambley's fang is on the right side of his mouth.
+     * @param value {@true} if Rambley's sides should be flipped, {@code false} 
+     * if Rambley's sides should not be flipped.
      * @return This {@code RambleyPainter}.
-     * @see RAMBLEY_FANG_SIDE_FLAG
+     * @see RAMBLEY_FLIPPED_FLAG
      * @see setFlag 
-     * @see isRambleyFangOnLeft
+     * @see isRambleyFlipped
      */
-    public RambleyPainter setRambleyFangOnLeft(boolean value){
-        return setFlag(RAMBLEY_FANG_SIDE_FLAG,value);
+    public RambleyPainter setRambleyFlipped(boolean value){
+        return setFlag(RAMBLEY_FLIPPED_FLAG,value);
     }
     /**
      * This returns whether Rambley's jaw is closed when his mouth is opened. 
@@ -4131,8 +4142,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #setRambleyOpenMouthHeight
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
-     * @see #isRambleyFangOnLeft 
-     * @see #setRambleyFangOnLeft 
+     * @see #isRambleyFlipped 
+     * @see #setRambleyFlipped 
      * @see #RAMBLEY_FANG_WIDTH
      * @see #RAMBLEY_FANG_HEIGHT
      * @see RAMBLEY_FANG_VISIBLE_HEIGHT
@@ -4169,7 +4180,7 @@ public class RambleyPainter implements Painter<Component>{
      * method, with the top center of the visible portion of the right fang 
      * being located around the lowest point on the right side of the mouth 
      * curve. If either Rambley is {@link #isRambleyEvil evil} or Rambley's fang 
-     * is to be on the {@link #isRambleyFangOnLeft left side of his face}, then 
+     * is to be on the {@link #isRambleyFlipped left side of his face}, then 
      * his right fang will be  mirrored to produce his left fang. If Rambley is 
      * evil, then the left fang will be added to the right fang to give Rambley 
      * fangs on either side of his face. If Rambley is not evil, but his fang is 
@@ -4213,8 +4224,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #setRambleyOpenMouthHeight
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
-     * @see #isRambleyFangOnLeft 
-     * @see #setRambleyFangOnLeft 
+     * @see #isRambleyFlipped 
+     * @see #setRambleyFlipped 
      * @see #RAMBLEY_FANG_WIDTH
      * @see #RAMBLEY_FANG_HEIGHT
      * @see RAMBLEY_FANG_VISIBLE_HEIGHT
@@ -4249,7 +4260,7 @@ public class RambleyPainter implements Painter<Component>{
             // Create the area for the fang
         Area fang = new Area(path);
             // If Rambley is not evil and Rambley's fang should be on the left
-        if (!isRambleyEvil() && isRambleyFangOnLeft()){
+        if (!isRambleyEvil() && isRambleyFlipped()){
                 // Get an AffineTransform to flip the area horizontally and 
                 // mirror it over the vertical line at the center of the mouth
             afTx = getHorizontalMirrorTransform(mouthQuad1.getX1(),fang,afTx);
@@ -4345,7 +4356,7 @@ public class RambleyPainter implements Painter<Component>{
             // Draw a line to 5 pixels to the right of the center of the mouth
         path.lineTo(mouthQuad1.getX1()+5, y);
             // If Rambley's fang is to be on his left
-        if (isRambleyFangOnLeft()){
+        if (isRambleyFlipped()){
                 // Get an AffineTransform to flip the path horizontally and 
                 // mirror it over the vertical line at the center of the mouth 
                 // to flip it horizontally in place
