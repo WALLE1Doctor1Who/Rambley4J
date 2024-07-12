@@ -590,18 +590,26 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final String PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED = 
             "PixelGridThicknessPropertyChanged"; 
-    
-//    public static final String RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED = 
-//            "RambleyRightEyeXPropertyChanged";
-//    
-//    public static final String RAMBLEY_RIGHT_EYE_Y_PROPERTY_CHANGED = 
-//            "RambleyRightEyeYPropertyChanged";
-//    
-//    public static final String RAMBLEY_LEFT_EYE_X_PROPERTY_CHANGED = 
-//            "RambleyLeftEyeXPropertyChanged";
-//    
-//    public static final String RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED = 
-//            "RambleyLeftEyeYPropertyChanged";
+    /**
+     * 
+     */
+    public static final String RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED = 
+            "RambleyRightEyeXPropertyChanged";
+    /**
+     * 
+     */
+    public static final String RAMBLEY_RIGHT_EYE_Y_PROPERTY_CHANGED = 
+            "RambleyRightEyeYPropertyChanged";
+    /**
+     * 
+     */
+    public static final String RAMBLEY_LEFT_EYE_X_PROPERTY_CHANGED = 
+            "RambleyLeftEyeXPropertyChanged";
+    /**
+     * 
+     */
+    public static final String RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED = 
+            "RambleyLeftEyeYPropertyChanged";
     /**
      * This identifies that a change has been made to how wide Rambley's mouth 
      * is open.
@@ -979,8 +987,7 @@ public class RambleyPainter implements Painter<Component>{
      * This sets an integer storing the flags used to store the settings for 
      * this painter and control its state.
      * 
-     * @todo Add references to other related methods. Either remove the firing 
-     * of a state change or mention it in the documentation.
+     * @todo Add references to other related methods.
      * 
      * @param flags The flags for this painter (must be a positive integer 
      * between 0 and {@link #MAXIMUM_VALID_FLAGS}, inclusive).
@@ -1011,8 +1018,6 @@ public class RambleyPainter implements Painter<Component>{
                 if (Integer.highestOneBit(flag) >= Integer.highestOneBit(changed))
                     break;
             }
-                // Is a state change still necessary?
-            fireStateChanged();
         }
         return this;
     }
@@ -1591,10 +1596,20 @@ public class RambleyPainter implements Painter<Component>{
             // If either the x position or the y position has changed
         if (checkControlDouble(x,eyeRightX,"Right eye x value") || 
                 checkControlDouble(y,eyeRightY,"Right eye y value")){
+                // Get the old value for the x
+            double oldX = eyeRightX;
+                // Get the old value for the y
+            double oldY = eyeRightY;
             eyeRightX = x;
             eyeRightY = y;
-                // Fire a change in the state
-            fireStateChanged();
+                // If the x position changed
+            if (oldX != x)
+                    // Fire a property change event for the x position
+                firePropertyChange(RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED,oldX,x);
+                // If the y position changed
+            if (oldY != y)
+                    // Fire a property change event for the y position
+                firePropertyChange(RAMBLEY_RIGHT_EYE_Y_PROPERTY_CHANGED,oldY,y);
         }
         return this;
     }
@@ -1624,10 +1639,20 @@ public class RambleyPainter implements Painter<Component>{
             // If either the x position or the y position has changed
         if (checkControlDouble(x,eyeLeftX,"Left eye x value") || 
                 checkControlDouble(y,eyeLeftY,"Left eye y value")){
+                // Get the old value for the x
+            double oldX = eyeLeftX;
+                // Get the old value for the y
+            double oldY = eyeLeftY;
             eyeLeftX = x;
             eyeLeftY = y;
-                // Fire a change in the state
-            fireStateChanged();
+                // If the x position changed
+            if (oldX != x)
+                    // Fire a property change event for the x position
+                firePropertyChange(RAMBLEY_LEFT_EYE_X_PROPERTY_CHANGED,oldX,x);
+                // If the y position changed
+            if (oldY != y)
+                    // Fire a property change event for the y position
+                firePropertyChange(RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED,oldY,y);
         }
         return this;
     }
