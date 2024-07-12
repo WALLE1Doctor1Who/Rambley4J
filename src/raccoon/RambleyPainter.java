@@ -4252,10 +4252,8 @@ public class RambleyPainter implements Painter<Component>{
      * @param openQuad The QuadCurve2D object with the curve that forms half of 
      * the shape of Rambley's open mouth (cannot be null).
      * @param mouthOpen The area that forms Rambley's open mouth.
-     * @param point1 A Point2D object to use to calculate some points used for 
+     * @param point A Point2D object to use to calculate some points used for 
      * the line, or null.
-     * @param point2 A second Point2D object to use to calculate some points 
-     * used for the line, or null.
      * @param quadCurve A QuadCurve2D object to use to create the line segment 
      * of the right fang curve on the line, or null.
      * @param path A Path2D object to store the results in, or null.
@@ -4265,7 +4263,7 @@ public class RambleyPainter implements Painter<Component>{
     private Path2D createRambleyClosedTeethLine(double mouthWidth, 
             double mouthHeight, QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, 
             Path2D mouthCurve, QuadCurve2D openQuad, Area mouthOpen, 
-            Point2D point1, Point2D point2, QuadCurve2D quadCurve, Path2D path){
+            Point2D point, QuadCurve2D quadCurve, Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -4285,17 +4283,12 @@ public class RambleyPainter implements Painter<Component>{
                 quadCurve);
             // Calculate the starting point on the curve for Rambley's fang 
             // that is at the top of the curve on the teeth line
-        point1 = GeometryMath.getQuadBezierPointForY(quadCurve, y, point1);
-            // Calculate the point on the curve for Rambley's fang that is 
-            // in between the top and bottom of the curve used for the teeth 
-            // line
-        point2 = GeometryMath.getQuadBezierPointForY(quadCurve, 
-                (point1.getY()+quadCurve.getY2())/2, point2);
+        point = GeometryMath.getQuadBezierPointForY(quadCurve, y, point);
             // Calculate the segment of the curve for Rambley's fang that will 
             // appear on the teeth line
-        quadCurve = GeometryMath.getQuadBezierCurve(point1.getX(),point1.getY(), 
-                point2.getX(), point2.getY(), 
-                quadCurve.getX2(), quadCurve.getY2(), quadCurve);
+        quadCurve = GeometryMath.getQuadBezierCurveSegment(
+                point.getX(),point.getY(),quadCurve.getX2(),quadCurve.getY2(), 
+                quadCurve, quadCurve);
             // Append the segment of the fang curve to the path
         path.append(quadCurve, false);
             // Mirror the path horizontally to get the other side of the fang
@@ -4611,8 +4604,8 @@ public class RambleyPainter implements Painter<Component>{
                         // the upper and lower teeth.
                     path = createRambleyClosedTeethLine(getRambleyOpenMouthWidth(),
                             getRambleyOpenMouthHeight(),mouthCurve1,mouthCurve2,
-                            mouthPath,quadCurve2,openMouth,point1,point2,
-                            quadCurve1,path);
+                            mouthPath,quadCurve2,openMouth,point1,quadCurve1,
+                            path);
                         // Draw the line that separates the top and bottom of 
                         // Rambley's jaw
                     gMouth.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
