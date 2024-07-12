@@ -3489,10 +3489,10 @@ public class RambleyPainter implements Painter<Component>{
             // y-coordinate of the ellipse.
         path.quadTo(rect.getMinX(),ellipse.getMinY(),point1.getX(),point1.getY());
             // Add a quadratic bezier curve from point1 to the bottom-center of 
-            // the rectangular shape, using a control point that is 5 pixels to 
+            // the rectangular shape, using a control point that is 2 pixels to 
             // the right of the eye marks ellipse, and that is halfway between 
             // the bottoms of the rectangular shape and the eye ellipse.
-        path.quadTo(eyeMarkEllipse.getMinX()+5, (ellipse.getMaxY()+rect.getMaxY())/2, 
+        path.quadTo(eyeMarkEllipse.getMinX()+2, (ellipse.getMaxY()+rect.getMaxY())/2, 
                 rect.getCenterX(), rect.getMaxY());
             // Get the x-coordinate to use for the control point of the next 
             // quadratic bezier curve. This is 14 pixels left of the center of 
