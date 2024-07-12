@@ -3254,13 +3254,10 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of the markings 
      * around Rambley's right eye. This uses the ellipse given to the {@link 
-     * #getRambleySnout getRambleySnout} method ({@code snout}) and the ellipse 
-     * given to the {@link #createRambleyEyebrow createRambleyEyebrow} method 
-     * ({@code eyeBrow}) to position and control the form of the shape.
+     * #createRambleyEyebrow createRambleyEyebrow} method ({@code eyeBrow}) to 
+     * position and control the form of the shape.
      * @param eyeBrow An Ellipse2D object with the ellipse used to form 
      * Rambley's right eyebrow (cannot be null).
-     * @param snout  An Ellipse2D object with the ellipse used to form Rambley's 
-     * snout (cannot be null).
      * @param ellipse An Ellipse2D object to use to calculate the top-right 
      * portion of the markings, or null.
      * @param path A Path2D object to use to form the portion of the markings 
@@ -3282,13 +3279,11 @@ public class RambleyPainter implements Painter<Component>{
      * double, double, Ellipse2D, Ellipse2D) 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
-     * @see #getRambleySnout
      * @see #createRambleyEyebrow 
      * @see #createRambleyEyeShape
      */
-    private Area createRambleyEyeMarkings(Ellipse2D eyeBrow, Ellipse2D snout, 
-            Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2,
-            QuadCurve2D quadCurve){
+    private Area createRambleyEyeMarkings(Ellipse2D eyeBrow, Ellipse2D ellipse, 
+            Path2D path, Point2D point1, Point2D point2, QuadCurve2D quadCurve){
             // If the given Ellipse2D object is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -3344,10 +3339,18 @@ public class RambleyPainter implements Painter<Component>{
             // Add the bottom-left quadratic bezier curve to the path
         path.append(quadCurve, true);
             // Add a bezier control point from the end of the bottom-left curve 
-            // to the right-center of the ellipse. Use the ellipse's right-most 
-            // x-coordinate and the snout's y-coordinate as the control. This 
-            // curve will mostly be covered up by the eyes.
-        path.quadTo(ellipse.getMaxX(), snout.getMinY(), 
+            // to 4 pixels before the right edge of the ellipse and 5 pixels up. 
+            // Use the control point located at the x-coordinate between the end 
+            // of the bottom-left curve and the end of this curve and at the 
+            // y-coordinate of the end of the bottom-left curve.
+        path.quadTo((quadCurve.getX2()+ellipse.getMaxX()-4)/2,quadCurve.getY2(), 
+                ellipse.getMaxX()-4, quadCurve.getY2()-5);
+            // Add a bezier control point from the end of the previous curve to 
+            // the right-center of the ellipse. Use the ellipse's right-most 
+            // x-coordinate and the y-coordinate that is 1/3 of the way to the 
+            // center of the ellipse.
+        path.quadTo(ellipse.getMaxX(), 
+                ((quadCurve.getY2()-5)*2+ellipse.getCenterY())/3, 
                 ellipse.getMaxX(), ellipse.getCenterY());
             // Close the path
         path.closePath();
@@ -4459,8 +4462,8 @@ public class RambleyPainter implements Painter<Component>{
         Area eyeBrowL = createHorizontallyMirroredArea(eyeBrowR,
                 headBounds.getCenterX());
             // Create the area around Rambley's right eye
-        Area eyeSurroundR = createRambleyEyeMarkings(ellipse2,snout,ellipse3,
-                path,point1,point2,quadCurve1);
+        Area eyeSurroundR = createRambleyEyeMarkings(ellipse2,ellipse3,path,
+                point1,point2,quadCurve1);
             // Flip to form the area around Rambley's left eye
         Area eyeSurroundL = createHorizontallyMirroredArea(eyeSurroundR,
                 headBounds.getCenterX());
@@ -4505,6 +4508,8 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(headShape);
             g.setColor(Color.ORANGE);
             g.draw(headBounds);
+            g.setColor(Color.BLACK);
+            g.draw(snout);
             g.setColor(Color.GREEN);
             g.draw(snoutArea);
             g.setColor(Color.BLUE);
