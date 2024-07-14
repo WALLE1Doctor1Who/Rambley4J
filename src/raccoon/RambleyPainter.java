@@ -17,7 +17,8 @@ import javax.swing.event.*;
  * This is a Painter that paints Rambley the Raccoon from Indigo Park. 
  * 
  * Special thanks to AnimalWave on Discord for help with the equations that some 
- * of the code is based off of.
+ * of the code is based off of. Given their help, I have decided to credit them 
+ * as a co-author for this class.
  * 
  * @author Milo Steier
  * @author AnimalWave on Discord
@@ -58,11 +59,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color RAMBLEY_SECONDARY_BODY_COLOR = new Color(0xEBDEE0);
     /**
-     * This is the main color that is used to outline Rambley the Raccoon. That 
-     * is to say, this is the color which most of the outline for Rambley is 
-     * comprised of.
+     * This is the main color that is used to draw the lines around and on 
+     * Rambley the Raccoon. That is to say, this is the color which most of the 
+     * lines for Rambley is comprised of.
      */
-    public static final Color RAMBLEY_OUTLINE_COLOR = new Color(0x624361);
+    public static final Color RAMBLEY_LINE_COLOR = new Color(0x624361);
     /**
      * This is the color for the stripes on Rambley the Raccoon's tail.
      */
@@ -73,10 +74,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color RAMBLEY_PAW_COLOR = new Color(0x161311);
     /**
-     * This is the color for the outline of Rambley the Raccoon's paws. That is 
-     * to say, this is the color for the outline of Rambley's hands and feet.
+     * This is the color for the lines around Rambley the Raccoon's paws. That 
+     * is to say, this is the color for the lines around Rambley's hands and 
+     * feet.
      */
-    public static final Color RAMBLEY_PAW_OUTLINE_COLOR = RAMBLEY_OUTLINE_COLOR;
+    public static final Color RAMBLEY_PAW_LINE_COLOR = RAMBLEY_LINE_COLOR;
     /**
      * This is the color for the mask-like markings on Rambley the Raccoon's 
      * face.
@@ -91,18 +93,18 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color RAMBLEY_EYE_WHITE_COLOR = Color.WHITE;
     /**
-     * This is the color for the outline of Rambley the Raccoon's eyes.
+     * This is the color for the lines around Rambley the Raccoon's eyes.
      */
-    public static final Color RAMBLEY_EYE_OUTLINE_COLOR = Color.BLACK;
+    public static final Color RAMBLEY_EYE_LINE_COLOR = Color.BLACK;
     /**
      * This is the color for Rambley the Raccoon's irises.
      */
     public static final Color RAMBLEY_IRIS_COLOR = new Color(0x883EC1);
     /**
-     * This is the color for the outline of Rambley the Raccoon's irises and 
-     * pupils.
+     * This is the color for the lines around of Rambley the Raccoon's irises 
+     * and pupils.
      */
-    public static final Color RAMBLEY_IRIS_OUTLINE_COLOR = Color.BLACK;//new Color(0x23163F);
+    public static final Color RAMBLEY_IRIS_LINE_COLOR = Color.BLACK;//new Color(0x23163F);
     /**
      * This is the color for evil Rambley's irisis. Evil Rambley is a version of 
      * Rambley the Raccoon with red eyes that first appeared on thumbnails of 
@@ -110,13 +112,13 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color EVIL_RAMBLEY_IRIS_COLOR = Color.RED;
     /**
-     * This is the color for the outline of evil Rambley's irises and pupils. 
+     * This is the color for the lines around evil Rambley's irises and pupils. 
      * Evil Rambley is a version of Rambley the Raccoon with red eyes that first 
      * appeared on thumbnails of videos from the YouTube channel GameTheory on 
      * the topic of Indigo Park.
      */
-    public static final Color EVIL_RAMBLEY_IRIS_OUTLINE_COLOR = 
-            RAMBLEY_IRIS_OUTLINE_COLOR;
+    public static final Color EVIL_RAMBLEY_IRIS_LINE_COLOR = 
+            RAMBLEY_IRIS_LINE_COLOR;
     /**
      * This is the color for Rambley the Raccoon's pupils.
      */
@@ -126,41 +128,44 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color RAMBLEY_NOSE_COLOR = RAMBLEY_PAW_COLOR;
     /**
-     * This is the color for the outline of Rambley the Raccoon's nose.
+     * This is the color for the line around and on Rambley the Raccoon's nose.
      */
-    public static final Color RAMBLEY_NOSE_OUTLINE_COLOR = RAMBLEY_OUTLINE_COLOR;
+    public static final Color RAMBLEY_NOSE_LINE_COLOR = RAMBLEY_LINE_COLOR;
     /**
      * This is the color for the inside of Rambley the Raccoon's mouth.
      */
     public static final Color RAMBLEY_MOUTH_COLOR = new Color(0x3D0D2F);
     /**
-     * This is the color for the outline of Rambley the Raccoon's mouth.
+     * This is the color for the lines around and in Rambley the Raccoon's 
+     * mouth.
      */
-    public static final Color RAMBLEY_MOUTH_OUTLINE_COLOR = RAMBLEY_OUTLINE_COLOR;
+    public static final Color RAMBLEY_MOUTH_LINE_COLOR = RAMBLEY_LINE_COLOR;
     /**
      * This is the color for Rambley the Raccoon's teeth.
      */
     public static final Color RAMBLEY_TEETH_COLOR = Color.WHITE;
     /**
-     * This is the color for the outline of Rambley the Raccoon's teeth.
+     * This is the color for the lines around Rambley the Raccoon's teeth.
      */
-    public static final Color RAMBLEY_TEETH_OUTLINE_COLOR = RAMBLEY_MOUTH_OUTLINE_COLOR;
+    public static final Color RAMBLEY_TEETH_LINE_COLOR = RAMBLEY_MOUTH_LINE_COLOR;
     /**
      * This is the color for Rambley the Raccoon's tongue.
      */
     public static final Color RAMBLEY_TONGUE_COLOR = new Color(0x724794);
     /**
-     * This is the color for the outline of Rambley the Raccoon's tongue.
+     * This is the color for the lines around and on Rambley the Raccoon's 
+     * tongue.
      */
-    public static final Color RAMBLEY_TONGUE_OUTLINE_COLOR = RAMBLEY_TONGUE_COLOR;
+    public static final Color RAMBLEY_TONGUE_LINE_COLOR = RAMBLEY_TONGUE_COLOR;
     /**
      * This is the color for Rambley the Raccoon's red scarf.
      */
     public static final Color RAMBLEY_SCARF_COLOR = new Color(0xC64C57);
     /**
-     * This is the color for the outline of Rambley the Raccoon's red scarf.
+     * This is the color for the lines around and on Rambley the Raccoon's red 
+     * scarf.
      */
-    public static final Color RAMBLEY_SCARF_OUTLINE_COLOR = new Color(0xA63442);
+    public static final Color RAMBLEY_SCARF_LINE_COLOR = new Color(0xA63442);
     /**
      * This is the color for Rambley the Raccoon's train conductor hat which he 
      * wears during the Rambley's Railroad ride.
@@ -168,18 +173,18 @@ public class RambleyPainter implements Painter<Component>{
     public static final Color RAMBLEY_CONDUCTOR_HAT_COLOR = new Color(0x431188);
     /**
      * This is the color for the stripes on Rambley the Raccoon's train 
-     * conductor hat which he wears during the Rambley's Railroad ride.
+     * conductor hat.
      */
     public static final Color RAMBLEY_CONDUCTOR_HAT_STRIPE_COLOR = new Color(0xF3E5FE);
     /**
-     * This is the color for the outline of Rambley the Raccoon's train 
-     * conductor hat which he wears during the Rambley's Railroad ride.
+     * This is the color for the line around Rambley the Raccoon's train 
+     * conductor hat.
      */
-    public static final Color RAMBLEY_CONDUCTOR_HAT_OUTLINE_COLOR = Color.BLACK;
+    public static final Color RAMBLEY_CONDUCTOR_HAT_LINE_COLOR = Color.BLACK;
     /**
-     * This is the color for the border that goes around Rambley the Raccoon.
+     * This is the color for the outline that goes around Rambley the Raccoon.
      */
-    public static final Color RAMBLEY_BORDER_COLOR = Color.WHITE;
+    public static final Color RAMBLEY_OUTLINE_COLOR = Color.WHITE;
     /**
      * This is the color for Rambley the Raccoon's drop shadow.
      */
@@ -366,9 +371,9 @@ public class RambleyPainter implements Painter<Component>{
         return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_EAR_MULTIPLIER;
     }
     /**
-     * This is the thickness of the border around Rambley.
+     * This is the thickness of the outline around Rambley.
      */
-    protected static final float RAMBLEY_BORDER_THICKNESS = 6.0f;
+    protected static final float RAMBLEY_OUTLINE_THICKNESS = 6.0f;
     /**
      * This is the x offset for Rambley's drop shadow.
      */
@@ -414,56 +419,60 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int PAINT_PIXEL_GRID_FLAG =         0x00000002;
     /**
-     * This is the flag for whether the border around Rambley and Rambley's 
-     * shadow will be painted.
+     * This is the flag for whether the outline around Rambley will be painted.
      */
-    public static final int PAINT_BORDER_AND_SHADOW_FLAG =  0x00000004;
+    public static final int PAINT_RAMBLEY_OUTLINE_FLAG =    0x00000004;
+    /**
+     * This is the flag for whether Rambley's shadow will be painted.
+     */
+    public static final int PAINT_RAMBLEY_SHADOW_FLAG =     0x00000008;
     /**
      * This is the flag for ignoring Rambley's aspect ratio when rendering 
      * Rambley.
      */
-    public static final int IGNORE_ASPECT_RATIO_FLAG =      0x00000008;
+    public static final int IGNORE_ASPECT_RATIO_FLAG =      0x00000010;
     /**
      * This is the flag for whether evil Rambley will be painted instead of 
      * normal Rambley. Evil Rambley is a version of Rambley the Raccoon with red 
      * eyes that first appeared on thumbnails of videos from the YouTube channel 
      * GameTheory on the topic of Indigo Park.
      */
-    public static final int EVIL_RAMBLEY_FLAG =             0x00000010;
+    public static final int EVIL_RAMBLEY_FLAG =             0x00000020;
     /**
      * This is the flag for drawing the background polka dots as circles instead 
      * of diamonds.
      */
-    public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000020;
+    public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000040;
     /**
      * This is the flag which controls which side certain elements of Rambley 
      * will appear on. This includes which side of Rambley's face his fang will 
      * show on when his mouth is open, and which side the knot on Rambley's 
      * scarf will appear on.
      */
-    public static final int RAMBLEY_FLIPPED_FLAG =          0x00000040;
+    public static final int RAMBLEY_FLIPPED_FLAG =          0x00000080;
     /**
      * This is the flag which controls whether Rambley's jaw is closed when his 
      * mouth is open.
      */
-    public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000080;
+    public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000100;
     /**
      * This is the flag for whether Rambley's scarf will be painted.
      */
-    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000100;
+    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000200;
     /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
      */
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG | 
-            PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG | 
-            PAINT_RAMBLEY_SCARF_FLAG;
+            PAINT_PIXEL_GRID_FLAG | PAINT_RAMBLEY_OUTLINE_FLAG | 
+            PAINT_RAMBLEY_SHADOW_FLAG | PAINT_RAMBLEY_SCARF_FLAG;
     /**
      * This stores the maximum value a {@code RambleyPainter}'s flags can be and 
      * still be considered valid.
      * @see PAINT_BACKGROUND_FLAG
      * @see PAINT_PIXEL_GRID_FLAG
-     * @see PAINT_BORDER_AND_SHADOW_FLAG
+     * @see PAINT_RAMBLEY_OUTLINE_FLAG
+     * @see PAINT_RAMBLEY_SHADOW_FLAG
      * @see IGNORE_ASPECT_RATIO_FLAG
      * @see EVIL_RAMBLEY_FLAG
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
@@ -472,10 +481,11 @@ public class RambleyPainter implements Painter<Component>{
      * @see PAINT_RAMBLEY_SCARF_FLAG
      */
     public static final int MAXIMUM_VALID_FLAGS = PAINT_BACKGROUND_FLAG | 
-            PAINT_PIXEL_GRID_FLAG | PAINT_BORDER_AND_SHADOW_FLAG | 
-            IGNORE_ASPECT_RATIO_FLAG | EVIL_RAMBLEY_FLAG | 
-            CIRCULAR_BACKGROUND_DOTS_FLAG | RAMBLEY_FLIPPED_FLAG | 
-            RAMBLEY_JAW_CLOSED_FLAG | PAINT_RAMBLEY_SCARF_FLAG;
+            PAINT_PIXEL_GRID_FLAG | PAINT_RAMBLEY_OUTLINE_FLAG | 
+            PAINT_RAMBLEY_SHADOW_FLAG | IGNORE_ASPECT_RATIO_FLAG | 
+            EVIL_RAMBLEY_FLAG | CIRCULAR_BACKGROUND_DOTS_FLAG | 
+            RAMBLEY_FLIPPED_FLAG | RAMBLEY_JAW_CLOSED_FLAG | 
+            PAINT_RAMBLEY_SCARF_FLAG;
     /**
      * This identifies that a change has been made to whether the background 
      * should be painted.
@@ -491,12 +501,19 @@ public class RambleyPainter implements Painter<Component>{
     public static final String PIXEL_GRID_PAINTED_PROPERTY_CHANGED = 
             "PixelGridPaintedPropertyChanged";
     /**
-     * This identifies that a change has been made to whether Rambley's border 
+     * This identifies that a change has been made to whether Rambley's outline 
      * and shadow should be painted.
-     * @see PAINT_BORDER_AND_SHADOW_FLAG
+     * @see PAINT_RAMBLEY_OUTLINE_FLAG
      */
-    public static final String BORDER_AND_SHADOW_PAINTED_PROPERTY_CHANGED = 
-            "BorderShadowPaintedPropertyChanged";
+    public static final String RAMBLEY_OUTLINE_PAINTED_PROPERTY_CHANGED = 
+            "RambleyBorderPaintedPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley's shadow 
+     * should be painted.
+     * @see PAINT_RAMBLEY_SHADOW_FLAG
+     */
+    public static final String RAMBLEY_SHADOW_PAINTED_PROPERTY_CHANGED = 
+            "RambleyShadowPaintedPropertyChanged";
     /**
      * This identifies that a change has been made to whether the aspect ratio 
      * for Rambley will be ignored.
@@ -551,8 +568,10 @@ public class RambleyPainter implements Painter<Component>{
         TreeMap<Integer, String> nameMap = new TreeMap<>();
         nameMap.put(PAINT_BACKGROUND_FLAG, BACKGROUND_PAINTED_PROPERTY_CHANGED);
         nameMap.put(PAINT_PIXEL_GRID_FLAG, PIXEL_GRID_PAINTED_PROPERTY_CHANGED);
-        nameMap.put(PAINT_BORDER_AND_SHADOW_FLAG, 
-                BORDER_AND_SHADOW_PAINTED_PROPERTY_CHANGED);
+        nameMap.put(PAINT_RAMBLEY_OUTLINE_FLAG, 
+                RAMBLEY_OUTLINE_PAINTED_PROPERTY_CHANGED);
+        nameMap.put(PAINT_RAMBLEY_SHADOW_FLAG, 
+                RAMBLEY_SHADOW_PAINTED_PROPERTY_CHANGED);
         nameMap.put(IGNORE_ASPECT_RATIO_FLAG, 
                 IGNORE_ASPECT_RATIO_PROPERTY_CHANGED);
         nameMap.put(EVIL_RAMBLEY_FLAG, EVIL_RAMBLEY_PROPERTY_CHANGED);
@@ -724,7 +743,7 @@ public class RambleyPainter implements Painter<Component>{
      */
     private BasicStroke detailStroke = null;
     /**
-     * A BasicStroke object used to render most of the outlines of Rambley. This 
+     * A BasicStroke object used to render most of the lines of Rambley. This 
      * is initially null and is initialized the first time it is used.
      */
     private BasicStroke outlineStroke = null;
@@ -1232,31 +1251,50 @@ public class RambleyPainter implements Painter<Component>{
         return setFlag(IGNORE_ASPECT_RATIO_FLAG,value);
     }
     /**
-     * This returns whether the border around Rambley and Rambley's shadow will 
-     * be painted by this {@code RambleyPainter}. The default value for this is 
-     * {@code true}.
-     * @return Whether the border around Rambley and Rambley's shadow will be 
-     * painted.
-     * @see PAINT_BORDER_AND_SHADOW_FLAG
+     * This returns whether the outline around Rambley will be painted by this 
+     * {@code RambleyPainter}. The default value for this is {@code true}.
+     * @return Whether the outline around Rambley will be painted.
+     * @see PAINT_RAMBLEY_OUTLINE_FLAG
      * @see #getFlag 
-     * @see setBorderAndShadowPainted
+     * @see setRambleyOutlinePainted
      */
-    public boolean isBorderAndShadowPainted(){
-        return getFlag(PAINT_BORDER_AND_SHADOW_FLAG);
+    public boolean isRambleyOutlinePainted(){
+        return getFlag(PAINT_RAMBLEY_OUTLINE_FLAG);
     }
     /**
-     * This sets whether the border around Rambley and Rambley's shadow will be 
-     * painted by this {@code RambleyPainter}. The default value for this is 
-     * {@code true}.
-     * @param enabled Whether the border around Rambley and Rambley's shadow 
-     * should be painted.
+     * This sets whether the outline around Rambley will be painted by this 
+     * {@code RambleyPainter}. The default value for this is {@code true}.
+     * @param enabled Whether the outline around Rambley should be painted.
      * @return This {@code RambleyPainter}.
-     * @see PAINT_BORDER_AND_SHADOW_FLAG
+     * @see PAINT_RAMBLEY_OUTLINE_FLAG
      * @see #setFlag 
-     * @see isBorderAndShadowPainted
+     * @see isRambleyOutlinePainted
      */
-    public RambleyPainter setBorderAndShadowPainted(boolean enabled){
-        return setFlag(PAINT_BORDER_AND_SHADOW_FLAG,enabled);
+    public RambleyPainter setRambleyOutlinePainted(boolean enabled){
+        return setFlag(PAINT_RAMBLEY_OUTLINE_FLAG,enabled);
+    }
+    /**
+     * This returns whether Rambley's shadow will be painted by this {@code 
+     * RambleyPainter}. The default value for this is {@code true}.
+     * @return Whether Rambley's shadow will be painted.
+     * @see PAINT_RAMBLEY_SHADOW_FLAG
+     * @see #getFlag 
+     * @see setRambleyShadowPainted
+     */
+    public boolean isRambleyShadowPainted(){
+        return getFlag(PAINT_RAMBLEY_SHADOW_FLAG);
+    }
+    /**
+     * This sets whether Rambley's shadow will be painted by this {@code 
+     * RambleyPainter}. The default value for this is {@code true}.
+     * @param enabled Whether Rambley's shadow should be painted.
+     * @return This {@code RambleyPainter}.
+     * @see PAINT_RAMBLEY_SHADOW_FLAG
+     * @see #setFlag 
+     * @see isRambleyShadowPainted
+     */
+    public RambleyPainter setRambleyShadowPainted(boolean enabled){
+        return setFlag(PAINT_RAMBLEY_SHADOW_FLAG,enabled);
     }
     /**
      * This returns whether the polka dots in the background will be circles or 
@@ -2480,7 +2518,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see BasicStroke#JOIN_ROUND
      * @see #getRambleyNormalStroke() 
      * @see #getRambleyDetailStroke() 
-     * @see #getRambleyOutlineStroke() 
+     * @see #getRambleyLineStroke() 
      */
     protected BasicStroke getRambleyStroke(float width){
         return new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
@@ -2494,8 +2532,8 @@ public class RambleyPainter implements Painter<Component>{
      * @return The normal stroke used for drawing Rambley.
      * @see #getRambleyStroke
      * @see getRambleyDetailStroke
-     * @see getRambleyOutlineStroke
-     * @see #getRambleyBorderStroke 
+     * @see #getRambleyLineStroke
+     * @see #getRambleyOutlineStroke 
      * @see BasicStroke#CAP_ROUND
      * @see BasicStroke#JOIN_ROUND
      */
@@ -2513,8 +2551,8 @@ public class RambleyPainter implements Painter<Component>{
      * @return The details stroke used for drawing Rambley.
      * @see #getRambleyStroke
      * @see getRambleyNormalStroke
-     * @see getRambleyOutlineStroke
-     * @see #getRambleyBorderStroke 
+     * @see #getRambleyLineStroke
+     * @see #getRambleyOutlineStroke 
      * @see BasicStroke#CAP_ROUND
      * @see BasicStroke#JOIN_ROUND
      */
@@ -2525,20 +2563,20 @@ public class RambleyPainter implements Painter<Component>{
         return detailStroke;
     }
     /**
-     * This returns a BasicStroke object to use for rendering most of the 
-     * outlines for Rambley. This stroke has a line width of 3.0, the ends 
-     * of the lines will be {@link BasicStroke#CAP_ROUND rounded}, and points 
-     * where paths meet will be {@link BasicStroke#JOIN_ROUND rounded}.
-     * @return The outline stroke used for drawing Rambley.
+     * This returns a BasicStroke object to use for rendering most of the lines 
+     * for Rambley. This stroke has a line width of 3.0, the ends of the lines 
+     * will be {@link BasicStroke#CAP_ROUND rounded}, and points where paths 
+     * meet will be {@link BasicStroke#JOIN_ROUND rounded}.
+     * @return The line stroke used for drawing Rambley.
      * @see #getRambleyStroke
      * @see getRambleyNormalStroke
      * @see getRambleyDetailStroke
-     * @see #getRambleyBorderStroke 
+     * @see #getRambleyOutlineStroke 
      * @see BasicStroke#CAP_ROUND
      * @see BasicStroke#JOIN_ROUND
      */
-    protected BasicStroke getRambleyOutlineStroke(){
-            // If the outline stroke for Rambley has not been initialized yet
+    protected BasicStroke getRambleyLineStroke(){
+            // If the line stroke for Rambley has not been initialized yet
         if (outlineStroke == null)
             outlineStroke = getRambleyStroke(3.0f);
         return outlineStroke;
@@ -3574,13 +3612,13 @@ public class RambleyPainter implements Painter<Component>{
      * @see #RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
      * @see #RAMBLEY_PUPIL_COLOR
-     * @see #RAMBLEY_IRIS_OUTLINE_COLOR
-     * @see #EVIL_RAMBLEY_IRIS_OUTLINE_COLOR
-     * @see #RAMBLEY_EYE_OUTLINE_COLOR
+     * @see #RAMBLEY_IRIS_LINE_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_LINE_COLOR
+     * @see #RAMBLEY_EYE_LINE_COLOR
      * @see #RAMBLEY_IRIS_SIZE
      * @see #RAMBLEY_PUPIL_SIZE
      * @see #getRambleyDetailStroke 
-     * @see #getRambleyOutlineStroke 
+     * @see #getRambleyLineStroke 
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
      */
@@ -3605,8 +3643,8 @@ public class RambleyPainter implements Painter<Component>{
             // Set the color for the outline of Rambley's iris. If Rambley is 
             // evil, use the evil Rambley iris outline color. Otherwise, use the 
             // normal Rambley iris outline color
-        gEye.setColor((isRambleyEvil())?EVIL_RAMBLEY_IRIS_OUTLINE_COLOR:
-                RAMBLEY_IRIS_OUTLINE_COLOR);
+        gEye.setColor((isRambleyEvil())?EVIL_RAMBLEY_IRIS_LINE_COLOR:
+                RAMBLEY_IRIS_LINE_COLOR);
             // Set the stroke to use to the detail stroke
         gEye.setStroke(getRambleyDetailStroke());
             // Draw the outline of the iris
@@ -3618,9 +3656,9 @@ public class RambleyPainter implements Painter<Component>{
             // Create another copy of the given graphics context
         g = (Graphics2D) g.create();
             // Set the stroke to use to the outline stroke
-        g.setStroke(getRambleyOutlineStroke());
+        g.setStroke(getRambleyLineStroke());
             // Draw the outline for Rambley's eye
-        g.setColor(RAMBLEY_EYE_OUTLINE_COLOR);
+        g.setColor(RAMBLEY_EYE_LINE_COLOR);
         g.draw(eyeWhite);
             // Dispose of the copy of the graphics context
         g.dispose();
@@ -3649,13 +3687,13 @@ public class RambleyPainter implements Painter<Component>{
      * @see #RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
      * @see #RAMBLEY_PUPIL_COLOR
-     * @see #RAMBLEY_IRIS_OUTLINE_COLOR
-     * @see #EVIL_RAMBLEY_IRIS_OUTLINE_COLOR
-     * @see #RAMBLEY_EYE_OUTLINE_COLOR
+     * @see #RAMBLEY_IRIS_LINE_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_LINE_COLOR
+     * @see #RAMBLEY_EYE_LINE_COLOR
      * @see #RAMBLEY_IRIS_SIZE
      * @see #RAMBLEY_PUPIL_SIZE
      * @see #getRambleyDetailStroke 
-     * @see #getRambleyOutlineStroke 
+     * @see #getRambleyLineStroke 
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
      */
@@ -3695,13 +3733,13 @@ public class RambleyPainter implements Painter<Component>{
      * @see #RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
      * @see #RAMBLEY_PUPIL_COLOR
-     * @see #RAMBLEY_IRIS_OUTLINE_COLOR
-     * @see #EVIL_RAMBLEY_IRIS_OUTLINE_COLOR
-     * @see #RAMBLEY_EYE_OUTLINE_COLOR
+     * @see #RAMBLEY_IRIS_LINE_COLOR
+     * @see #EVIL_RAMBLEY_IRIS_LINE_COLOR
+     * @see #RAMBLEY_EYE_LINE_COLOR
      * @see #RAMBLEY_IRIS_SIZE
      * @see #RAMBLEY_PUPIL_SIZE
      * @see #getRambleyDetailStroke 
-     * @see #getRambleyOutlineStroke 
+     * @see #getRambleyLineStroke 
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
      */
@@ -4069,7 +4107,7 @@ public class RambleyPainter implements Painter<Component>{
      * This creates and returns the Area that forms Rambley's tongue. This uses 
      * the shape of the mouth returned by the {@link createRambleyOpenMouthShape
      * createRambleyOpenMouthShape} method ({@code openMouth}) to ensure that 
-     * the tongue does not escape the mouth.
+     * the tongue does not escape the mouth. 
      * @param xC The center x-coordinate for the tongue.
      * @param x The x-coordiante for the top-left corner of the tongue.
      * @param y The y-coordinate of the bottom of the mouth.
@@ -4116,7 +4154,10 @@ public class RambleyPainter implements Painter<Component>{
      * portion of the fang. The portion of the fang above the given y-coordinate 
      * is intended to be obscured by the top of the mouth, while the portion of 
      * the fang below the given y-coordinate is intended to be visible in the 
-     * open mouth.
+     * open mouth. <p>
+     * 
+     * Thank you AnimalWave on Discord for the equations on which the fang's 
+     * size was based off of.
      * 
      * @todo Add references to other related methods. 
      * 
@@ -4547,8 +4588,7 @@ public class RambleyPainter implements Painter<Component>{
         Area rambleyShape = new Area(headShape);
             // If Rambley's scarf is to be painted
         if (isRambleyScarfPainted()){
-            // Add Rambley's scarf to the rambleyShape area
-            
+                // Add the neck part of Rambley's scarf to the area
             rambleyShape.add(scarf1);
             
         }
@@ -4575,11 +4615,9 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(Color.BLUE);
             g.draw(scarfPath1);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
-                // If the border around Rambley and Rambley's drop shadow are 
-            if (isBorderAndShadowPainted())     // painted
-                    // Render his border and shadow.
-                paintRambleyBorderAndShadow(g,rambleyShape,0,0,
-                        INTERNAL_RENDER_WIDTH,INTERNAL_RENDER_HEIGHT);
+                // Render Rambley's outline and shadow.
+            paintRambleyOutlineAndShadow(g,rambleyShape,0,0,
+                    INTERNAL_RENDER_WIDTH,INTERNAL_RENDER_HEIGHT);
                 // If Rambley's scarf is to be painted
             if (isRambleyScarfPainted()){
                     // Create a copy of the graphics context to draw the scarf
@@ -4594,21 +4632,6 @@ public class RambleyPainter implements Painter<Component>{
                 // Draw Rambley's body here. 
             
                 // If Rambley's scarf is to be painted
-            if (isRambleyScarfPainted()){
-                    // Create a copy of the graphics context to draw the scarf
-                Graphics2D gScarf = (Graphics2D) g.create();
-                
-                gScarf.setColor(RAMBLEY_SCARF_COLOR);
-                gScarf.fill(scarf1);
-                gScarf.setStroke(getRambleyDetailStroke());
-                gScarf.setColor(RAMBLEY_SCARF_OUTLINE_COLOR);
-                gScarf.draw(scarfPath1);
-                gScarf.setStroke(getRambleyOutlineStroke());
-                gScarf.draw(scarf1);
-                    // Dispose of the scarf graphics context
-                gScarf.dispose();
-            }
-            
                 // Draw Rambley's head and face
             paintRambleyHead(g,headBounds,headShape,earR,earL,earInR,earInL);
             
@@ -4740,7 +4763,7 @@ public class RambleyPainter implements Painter<Component>{
                         point1,quadCurve1,path);
                     // Draw the line that separates the top and bottom of 
                     // Rambley's jaw
-                gMouth.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                gMouth.setColor(RAMBLEY_TEETH_LINE_COLOR);
                 gMouth.draw(path);
             } else {
                     // Create the shape of Rambley's tongue
@@ -4754,25 +4777,25 @@ public class RambleyPainter implements Painter<Component>{
                 gMouth.setColor(RAMBLEY_TONGUE_COLOR);
                 gMouth.fill(tongue);
                     // Draw the outline for Rambley's tongue
-                gMouth.setColor(RAMBLEY_TONGUE_OUTLINE_COLOR);
+                gMouth.setColor(RAMBLEY_TONGUE_LINE_COLOR);
                 gMouth.draw(tongue);
                     // Fill in Rambley's fang(s)
                 gMouth.setColor(RAMBLEY_TEETH_COLOR);
                 gMouth.fill(fang);
                     // Draw the outline for Rambley's fang(s)
-                gMouth.setColor(RAMBLEY_TEETH_OUTLINE_COLOR);
+                gMouth.setColor(RAMBLEY_TEETH_LINE_COLOR);
                 gMouth.draw(fang);
             }   // Dispose of the mouth graphics context
             gMouth.dispose();
                 // Set the stroke to Rambley's detail stroke
             g.setStroke(getRambleyDetailStroke());
                 // Draw Rambley's mouth
-            g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
+            g.setColor(RAMBLEY_MOUTH_LINE_COLOR);
             g.draw(openMouth);
         }   // Set the stroke to Rambley's detail stroke
         g.setStroke(getRambleyDetailStroke());
             // Draw Rambley's mouth
-        g.setColor(RAMBLEY_MOUTH_OUTLINE_COLOR);
+        g.setColor(RAMBLEY_MOUTH_LINE_COLOR);
         g.draw(mouthPath);
             // Set the stroke to Rambley's normal stroke
         g.setStroke(getRambleyNormalStroke());
@@ -4781,8 +4804,8 @@ public class RambleyPainter implements Painter<Component>{
         g.fill(nose);
             // Set the stroke to Rambley's detail stroke
         g.setStroke(getRambleyDetailStroke());
-            // Set the color to the outline color for Rambley's nose
-        g.setColor(RAMBLEY_NOSE_OUTLINE_COLOR);
+            // Set the color to the line color for Rambley's nose
+        g.setColor(RAMBLEY_NOSE_LINE_COLOR);
             // Draw the outline for Rambley's nose
         g.draw(nose);
             // Dispose of the copy of the graphics context
@@ -4821,10 +4844,10 @@ public class RambleyPainter implements Painter<Component>{
         paintRambleySnout(g,headBounds,headShape);
             // Paint Rambley's eyes 
         paintRambleyEyes(g,headBounds,headShape);
-            // Set the color to Rambley's main outline color
-        g.setColor(RAMBLEY_OUTLINE_COLOR);
-            // Set the stroke to Rambley's outline stroke
-        g.setStroke(getRambleyOutlineStroke());
+            // Set the color to Rambley's main line color
+        g.setColor(RAMBLEY_LINE_COLOR);
+            // Set the stroke to Rambley's line stroke
+        g.setStroke(getRambleyLineStroke());
             // Draw the outline for Rambley's head
         g.draw(headShape);
             // Set the stroke to Rambley's detail stroke
@@ -4842,23 +4865,23 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This returns a BasicStroke object to use for rendering the border around 
      * Rambley. This stroke has a line width of 2 * {@link 
-     * RAMBLEY_BORDER_THICKNESS} (in order to have the visible section to be 
-     * {@code RAMBLEY_BORDER_THICKNESS}), the ends of the lines will be {@link 
+     * RAMBLEY_OUTLINE_THICKNESS} (in order to have the visible section to be 
+     * {@code RAMBLEY_OUTLINE_THICKNESS}), the ends of the lines will be {@link 
      * BasicStroke#CAP_ROUND rounded}, and points where paths meet will be 
      * {@link BasicStroke#JOIN_ROUND rounded}.
      * @return The border stroke used for drawing the border around Rambley.
      * @see #getRambleyStroke
      * @see getRambleyNormalStroke
      * @see getRambleyDetailStroke
-     * @see getRambleyOutlineStroke
-     * @see RAMBLEY_BORDER_THICKNESS
+     * @see getRambleyLineStroke
+     * @see RAMBLEY_OUTLINE_THICKNESS
      * @see BasicStroke#CAP_ROUND
      * @see BasicStroke#JOIN_ROUND
      */
-    protected BasicStroke getRambleyBorderStroke(){
+    protected BasicStroke getRambleyOutlineStroke(){
             // If the border stroke for Rambley has not been initialized yet
         if (borderStroke == null)
-            borderStroke = getRambleyStroke(RAMBLEY_BORDER_THICKNESS*2);
+            borderStroke = getRambleyStroke(RAMBLEY_OUTLINE_THICKNESS*2);
         return borderStroke;
     }
     /**
@@ -4866,11 +4889,13 @@ public class RambleyPainter implements Painter<Component>{
      * drop shadow.
      * @param tx An AffineTransform to store the results in, or null.
      * @return An AffineTransform used to turn shapes into drop shadows.
-     * @see #paintRambleyBorderAndShadow 
+     * @see #paintRambleyOutlineAndShadow 
      * @see #paintRambley
      * @see getDropShadow
      * @see RAMBLEY_DROP_SHADOW_X_OFFSET
      * @see RAMBLEY_DROP_SHADOW_Y_OFFSET
+     * @see #isRambleyShadowPainted 
+     * @see #setRambleyShadowPainted 
      */
     protected AffineTransform getDropShadowTransform(AffineTransform tx){
             // If the given AffineTransform is null
@@ -4888,11 +4913,13 @@ public class RambleyPainter implements Painter<Component>{
      * given area.
      * @param area The area to get the drop shadow of.
      * @return An area that represents the drop shadow of the given area.
-     * @see #paintRambleyBorderAndShadow 
+     * @see #paintRambleyOutlineAndShadow 
      * @see #paintRambley
      * @see #getDropShadowTransform 
      * @see RAMBLEY_DROP_SHADOW_X_OFFSET
      * @see RAMBLEY_DROP_SHADOW_Y_OFFSET
+     * @see #isRambleyShadowPainted 
+     * @see #setRambleyShadowPainted 
      */
     protected Area getDropShadow(Area area){
             // Get the AffineTransform for creating the drop shadow
@@ -4901,15 +4928,18 @@ public class RambleyPainter implements Painter<Component>{
         return area.createTransformedArea(afTx);
     }
     /**
-     * This is used to render the border around Rambley the Raccoon and his drop 
-     * shadow. This first draws the drop shadow using the given {@code 
-     * rambleyShape} shifted down and in the {@link RAMBLEY_DROP_SHADOW_COLOR 
-     * color for the shadow}. This then draws the outline of the given {@code 
-     * rambleyShape} with a thick line width in the {@link RAMBLEY_BORDER_COLOR 
-     * border color} to draw the border. This is expected to be rendered before 
-     * Rambley is rendered. This renders to a copy of the given graphics 
-     * context, so as to protect the rest of the paint code from changes made to 
-     * the graphics context while rendering the border and shadow.
+     * This is used to render the outline around Rambley the Raccoon and his 
+     * drop shadow. If {@link #isRambleyShadowPainted Rambley's shadow is 
+     * painted}, then this will first draw the drop shadow using the given 
+     * {@code rambleyShape} shifted down and in the {@link 
+     * RAMBLEY_DROP_SHADOW_COLOR color for the shadow}. If {@link 
+     * #isRambleyOutlinePainted Rambley's outline is painted}, then this will 
+     * draw the outline of the given {@code rambleyShape} with a thick line 
+     * width in the {@link RAMBLEY_OUTLINE_COLOR outline color} to draw the 
+     * outline. This is expected to be rendered before Rambley is rendered. This 
+     * renders to a copy of the given graphics context, so as to protect the 
+     * rest of the paint code from changes made to the graphics context while 
+     * rendering the outline and shadow.
      * @param g The graphics context to render to.
      * @param rambleyShape The Area that forms the outline of Rambley.
      * @param x The x-coordinate of the top-left corner of the area to fill.
@@ -4920,15 +4950,20 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getDropShadow 
      * @see #getDropShadowTransform 
      * @see RAMBLEY_DROP_SHADOW_COLOR
-     * @see RAMBLEY_BORDER_COLOR
+     * @see RAMBLEY_OUTLINE_COLOR
      * @see RAMBLEY_DROP_SHADOW_X_OFFSET
      * @see RAMBLEY_DROP_SHADOW_Y_OFFSET
-     * @see getRambleyBorderStroke 
-     * @see #isBorderAndShadowPainted 
-     * @see #setBorderAndShadowPainted 
+     * @see getRambleyOutlineStroke 
+     * @see #isRambleyOutlinePainted 
+     * @see #setRambleyOutlinePainted 
+     * @see #isRambleyShadowPainted 
+     * @see #setRambleyShadowPainted 
      */
-    protected void paintRambleyBorderAndShadow(Graphics2D g, Area rambleyShape, 
+    protected void paintRambleyOutlineAndShadow(Graphics2D g, Area rambleyShape, 
             double x, double y, double w, double h){
+            // If neither Rambley's outline nor shadow will be painted
+        if (!isRambleyOutlinePainted() && !isRambleyShadowPainted())
+            return;
             // Create a copy of the given graphics context
         g = (Graphics2D) g.create();
             // If the Rectangle2D scratch object has not been initialized yet
@@ -4938,19 +4973,25 @@ public class RambleyPainter implements Painter<Component>{
         rect.setFrame(x, y, w, h);
             // Clip the graphics to be within the rectangle
         g.clip(rect);
-            // Get the area to use to draw Rambley's drop shadow
-        Area shadow = getDropShadow(rambleyShape);
-            // Set the stroke to use to the border stroke
-        g.setStroke(getRambleyBorderStroke());
-            // Fill the area for Rambley's drop shadow
-        g.setColor(RAMBLEY_DROP_SHADOW_COLOR);
-        g.fill(shadow);
-            // Draw the drop shadow so as to match the thickness of the border
-        g.draw(shadow);
-            // Fill the area for the border around rambley
-        g.setColor(RAMBLEY_BORDER_COLOR);
-        g.draw(rambleyShape);
-            // Dispose of the copy of the graphics context
+            // If Rambley's outline should be painted
+        if (isRambleyOutlinePainted())
+                // Set the stroke to use to the outline stroke
+            g.setStroke(getRambleyOutlineStroke());
+            // If Rambley's shadow should be painted
+        if (isRambleyShadowPainted()){
+                // Get the area to use to draw Rambley's drop shadow
+            Area shadow = getDropShadow(rambleyShape);
+                // Fill the area for Rambley's drop shadow
+            g.setColor(RAMBLEY_DROP_SHADOW_COLOR);
+            g.fill(shadow);
+                // Draw the drop shadow so as to match the thickness of the border
+            g.draw(shadow);
+        }   // If Rambley's outline should be painted
+        if (isRambleyOutlinePainted()){
+                // Fill the area for the outline around rambley
+            g.setColor(RAMBLEY_OUTLINE_COLOR);
+            g.draw(rambleyShape);
+        }   // Dispose of the copy of the graphics context
         g.dispose();
     }
     /**
