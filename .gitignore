@@ -27,6 +27,10 @@ replay_pid*
 
 # The open files and bookmarks config file for the project
 /nbproject/private/private.xml
+
+# Windows ini file
+/desktop.ini
+
 /src/raccoon/RambleyTestViewer.java
 /src/raccoon/RambleyTestViewer.form
 /src/raccoon/JRambleyPanel.java
