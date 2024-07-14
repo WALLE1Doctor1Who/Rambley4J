@@ -941,6 +941,20 @@ public class RambleyPainter implements Painter<Component>{
      */
     private QuadCurve2D quadCurve2 = null;
     /**
+     * A scratch CubicCurve2D object used for rendering Rambley. This is 
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
+     */
+    private CubicCurve2D cubicCurve1 = null;
+    /**
+     * A second scratch CubicCurve2D object used for rendering Rambley. This is 
+     * initialized the first time it is used. This scratch object may change at 
+     * any time during the rendering process, and should not be assumed to be in 
+     * a known state before being used.
+     */
+    private CubicCurve2D cubicCurve2 = null;
+    /**
      * This is a scratch AffineTransform used to transform shapes. This is 
      * initially null and is initialized the first time it is used. This scratch 
      * object may change at any time during the rendering process, and should 
@@ -4495,6 +4509,12 @@ public class RambleyPainter implements Painter<Component>{
             // If the second QuadCurve2D scratch object has not been initialized 
         if (quadCurve2 == null)     // yet
             quadCurve2 = new QuadCurve2D.Double();
+            // If the first CubicCurve2D scratch object has not been 
+        if (cubicCurve1 == null)     // initialized yet
+            cubicCurve1 = new CubicCurve2D.Double();
+            // If the second CubicCurve2D scratch object has not been 
+        if (cubicCurve2 == null)     // initialized yet
+            cubicCurve2 = new CubicCurve2D.Double();
             // If the head Ellipse2D scratch object has not been initialized yet
         if (headEllipse == null)
             headEllipse = new Ellipse2D.Double();
@@ -4540,9 +4560,6 @@ public class RambleyPainter implements Painter<Component>{
         double y2 = headEllipse.getMaxY()+6;
         double x1 = x2-40;
         double y1 = y2-28;
-        
-        CubicCurve2D cubicCurve1 = new CubicCurve2D.Double();
-        CubicCurve2D cubicCurve2 = new CubicCurve2D.Double();
         
         cubicCurve1.setCurve(x1, y1, x1, y1+7.5, x2-15, y2, x2, y2);
         cubicCurve2.setCurve(
