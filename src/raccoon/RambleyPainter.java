@@ -2693,7 +2693,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see RAMBLEY_CHEEK_TRIANGLE_HEIGHT
      * @see #getRambleyEar 
      */
-    protected Area getRambleyEarlessHead(double x, double y, Rectangle2D rect, 
+    private Area getRambleyEarlessHead(double x, double y, Rectangle2D rect, 
             Path2D path, Ellipse2D ellipse1, Ellipse2D ellipse2){
             // If the given Rectangle is null
         if (rect == null)
@@ -3016,7 +3016,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #RAMBLEY_EAR_HEIGHT
      * @see #RAMBLEY_EAR_TIP_ROUNDING
      */
-    protected Area getRambleyEar(double x, double y, Path2D path){
+    private Area getRambleyEar(double x, double y, Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -3213,7 +3213,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
      */
-    protected Area getRambleyMaskFaceMarkings(RectangularShape headBounds, 
+    private Area getRambleyMaskFaceMarkings(RectangularShape headBounds, 
             Ellipse2D ellipse1, Ellipse2D ellipse2, Ellipse2D ellipse3, 
             Rectangle2D rect){
             // If the given Rectangle is null
@@ -3308,7 +3308,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
      */
-    protected Area getRambleySnout(RectangularShape headBounds, Area head, 
+    private Area getRambleySnout(RectangularShape headBounds, Area head, 
             Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2, 
             QuadCurve2D quadCurve){
             // If the ellipse is null
@@ -3816,7 +3816,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
      */
-    protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x,
+    private void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x,
             double y,Rectangle2D bounds,double minXOff,double maxXOff,
             Ellipse2D iris,Ellipse2D pupil){
             // If the given bounds for the eye is null
