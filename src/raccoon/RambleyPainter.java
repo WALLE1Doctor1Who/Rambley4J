@@ -2745,6 +2745,17 @@ public class RambleyPainter implements Painter<Component>{
         headShape.intersect(new Area(path));
             // Add the upper part of his head to the lower part
         headShape.add(temp);
+            // Get the amount by which the head shape will need to be shifted 
+            // in order to center it in the x axis
+        double xOff = rect.getCenterX() - headShape.getBounds2D().getCenterX();
+            // If the generic AffineTransform object has not been initialized 
+        if (afTx == null)   // yet
+                // Get a translation transform to center the head shape
+            afTx = AffineTransform.getTranslateInstance(xOff, 0);
+        else    // Set the transform to center the head shape
+            afTx.setToTranslation(xOff, 0);
+            // Transform the head shape in order to center it
+        headShape.transform(afTx);
         return headShape;
     }
     /**
