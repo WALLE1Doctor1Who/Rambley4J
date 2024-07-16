@@ -4,6 +4,7 @@
  */
 package geom;
 
+import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
@@ -1069,5 +1070,135 @@ public final class GeometryMath {
         return getLineIntersection(
                 line1.getX1(),line1.getY1(),line1.getX2(),line1.getY2(),
                 line2.getX1(),line2.getY1(),line2.getX2(),line2.getY2(),point);
+    }
+    
+    
+    
+    /**
+     * This returns a Map that maps the names of the segment types to the 
+     * constants that represent those segment types.
+     * @return An unmodifiable map of the names of the segment types.
+     */
+    private static Map<Integer, String> getSegTypes(){
+            // A map to store the names of the segment types
+        HashMap<Integer,String> segTypes = new HashMap<>();
+        segTypes.put(PathIterator.SEG_MOVETO, "SEG_MOVETO");
+        segTypes.put(PathIterator.SEG_LINETO, "SEG_LINETO");
+        segTypes.put(PathIterator.SEG_QUADTO, "SEG_QUADTO");
+        segTypes.put(PathIterator.SEG_CUBICTO,"SEG_CUBICTO");
+        segTypes.put(PathIterator.SEG_CLOSE,  "SEG_CLOSE");
+        return Collections.unmodifiableMap(segTypes);
+    }
+    /**
+     * This is a map that maps the constants for the segment types in a {@code 
+     * PathIterator} to the names of the constants.
+     * @see PathIterator#SEG_MOVETO
+     * @see PathIterator#SEG_LINETO
+     * @see PathIterator#SEG_QUADTO
+     * @see PathIterator#SEG_CUBICTO
+     * @see PathIterator#SEG_CLOSE
+     */
+    public static final Map<Integer, String> SEGMENT_TYPE_NAMES = getSegTypes();
+    /**
+     * This prints the segment types and coordinates for those segments for the 
+     * given path iterator. This is mainly to be used for debugging purposes.
+     * @param pathItr The path iterator to print the segmants of
+     */
+    public static void printPathIterator(PathIterator pathItr){
+            // An array of 6 doubles to get the coordinates
+        double[] coords = new double[6];
+            // While the path iterator is not done
+        while(!pathItr.isDone()){
+                // Get the type and coordinates for the segment
+            int type = pathItr.currentSegment(coords);
+                // This will be the format to use to format the coordinate pairs
+            String format = ": ";
+                // Determine what coordinates to include based off the type
+            switch(type){
+                    // If the path closes at this segment
+                case(PathIterator.SEG_CLOSE):
+                        // Use a blank string as the format to not include any 
+                    format = "";    // coordinate pairs
+                    break;
+                    // Default any unknown segments types to show all three 
+                default:    // coordinate pairs
+                    // If the segment type is a cubic bezier curve
+                case(PathIterator.SEG_CUBICTO):
+                    format += "(%9.5f, %9.5f), ";
+                    // If the segment type is a quadratic bezier curve
+                case(PathIterator.SEG_QUADTO):
+                    format += "(%9.5f, %9.5f), ";
+                    // If the segment type is a line
+                case(PathIterator.SEG_LINETO):
+                    // If the segment is just moving the point
+                case(PathIterator.SEG_MOVETO):
+                    format += "(%9.5f, %9.5f)";
+            }   // Print out the type and coordinate pairs
+            System.out.printf("%11s"+format,
+                        // Get the type name, defaulting to unknown for unknown 
+                        // segment types
+                    SEGMENT_TYPE_NAMES.getOrDefault(type, "UNKNOWN"),
+                    coords[0],coords[1],coords[2],
+                    coords[3],coords[4],coords[5]);
+            System.out.println();
+                // Advance the path iterator
+            pathItr.next();
+        }
+    }
+    /**
+     * 
+     * @param shape
+     * @param tx 
+     */
+    public static void printPathIterator(Shape shape, AffineTransform tx){
+        printPathIterator(shape.getPathIterator(tx));
+    }
+    /**
+     * 
+     * @param shape 
+     */
+    public static void printPathIterator(Shape shape){
+        printPathIterator(shape,null);
+    }
+    /**
+     * 
+     * @param name The name of the shape, or null
+     * @param shape The shape to print the bounds of
+     */
+    public static void printShape(String name, Shape shape){
+            // Get the bounds of the shape
+        Rectangle2D bounds = shape.getBounds2D();
+            // If the given name of the shape is not null
+        if (name != null)
+            System.out.print(name+": ");
+        System.out.println(bounds + ", Center=(" + 
+                bounds.getCenterX() + ", " + bounds.getCenterY()+"), Max=("+
+                bounds.getMaxX() + ", " + bounds.getMaxY()+")");
+    }
+    /**
+     * 
+     * @param name
+     * @param curve 
+     */
+    public static void printQuadCurve(String name, QuadCurve2D curve){
+            // If the given name of the curve is not null
+        if (name != null)
+            System.out.print(name+": ");
+        System.out.println("P1=" + curve.getP1()+", CtrlPt="+curve.getCtrlPt()+
+                ", P2="+curve.getP2());
+    }
+    /**
+     * 
+     * @param name
+     * @param curve 
+     */
+    public static void printCubicCurve(String name, CubicCurve2D curve){
+            // If the given name of the curve is not null
+        if (name != null)
+            System.out.print(name+": ");
+        System.out.println("P1=" + curve.getP1()+
+                ", CtrlP1="+curve.getCtrlP1()+
+                ", CtrlP2="+curve.getCtrlP2()+
+                ", P2="+curve.getP2());
     }
 }

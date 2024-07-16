@@ -4745,10 +4745,10 @@ public class RambleyPainter implements Painter<Component>{
             
             // DEBUG: If we are showing the lines that make up Rambley 
         if (getShowsLines()){
-            printShape("headBounds",headBounds);
-            printShape("headShape",headShape);
-            printShape("rambleyShape",rambleyShape);
-            printShape("headEllipse",headEllipse);
+            GeometryMath.printShape("headBounds",headBounds);
+            GeometryMath.printShape("headShape",headShape);
+            GeometryMath.printShape("rambleyShape",rambleyShape);
+            GeometryMath.printShape("headEllipse",headEllipse);
 //            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 //                    RenderingHints.VALUE_ANTIALIAS_OFF);
             g.setColor(RAMBLEY_LINE_COLOR);
@@ -5459,75 +5459,165 @@ public class RambleyPainter implements Painter<Component>{
     
     
         // Some debug settings that will be removed when finished
-    
+    /**
+     * This returns whether the debug lines should be shown instead of Rambley. 
+     * This is a debug value and should not be relied upon except during 
+     * debugging, and will be removed at a later date.
+     * @return Whether lines should be shown instead of Rambley.
+     */
     boolean getShowsLines(){
         return false;
     }
+    /**
+     * This returns whether to draw an alternate version of something. What 
+     * exactly this changes will depend on what is currently being tested. This 
+     * is a debug value and should not be relied upon except during debugging, 
+     * and will be removed at a later date.
+     * @return Whether to draw an alternate version of something being tested.
+     */
     boolean getABTesting(){
         return false;
     }
+    /**
+     * This is the first test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble1(){
         return 0.0;
     }
+    /**
+     * This is the second test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble2(){
         return 0.0;
     }
+    /**
+     * This is the third test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble3(){
         return 0.0;
     }
+    /**
+     * This is the fourth test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble4(){
         return 0.0;
     }
+    /**
+     * This is the fifth test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble5(){
         return 0.0;
     }
+    /**
+     * This is the sixth test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble6(){
         return 0.0;
     }
+    /**
+     * This is the seventh test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble7(){
         return 0.0;
     }
+    /**
+     * This is the eigth test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
     double getTestDouble8(){
         return 0.0;
     }
-    
-    static void printPathIterator(PathIterator pathItr){
-        HashMap<Integer,String> segTypes = new HashMap<>();
-        segTypes.put(PathIterator.SEG_MOVETO, "SEG_MOVETO");
-        segTypes.put(PathIterator.SEG_LINETO, "SEG_LINETO");
-        segTypes.put(PathIterator.SEG_QUADTO, "SEG_QUADTO");
-        segTypes.put(PathIterator.SEG_CUBICTO,"SEG_CUBICTO");
-        segTypes.put(PathIterator.SEG_CLOSE,  "SEG_CLOSE");
-        while(!pathItr.isDone()){
-            double[] coords = new double[6];
-            int type = pathItr.currentSegment(coords);
-            System.out.printf("%11s: (%9.5f, %9.5f), (%9.5f, %9.5f), (%9.5f, %9.5f)%n",
-                    segTypes.get(type),coords[0],coords[1],coords[2],coords[3],coords[4],coords[5]);
-            pathItr.next();
-        }
-        System.out.println();
+    /**
+     * This is the ninth test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
+    double getTestDouble9(){
+        return 0.0;
     }
-    
-    static void printPathIterator(Shape shape){
-        printPathIterator(shape.getPathIterator(null));
+    /**
+     * This is the tenth test double value used to dial in a value to use for 
+     * drawing Rambley. What exactly this value is used depends on what is 
+     * currently being worked on. This is a debug value and should not be relied 
+     * upon except during debugging, and will be removed at a later date.
+     * @return A double value used for testing.
+     */
+    double getTestDouble10(){
+        return 0.0;
     }
-    
-    static void printShape(String shapeName, Shape shape){
-        Rectangle2D bounds = shape.getBounds2D();
-        System.out.println(shapeName+": " + bounds + ", Center=(" + 
-                bounds.getCenterX() + ", " + bounds.getCenterY()+"), Max=("+
-                bounds.getMaxX() + ", " + bounds.getMaxY()+")");
+    /**
+     * This calculates a value to use to derive a control point for a curve for 
+     * testing purposes. This is a debug method and should not be relied upon 
+     * upon except during debugging, and will be removed at a later date.
+     * @param x1 The start of the curve.
+     * @param x2 The end of the curve.
+     * @param d1 How much the start of the curve should impact the control 
+     * point.
+     * @param d2 How much the end of the curve should impact the control 
+     * point.
+     * @return A value to use for the control point of a curve.
+     */
+    double getTestCtrlValue(double x1, double x2, double d1, double d2){
+            // If the control values are both zero (prevents a divide by zero)
+        if (d1 == 0 && d2 == 0)
+            return 0;
+        return (x1*d1+x2*d2)/(d1+d2);
     }
-    
-    static void printQuadCurve(String name, QuadCurve2D curve){
-        System.out.println(name+": P1=" + curve.getP1()+
-                ", CtrlPt="+curve.getCtrlPt()+", P2="+curve.getP2());
+    /**
+     * This calculates a value to use as the x coordinate of the control point 
+     * of a curve. The value will be between {@code x1} and {@code x2}, and 
+     * which side will be favored is controlled using the first and second test 
+     * doubles.
+     * @param x1 The x-coordinate of the start of the curve.
+     * @param x2 The x-coordinate of the end of the curve.
+     * @return The x-coordinate for the control point of the curve.
+     */
+    double getTestCtrlX(double x1, double x2){
+        return getTestCtrlValue(x1,x2,getTestDouble1(),getTestDouble2());
     }
-    
-    static void printCubicCurve(String name, CubicCurve2D curve){
-        System.out.println(name+": P1=" + curve.getP1()+
-                ", CtrlP1="+curve.getCtrlP1()+
-                ", CtrlP2="+curve.getCtrlP2()+
-                ", P2="+curve.getP2());
+    /**
+     * This calculates a value to use as the y coordinate of the control point 
+     * of a curve. The value will be between {@code y1} and {@code y2}, and 
+     * which side will be favored is controlled using the third and fourth test 
+     * doubles.
+     * @param y1 The y-coordinate of the start of the curve.
+     * @param y2 The y-coordinate of the end of the curve.
+     * @return The y-coordinate for the control point of the curve.
+     */
+    double getTestCtrlY(double y1, double y2){
+        return getTestCtrlValue(y1,y2,getTestDouble3(),getTestDouble4());
     }
 }
