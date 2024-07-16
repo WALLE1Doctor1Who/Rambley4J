@@ -239,21 +239,25 @@ public class RambleyPainter implements Painter<Component>{
             Math.tan(Math.toRadians(RAMBLEY_CHEEK_ANGLE))*100;
     /**
      * This is the width and height of Rambley's irises.
+     * @see RAMBLEY_PUPIL_SIZE
      */
     protected static final double RAMBLEY_IRIS_SIZE = 24;
     /**
      * This contains half of the {@link RAMBLEY_IRIS_SIZE size} of Rambley's 
      * irises. This is used for calculating the location of Rambley's irises 
      * when using their center coordinates to position them.
+     * @see RAMBLEY_IRIS_SIZE
      */
     private static final double RAMBLEY_IRIS_HALF_SIZE = RAMBLEY_IRIS_SIZE/2.0;
     /**
      * This is the width and height of Rambley's pupils.
+     * @see RAMBLEY_IRIS_SIZE
      */
     protected static final double RAMBLEY_PUPIL_SIZE = RAMBLEY_IRIS_SIZE-14;
     /**
      * This contains half of the {@link RAMBLEY_PUPIL_SIZE size} of Rambley's 
      * pupils. Rambley's pupils are centered in Rambley's irises.
+     * @see RAMBLEY_PUPIL_SIZE
      */
     private static final double RAMBLEY_PUPIL_HALF_SIZE = RAMBLEY_PUPIL_SIZE/2.0;
     /**
@@ -379,10 +383,12 @@ public class RambleyPainter implements Painter<Component>{
     protected static final float RAMBLEY_OUTLINE_THICKNESS = 6.0f;
     /**
      * This is the x offset for Rambley's drop shadow.
+     * @see RAMBLEY_DROP_SHADOW_Y_OFFSET
      */
     protected static final double RAMBLEY_DROP_SHADOW_X_OFFSET = 4.5;
     /**
      * This is the y offset for Rambley's drop shadow.
+     * @see RAMBLEY_DROP_SHADOW_X_OFFSET
      */
     protected static final double RAMBLEY_DROP_SHADOW_Y_OFFSET = 6.0;
     /**
@@ -394,22 +400,27 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is half the width of Rambley's fangs at their base. This is used to 
      * calculate the curve used to produce Rambley's fangs.
+     * @see RAMBLEY_FANG_WIDTH
      */
     private static final double RAMBLEY_FANG_HALF_WIDTH =RAMBLEY_FANG_WIDTH/2.0;
     /**
      * This is the total height of Rambley's fangs. This includes the visible 
      * portion of Rambley's fangs and the portion of Rambley's fangs that is 
      * obscured by the top of Rambley's mouth.
+     * @see RAMBLEY_FANG_VISIBLE_HEIGHT
      */
     protected static final double RAMBLEY_FANG_HEIGHT = 19.5;
     /**
      * This is the height of the visible portion of Rambley's fangs at their 
      * center.
+     * @see RAMBLEY_FANG_HEIGHT
      */
     protected static final double RAMBLEY_FANG_VISIBLE_HEIGHT = 9.5;
     /**
      * This is the height of the portion of Rambley's fangs that is obscured by 
      * the top of Rambley's mouth.
+     * @see RAMBLEY_FANG_HEIGHT
+     * @see RAMBLEY_FANG_VISIBLE_HEIGHT
      */
     private static final double RAMBLEY_FANG_OBSCURED_HEIGHT = 
             RAMBLEY_FANG_HEIGHT - RAMBLEY_FANG_VISIBLE_HEIGHT;
@@ -418,6 +429,28 @@ public class RambleyPainter implements Painter<Component>{
      * Rambley's scarf is shifted up from the bottom portion of the scarf.
      */
     private static final double RAMBLEY_NECK_SCARF_Y_OFFSET = 23;
+    /**
+     * This is the width of the neck portion of Rambley's scarf.
+     * @see RAMBLEY_NECK_SCARF_HEIGHT
+     */
+    protected static final double RAMBLEY_NECK_SCARF_WIDTH = 80;
+    /**
+     * This is half the width of the neck portion of Rambley's scarf.
+     * @see RAMBLEY_NECK_SCARF_WIDTH
+     */
+    private static final double RAMBLEY_NECK_SCARF_HALF_WIDTH = 
+            RAMBLEY_NECK_SCARF_WIDTH/2.0;
+    /**
+     * This is the height of the neck portion of Rambley's scarf.
+     * @see RAMBLEY_NECK_SCARF_WIDTH
+     */
+    protected static final double RAMBLEY_NECK_SCARF_HEIGHT = 80;
+    /**
+     * This is half the height of the neck portion of Rambley's scarf.
+     * @see RAMBLEY_NECK_SCARF_HEIGHT
+     */
+    private static final double RAMBLEY_NECK_SCARF_HALF_HEIGHT = 
+            RAMBLEY_NECK_SCARF_HEIGHT/2.0;
     /**
      * This is the flag for whether the background will be painted.
      */
