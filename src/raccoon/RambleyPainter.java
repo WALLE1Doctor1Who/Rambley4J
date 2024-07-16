@@ -194,13 +194,13 @@ public class RambleyPainter implements Painter<Component>{
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
      */
-    private static final double INTERNAL_RENDER_WIDTH = 320;
+    private static final double INTERNAL_RENDER_WIDTH = 320;//256;
     /**
      * This is the height at which Rambley is rendered at internally. Rambley is 
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
      */
-    private static final double INTERNAL_RENDER_HEIGHT = 320;
+    private static final double INTERNAL_RENDER_HEIGHT = 320;//256;
     /**
      * The offset for the x-coordinate of the top center of Rambley's head.
      */
@@ -209,7 +209,7 @@ public class RambleyPainter implements Painter<Component>{
      * The offset for the y-coordinate of the top center of Rambley's earless 
      * head.
      */
-    private static final double RAMBLEY_Y_OFFSET = 80;
+    private static final double RAMBLEY_Y_OFFSET = 80;//76;
     /**
      * This is the default width and height of the background polka dots.
      */
