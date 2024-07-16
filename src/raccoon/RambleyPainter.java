@@ -194,13 +194,13 @@ public class RambleyPainter implements Painter<Component>{
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
      */
-    protected static final double INTERNAL_RENDER_WIDTH = 320;
+    private static final double INTERNAL_RENDER_WIDTH = 320;
     /**
      * This is the height at which Rambley is rendered at internally. Rambley is 
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
      */
-    protected static final double INTERNAL_RENDER_HEIGHT = 320;
+    private static final double INTERNAL_RENDER_HEIGHT = 320;
     /**
      * The offset for the x-coordinate of the top-left corner of Rambley.
      */
@@ -271,10 +271,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double RAMBLEY_EAR_Y_OFFSET = getRambleyEarOffset(0);
     /**
-     * This is the multiplier to use to convert coordinates in the ear equations 
-     * coordinate system to the image coordinate system.
+     * This is the multiplier to use to convert coordinates in the coordinate 
+     * system used by the equations provided by AnimalWave on Discord to the 
+     * image coordinate system. 
      */
-    private static final double RAMBLEY_EAR_MULTIPLIER = 42;
+    private static final double RAMBLEY_ANIMALWAVE_MULTIPLIER = 42;
     /**
      * This is the height at which Rambley's ears are rendered at. This is not 
      * necessarily the final height of Rambley's ears, as the ears may be 
@@ -282,7 +283,7 @@ public class RambleyPainter implements Painter<Component>{
      * ears is created. This is also used to vertically flip the ears as 
      * otherwise they'd produce upside down ears. 
      */
-    protected static final double RAMBLEY_EAR_HEIGHT = 1.8*RAMBLEY_EAR_MULTIPLIER;
+    protected static final double RAMBLEY_EAR_HEIGHT = 1.8*RAMBLEY_ANIMALWAVE_MULTIPLIER;
     /**
      * This is the offset for the y-coordinates when calculating the curve for 
      * the tip of Rambley's ears. The curve for the tip of Rambley's ears are 
@@ -311,12 +312,12 @@ public class RambleyPainter implements Painter<Component>{
      * @see #earEquToGraphicsX 
      * @see #graphicsToEarEquX 
      * @see RAMBLEY_EAR_HEIGHT
-     * @see RAMBLEY_EAR_MULTIPLIER
+     * @see RAMBLEY_ANIMALWAVE_MULTIPLIER
      * @see RAMBLEY_EAR_Y_OFFSET
      */
     private static double graphicsToEarEquY(double y){
         y = RAMBLEY_EAR_HEIGHT - y;
-        y /= RAMBLEY_EAR_MULTIPLIER;
+        y /= RAMBLEY_ANIMALWAVE_MULTIPLIER;
         return y + RAMBLEY_EAR_Y_OFFSET;
     }
     /**
@@ -329,10 +330,11 @@ public class RambleyPainter implements Painter<Component>{
      * @see #earEquToGraphicsY 
      * @see #graphicsToEarEquY 
      * @see RAMBLEY_EAR_HEIGHT
+     * @see RAMBLEY_ANIMALWAVE_MULTIPLIER
      * @see RAMBLEY_EAR_X_OFFSET
      */
     private static double graphicsToEarEquX(double x){
-        x /= RAMBLEY_EAR_MULTIPLIER;
+        x /= RAMBLEY_ANIMALWAVE_MULTIPLIER;
         return RAMBLEY_EAR_X_OFFSET-x;
     }
     /**
@@ -346,12 +348,12 @@ public class RambleyPainter implements Painter<Component>{
      * @see #graphicsToEarEquX 
      * @see #earEquToGraphicsX 
      * @see RAMBLEY_EAR_HEIGHT
-     * @see RAMBLEY_EAR_MULTIPLIER
+     * @see RAMBLEY_ANIMALWAVE_MULTIPLIER
      * @see RAMBLEY_EAR_Y_OFFSET
      */
     private static double earEquToGraphicsY(double y){
         y -= RAMBLEY_EAR_Y_OFFSET;
-        y *= RAMBLEY_EAR_MULTIPLIER;
+        y *= RAMBLEY_ANIMALWAVE_MULTIPLIER;
         return (RAMBLEY_EAR_HEIGHT-y);
     }
     /**
@@ -365,10 +367,11 @@ public class RambleyPainter implements Painter<Component>{
      * @see #graphicsToEarEquY 
      * @see #earEquToGraphicsY 
      * @see RAMBLEY_EAR_HEIGHT
+     * @see RAMBLEY_ANIMALWAVE_MULTIPLIER
      * @see RAMBLEY_EAR_X_OFFSET
      */
     private static double earEquToGraphicsX(double x){
-        return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_EAR_MULTIPLIER;
+        return (RAMBLEY_EAR_X_OFFSET-x)*RAMBLEY_ANIMALWAVE_MULTIPLIER;
     }
     /**
      * This is the thickness of the outline around Rambley.
@@ -410,6 +413,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double RAMBLEY_FANG_OBSCURED_HEIGHT = 
             RAMBLEY_FANG_HEIGHT - RAMBLEY_FANG_VISIBLE_HEIGHT;
+    /**
+     * This is the amount by which the upper portion of the neck portion of 
+     * Rambley's scarf is shifted up from the bottom portion of the scarf.
+     */
+    private static final double RAMBLEY_NECK_SCARF_Y_OFFSET = 23;
     /**
      * This is the flag for whether the background will be painted.
      */
@@ -815,6 +823,12 @@ public class RambleyPainter implements Painter<Component>{
      * initially null and is initialized the first time it is used.
      */
     private Path2D mouthPath = null;
+    /**
+     * A CubicCurve2D object used for generating the details on the neck portion 
+     * of Rambley's scarf. This is initially null and is initialized the first 
+     * time it is used.
+     */
+    private CubicCurve2D scarfCurve1 = null;
     /**
      * This is a scratch AffineTransform used to flip shapes horizontally. This 
      * is initially null and is initialized the first time it is used.
@@ -4518,6 +4532,9 @@ public class RambleyPainter implements Painter<Component>{
             // If the head Ellipse2D scratch object has not been initialized yet
         if (headEllipse == null)
             headEllipse = new Ellipse2D.Double();
+            // If the CubicCurve2D object for the scarf has not been initialized 
+        if (scarfCurve1 == null)     // yet
+            scarfCurve1 = new CubicCurve2D.Double();
         
             // Create the shape for Rambley's head (without his ears for now)
         Area headShape = getRambleyEarlessHead(getRambleyX(),getRambleyY(),
@@ -4623,10 +4640,8 @@ public class RambleyPainter implements Painter<Component>{
             printShape("headEllipse",headEllipse);
 //            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 //                    RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setColor(RAMBLEY_OUTLINE_COLOR);
+            g.setColor(RAMBLEY_LINE_COLOR);
             g.draw(rambleyShape);
-            g.setColor(Color.RED);
-            g.draw(headShape);
             g.setColor(Color.ORANGE);
             g.draw(headBounds);
             g.setColor(Color.BLUE);
