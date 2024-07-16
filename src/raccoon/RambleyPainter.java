@@ -202,12 +202,12 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double INTERNAL_RENDER_HEIGHT = 320;
     /**
-     * The offset for the x-coordinate of the top-left corner of Rambley's head.
+     * The offset for the x-coordinate of the top center of Rambley's head.
      */
-    private static final double RAMBLEY_X_OFFSET = (INTERNAL_RENDER_WIDTH-200)/2.0;
+    private static final double RAMBLEY_X_OFFSET = INTERNAL_RENDER_WIDTH/2.0;
     /**
-     * The offset for the y-coordinate of the top-left corner of Rambley's 
-     * earless head.
+     * The offset for the y-coordinate of the top center of Rambley's earless 
+     * head.
      */
     private static final double RAMBLEY_Y_OFFSET = 80;
     /**
@@ -2645,10 +2645,10 @@ public class RambleyPainter implements Painter<Component>{
         return outlineStroke;
     }
     /**
-     * This returns the x-coordinate for the top-left corner for Rambley's head 
+     * This returns the x-coordinate for the top center of Rambley's head 
      * without his ears.
-     * @return The offset for the x-coordinate of the top-left corner of 
-     * Rambley's head.
+     * @return The offset for the x-coordinate of the top center of Rambley's 
+     * head.
      * @see #getRambleyY 
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
@@ -2659,10 +2659,10 @@ public class RambleyPainter implements Painter<Component>{
         return RAMBLEY_X_OFFSET;
     }
     /**
-     * This returns the y-coordinate for the top-left corner for Rambley's head 
+     * This returns the y-coordinate for the top center of Rambley's head 
      * without his ears.
-     * @return The offset for the y-coordinate of the top-left corner of 
-     * Rambley's earless head.
+     * @return The offset for the y-coordinate of the top center of Rambley's 
+     * head.
      * @see #getRambleyX
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
@@ -2675,10 +2675,10 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the base shape of Rambley's 
      * head without his ears.
-     * @param x The x-coordinate of the top-left corner of Rambley's head 
-     * without his ears.
-     * @param y The y-coordinate of the top-left corner of Rambley's head 
-     * without his ears.
+     * @param x The x-coordinate of the top center of Rambley's head without his 
+     * ears.
+     * @param y The y-coordinate of the top center of Rambley's head without his 
+     * ears.
      * @param rect A Rectangle2D object to use to store the mask for the lower 
      * half of the cheeks, or null.
      * @param path A Path2D object to use to store the mask for the cheeks, or 
@@ -2710,10 +2710,13 @@ public class RambleyPainter implements Painter<Component>{
             // If the second of the two ellipses are null
         if (ellipse2 == null)
             ellipse2 = new Ellipse2D.Double();
-            // Set the frame of the rectangle to be at the given x-coordinate, 
-            // 84 pixels below the given y-coordinate, and that is 200 x 92.
+            // Set the frame of the rectangle to be centered at the given 
+            // x-coordinate, and 130 pixels below the given y-coordinate. The 
+            // top-left corner of the rectangle will be located 100 pixels to 
+            // the left of the given x-coordinate and 84 pixels below the given 
+            // y-coordinate The rectangle will be 200 x 92.
             // This will form the lower half of the mask for the cheeks
-        rect.setFrame(x, y+84, 200, 92);
+        rect.setFrameFromCenter(x, y+130, x+100, y+84);
             // Append the rectangle to the path
         path.append(rect, false);
             // Line to the top-left corner of the rectangle
