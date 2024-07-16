@@ -202,11 +202,12 @@ public class RambleyPainter implements Painter<Component>{
      */
     private static final double INTERNAL_RENDER_HEIGHT = 320;
     /**
-     * The offset for the x-coordinate of the top-left corner of Rambley.
+     * The offset for the x-coordinate of the top-left corner of Rambley's head.
      */
     private static final double RAMBLEY_X_OFFSET = (INTERNAL_RENDER_WIDTH-200)/2.0;
     /**
-     * The offset for the y-coordinate of the top-left corner of Rambley.
+     * The offset for the y-coordinate of the top-left corner of Rambley's 
+     * earless head.
      */
     private static final double RAMBLEY_Y_OFFSET = 80;
     /**
@@ -2647,7 +2648,7 @@ public class RambleyPainter implements Painter<Component>{
      * This returns the x-coordinate for the top-left corner for Rambley's head 
      * without his ears.
      * @return The offset for the x-coordinate of the top-left corner of 
-     * Rambley.
+     * Rambley's head.
      * @see #getRambleyY 
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
@@ -2661,7 +2662,7 @@ public class RambleyPainter implements Painter<Component>{
      * This returns the y-coordinate for the top-left corner for Rambley's head 
      * without his ears.
      * @return The offset for the y-coordinate of the top-left corner of 
-     * Rambley.
+     * Rambley's earless head.
      * @see #getRambleyX
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
@@ -2711,7 +2712,7 @@ public class RambleyPainter implements Painter<Component>{
             ellipse2 = new Ellipse2D.Double();
             // Set the frame of the rectangle to be at the given x-coordinate, 
             // 84 pixels below the given y-coordinate, and that is 200 x 92.
-            // his will form the lower half of the mask for the cheeks
+            // This will form the lower half of the mask for the cheeks
         rect.setFrame(x, y+84, 200, 92);
             // Append the rectangle to the path
         path.append(rect, false);
@@ -4758,6 +4759,7 @@ public class RambleyPainter implements Painter<Component>{
         if (getShowsLines()){
             GeometryMath.printShape("headBounds",headBounds);
             GeometryMath.printShape("headShape",headShape);
+            GeometryMath.printShape("earR", earR);
             GeometryMath.printShape("rambleyShape",rambleyShape);
             GeometryMath.printShape("headEllipse",headEllipse);
 //            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
