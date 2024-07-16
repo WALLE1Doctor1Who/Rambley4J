@@ -344,7 +344,7 @@ public final class GeometryMath {
      * @param point1 The Point2D object that the first point of intersection 
      * will be stored in.
      * @param point2 The Point2D object that the second point of intersection 
-     * will  be stored in.
+     * will be stored in.
      * @return Whether the line intersects the ellipse.
      * @see #getCircleIntersections(Ellipse2D, double, double, double, double, 
      * Point2D, Point2D) 
@@ -360,7 +360,7 @@ public final class GeometryMath {
                 line.getX2(),line.getY2(),point1,point2);
     }
     /**
-     * 
+     * This is used to calculate a point on a quadratic Bezier curve 
      * @param p0 The starting point of the curve.
      * @param p1 The control point for the curve.
      * @param p2 The end point of the curve.
@@ -372,7 +372,7 @@ public final class GeometryMath {
         return (Math.pow(1-t, 2) * p0)+(2 * t * (1-t)*p1)+(Math.pow(t, 2)*p2);
     }
     /**
-     * 
+     * This calculates and returns 
      * @param x1 The x-coordinate of the starting point of the curve.
      * @param y1 The y-coordinate of the starting point of the curve.
      * @param xC The x-coordinate of the control point for the curve.
@@ -381,7 +381,8 @@ public final class GeometryMath {
      * @param y2 The y-coordinate of the end point of the curve.
      * @param t A value between 0 and 1, inclusive, 
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve that corresponds to the 
+     * given value of {@code t}.
      */
     public static Point2D getQuadBezierPoint(double x1, double y1, double xC, 
             double yC, double x2, double y2, double t, Point2D point){
@@ -399,7 +400,8 @@ public final class GeometryMath {
      * @param p2 The end point of the curve.
      * @param t A value between 0 and 1, inclusive, 
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve that corresponds to the 
+     * given value of {@code t}.
      */
     public static Point2D getQuadBezierPoint(Point2D p1, Point2D pC, 
             Point2D p2, double t, Point2D point){
@@ -411,7 +413,8 @@ public final class GeometryMath {
      * @param curve The curve to get the point on.
      * @param t A value between 0 and 1, inclusive, 
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve that corresponds to the 
+     * given value of {@code t}.
      */
     public static Point2D getQuadBezierPoint(QuadCurve2D curve, double t, 
             Point2D point){
@@ -420,14 +423,14 @@ public final class GeometryMath {
     }
     /**
      * 
-     * @param p0 The starting point of the curve
-     * @param p1 The control point for the curve
-     * @param p2 The end point of the curve
-     * @param p The point to get the value of t for
+     * @param p0 The starting point of the curve.
+     * @param p1 The control point for the curve.
+     * @param p2 The end point of the curve.
+     * @param p The point to get the value of t for.
      * @return The t value for the point on the curve, or Double.NAN if not 
      * found on the curve
      */
-    public static double getQuadBezierT(double p0, double p1, double p2, double p){
+    public static double getQuadBezierT(double p0,double p1,double p2,double p){
             // Get the a coefficient for the quadratic equation
         double a = p0 - (2 * p1) + p2;
             // Get the b coefficient for the quadratic equation
@@ -464,9 +467,11 @@ public final class GeometryMath {
      * @param yC The y-coordinate of the control point for the curve.
      * @param x2 The x-coordinate of the end point of the curve.
      * @param y2 The y-coordinate of the end point of the curve.
-     * @param x The x-coordinate of the point to get
+     * @param x The x-coordinate of the point to get.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve with the given 
+     * x-coordinate, or null if the given x-coordinate does not lie on the 
+     * curve.
      */
     public static Point2D getQuadBezierPointForX(double x1, double y1,double xC, 
             double yC, double x2, double y2, double x, Point2D point){
@@ -486,10 +491,12 @@ public final class GeometryMath {
      * 
      * @param p1 The starting point of the curve
      * @param pC The control point for the curve
-     * @param p2 The end point of the curve
-     * @param x The x-coordinate of the point to get
+     * @param p2 The end point of the curve.
+     * @param x The x-coordinate of the point to get.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve with the given 
+     * x-coordinate, or null if the given x-coordinate does not lie on the 
+     * curve.
      */
     public static Point2D getQuadBezierPointForX(Point2D p1, Point2D pC, 
             Point2D p2, double x, Point2D point){
@@ -499,9 +506,11 @@ public final class GeometryMath {
     /**
      * 
      * @param curve The curve to get the point on.
-     * @param x The x-coordinate of the point to get
+     * @param x The x-coordinate of the point to get.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve with the given 
+     * x-coordinate, or null if the given x-coordinate does not lie on the 
+     * curve.
      */
     public static Point2D getQuadBezierPointForX(QuadCurve2D curve,double x, 
             Point2D point){
@@ -517,9 +526,11 @@ public final class GeometryMath {
      * @param yC The y-coordinate of the control point for the curve.
      * @param x2 The x-coordinate of the end point of the curve.
      * @param y2 The y-coordinate of the end point of the curve.
-     * @param y The y-coordinate of the point to get
+     * @param y The y-coordinate of the point to get.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve with the given 
+     * y-coordinate, or null if the given y-coordinate does not lie on the 
+     * curve.
      */
     public static Point2D getQuadBezierPointForY(double x1, double y1,double xC, 
             double yC, double x2, double y2, double y, Point2D point){
@@ -539,10 +550,12 @@ public final class GeometryMath {
      * 
      * @param p1 The starting point of the curve
      * @param pC The control point for the curve
-     * @param p2 The end point of the curve
-     * @param y The y-coordinate of the point to get
+     * @param p2 The end point of the curve.
+     * @param y The y-coordinate of the point to get.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve with the given 
+     * y-coordinate, or null if the given y-coordinate does not lie on the 
+     * curve.
      */
     public static Point2D getQuadBezierPointForY(Point2D p1, Point2D pC, 
             Point2D p2, double y, Point2D point){
@@ -552,9 +565,11 @@ public final class GeometryMath {
     /**
      * 
      * @param curve The curve to get the point on.
-     * @param y The y-coordinate of the point to get
+     * @param y The y-coordinate of the point to get.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The point on the quadratic Bezier curve with the given 
+     * y-coordinate, or null if the given y-coordinate does not lie on the 
+     * curve.
      */
     public static Point2D getQuadBezierPointForY(QuadCurve2D curve,double y, 
             Point2D point){
@@ -573,7 +588,9 @@ public final class GeometryMath {
      * @param x2 The x-coordinate of the end point of the curve.
      * @param y2 The y-coordinate of the end point of the curve.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The control point for the quadratic Bezier curve that starts at 
+     * point ({@code x0}, {@code y0}), passes through point ({@code x1}, {@code 
+     * y1}), and ends at point ({@code x2}, {@code y2}).
      */
     public static Point2D getQuadBezierControlPoint(double x0, double y0, 
             double x1, double y1, double x2, double y2, Point2D point){
@@ -606,7 +623,9 @@ public final class GeometryMath {
      * @param p1 The point on the curve to pass through.
      * @param p2 The end point of the curve.
      * @param point A Point2D object to store the results in, or null.
-     * @return 
+     * @return The control point for the quadratic Bezier curve that starts at 
+     * point {@code p0}, passes through point {@code p1}, and ends at point 
+     * {@code p2}.
      */
     public static Point2D getQuadBezierControlPoint(Point2D p0, Point2D p1, 
             Point2D p2, Point2D point){
@@ -624,7 +643,9 @@ public final class GeometryMath {
      * @param x2 The x-coordinate of the end point of the curve.
      * @param y2 The y-coordinate of the end point of the curve.
      * @param curve A QuadCurve2D object to store the results in, or null.
-     * @return 
+     * @return The QuadCurve2D object with the quadratic Bezier curve that 
+     * starts at point ({@code x0}, {@code y0}), passes through point 
+     * ({@code x1}, {@code y1}), and ends at point ({@code x2}, {@code y2}).
      */
     public static QuadCurve2D getQuadBezierCurve(double x0, double y0, 
             double x1, double y1, double x2, double y2, QuadCurve2D curve){
@@ -646,7 +667,9 @@ public final class GeometryMath {
      * @param p1 The point on the curve to pass through.
      * @param p2 The end point of the curve.
      * @param curve A QuadCurve2D object to store the results in, or null.
-     * @return 
+     * @return The QuadCurve2D object with the quadratic Bezier curve that 
+     * starts at point {@code p0}, passes through point {@code p1}, and ends at 
+     * point {@code p2}.
      */
     public static QuadCurve2D getQuadBezierCurve(Point2D p0, Point2D p1, 
             Point2D p2, QuadCurve2D curve){
@@ -993,6 +1016,9 @@ public final class GeometryMath {
             line1.setLine(l2);
     }
     /**
+     * 
+     * 
+     * @todo Test this method
      * 
      * @param x1 The x-coordinate of the start point of the first specified 
      * line segment.
