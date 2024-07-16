@@ -3309,6 +3309,7 @@ public class RambleyPainter implements Painter<Component>{
      * curve for Rambley's snout, or null.
      * @return The area around Rambley's nose and mouth.
      * @see #paintRambley 
+     * @see #paintRambleySnout 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
      */
@@ -3397,10 +3398,10 @@ public class RambleyPainter implements Painter<Component>{
      * double, double, Ellipse2D, Ellipse2D) 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
-     * @see #createRambleyEyeMarkings
-     * @see #createRambleyEyeShape
+     * @see #getRambleyEyeMarkings
+     * @see #getRambleyEyeShape
      */
-    private Area createRambleyEyebrow(RectangularShape headBounds, 
+    private Area getRambleyEyebrow(RectangularShape headBounds, 
             Ellipse2D ellipse){
             // If the ellipse is null
         if (ellipse == null)
@@ -3440,10 +3441,10 @@ public class RambleyPainter implements Painter<Component>{
      * double, double, Ellipse2D, Ellipse2D) 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
-     * @see #createRambleyEyebrow 
-     * @see #createRambleyEyeShape
+     * @see #getRambleyEyebrow 
+     * @see #getRambleyEyeShape
      */
-    private Area createRambleyEyeMarkings(RectangularShape headBounds, 
+    private Area getRambleyEyeMarkings(RectangularShape headBounds, 
             Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2, 
             QuadCurve2D quadCurve){
             // If the given Ellipse2D object is null
@@ -3520,7 +3521,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns an Area that forms the shape of Rambley's right 
      * eye. This uses the ellipse and quadratic curve given to {@link 
-     * #createRambleyEyeMarkings createRambleyEyeMarkings} method 
+     * #getRambleyEyeMarkings getRambleyEyeMarkings} method 
      * ({@code eyeMarkEllipse} and {@code eyeMarkCurve}) to position and control 
      * the shape of the eye.
      * @param headBounds The bounds of Rambley's head to position and control 
@@ -3552,10 +3553,10 @@ public class RambleyPainter implements Painter<Component>{
      * double, double, Ellipse2D, Ellipse2D) 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
-     * @see #createRambleyEyebrow 
-     * @see #createRambleyEyeMarkings
+     * @see #getRambleyEyebrow 
+     * @see #getRambleyEyeMarkings
      */
-    private Area createRambleyEyeShape(RectangularShape headBounds, 
+    private Area getRambleyEyeShape(RectangularShape headBounds, 
             Ellipse2D eyeMarkEllipse,QuadCurve2D eyeMarkCurve,Ellipse2D ellipse, 
             RectangularShape rect, Path2D path, Point2D point1, Point2D point2, 
             Point2D point3){
@@ -3679,12 +3680,13 @@ public class RambleyPainter implements Painter<Component>{
      * @param iris The Ellipse2D object representing Rambley's iris.
      * @param pupil The Ellipse2D object representing Rambley's pupil.
      * @see #paintRambley 
+     * @see #paintRambleyEyes
      * @see #setRambleyEyeLocation 
      * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, 
      * Ellipse2D) 
      * @see #paintRambleyEye(Graphics2D, Shape, double, double, Rectangle2D, 
      * double, double, Ellipse2D, Ellipse2D) 
-     * @see #createRambleyEyeShape
+     * @see #getRambleyEyeShape
      * @see #RAMBLEY_EYE_WHITE_COLOR
      * @see #RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
@@ -3755,11 +3757,12 @@ public class RambleyPainter implements Painter<Component>{
      * @param iris The Ellipse2D object representing Rambley's iris, or null.
      * @param pupil The Ellipse2D object representing Rambley's pupil, or null.
      * @see #paintRambley 
+     * @see #paintRambleyEyes
      * @see #setRambleyEyeLocation 
      * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
      * @see #paintRambleyEye(Graphics2D, Shape, double, double, Rectangle2D, 
      * double, double, Ellipse2D, Ellipse2D) 
-     * @see #createRambleyEyeShape
+     * @see #getRambleyEyeShape
      * @see #RAMBLEY_EYE_WHITE_COLOR
      * @see #RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
@@ -3801,11 +3804,12 @@ public class RambleyPainter implements Painter<Component>{
      * @param iris The Ellipse2D object representing Rambley's iris, or null.
      * @param pupil The Ellipse2D object representing Rambley's pupil, or null.
      * @see #paintRambley 
+     * @see #paintRambleyEyes
      * @see #setRambleyEyeLocation 
      * @see #paintRambleyEye(Graphics2D, Shape, Ellipse2D, Ellipse2D) 
      * @see #paintRambleyEye(Graphics2D, Shape, double, double, Ellipse2D, 
      * Ellipse2D) 
-     * @see #createRambleyEyeShape
+     * @see #getRambleyEyeShape
      * @see #RAMBLEY_EYE_WHITE_COLOR
      * @see #RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
@@ -3855,9 +3859,10 @@ public class RambleyPainter implements Painter<Component>{
      * @return The area that forms Rambley's nose.
      * @see #paintRambley 
      * @see #getRambleySnout 
-     * @see #createRambleyMouthCurve
+     * @see #getRambleyMouthCurve
+     * @see #getRambleyOpenMouth
      */
-    private Area createRambleyNoseShape(Ellipse2D snout, Rectangle2D rect, 
+    private Area getRambleyNose(Ellipse2D snout, Rectangle2D rect, 
             Ellipse2D ellipse, Path2D path){
             // If the given Path2D object is null
         if (path == null)
@@ -3931,16 +3936,18 @@ public class RambleyPainter implements Painter<Component>{
      * @param path A Path2D object to store the results in, or null.
      * @return A Path2D object with the mouth curve.
      * @see #paintRambley 
+     * @see #paintRambleySnout 
      * @see #getRambleySnout 
-     * @see #createRambleyNoseShape
-     * @see createRambleyTongueShape
+     * @see #getRambleyNose
+     * @see #getRambleyOpenMouth
+     * @see #getRambleyTongue
      * @see #getRambleyFangCurve 
-     * @see createRambleyFangShape
-     * @see #createRambleyClosedTeethLine
+     * @see #getRambleyFangs
+     * @see #getRambleyClosedTeeth
      */
-    private Path2D createRambleyMouthCurve(Ellipse2D snout, Point2D point, 
-            QuadCurve2D quadCurve1, QuadCurve2D quadCurve2, 
-            Point2D point1, Point2D point2, Path2D path){
+    private Path2D getRambleyMouthCurve(Ellipse2D snout, Point2D point, 
+            QuadCurve2D quadCurve1, QuadCurve2D quadCurve2, Point2D point1, 
+            Point2D point2, Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -4026,8 +4033,8 @@ public class RambleyPainter implements Painter<Component>{
      * uses the ellipse given to the {@link #getRambleySnout getRambleySnout} 
      * method ({@code snout}) to control the maximum height of the mouth. This 
      * also uses the path returned by and the quadratic curves given to the 
-     * {@link #createRambleyMouthCurve createRambleyMouthCurve} method, those 
-     * being {@code mouthCurve} (the path), {@code mouthQuad1}, and {@code 
+     * {@link #getRambleyMouthCurve getRambleyMouthCurve} method, those being 
+     * {@code mouthCurve} (the path), {@code mouthQuad1}, and {@code 
      * mouthQuad2} to control and position the mouth.
      * 
      * @todo Add references to other related methods.
@@ -4061,23 +4068,23 @@ public class RambleyPainter implements Painter<Component>{
      * mouth, or null.
      * @return The area that forms Rambley's open mouth.
      * @see #paintRambley 
+     * @see #paintRambleySnout 
      * @see #getRambleySnout 
-     * @see #createRambleyNoseShape
-     * @see createRambleyMouthCurve
-     * @see createRambleyTongueShape
+     * @see #getRambleyNose
+     * @see #getRambleyMouthCurve
+     * @see #getRambleyTongue
      * @see #getRambleyFangCurve 
-     * @see createRambleyFangShape
-     * @see #createRambleyClosedTeethLine
+     * @see #getRambleyFangs
+     * @see #getRambleyClosedTeeth
      * @see #getRambleyOpenMouthWidth 
      * @see #setRambleyOpenMouthWidth 
      * @see #getRambleyOpenMouthHeight
      * @see #setRambleyOpenMouthHeight
      */
-    private Area createRambleyOpenMouthShape(Path2D mouthCurve,
-            double mouthWidth, double mouthHeight, Ellipse2D snout,
-            QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, Point2D point1, 
-            Point2D point2, QuadCurve2D quadCurve, Rectangle2D rect, 
-            Path2D path){
+    private Area getRambleyOpenMouth(Path2D mouthCurve, double mouthWidth, 
+            double mouthHeight, Ellipse2D snout,QuadCurve2D mouthQuad1, 
+            QuadCurve2D mouthQuad2, Point2D point1, Point2D point2, 
+            QuadCurve2D quadCurve, Rectangle2D rect, Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -4182,9 +4189,9 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns the Area that forms Rambley's tongue. This uses 
-     * the shape of the mouth returned by the {@link createRambleyOpenMouthShape
-     * createRambleyOpenMouthShape} method ({@code openMouth}) to ensure that 
-     * the tongue does not escape the mouth. 
+     * the shape of the mouth returned by the {@link #getRambleyOpenMouth
+     * getRambleyOpenMouth} method ({@code openMouth}) to ensure that the tongue 
+     * does not escape the mouth. 
      * @param xC The center x-coordinate for the tongue.
      * @param x The x-coordiante for the top-left corner of the tongue.
      * @param y The y-coordinate of the bottom of the mouth.
@@ -4197,18 +4204,19 @@ public class RambleyPainter implements Painter<Component>{
      * null.
      * @return An area that forms Rambley's tongue.
      * @see #paintRambley 
-     * @see #createRambleyNoseShape
-     * @see createRambleyMouthCurve
-     * @see createRambleyFangShape
-     * @see #createRambleyClosedTeethLine
+     * @see #paintRambleySnout 
+     * @see #getRambleyNose
+     * @see #getRambleyMouthCurve
+     * @see #getRambleyOpenMouth
+     * @see #getRambleyFangs
+     * @see #getRambleyClosedTeeth
      * @see #getRambleyOpenMouthWidth 
      * @see #setRambleyOpenMouthWidth 
      * @see #getRambleyOpenMouthHeight
      * @see #setRambleyOpenMouthHeight
      */
-    private Area createRambleyTongueShape(double xC, double x, double y, 
-            double mouthWidth, double mouthHeight, Area openMouth, 
-            Ellipse2D ellipse){
+    private Area getRambleyTongue(double xC,double x,double y,double mouthWidth, 
+            double mouthHeight, Area openMouth, Ellipse2D ellipse){
             // If the given Ellipse2D object is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -4251,9 +4259,11 @@ public class RambleyPainter implements Painter<Component>{
      * @return A QuadCurve2D object with the curve that forms half of Rambley's 
      * fang.
      * @see #paintRambley 
-     * @see createRambleyMouthCurve
-     * @see #createRambleyFangShape
-     * @see #createRambleyClosedTeethLine
+     * @see #paintRambleySnout 
+     * @see #getRambleyMouthCurve
+     * @see #getRambleyOpenMouth
+     * @see #getRambleyFangs
+     * @see #getRambleyClosedTeeth
      * @see #getRambleyOpenMouthWidth 
      * @see #setRambleyOpenMouthWidth 
      * @see #getRambleyOpenMouthHeight
@@ -4290,11 +4300,11 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This creates and returns the Area that forms Rambley's fangs. This uses 
      * the two quadratic bezier curves that form the right side of Rambley's 
-     * mouth, as calculated by the {@link #createRambleyMouthCurve 
-     * createRambleyMouthCurve} method (these being the curves {@code 
-     * mouthQuad1} and {@code mouthQuad2}), to control the size and position of 
-     * Rambley's right fang. The curve that forms half of Rambley's right fang 
-     * are calculated using the {@link #getRambleyFangCurve getRambleyFangCurve} 
+     * mouth, as calculated by the {@link #getRambleyMouthCurve 
+     * getRambleyMouthCurve} method (these being the curves {@code mouthQuad1} 
+     * and {@code mouthQuad2}), to control the size and position of Rambley's 
+     * right fang. The curve that forms half of Rambley's right fang are 
+     * calculated using the {@link #getRambleyFangCurve getRambleyFangCurve} 
      * method, with the top center of the visible portion of the right fang 
      * being located around the lowest point on the right side of the mouth 
      * curve. If either Rambley is {@link #isRambleyEvil evil} or Rambley's fang 
@@ -4304,8 +4314,8 @@ public class RambleyPainter implements Painter<Component>{
      * fangs on either side of his face. If Rambley is not evil, but his fang is 
      * to be on his left, then the left fang will be returned instead of the 
      * right fang. Finally, this uses the shape of the mouth returned by the 
-     * {@link createRambleyOpenMouthShape createRambleyOpenMouthShape} method 
-     * ({@code openMouth}) to ensure that the fang(s) do not escape the mouth.
+     * {@link #getRambleyOpenMouth getRambleyOpenMouth} method ({@code 
+     * openMouth}) to ensure that the fang(s) do not escape the mouth.
      * 
      * @todo Add references to other related methods. Also, possibly make it so 
      * the fang's position is dependent on the width of the mouth (i.e. move the 
@@ -4331,11 +4341,13 @@ public class RambleyPainter implements Painter<Component>{
      * null.
      * @return The area that forms Rambley's fang(s).
      * @see #paintRambley 
-     * @see #createRambleyNoseShape
-     * @see createRambleyMouthCurve
-     * @see createRambleyTongueShape
+     * @see #paintRambleySnout 
+     * @see #getRambleyNose
+     * @see #getRambleyMouthCurve
+     * @see #getRambleyOpenMouth
+     * @see #getRambleyTongue
      * @see #getRambleyFangCurve 
-     * @see #createRambleyClosedTeethLine
+     * @see #getRambleyClosedTeeth
      * @see #getRambleyOpenMouthWidth 
      * @see #setRambleyOpenMouthWidth 
      * @see #getRambleyOpenMouthHeight
@@ -4348,7 +4360,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #RAMBLEY_FANG_HEIGHT
      * @see RAMBLEY_FANG_VISIBLE_HEIGHT
      */
-    private Area createRambleyFangShape(double mouthWidth, double mouthHeight, 
+    private Area getRambleyFangs(double mouthWidth, double mouthHeight, 
             QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, Area openMouth, 
             QuadCurve2D quadCurve, Path2D path){
             // If the given Path2D object is null
@@ -4423,10 +4435,10 @@ public class RambleyPainter implements Painter<Component>{
      * @return A Path2D object to use to draw the line separating the upper and 
      * lower halves of Rambley's jaw.
      */
-    private Path2D createRambleyClosedTeethLine(double mouthWidth, 
-            double mouthHeight, QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, 
-            Path2D mouthCurve, QuadCurve2D openQuad, Area mouthOpen, 
-            Point2D point, QuadCurve2D quadCurve, Path2D path){
+    private Path2D getRambleyClosedTeeth(double mouthWidth, double mouthHeight, 
+            QuadCurve2D mouthQuad1, QuadCurve2D mouthQuad2, Path2D mouthCurve, 
+            QuadCurve2D openQuad, Area mouthOpen, Point2D point, 
+            QuadCurve2D quadCurve, Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -4508,7 +4520,7 @@ public class RambleyPainter implements Painter<Component>{
      * @return The area that forms the shape of Rambley's scarf without the 
      * knot.
      */
-    private Area createRambleyNeckScarf(double x, double y, 
+    private Area getRambleyNeckScarf(double x, double y, 
             CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
             // If the given Path2D object is null
         if (path == null)
@@ -4571,9 +4583,9 @@ public class RambleyPainter implements Painter<Component>{
      * This creates and returns the path to use to draw the details for 
      * Rambley's scarf without the knot at the back. That is to say, this 
      * returns the details for the neck portion of Rambley's scarf. This uses 
-     * the first curve passed to the {@link createRambleyNeckScarf 
-     * createRambleyNeckScarf} method ({@code scarfCurve}) to form the details 
-     * for the scarf.
+     * the first curve passed to the {@link #getRambleyNeckScarf 
+     * getRambleyNeckScarf} method ({@code scarfCurve}) to form the details for 
+     * the scarf.
      * 
      * @todo Add references to other related methods. 
      * 
@@ -4587,7 +4599,7 @@ public class RambleyPainter implements Painter<Component>{
      * @return A Path2D object to use to draw the details for Rambley's scarf 
      * without the knot.
      */
-    private Path2D createRambleyNeckScarfDetail(CubicCurve2D scarfCurve, 
+    private Path2D getRambleyNeckScarfDetail(CubicCurve2D scarfCurve, 
             CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
             // If the given Path2D object is null
         if (path == null)
@@ -4621,19 +4633,31 @@ public class RambleyPainter implements Painter<Component>{
         return path;
     }
     /**
-     * This is used to render Rambley the Raccoon.
+     * This is used to render Rambley the Raccoon, his outline, his shadow, and 
+     * his accessories. 
      * 
      * This renders to a copy of the given graphics context, so as to 
      * protect the rest of the paint code from changes made to the graphics 
      * context while rendering Rambley.
+     * 
+     * @todo Add references to related methods. Describe how Rambley is 
+     * rendered, mentioning the methods this method delegates tasks to.
      * 
      * @param g The graphics context to render to.
      * @param x The x-coordinate of the top-left corner of the area to fill.
      * @param y The y-coordinate of the top-left corner of the area to fill.
      * @param w The width of the area to fill.
      * @param h The height of the area to fill.
+     * @return The shape of Rambley's body.
+     * @see #paint 
+     * @see #paintBackground 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int, Shape) 
+     * @see #paintPixelGrid(Graphics2D, int, int, int, int) 
+     * @see #paintRambleyOutlineAndShadow 
+     * @see #paintRambleyHead
+     * @see #paintRambleyNeckScarf 
      */
-    protected void paintRambley(Graphics2D g, int x, int y, int w, int h){
+    protected Shape paintRambley(Graphics2D g, int x, int y, int w, int h){
             // Create a copy of the given graphics context limited to the given 
             // area to fill
         g = (Graphics2D) g.create(x,y,w,h);
@@ -4735,7 +4759,7 @@ public class RambleyPainter implements Painter<Component>{
             // Create the front (neck) part of Rambley's scarf. If Rambley is 
             // flipped, the scarf will be offset two pixels to the right. 
             // Otherwise, the scarf will be offset two pixels to the left
-        Area scarf1 = createRambleyNeckScarf(
+        Area scarf1 = getRambleyNeckScarf(
                 headBounds.getCenterX()+(isRambleyFlipped()?2:-2),
                 headEllipse.getMaxY()+6,scarfCurve1,cubicCurve1,path);
         
@@ -4798,189 +4822,44 @@ public class RambleyPainter implements Painter<Component>{
             
             // Draw Rambley's conductor hat here
             
-            // Draw any parts that cover Rambley's face here
+            // Draw any parts that may cover Rambley's face here
             
         }
             // Dispose of the copy of the graphics context
         g.dispose();
+        return rambleyShape;
     }
     /**
+     * This is used to render Rambley the Raccoon's head and face. 
+     * 
+     * This renders to a copy of the given graphics context, so as to 
+     * protect the rest of the paint code from changes made to the graphics 
+     * context while rendering Rambley's head.
+     * 
+     * @todo Add references to related methods. Describe how Rambley's head is 
+     * rendered, mentioning the methods this method delegates tasks to.
      * 
      * @param g The graphics context to render to.
-     * @param headBounds The bounds of Rambley's head.
-     * @param headShape The shape of Rambley's head.
-     */
-    protected void paintRambleyEyes(Graphics2D g, RectangularShape headBounds, 
-            Area headShape){
-            // If the iris Ellipse2D object has not been initialized yet
-        if (iris == null)
-            iris = new Ellipse2D.Double();
-            // If the pupil Ellipse2D object has not been initialized yet
-        if (pupil == null)
-            pupil = new Ellipse2D.Double();
-            // Create Rambley's right eyebrow (this will intersect with the 
-            // other eye markings)
-        Area eyeBrowR = createRambleyEyebrow(headBounds,ellipse2);
-            // Flip to form the Left eyebrow (this will intersect with the 
-            // other eye markings)
-        Area eyeBrowL = createHorizontallyMirroredArea(eyeBrowR,
-                headBounds.getCenterX());
-            // Create the area around Rambley's right eye
-        Area eyeSurroundR = createRambleyEyeMarkings(headBounds,ellipse3,path,
-                point1,point2,quadCurve1);
-            // Flip to form the area around Rambley's left eye
-        Area eyeSurroundL = createHorizontallyMirroredArea(eyeSurroundR,
-                headBounds.getCenterX());
-            // Create the shape of Rambley's right eye
-        Area eyeWhiteR = createRambleyEyeShape(headBounds,ellipse3,quadCurve1,
-                ellipse1,rect,path,point4,point5,point6);
-            // Flip to form the shape of Rambley's left eye
-        Area eyeWhiteL = createHorizontallyMirroredArea(eyeWhiteR,
-                headBounds.getCenterX());
-            // Create a copy of the graphics context
-        g = (Graphics2D) g.create();
-            // Set the color to Rambley's eye brow color
-        g.setColor(RAMBLEY_EYEBROW_COLOR);
-            // Fill in Rambley's eyebrows
-        g.fill(eyeBrowR);
-        g.fill(eyeBrowL);
-            // Set the color to use to Rambley's secondary body color
-        g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
-            // Fill in the area arround Rambley's eyes
-        g.fill(eyeSurroundR);
-        g.fill(eyeSurroundL);
-            // Get the bounds for the right eye
-        Rectangle2D eyeBounds = eyeWhiteR.getBounds2D();
-            // Get the offset to use to shift the iris and pupil to their 
-            // default positions
-        double pupilX = ((headBounds.getCenterX()-25)-eyeBounds.getCenterX())*2;
-            // Draw Rambley's right eye
-        paintRambleyEye(g,eyeWhiteR,getRambleyRightEyeX(),getRambleyRightEyeY(),
-                eyeBounds,0,pupilX,iris,pupil);
-            // Draw Rambley's left eye
-        paintRambleyEye(g,eyeWhiteL,getRambleyLeftEyeX(),getRambleyLeftEyeY(),
-                eyeWhiteL.getBounds2D(),-pupilX,0,iris,pupil);
-            // Dispose of the copy of the graphics context
-        g.dispose();
-    }
-    /**
-     * 
-     * @param g The graphics context to render to.
-     * @param headBounds The bounds of Rambley's head.
-     * @param headShape The shape of Rambley's head.
-     */
-    protected void paintRambleySnout(Graphics2D g, RectangularShape headBounds, 
-            Area headShape){
-            // If the first mouth QuadCurve2D scratch object has not been 
-        if (mouthCurve1 == null)    // initialized yet
-            mouthCurve1 = new QuadCurve2D.Double();
-            // If the second mouth QuadCurve2D scratch object has not been  
-        if (mouthCurve2 == null)     // initialized yet
-            mouthCurve2 = new QuadCurve2D.Double();
-            // Create the area around Rambley's nose and mouth
-        Area snoutArea = getRambleySnout(headBounds,headShape,ellipse2,path,
-                point1,point2,quadCurve1);
-            // Create the shape of Rambley's nose
-        Area nose = createRambleyNoseShape(ellipse2,rect,ellipse1,path);
-            // Set the location of the point to the bottom center of the nose
-        point1.setLocation(rect.getCenterX(),rect.getMaxY());
-            // Get the curve for Rambley's mouth, using the bottom center of the 
-            // nose to position the mouth.
-        mouthPath = createRambleyMouthCurve(ellipse2,point1,mouthCurve1,
-                mouthCurve2,point2,point3,mouthPath);
-            // Create a copy of the graphics context
-        g = (Graphics2D) g.create();
-            // Set the color to use to Rambley's secondary body color
-        g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
-            // Fill in Rambley's snout area
-        g.fill(snoutArea);
-            // If Rambley's open mouth is open
-        if (isRambleyMouthOpen()){
-                // Get how wide the mouth should be
-            double mouthWidth = getRambleyOpenMouthWidth();
-                // Get the height of the open mouth
-            double mouthHeight = getRambleyOpenMouthHeight();
-                // Create the shape of Rambley's mouth when open
-            Area openMouth = createRambleyOpenMouthShape(mouthPath, mouthWidth, 
-                    mouthHeight,ellipse2,mouthCurve1,mouthCurve2,point4,point5,
-                    quadCurve2,rect,path);
-                // Set the color to use for drawing the area for Rambley's open
-                // mouth. If Rambley's jaw is closed, use Rambley's teeth color 
-                // since we can only see Rambley's teeth. Otherwise, use the 
-                // color of the inside of Rambley's mouth
-            g.setColor(isRambleyJawClosed()?RAMBLEY_TEETH_COLOR:RAMBLEY_MOUTH_COLOR);
-                // Fill in the area for Rambley's open mouth
-            g.fill(openMouth);
-                // Create a copy of the graphics context to draw the inner mouth
-            Graphics2D gMouth = (Graphics2D) g.create();
-                // Clip the graphics context to the open mouth
-            gMouth.clip(openMouth);
-                // If Rambley's jaw is closed
-            if (isRambleyJawClosed()){
-                    // Create the path to use to draw the line that separates 
-                    // the upper and lower teeth.
-                path = createRambleyClosedTeethLine(mouthWidth, mouthHeight, 
-                        mouthCurve1,mouthCurve2,mouthPath,quadCurve2,openMouth,
-                        point1,quadCurve1,path);
-                    // Draw the line that separates the top and bottom of 
-                    // Rambley's jaw
-                gMouth.setColor(RAMBLEY_TEETH_LINE_COLOR);
-                gMouth.draw(path);
-            } else {
-                    // Create the shape of Rambley's tongue
-                Area tongue = createRambleyTongueShape(rect.getCenterX(),
-                        mouthCurve2.getX2(),rect.getMaxY(),mouthWidth, 
-                        mouthHeight, openMouth,ellipse1);
-                    // Create the shape of Rambley's right fang
-                Area fang = createRambleyFangShape(mouthWidth, mouthHeight, 
-                        mouthCurve1,mouthCurve2,openMouth,quadCurve1,path);
-                    // Fill in Rambley's tongue
-                gMouth.setColor(RAMBLEY_TONGUE_COLOR);
-                gMouth.fill(tongue);
-                    // Draw the outline for Rambley's tongue
-                gMouth.setColor(RAMBLEY_TONGUE_LINE_COLOR);
-                gMouth.draw(tongue);
-                    // Fill in Rambley's fang(s)
-                gMouth.setColor(RAMBLEY_TEETH_COLOR);
-                gMouth.fill(fang);
-                    // Draw the outline for Rambley's fang(s)
-                gMouth.setColor(RAMBLEY_TEETH_LINE_COLOR);
-                gMouth.draw(fang);
-            }   // Dispose of the mouth graphics context
-            gMouth.dispose();
-                // Set the stroke to Rambley's detail stroke
-            g.setStroke(getRambleyDetailStroke());
-                // Draw Rambley's mouth
-            g.setColor(RAMBLEY_MOUTH_LINE_COLOR);
-            g.draw(openMouth);
-        }   // Set the stroke to Rambley's detail stroke
-        g.setStroke(getRambleyDetailStroke());
-            // Draw Rambley's mouth
-        g.setColor(RAMBLEY_MOUTH_LINE_COLOR);
-        g.draw(mouthPath);
-            // Set the stroke to Rambley's normal stroke
-        g.setStroke(getRambleyNormalStroke());
-            // Draw Rambley's nose
-        g.setColor(RAMBLEY_NOSE_COLOR);
-        g.fill(nose);
-            // Set the stroke to Rambley's detail stroke
-        g.setStroke(getRambleyDetailStroke());
-            // Set the color to the line color for Rambley's nose
-        g.setColor(RAMBLEY_NOSE_LINE_COLOR);
-            // Draw the outline for Rambley's nose
-        g.draw(nose);
-            // Dispose of the copy of the graphics context
-        g.dispose();
-    }
-    /**
-     * 
-     * @param g The graphics context to render to.
-     * @param headBounds The bounds of Rambley's head.
+     * @param headBounds The bounds of Rambley's head, or null.
      * @param headShape The shape of Rambley's head.
      * @param earR The shape of Rambley's right ear.
      * @param earL The shape of Rambley's left ear.
      * @param earInR The shape of the inner portion of Rambley's right ear.
      * @param earInL The shape of the inner portion of Rambley's left ear.
+     * @see #paintRambley 
+     * @see #paintRambleyEyes
+     * @see #paintRambleySnout 
+     * @see #getRambleyEarlessHead
+     * @see #getRambleyEar 
+     * @see #getRambleyInnerEar 
+     * @see getRambleyMaskFaceMarkings
+     * @see #getRambleyNormalStroke 
+     * @see #getRambleyDetailStroke 
+     * @see #getRambleyLineStroke 
+     * @see RAMBLEY_MAIN_BODY_COLOR
+     * @see RAMBLEY_FACE_MARKINGS_COLOR
+     * @see RAMBLEY_SECONDARY_BODY_COLOR
+     * @see RAMBLEY_LINE_COLOR
      */
     protected void paintRambleyHead(Graphics2D g, RectangularShape headBounds, 
             Area headShape, Area earR, Area earL, Area earInR, Area earInL){
@@ -5021,6 +4900,207 @@ public class RambleyPainter implements Painter<Component>{
         g.dispose();
     }
     /**
+     * This is used to render Rambley the Raccoon's eyes. 
+     * 
+     * This renders to a copy of the given graphics context, so as to 
+     * protect the rest of the paint code from changes made to the graphics 
+     * context while rendering Rambley's eyes.
+     * 
+     * @todo Add references to related methods. Describe how Rambley's eyes are 
+     * rendered, mentioning the methods this method delegates tasks to.
+     * 
+     * @param g The graphics context to render to.
+     * @param headBounds The bounds of Rambley's head, or null.
+     * @param headShape The shape of Rambley's head (cannot be null).
+     */
+    protected void paintRambleyEyes(Graphics2D g, RectangularShape headBounds, 
+            Area headShape){
+            // If the iris Ellipse2D object has not been initialized yet
+        if (iris == null)
+            iris = new Ellipse2D.Double();
+            // If the pupil Ellipse2D object has not been initialized yet
+        if (pupil == null)
+            pupil = new Ellipse2D.Double();
+            // If the given bounds for the head is null
+        if (headBounds == null)
+            headBounds = getBoundsOfShape(headShape);
+            // Create Rambley's right eyebrow (this will intersect with the 
+            // other eye markings)
+        Area eyeBrowR = getRambleyEyebrow(headBounds,ellipse2);
+            // Flip to form the Left eyebrow (this will intersect with the 
+            // other eye markings)
+        Area eyeBrowL = createHorizontallyMirroredArea(eyeBrowR,
+                headBounds.getCenterX());
+            // Create the area around Rambley's right eye
+        Area eyeSurroundR = getRambleyEyeMarkings(headBounds,ellipse3,path,
+                point1,point2,quadCurve1);
+            // Flip to form the area around Rambley's left eye
+        Area eyeSurroundL = createHorizontallyMirroredArea(eyeSurroundR,
+                headBounds.getCenterX());
+            // Create the shape of Rambley's right eye
+        Area eyeWhiteR = getRambleyEyeShape(headBounds,ellipse3,quadCurve1,
+                ellipse1,rect,path,point4,point5,point6);
+            // Flip to form the shape of Rambley's left eye
+        Area eyeWhiteL = createHorizontallyMirroredArea(eyeWhiteR,
+                headBounds.getCenterX());
+            // Create a copy of the graphics context
+        g = (Graphics2D) g.create();
+            // Set the color to Rambley's eye brow color
+        g.setColor(RAMBLEY_EYEBROW_COLOR);
+            // Fill in Rambley's eyebrows
+        g.fill(eyeBrowR);
+        g.fill(eyeBrowL);
+            // Set the color to use to Rambley's secondary body color
+        g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
+            // Fill in the area arround Rambley's eyes
+        g.fill(eyeSurroundR);
+        g.fill(eyeSurroundL);
+            // Get the bounds for the right eye
+        Rectangle2D eyeBounds = eyeWhiteR.getBounds2D();
+            // Get the offset to use to shift the iris and pupil to their 
+            // default positions
+        double pupilX = ((headBounds.getCenterX()-25)-eyeBounds.getCenterX())*2;
+            // Draw Rambley's right eye
+        paintRambleyEye(g,eyeWhiteR,getRambleyRightEyeX(),getRambleyRightEyeY(),
+                eyeBounds,0,pupilX,iris,pupil);
+            // Draw Rambley's left eye
+        paintRambleyEye(g,eyeWhiteL,getRambleyLeftEyeX(),getRambleyLeftEyeY(),
+                eyeWhiteL.getBounds2D(),-pupilX,0,iris,pupil);
+            // Dispose of the copy of the graphics context
+        g.dispose();
+    }
+    /**
+     * This is used to render Rambley the Raccoon's snout, nose, and mouth. This 
+     * uses the shape and bounds of the head to control the position of the 
+     * snout.
+     * 
+     * This renders to a copy of the given graphics context, so as to 
+     * protect the rest of the paint code from changes made to the graphics 
+     * context while rendering Rambley's snout.
+     * 
+     * @todo Add references to related methods. Describe how Rambley's snout is 
+     * rendered, mentioning the methods this method delegates tasks to.
+     * 
+     * @param g The graphics context to render to.
+     * @param headBounds The bounds of Rambley's head, or null.
+     * @param headShape The shape of Rambley's head (cannot be null).
+     * @see #paintRambley 
+     * @see #paintRambleyHead 
+     * @see #paintRambleyEyes
+     * @see getRambleySnout
+     * @see getRambleyNose
+     * @see #getRambleyMouthCurve
+     * @see #getRambleyOpenMouth
+     * @see #getRambleyTongue 
+     * 
+     * @see #getRambleyNormalStroke 
+     * @see #getRambleyDetailStroke 
+     * @see #getRambleyLineStroke 
+     */
+    protected void paintRambleySnout(Graphics2D g, RectangularShape headBounds, 
+            Area headShape){
+            // If the first mouth QuadCurve2D scratch object has not been 
+        if (mouthCurve1 == null)    // initialized yet
+            mouthCurve1 = new QuadCurve2D.Double();
+            // If the second mouth QuadCurve2D scratch object has not been  
+        if (mouthCurve2 == null)     // initialized yet
+            mouthCurve2 = new QuadCurve2D.Double();
+            // Create the area around Rambley's nose and mouth
+        Area snoutArea = getRambleySnout(headBounds,headShape,ellipse2,path,
+                point1,point2,quadCurve1);
+            // Create the shape of Rambley's nose
+        Area nose = getRambleyNose(ellipse2,rect,ellipse1,path);
+            // Set the location of the point to the bottom center of the nose
+        point1.setLocation(rect.getCenterX(),rect.getMaxY());
+            // Get the curve for Rambley's mouth, using the bottom center of the 
+            // nose to position the mouth.
+        mouthPath = getRambleyMouthCurve(ellipse2,point1,mouthCurve1,
+                mouthCurve2,point2,point3,mouthPath);
+            // Create a copy of the graphics context
+        g = (Graphics2D) g.create();
+            // Set the color to use to Rambley's secondary body color
+        g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
+            // Fill in Rambley's snout area
+        g.fill(snoutArea);
+            // If Rambley's open mouth is open
+        if (isRambleyMouthOpen()){
+                // Get how wide the mouth should be
+            double mouthWidth = getRambleyOpenMouthWidth();
+                // Get the height of the open mouth
+            double mouthHeight = getRambleyOpenMouthHeight();
+                // Create the shape of Rambley's mouth when open
+            Area openMouth = getRambleyOpenMouth(mouthPath, mouthWidth, 
+                    mouthHeight,ellipse2,mouthCurve1,mouthCurve2,point4,point5,
+                    quadCurve2,rect,path);
+                // Set the color to use for drawing the area for Rambley's open
+                // mouth. If Rambley's jaw is closed, use Rambley's teeth color 
+                // since we can only see Rambley's teeth. Otherwise, use the 
+                // color of the inside of Rambley's mouth
+            g.setColor(isRambleyJawClosed()?RAMBLEY_TEETH_COLOR:RAMBLEY_MOUTH_COLOR);
+                // Fill in the area for Rambley's open mouth
+            g.fill(openMouth);
+                // Create a copy of the graphics context to draw the inner mouth
+            Graphics2D gMouth = (Graphics2D) g.create();
+                // Clip the graphics context to the open mouth
+            gMouth.clip(openMouth);
+                // If Rambley's jaw is closed
+            if (isRambleyJawClosed()){
+                    // Create the path to use to draw the line that separates 
+                    // the upper and lower teeth.
+                path = getRambleyClosedTeeth(mouthWidth, mouthHeight, 
+                        mouthCurve1,mouthCurve2,mouthPath,quadCurve2,openMouth,
+                        point1,quadCurve1,path);
+                    // Draw the line that separates the top and bottom of 
+                    // Rambley's jaw
+                gMouth.setColor(RAMBLEY_TEETH_LINE_COLOR);
+                gMouth.draw(path);
+            } else {
+                    // Create the shape of Rambley's tongue
+                Area tongue = getRambleyTongue(rect.getCenterX(),
+                        mouthCurve2.getX2(),rect.getMaxY(),mouthWidth, 
+                        mouthHeight, openMouth,ellipse1);
+                    // Create the shape of Rambley's right fang
+                Area fang = getRambleyFangs(mouthWidth, mouthHeight, 
+                        mouthCurve1,mouthCurve2,openMouth,quadCurve1,path);
+                    // Fill in Rambley's tongue
+                gMouth.setColor(RAMBLEY_TONGUE_COLOR);
+                gMouth.fill(tongue);
+                    // Draw the outline for Rambley's tongue
+                gMouth.setColor(RAMBLEY_TONGUE_LINE_COLOR);
+                gMouth.draw(tongue);
+                    // Fill in Rambley's fang(s)
+                gMouth.setColor(RAMBLEY_TEETH_COLOR);
+                gMouth.fill(fang);
+                    // Draw the outline for Rambley's fang(s)
+                gMouth.setColor(RAMBLEY_TEETH_LINE_COLOR);
+                gMouth.draw(fang);
+            }   // Dispose of the mouth graphics context
+            gMouth.dispose();
+                // Set the stroke to Rambley's detail stroke
+            g.setStroke(getRambleyDetailStroke());
+                // Draw Rambley's mouth
+            g.setColor(RAMBLEY_MOUTH_LINE_COLOR);
+            g.draw(openMouth);
+        }   // Set the stroke to Rambley's detail stroke
+        g.setStroke(getRambleyDetailStroke());
+            // Draw Rambley's mouth
+        g.setColor(RAMBLEY_MOUTH_LINE_COLOR);
+        g.draw(mouthPath);
+            // Set the stroke to Rambley's normal stroke
+        g.setStroke(getRambleyNormalStroke());
+            // Draw Rambley's nose
+        g.setColor(RAMBLEY_NOSE_COLOR);
+        g.fill(nose);
+            // Set the stroke to Rambley's detail stroke
+        g.setStroke(getRambleyDetailStroke());
+            // Set the color to the line color for Rambley's nose
+        g.setColor(RAMBLEY_NOSE_LINE_COLOR);
+            // Draw the outline for Rambley's nose
+        g.draw(nose);
+            // Dispose of the copy of the graphics context
+        g.dispose();
+    }
+    /**
      * This is used to render 
      * @param g The graphics context to render to.
      * @param scarfArea
@@ -5029,7 +5109,7 @@ public class RambleyPainter implements Painter<Component>{
     protected void paintRambleyNeckScarf(Graphics2D g, Area scarfArea, 
             CubicCurve2D scarfCurve){
             // Calculate the path containing the details of the scarf
-        path = createRambleyNeckScarfDetail(scarfCurve,cubicCurve1,cubicCurve2,
+        path = getRambleyNeckScarfDetail(scarfCurve,cubicCurve1,cubicCurve2,
                 path);
             // Create a copy of the graphics context to draw the scarf
         g = (Graphics2D) g.create();
