@@ -444,7 +444,7 @@ public class RambleyPainter implements Painter<Component>{
      * This is the height of the neck portion of Rambley's scarf.
      * @see RAMBLEY_NECK_SCARF_WIDTH
      */
-    protected static final double RAMBLEY_NECK_SCARF_HEIGHT = 80;
+    protected static final double RAMBLEY_NECK_SCARF_HEIGHT = 56;
     /**
      * This is half the height of the neck portion of Rambley's scarf.
      * @see RAMBLEY_NECK_SCARF_HEIGHT
