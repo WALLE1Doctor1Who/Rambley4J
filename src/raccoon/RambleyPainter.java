@@ -4475,6 +4475,136 @@ public class RambleyPainter implements Painter<Component>{
         return path;
     }
     /**
+     * This creates and returns the Area that forms Rambley's scarf without the 
+     * knot at the back. That is to say, this returns the area that forms the 
+     * neck portion of Rambley's scarf.
+     * 
+     * @todo Add references to other related methods. 
+     * 
+     * @param x The x-coordinate of the bottom center of the scarf.
+     * @param y The y-coordinate of the bottom center of the scarf.
+     * @param cubicCurve1 A CubicCurve2D object to store the bottom-left curve 
+     * of the top portion of the scarf, or null.
+     * @param cubicCurve2 A CubicCurve2D object to store the top-left curve of 
+     * the top portion of the scarf, or null.
+     * @param path A Path2D object to use to form the top portion of the scarf, 
+     * or null. 
+     * @return The area that forms the shape of Rambley's scarf without the 
+     * knot.
+     */
+    private Area createRambleyNeckScarf(double x, double y, 
+            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // If the first given CubicCurve2D object is null
+        if (cubicCurve1 == null)
+            cubicCurve1 = new CubicCurve2D.Double();
+            // If the second given CubicCurve2D object is null
+        if (cubicCurve2 == null)
+            cubicCurve2 = new CubicCurve2D.Double();
+            // Shift it up to get the bottom of the top part of the scarf 
+        y -= RAMBLEY_NECK_SCARF_Y_OFFSET;
+            // This gets the left-most x-coordinate for the scarf
+        double x1 = x-RAMBLEY_NECK_SCARF_HALF_WIDTH;
+            // This gets the center y-coordinate for the top part of the scarf
+        double y1 = y-RAMBLEY_NECK_SCARF_HALF_HEIGHT;
+            // Set the first curve of the top part to be from the center left of 
+            // the top of the scarf to the bottom center of the top of the 
+            // scarf. The first control coordinate is at 7.5 pixels below the 
+            // start of the curve. The second control point is 15 pixels to the 
+            // left of the end of the curve. This forms the bottom-left curve 
+            // used for the top part of the scarf
+        cubicCurve1.setCurve(x1, y1, x1, y1+7.5, x-15, y, x, y);
+            // Set the second curve to be a vertically flipped version of the 
+            // first curve that starts at the top center of the top part of the 
+            // scarf and ends where the first curve starts. This forms the 
+            // top-left curve for the top part of the scarf
+        cubicCurve2.setCurve(
+                cubicCurve1.getX2(), y1-(cubicCurve1.getY2()-y1), 
+                cubicCurve1.getCtrlX2(), y1-(cubicCurve1.getCtrlY2()-y1), 
+                cubicCurve1.getCtrlX1(), y1-(cubicCurve1.getCtrlY1()-y1), 
+                cubicCurve1.getX1(), cubicCurve1.getY1());
+            // Append the top-left curve to the path
+        path.append(cubicCurve2, false);
+            // Append the bottom-left curve to the path
+        path.append(cubicCurve1, true);
+            // Close the path
+        path.closePath();
+            // Mirror the path horizontally to get the other side of the top of 
+            // the scarf
+        path = mirrorPathHorizontally(path,x);
+            // Create an area with the path to get the neck portion of the scarf
+        Area scarf = new Area(path);
+            // If the scratch AffineTransform is null
+        if (afTx == null)
+                // Create a translation transform to move the top of the scarf 
+                // down to form the bottom of the scarf
+            afTx = AffineTransform.getTranslateInstance(0, RAMBLEY_NECK_SCARF_Y_OFFSET);
+        else    // Set the transform to be a translation transform to move the 
+                // top of the scarf down to form the bottom of the scarf
+            afTx.setToTranslation(0, RAMBLEY_NECK_SCARF_Y_OFFSET);
+            // Add a version of the scarf area that has been translated 
+            // downwards to form the bottom part of the scarf
+        scarf.add(scarf.createTransformedArea(afTx));
+        return scarf;
+    }
+    /**
+     * This creates and returns the path to use to draw the details for 
+     * Rambley's scarf without the knot at the back. That is to say, this 
+     * returns the details for the neck portion of Rambley's scarf. This uses 
+     * the first curve passed to the {@link createRambleyNeckScarf 
+     * createRambleyNeckScarf} method ({@code scarfCurve}) to form the details 
+     * for the scarf.
+     * 
+     * @todo Add references to other related methods. 
+     * 
+     * @param scarfCurve The CubicCurve2D object with the bottom-left curve of 
+     * the top portion of the scarf (cannot be null).
+     * @param cubicCurve1 A CubicCurve2D object to use to split a CubicCurve2D 
+     * object, or null.
+     * @param cubicCurve2 A second CubicCurve2D object to use to split a 
+     * CubicCurve2D object, or null.
+     * @param path A Path2D object to store the results in, or null.
+     * @return A Path2D object to use to draw the details for Rambley's scarf 
+     * without the knot.
+     */
+    private Path2D createRambleyNeckScarfDetail(CubicCurve2D scarfCurve, 
+            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
+            // If the given Path2D object is null
+        if (path == null)
+            path = new Path2D.Double();
+        else    // Reset the given Path2D object
+            path.reset();
+            // If the first given CubicCurve2D object is null
+        if (cubicCurve1 == null)
+            cubicCurve1 = new CubicCurve2D.Double();
+            // If the second given CubicCurve2D object is null
+        if (cubicCurve2 == null)
+            cubicCurve2 = new CubicCurve2D.Double();
+            // Divide the curve
+        scarfCurve.subdivide(cubicCurve1, cubicCurve2);
+            // Add the left side of the curve to the path
+        path.append(cubicCurve1, false);
+            // Divide the right side of the curve
+        cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
+            // Divide the left side of the right side of the curve
+        cubicCurve1.subdivide(cubicCurve1, cubicCurve2);
+            // Add the left side of the curve to the path
+        path.append(cubicCurve1, true);
+            // Divide the right side of the curve
+        cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
+            // Add the left side of the curve to the path
+        path.append(cubicCurve1, true);
+            // Add a line that goes down and to the left
+        path.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
+            // Mirror the path to get the other side
+        path = mirrorPathHorizontally(path,scarfCurve.getX2());
+        return path;
+    }
+    /**
      * This is used to render Rambley the Raccoon.
      * 
      * This renders to a copy of the given graphics context, so as to 
@@ -4571,7 +4701,7 @@ public class RambleyPainter implements Painter<Component>{
         
             // Create the shape for Rambley's head (without his ears for now)
         Area headShape = getRambleyEarlessHead(getRambleyX(),getRambleyY(),
-                rect,path,headEllipse,ellipse1);
+                rect,path,headEllipse,ellipse2);
             // Get the bounds for the head, so that we can base the facial 
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
@@ -4587,69 +4717,17 @@ public class RambleyPainter implements Painter<Component>{
         headShape.add(earR);
             // Add Rambley's left ear to the shape of his head.
         headShape.add(earL);
+            // Create the front (neck) part of Rambley's scarf. If Rambley is 
+            // flipped, the scarf will be offset two pixels to the right. 
+            // Otherwise, the scarf will be offset two pixels to the left
+        Area scarf1 = createRambleyNeckScarf(
+                headBounds.getCenterX()+(isRambleyFlipped()?2:-2),
+                headEllipse.getMaxY()+6,scarfCurve1,cubicCurve1,path);
         
         // Code for creating the scarf goes here. The scarf will consist of two 
         // parts, one that is drawn behind Rambley's body and one that is drawn 
         // in front of Rambley's body, but behind his head
-        
-        double d1 = getTestDouble1();
-        double d2 = getTestDouble2();
-        double d3 = getTestDouble3();
-        double d4 = getTestDouble4();
-        double d5 = getTestDouble5();
-        double d6 = getTestDouble6();
-        double d7 = getTestDouble7();
-        double d8 = getTestDouble8();
-        
-//        double xC = (x1*d1+x2*d2)/(d1+d2);
-//        double yC = (y1*d3+y2*d4)/(d3+d4);
 
-            // Create the front part of the scarf
-        
-        double x2 = headBounds.getCenterX();
-        double y2 = headEllipse.getMaxY()+6;
-        double x1 = x2-40;
-        double y1 = y2-28;
-        
-        cubicCurve1.setCurve(x1, y1, x1, y1+7.5, x2-15, y2, x2, y2);
-        cubicCurve2.setCurve(
-                cubicCurve1.getX2(), cubicCurve1.getY1()-(cubicCurve1.getY2()-cubicCurve1.getY1()), 
-                cubicCurve1.getCtrlX2(), cubicCurve1.getY1()-(cubicCurve1.getCtrlY2()-cubicCurve1.getY1()), 
-                cubicCurve1.getCtrlX1(), cubicCurve1.getY1()-(cubicCurve1.getCtrlY1()-cubicCurve1.getY1()), 
-                cubicCurve1.getX1(), cubicCurve1.getY1());
-        
-        Path2D scarfPath1 = new Path2D.Double();
-        scarfPath1.append(cubicCurve2, false);
-        scarfPath1.append(cubicCurve1, true);
-        scarfPath1.closePath();
-        scarfPath1 = mirrorPathHorizontally(scarfPath1,headBounds.getCenterX());
-        Area scarf1 = new Area(scarfPath1);
-        if (afTx == null)
-            afTx = AffineTransform.getTranslateInstance(0, -23);
-        else 
-            afTx.setToTranslation(0, -23);
-        scarf1.add(scarf1.createTransformedArea(afTx));
-        
-        cubicCurve1.setCurve(cubicCurve1.getX1(), cubicCurve1.getY1()+afTx.getTranslateY(), 
-                cubicCurve1.getCtrlX1(), cubicCurve1.getCtrlY1()+afTx.getTranslateY(), 
-                cubicCurve1.getCtrlX2(), cubicCurve1.getCtrlY2()+afTx.getTranslateY(), 
-                cubicCurve1.getX2(), cubicCurve1.getY2()+afTx.getTranslateY());
-        
-        scarfPath1.reset();
-        
-        cubicCurve1.subdivide(cubicCurve1, cubicCurve2);
-        scarfPath1.append(cubicCurve1, false);
-        cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
-        cubicCurve1.subdivide(cubicCurve1, cubicCurve2);
-        scarfPath1.append(cubicCurve1, true);
-        cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
-        scarfPath1.append(cubicCurve1, true);
-        
-        scarfPath1.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
-        
-        scarfPath1 = mirrorPathHorizontally(scarfPath1,headBounds.getCenterX());
-        
-        
             // This is an area that contains the entire shape of Rambley's 
             // outline. Start this area with the shape of his head.
         Area rambleyShape = new Area(headShape);
@@ -4657,7 +4735,7 @@ public class RambleyPainter implements Painter<Component>{
         if (isRambleyScarfPainted()){
                 // Add the neck part of Rambley's scarf to the area
             rambleyShape.add(scarf1);
-            
+                // Add the knot part of Rambley's scarf to the area
         }
         
             // Code for adding other parts of Rambley's outline goes here
@@ -4678,7 +4756,7 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(Color.ORANGE);
             g.draw(headBounds);
             g.setColor(Color.BLUE);
-            g.draw(scarfPath1);
+            g.draw(path);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // Render Rambley's outline and shadow.
             paintRambleyOutlineAndShadow(g,rambleyShape,0,0,
@@ -4697,6 +4775,9 @@ public class RambleyPainter implements Painter<Component>{
                 // Draw Rambley's body here. 
             
                 // If Rambley's scarf is to be painted
+            if (isRambleyScarfPainted())
+                    // Draw the front part of Rambley's scarf
+                paintRambleyNeckScarf(g,scarf1,scarfCurve1);
                 // Draw Rambley's head and face
             paintRambleyHead(g,headBounds,headShape,earR,earL,earInR,earInL);
             
@@ -4922,6 +5003,36 @@ public class RambleyPainter implements Painter<Component>{
             // Draw the outline for Rambley's inner left ear
         g.draw(earInL);
             // Dispose of the copy of the graphics context
+        g.dispose();
+    }
+    /**
+     * This is used to render 
+     * @param g The graphics context to render to.
+     * @param scarfArea
+     * @param scarfCurve 
+     */
+    protected void paintRambleyNeckScarf(Graphics2D g, Area scarfArea, 
+            CubicCurve2D scarfCurve){
+            // Calculate the path containing the details of the scarf
+        path = createRambleyNeckScarfDetail(scarfCurve,cubicCurve1,cubicCurve2,
+                path);
+            // Create a copy of the graphics context to draw the scarf
+        g = (Graphics2D) g.create();
+            // Set the color to be the color for Rambley's scarf
+        g.setColor(RAMBLEY_SCARF_COLOR);
+            // Fill in the neck of Rambley's scarf
+        g.fill(scarfArea);
+            // Set the color to be the color for the outline of Rambley's scarf
+        g.setColor(RAMBLEY_SCARF_LINE_COLOR);
+            // Set the stroke to the detail stroke
+        g.setStroke(getRambleyDetailStroke());
+            // Draw the path containing the details of the scarf
+        g.draw(path);
+            // Set the stroke to the line stroke
+        g.setStroke(getRambleyLineStroke());
+            // Draw the outline of the scarf
+        g.draw(scarfArea);
+            // Dispose of the scarf graphics context
         g.dispose();
     }
     
