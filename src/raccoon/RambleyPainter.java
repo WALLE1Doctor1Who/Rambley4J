@@ -287,7 +287,8 @@ public class RambleyPainter implements Painter<Component>{
      * ears is created. This is also used to vertically flip the ears as 
      * otherwise they'd produce upside down ears. 
      */
-    protected static final double RAMBLEY_EAR_HEIGHT = 1.8*RAMBLEY_ANIMALWAVE_MULTIPLIER;
+    protected static final double RAMBLEY_EAR_HEIGHT = 
+            1.8*RAMBLEY_ANIMALWAVE_MULTIPLIER;
     /**
      * This is the offset for the y-coordinates when calculating the curve for 
      * the tip of Rambley's ears. The curve for the tip of Rambley's ears are 
@@ -4618,16 +4619,15 @@ public class RambleyPainter implements Painter<Component>{
      * @param h The height of the area to fill.
      */
     protected void paintRambley(Graphics2D g, int x, int y, int w, int h){
-            // Create a copy of the given graphics context
-        g = (Graphics2D) g.create();
+            // Create a copy of the given graphics context limited to the given 
+            // area to fill
+        g = (Graphics2D) g.create(x,y,w,h);
             // Get the scale factor for the x axis
         double scaleX = w/INTERNAL_RENDER_WIDTH;
             // Get the scale factor for the y axis
         double scaleY = h/INTERNAL_RENDER_HEIGHT;
             // If we are to ignore Rambley's aspect ratio
         if (isAspectRatioIgnored()){
-                // Translate to the given x and y coordinates
-            g.translate(x, y);
                 // Scale it to fit the internal rendering size
             g.scale(scaleX, scaleY);
         } else {// Get the smaller of the two scale factors (this will be what 
@@ -4638,7 +4638,7 @@ public class RambleyPainter implements Painter<Component>{
                 // Get the height of the area that will actually be rendered
             double height = Math.min(h, h*(scaleX/scaleY));
                 // Translate to center the image that will be rendered
-            g.translate((w-width)/2.0+x, (h-height)/2.0+y);
+            g.translate((w-width)/2.0, (h-height)/2.0);
                 // Scale it, preserving the aspect ratio
             g.scale(scale,scale);
         }   // If the Rectangle2D scratch object has not been initialized yet
@@ -4759,8 +4759,7 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(path);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // Render Rambley's outline and shadow.
-            paintRambleyOutlineAndShadow(g,rambleyShape,0,0,
-                    INTERNAL_RENDER_WIDTH,INTERNAL_RENDER_HEIGHT);
+            paintRambleyOutlineAndShadow(g,rambleyShape);
                 // If Rambley's scarf is to be painted
             if (isRambleyScarfPainted()){
                     // Create a copy of the graphics context to draw the scarf
@@ -5118,10 +5117,6 @@ public class RambleyPainter implements Painter<Component>{
      * rendering the outline and shadow.
      * @param g The graphics context to render to.
      * @param rambleyShape The Area that forms the outline of Rambley.
-     * @param x The x-coordinate of the top-left corner of the area to fill.
-     * @param y The y-coordinate of the top-left corner of the area to fill.
-     * @param w The width of the area to fill.
-     * @param h The height of the area to fill.
      * @see #paintRambley
      * @see #getDropShadow 
      * @see #getDropShadowTransform 
@@ -5135,20 +5130,12 @@ public class RambleyPainter implements Painter<Component>{
      * @see #isRambleyShadowPainted 
      * @see #setRambleyShadowPainted 
      */
-    protected void paintRambleyOutlineAndShadow(Graphics2D g, Area rambleyShape, 
-            double x, double y, double w, double h){
+    protected void paintRambleyOutlineAndShadow(Graphics2D g,Area rambleyShape){
             // If neither Rambley's outline nor shadow will be painted
         if (!isRambleyOutlinePainted() && !isRambleyShadowPainted())
             return;
             // Create a copy of the given graphics context
         g = (Graphics2D) g.create();
-            // If the Rectangle2D scratch object has not been initialized yet
-        if (rect == null)
-            rect = new Rectangle2D.Double();
-            // Set the frame of the rectangle to be the given rectangle
-        rect.setFrame(x, y, w, h);
-            // Clip the graphics to be within the rectangle
-        g.clip(rect);
             // If Rambley's outline should be painted
         if (isRambleyOutlinePainted())
                 // Set the stroke to use to the outline stroke
