@@ -3164,7 +3164,7 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This creates and returns an Area that forms the shape of Rambley's right 
-     * ear.
+     * ear. This method uses all 8 scratch Point2D objects.
      * @param x The x-coordinate for the top-left corner of the ear.
      * @param y The y-coordinate for the top-left corner of the ear.
      * @param path A Path2D object to use to construct the ear, or null.
@@ -4846,16 +4846,34 @@ public class RambleyPainter implements Painter<Component>{
             path = new Path2D.Double();
         else    // Reset the given Path2D object
             path.reset();
-        x -= RAMBLEY_SCARF_LOWER_END_WIDTH;
-        y -= getRambleyLowerScarfTopY(RAMBLEY_SCARF_LOWER_END_WIDTH);
-        path.moveTo(x, getRambleyLowerScarfTopY(0)+y);
-        for (double xOff = 0.1; xOff <= RAMBLEY_SCARF_LOWER_END_WIDTH; xOff += 0.1){
-            path.lineTo(x+xOff, getRambleyLowerScarfTopY(xOff)+y);
-        }
-        for (double xOff = RAMBLEY_SCARF_LOWER_END_WIDTH; xOff >= 0; xOff -= 0.1){
-            path.lineTo(x+xOff, getRambleyLowerScarfBottomY(xOff)+y);
-        }
+            // Offset the x-coordinate to get the left-most side of the scarf 
+            // end
+        double x1 = x - RAMBLEY_SCARF_LOWER_END_WIDTH;
+            // Offset the y-coordinate to get the top of the end of the scarf 
+        double y1 = y - getRambleyLowerScarfTopY(RAMBLEY_SCARF_LOWER_END_WIDTH);
+            // Start at the left-most point of the end of the scarf
+        point1.setLocation(x,y);
+            // Move the path to the starting point
+        path.moveTo(point1.getX(), point1.getY());
+            // Calculate the offset for the x-coordinate when 53.5% of the way 
+        double tempX = RAMBLEY_SCARF_LOWER_END_WIDTH * 0.535;   // to the right
+            // Get the point on the upper curve when 53.5% of the way right
+        point2.setLocation(x1+tempX,y1+getRambleyLowerScarfTopY(tempX));
+            // Get the point at the end of the upper curve
+        point3.setLocation(x1, y1+getRambleyLowerScarfTopY(0));
+            // Calculate the offset for the x-coordinate when 47% of the way 
+        tempX = RAMBLEY_SCARF_LOWER_END_WIDTH * 0.47;    // to the right
+            // Get the point on the lower curve when 47% of the way right
+        point4.setLocation(x1+tempX,y1+getRambleyLowerScarfBottomY(tempX));
+            // Calculate the quadratic bezier curve that passes through points 
+            // point1, point2, and point3, and add that curve to the path
+        point5 = addQuadBezierCurve(point1,point2,point3,point5,path);
+            // Calculate the quadratic bezier curve that passes through points 
+            // point3, point4, and point1, and add that curve to the path
+        point6 = addQuadBezierCurve(point3,point4,point1,point6,path);
+            // Close the path
         path.closePath();
+            // Create an area with the scarf end
         Area scarfEnd = new Area(path);
         
         path.reset();
@@ -5015,7 +5033,7 @@ public class RambleyPainter implements Painter<Component>{
             // Create the lower end of Rambley's scarf
             // TODO: Once the rest of the scarf stuff is in place, mess around 
             // with the position to get the best one relative to the scarf
-        Area scarf5 = getRambleyLowerScarfEnd(scarfKnotX,scarfKnotY,path);
+        Area scarf5 = getRambleyLowerScarfEnd(scarfKnotX,scarfKnotY,scarf6);
             // If Rambley is flipped
         if (isRambleyFlipped()){
                 // Flip the lower end of Rambley's scarf
@@ -5071,10 +5089,12 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(rambleyShape);
             g.setColor(Color.ORANGE);
             g.draw(headBounds);
-            g.setColor(Color.GREEN);
-            g.draw(scarf5);
             g.setColor(Color.BLUE);
             g.draw(path);
+            g.setColor(Color.GREEN);
+            g.draw(scarf5);
+            g.setColor(Color.MAGENTA);
+            g.draw(scarf6);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // Render Rambley's outline and shadow.
             paintRambleyOutlineAndShadow(g,rambleyShape);
