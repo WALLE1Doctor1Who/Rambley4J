@@ -209,7 +209,7 @@ public class RambleyPainter implements Painter<Component>{
      * The offset for the y-coordinate of the top center of Rambley's earless 
      * head.
      */
-    private static final double RAMBLEY_Y_OFFSET = 80;//76;
+    private static final double RAMBLEY_Y_OFFSET = 80;//70;
     /**
      * This is the default width and height of the background polka dots.
      */
@@ -2650,10 +2650,10 @@ public class RambleyPainter implements Painter<Component>{
      * @return The offset for the x-coordinate of the top center of Rambley's 
      * head.
      * @see #getRambleyY 
+     * @see #getRambleyWidth 
+     * @see #getRambleyHeight 
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
-     * @see #INTERNAL_RENDER_WIDTH
-     * @see #INTERNAL_RENDER_HEIGHT
      */
     protected double getRambleyX(){
         return RAMBLEY_X_OFFSET;
@@ -2664,13 +2664,39 @@ public class RambleyPainter implements Painter<Component>{
      * @return The offset for the y-coordinate of the top center of Rambley's 
      * head.
      * @see #getRambleyX
+     * @see #getRambleyWidth 
+     * @see #getRambleyHeight 
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
-     * @see #INTERNAL_RENDER_WIDTH
-     * @see #INTERNAL_RENDER_HEIGHT
      */
     protected double getRambleyY(){
         return RAMBLEY_Y_OFFSET;
+    }
+    /**
+     * This is the width at which Rambley is rendered at internally. Rambley is 
+     * scaled up or down to fill the area provided to the {@link #paint paint} 
+     * method of {@code RambleyPainter}.
+     * @return The internal rendering width of Rambley.
+     * @see #getRambleyX
+     * @see #getRambleyY 
+     * @see #getRambleyHeight 
+     * @see #paintRambley 
+     */
+    protected double getRambleyWidth(){
+        return INTERNAL_RENDER_WIDTH;
+    }
+    /**
+     * This is the height at which Rambley is rendered at internally. Rambley is 
+     * scaled up or down to fill the area provided to the {@link #paint paint} 
+     * method of {@code RambleyPainter}.
+     * @return The internal rendering height of Rambley.
+     * @see #getRambleyX
+     * @see #getRambleyY 
+     * @see #getRambleyWidth 
+     * @see #paintRambley 
+     */
+    protected double getRambleyHeight(){
+        return INTERNAL_RENDER_HEIGHT;
     }
     /**
      * This creates and returns an Area that forms the base shape of Rambley's 
@@ -4662,9 +4688,9 @@ public class RambleyPainter implements Painter<Component>{
             // area to fill
         g = (Graphics2D) g.create(x,y,w,h);
             // Get the scale factor for the x axis
-        double scaleX = w/INTERNAL_RENDER_WIDTH;
+        double scaleX = w/getRambleyWidth();
             // Get the scale factor for the y axis
-        double scaleY = h/INTERNAL_RENDER_HEIGHT;
+        double scaleY = h/getRambleyHeight();
             // If we are to ignore Rambley's aspect ratio
         if (isAspectRatioIgnored()){
                 // Scale it to fit the internal rendering size
