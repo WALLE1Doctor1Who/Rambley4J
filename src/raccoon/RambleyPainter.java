@@ -5079,12 +5079,20 @@ public class RambleyPainter implements Painter<Component>{
             // Create the lower end of Rambley's scarf
         Area scarf5 = getRambleyLowerScarfEnd(scarfKnotX,scarfKnotY,path,point1,
                 point2,point3,point4);
+        if (afTx == null)
+            afTx = AffineTransform.getRotateInstance(Math.PI/getTestDouble5(), point1.getX()+getTestDouble7(),point1.getY()+getTestDouble8());
+        else
+            afTx.rotate(Math.PI/getTestDouble5(), point1.getX()+getTestDouble7(),point1.getY()+getTestDouble8());
+        scarf3 = scarf5.createTransformedArea(afTx);
         
             // If Rambley is flipped
         if (isRambleyFlipped()){
                 // Flip the lower end of Rambley's scarf
             scarf5.transform(getHorizontalMirrorTransform(scarfCurve1.getX2(),
                     scarf5,horizTx));
+                // Flip the upper end of Rambley's scarf
+            scarf3.transform(getHorizontalMirrorTransform(scarfCurve1.getX2(),
+                    scarf3,horizTx));
                 // Flip the details of the lower end of Rambley's scarf
 //            scarf6 = flipPathHorizontally(scarf6,scarfCurve1.getX2());
         }
@@ -5133,6 +5141,8 @@ public class RambleyPainter implements Painter<Component>{
             g.draw(path);
             g.setColor(Color.GREEN);
             g.draw(scarf5);
+            g.setColor(Color.MAGENTA);
+            g.draw(scarf3);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // Render Rambley's outline and shadow.
             paintRambleyOutlineAndShadow(g,rambleyShape);
