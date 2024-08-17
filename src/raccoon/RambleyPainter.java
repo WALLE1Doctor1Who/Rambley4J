@@ -1889,6 +1889,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getHorizontalMirrorTransform 
      * @see #createHorizontallyMirroredArea 
      * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
      */
     protected AffineTransform getHorizontalFlipTransform(double dx, 
             AffineTransform tx){
@@ -1921,6 +1922,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getHorizontalMirrorTransform 
      * @see #createHorizontallyMirroredArea 
      * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
      */
     protected AffineTransform getHorizontalFlipTransform(double dx,Shape shape, 
             AffineTransform tx){
@@ -1950,6 +1952,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
      * @see #createHorizontallyMirroredArea 
      * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
      */
     protected AffineTransform getHorizontalMirrorTransform(double x,Shape shape,
             AffineTransform tx){
@@ -1975,6 +1978,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
      * @see #getHorizontalMirrorTransform 
      * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
      * @see Area#createTransformedArea 
      */
     protected Area createHorizontallyMirroredArea(Area area, double x){
@@ -1995,6 +1999,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
      * @see #getHorizontalMirrorTransform 
      * @see #createHorizontallyMirroredArea 
+     * @see #flipPathHorizontally 
      * @see Path2D#createTransformedShape 
      */
     protected Path2D mirrorPathHorizontally(Path2D path, double x){
@@ -2003,6 +2008,32 @@ public class RambleyPainter implements Painter<Component>{
         horizTx = getHorizontalMirrorTransform(x,path,horizTx);
             // Mirror the path horizontally and add it to the original path
         path.append(path.createTransformedShape(horizTx), false);
+        return path;
+    }
+    /**
+     * This flips the given path horizontally over the vertical line at the 
+     * given x-coordinate and stores the resulting path back into the given 
+     * path, overwriting the original.
+     * @param path The Path2D object to flip horizontally.
+     * @param x The x-coordinate of the vertical line to flip the path over.
+     * @return The given Path2D object, now flipped horizontally.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
+     * @see Path2D#createTransformedShape 
+     */
+    protected Path2D flipPathHorizontally(Path2D path, double x){
+            // Get an AffineTransform to flip the path horizontally and mirror 
+            // it over the vertical line at the given x coordinate
+        horizTx = getHorizontalMirrorTransform(x,path,horizTx);
+            // Mirror the path horizontally
+        Shape flipped = path.createTransformedShape(horizTx);
+            // Reset the path
+        path.reset();
+            // Add the mirrored shape to the original path
+        path.append(flipped, false);
         return path;
     }
     /**
