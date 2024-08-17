@@ -190,26 +190,63 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color RAMBLEY_DROP_SHADOW_COLOR = Color.BLACK;
     /**
-     * This is the width at which Rambley is rendered at internally. Rambley is 
-     * scaled up or down to fill the area provided to the {@link #paint paint} 
-     * method of {@code RambleyPainter}.
+     * This is the width at which Rambley is rendered at internally when without 
+     * his scarf.
+     * @todo Figure out a more controllable method for the internal rendering 
+     * size, instead of having it change depending on whether Rambley has his 
+     * scarf or not.
+     * @see INTERNAL_RENDER_WIDTH_2
+     * @see #getRambleyWidth
      */
-    private static final double INTERNAL_RENDER_WIDTH = 320;//256;
+    private static final double INTERNAL_RENDER_WIDTH_1 = 256;
     /**
-     * This is the height at which Rambley is rendered at internally. Rambley is 
-     * scaled up or down to fill the area provided to the {@link #paint paint} 
-     * method of {@code RambleyPainter}.
+     * This is the width at which Rambley is rendered at internally when he has 
+     * his scarf.
+     * @todo Figure out a more controllable method for the internal rendering 
+     * size, instead of having it change depending on whether Rambley has his 
+     * scarf or not.
+     * @see INTERNAL_RENDER_WIDTH_1
+     * @see #getRambleyWidth
      */
-    private static final double INTERNAL_RENDER_HEIGHT = 320;//256;
+    private static final double INTERNAL_RENDER_WIDTH_2 = 320;
     /**
-     * The offset for the x-coordinate of the top center of Rambley's head.
+     * This is the height at which Rambley is rendered at internally when without 
+     * his scarf.
+     * @todo Figure out a more controllable method for the internal rendering 
+     * size, instead of having it change depending on whether Rambley has his 
+     * scarf or not.
+     * @see INTERNAL_RENDER_HEIGHT_2
+     * @see #getRambleyHeight() 
      */
-    private static final double RAMBLEY_X_OFFSET = INTERNAL_RENDER_WIDTH/2.0;
+    private static final double INTERNAL_RENDER_HEIGHT_1 = 256;
+    /**
+     * This is the height at which Rambley is rendered at internally when he has 
+     * his scarf.
+     * @todo Figure out a more controllable method for the internal rendering 
+     * size, instead of having it change depending on whether Rambley has his 
+     * scarf or not.
+     * @see INTERNAL_RENDER_HEIGHT_1
+     * @see #getRambleyHeight() 
+     */
+    private static final double INTERNAL_RENDER_HEIGHT_2 = 320;
     /**
      * The offset for the y-coordinate of the top center of Rambley's earless 
-     * head.
+     * head when Rambley does not have his scarf.
+     * @todo Figure out a more controllable method for determining Rambley's 
+     * position in the image.
+     * @see RAMBLEY_Y_OFFSET_2
+     * @see #getRambleyY() 
      */
-    private static final double RAMBLEY_Y_OFFSET = 80;//70;
+    private static final double RAMBLEY_Y_OFFSET_1 = 70;
+    /**
+     * The offset for the y-coordinate of the top center of Rambley's earless 
+     * head when Rambley has his scarf.
+     * @todo Figure out a more controllable method for determining Rambley's 
+     * position in the image.
+     * @see RAMBLEY_Y_OFFSET_1
+     * @see #getRambleyY() 
+     */
+    private static final double RAMBLEY_Y_OFFSET_2 = 80;
     /**
      * This is the default width and height of the background polka dots.
      */
@@ -2647,6 +2684,8 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This returns the x-coordinate for the top center of Rambley's head 
      * without his ears.
+     * @todo Figure out a more controllable method for determining Rambley's 
+     * position in the image.
      * @return The offset for the x-coordinate of the top center of Rambley's 
      * head.
      * @see #getRambleyY 
@@ -2656,11 +2695,13 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEarlessHead
      */
     protected double getRambleyX(){
-        return RAMBLEY_X_OFFSET;
+        return getRambleyWidth()/2.0;
     }
     /**
      * This returns the y-coordinate for the top center of Rambley's head 
      * without his ears.
+     * @todo Figure out a more controllable method for determining Rambley's 
+     * position in the image.
      * @return The offset for the y-coordinate of the top center of Rambley's 
      * head.
      * @see #getRambleyX
@@ -2670,12 +2711,18 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEarlessHead
      */
     protected double getRambleyY(){
-        return RAMBLEY_Y_OFFSET;
+            // If Rambley's scarf is painted
+        if (isRambleyScarfPainted())
+            return RAMBLEY_Y_OFFSET_2;
+        return RAMBLEY_Y_OFFSET_1;
     }
     /**
      * This is the width at which Rambley is rendered at internally. Rambley is 
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
+     * @todo Figure out a more controllable method for the internal rendering 
+     * size, instead of having it change depending on whether Rambley has his 
+     * scarf or not.
      * @return The internal rendering width of Rambley.
      * @see #getRambleyX
      * @see #getRambleyY 
@@ -2683,12 +2730,18 @@ public class RambleyPainter implements Painter<Component>{
      * @see #paintRambley 
      */
     protected double getRambleyWidth(){
-        return INTERNAL_RENDER_WIDTH;
+            // If Rambley's scarf is painted
+        if (isRambleyScarfPainted())
+            return INTERNAL_RENDER_WIDTH_2;
+        return INTERNAL_RENDER_WIDTH_1;
     }
     /**
      * This is the height at which Rambley is rendered at internally. Rambley is 
      * scaled up or down to fill the area provided to the {@link #paint paint} 
      * method of {@code RambleyPainter}.
+     * @todo Figure out a more controllable method for the internal rendering 
+     * size, instead of having it change depending on whether Rambley has his 
+     * scarf or not.
      * @return The internal rendering height of Rambley.
      * @see #getRambleyX
      * @see #getRambleyY 
@@ -2696,7 +2749,10 @@ public class RambleyPainter implements Painter<Component>{
      * @see #paintRambley 
      */
     protected double getRambleyHeight(){
-        return INTERNAL_RENDER_HEIGHT;
+            // If Rambley's scarf is painted
+        if (isRambleyScarfPainted())
+            return INTERNAL_RENDER_HEIGHT_2;
+        return INTERNAL_RENDER_HEIGHT_1;
     }
     /**
      * This creates and returns an Area that forms the base shape of Rambley's 
