@@ -604,6 +604,10 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000400;
     /**
+     * This is the flag for whether Rambley's conductor hat will be painted.
+     */
+    public static final int PAINT_CONDUCTOR_HAT_FLAG =      0x00000800;
+    /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
      */
@@ -624,13 +628,14 @@ public class RambleyPainter implements Painter<Component>{
      * @see RAMBLEY_FLIPPED_FLAG
      * @see RAMBLEY_JAW_CLOSED_FLAG
      * @see PAINT_RAMBLEY_SCARF_FLAG
+     * @see PAINT_CONDUCTOR_HAT_FLAG
      */
     public static final int MAXIMUM_VALID_FLAGS = PAINT_BACKGROUND_FLAG | 
             PAINT_PIXEL_GRID_FLAG | PAINT_RAMBLEY_OUTLINE_FLAG | 
             PAINT_RAMBLEY_SHADOW_FLAG | IGNORE_ASPECT_RATIO_FLAG | 
             CIRCULAR_BACKGROUND_DOTS_FLAG | GLITCHY_RAMBLEY_FLAG | 
             EVIL_RAMBLEY_FLAG | RAMBLEY_FLIPPED_FLAG | RAMBLEY_JAW_CLOSED_FLAG | 
-            PAINT_RAMBLEY_SCARF_FLAG;
+            PAINT_RAMBLEY_SCARF_FLAG | PAINT_CONDUCTOR_HAT_FLAG;
     /**
      * This identifies that a change has been made to whether the background 
      * should be painted.
@@ -708,6 +713,13 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final String RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED = 
             "RambleyScarfPaintedPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley's 
+     * conductor hat should be painted.
+     * @see PAINT_CONDUCTOR_HAT_FLAG
+     */
+    public static final String CONDUCTOR_HAT_PAINTED_PROPERTY_CHANGED = 
+            "RambleyConductorHatPaintedPropertyChanged";
     // Any more flag property names go here
     /**
      * This generates a map that maps flags for controlling {@code 
@@ -735,6 +747,8 @@ public class RambleyPainter implements Painter<Component>{
         nameMap.put(PAINT_RAMBLEY_SCARF_FLAG, 
                 RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED);
         nameMap.put(GLITCHY_RAMBLEY_FLAG, GLITCHY_RAMBLEY_PROPERTY_CHANGED);
+        nameMap.put(PAINT_CONDUCTOR_HAT_FLAG, 
+                CONDUCTOR_HAT_PAINTED_PROPERTY_CHANGED);
         
             // Return an unmodifiable verion of the map
         return Collections.unmodifiableNavigableMap(nameMap);
@@ -1630,6 +1644,41 @@ public class RambleyPainter implements Painter<Component>{
      */
     public RambleyPainter setRambleyScarfPainted(boolean enabled){
         return setFlag(PAINT_RAMBLEY_SCARF_FLAG,enabled);
+    }
+    /**
+     * This returns whether Rambley's conductor hat will be painted by this 
+     * {@code RambleyPainter}. The default value for this is {@code false}. 
+     * It should be noted that Rambley's conductor hat is currently not 
+     * implemented yet.
+     * 
+     * @todo Add references to other related methods. Add the code to paint 
+     * Rambley's conductor hat.
+     * 
+     * @return Whether Rambley's conductor hat will be painted.
+     * @see #PAINT_CONDUCTOR_HAT_FLAG
+     * @see #getFlag 
+     * @see #setConductorHatPainted 
+     */
+    public boolean isConductorHatPainted(){
+        return getFlag(PAINT_CONDUCTOR_HAT_FLAG);
+    }
+    /**
+     * This sets whether Rambley's conductor hat will be painted by this {@code 
+     * RambleyPainter}. The default value for this is {@code false}. 
+     * It should be noted that Rambley's conductor hat is currently not 
+     * implemented yet.
+     * 
+     * @todo Add references to other related methods. Add the code to paint 
+     * Rambley's conductor hat.
+     * 
+     * @param enabled Whether Rambley's conductor hat should be painted.
+     * @return This {@code RambleyPainter}.
+     * @see #PAINT_CONDUCTOR_HAT_FLAG
+     * @see #setFlag 
+     * @see #isConductorHatPainted 
+     */
+    public RambleyPainter setConductorHatPainted(boolean enabled){
+        return setFlag(PAINT_CONDUCTOR_HAT_FLAG,enabled);
     }
     /**
      * This sets whether Rambley's jaw is closed when his mouth is opened. This 
@@ -5272,8 +5321,10 @@ public class RambleyPainter implements Painter<Component>{
                 paintRambleyNeckScarf(g,scarf1,scarfCurve1);
                 // Draw Rambley's head and face
             paintRambleyHead(g,headBounds,headShape,earR,earL,earInR,earInL);
-            
-            // Draw Rambley's conductor hat here
+                // If Rambley's conductor hat is to be painted
+            if (isConductorHatPainted()){
+                // Draw Rambley's conductor hat here
+            }
             
             // Draw any parts that may cover Rambley's face here
             
