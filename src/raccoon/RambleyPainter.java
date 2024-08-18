@@ -6092,7 +6092,7 @@ public class RambleyPainter implements Painter<Component>{
      * point.
      * @return A value to use for the control point of a curve.
      */
-    double getTestCtrlValue(double x1, double x2, double d1, double d2){
+    private double getTestCtrlValue(double x1, double x2, double d1, double d2){
             // If the control values are both zero (prevents a divide by zero)
         if (d1 == 0 && d2 == 0)
             return 0;
@@ -6107,7 +6107,7 @@ public class RambleyPainter implements Painter<Component>{
      * @param x2 The x-coordinate of the end of the curve.
      * @return The x-coordinate for the control point of the curve.
      */
-    double getTestCtrlX(double x1, double x2){
+    private double getTestCtrlX(double x1, double x2){
         return getTestCtrlValue(x1,x2,getTestDouble1(),getTestDouble2());
     }
     /**
@@ -6119,7 +6119,7 @@ public class RambleyPainter implements Painter<Component>{
      * @param y2 The y-coordinate of the end of the curve.
      * @return The y-coordinate for the control point of the curve.
      */
-    double getTestCtrlY(double y1, double y2){
+    private double getTestCtrlY(double y1, double y2){
         return getTestCtrlValue(y1,y2,getTestDouble3(),getTestDouble4());
     }
 }
