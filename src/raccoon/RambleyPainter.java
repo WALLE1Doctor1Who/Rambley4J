@@ -101,6 +101,11 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final Color RAMBLEY_IRIS_COLOR = new Color(0x883EC1);
     /**
+     * This is the color for Rambley the Raccoon's irises when he is glitching 
+     * out.
+     */
+    public static final Color GLITCHY_RAMBLEY_IRIS_COLOR = new Color(0x0FDBB1);
+    /**
      * This is the color for the lines around of Rambley the Raccoon's irises 
      * and pupils.
      */
@@ -565,33 +570,39 @@ public class RambleyPainter implements Painter<Component>{
      */
     public static final int IGNORE_ASPECT_RATIO_FLAG =      0x00000010;
     /**
+     * This is the flag for drawing the background polka dots as circles instead 
+     * of diamonds.
+     */
+    public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000020;
+    /**
+     * This is the flag for whether Rambley will be painted in his glitchy 
+     * state. When Rambley is glitching out, his eyes become a turquoise green 
+     * and he becomes more angular.
+     */
+    public static final int GLITCHY_RAMBLEY_FLAG =          0x00000040;
+    /**
      * This is the flag for whether evil Rambley will be painted instead of 
      * normal Rambley. Evil Rambley is a version of Rambley the Raccoon with red 
      * eyes that first appeared on thumbnails of videos from the YouTube channel 
      * GameTheory on the topic of Indigo Park.
      */
-    public static final int EVIL_RAMBLEY_FLAG =             0x00000020;
-    /**
-     * This is the flag for drawing the background polka dots as circles instead 
-     * of diamonds.
-     */
-    public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000040;
+    public static final int EVIL_RAMBLEY_FLAG =             0x00000080;
     /**
      * This is the flag which controls which side certain elements of Rambley 
      * will appear on. This includes which side of Rambley's face his fang will 
      * show on when his mouth is open, and which side the knot on Rambley's 
      * scarf will appear on.
      */
-    public static final int RAMBLEY_FLIPPED_FLAG =          0x00000080;
+    public static final int RAMBLEY_FLIPPED_FLAG =          0x00000100;
     /**
      * This is the flag which controls whether Rambley's jaw is closed when his 
      * mouth is open.
      */
-    public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000100;
+    public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000200;
     /**
      * This is the flag for whether Rambley's scarf will be painted.
      */
-    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000200;
+    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000400;
     /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
@@ -607,8 +618,9 @@ public class RambleyPainter implements Painter<Component>{
      * @see PAINT_RAMBLEY_OUTLINE_FLAG
      * @see PAINT_RAMBLEY_SHADOW_FLAG
      * @see IGNORE_ASPECT_RATIO_FLAG
-     * @see EVIL_RAMBLEY_FLAG
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
+     * @see GLITCHY_RAMBLEY_FLAG
+     * @see EVIL_RAMBLEY_FLAG
      * @see RAMBLEY_FLIPPED_FLAG
      * @see RAMBLEY_JAW_CLOSED_FLAG
      * @see PAINT_RAMBLEY_SCARF_FLAG
@@ -616,8 +628,8 @@ public class RambleyPainter implements Painter<Component>{
     public static final int MAXIMUM_VALID_FLAGS = PAINT_BACKGROUND_FLAG | 
             PAINT_PIXEL_GRID_FLAG | PAINT_RAMBLEY_OUTLINE_FLAG | 
             PAINT_RAMBLEY_SHADOW_FLAG | IGNORE_ASPECT_RATIO_FLAG | 
-            EVIL_RAMBLEY_FLAG | CIRCULAR_BACKGROUND_DOTS_FLAG | 
-            RAMBLEY_FLIPPED_FLAG | RAMBLEY_JAW_CLOSED_FLAG | 
+            CIRCULAR_BACKGROUND_DOTS_FLAG | GLITCHY_RAMBLEY_FLAG | 
+            EVIL_RAMBLEY_FLAG | RAMBLEY_FLIPPED_FLAG | RAMBLEY_JAW_CLOSED_FLAG | 
             PAINT_RAMBLEY_SCARF_FLAG;
     /**
      * This identifies that a change has been made to whether the background 
@@ -655,19 +667,26 @@ public class RambleyPainter implements Painter<Component>{
     public static final String IGNORE_ASPECT_RATIO_PROPERTY_CHANGED = 
             "IgnoreAspectRatioPropertyChanged";
     /**
-     * This identifies that a change has been made to whether Rambley is evil or 
-     * not.
-     * @see EVIL_RAMBLEY_FLAG
-     */
-    public static final String EVIL_RAMBLEY_PROPERTY_CHANGED = 
-            "EvilRambleyPropertyChanged";
-    /**
      * This identifies that a change has been made to whether the background 
      * polka dots are circular or diamonds.
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
      */
     public static final String CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED = 
             "CircularDotsPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley is 
+     * glitching out or not.
+     * @see GLITCHY_RAMBLEY_FLAG
+     */
+    public static final String GLITCHY_RAMBLEY_PROPERTY_CHANGED = 
+            "GlitchyRambleyPropertyChanged";
+    /**
+     * This identifies that a change has been made to whether Rambley is evil or 
+     * not.
+     * @see EVIL_RAMBLEY_FLAG
+     */
+    public static final String EVIL_RAMBLEY_PROPERTY_CHANGED = 
+            "EvilRambleyPropertyChanged";
     /**
      * This identifies that a change has been made to which side of Rambley 
      * certain elements will appear on.
@@ -715,6 +734,7 @@ public class RambleyPainter implements Painter<Component>{
                 RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED);
         nameMap.put(PAINT_RAMBLEY_SCARF_FLAG, 
                 RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED);
+        nameMap.put(GLITCHY_RAMBLEY_FLAG, GLITCHY_RAMBLEY_PROPERTY_CHANGED);
         
             // Return an unmodifiable verion of the map
         return Collections.unmodifiableNavigableMap(nameMap);
@@ -1320,6 +1340,45 @@ public class RambleyPainter implements Painter<Component>{
      */
     public RambleyPainter setPixelGridPainted(boolean enabled){
         return setFlag(PAINT_PIXEL_GRID_FLAG,enabled);
+    }
+    /**
+     * This returns whether this {@code RambleyPainter} will paint Rambley a 
+     * state of glitching out. When Rambley is glitching out, his eyes become a 
+     * turquoise green and he becomes more angular. The default value for this 
+     * is {@code false}. Currently this only affects Rambley's eye color, as the 
+     * the rest has not been implemented yet.
+     * 
+     * @todo Add references to other related methods. Add code to make Rambley 
+     * become more angular when this is enabled.
+     * 
+     * @return {@code true} if Rambley is glitching out, {@code false} 
+     * otherwise.
+     * @see #GLITCHY_RAMBLEY_FLAG
+     * @see #getFlag 
+     * @see #setRambleyGlitchy
+     */
+    public boolean isRambleyGlitchy(){
+        return getFlag(GLITCHY_RAMBLEY_FLAG);
+    }
+    /**
+     * This sets whether this {@code RambleyPainter} will paint Rambley a state 
+     * of glitching out. When Rambley is glitching out, his eyes become a 
+     * turquoise green and he becomes more angular. The default value for this 
+     * is {@code false}. Currently this only affects Rambley's eye color, as the 
+     * the rest has not been implemented yet.
+     * 
+     * @todo Add references to other related methods. Add code to make Rambley 
+     * become more angular when this is enabled.
+     * 
+     * @param value Whether Rambley should be glitching out ({@code true} for 
+     * glitchy Rambley, {@code false} for non-glitchy Rambley).
+     * @return This {@code RambleyPainter}.
+     * @see #GLITCHY_RAMBLEY_FLAG
+     * @see #getFlag 
+     * @see #setRambleyGlitchy 
+     */
+    public RambleyPainter setRambleyGlitchy(boolean value){
+        return setFlag(GLITCHY_RAMBLEY_FLAG,value);
     }
     /**
      * This returns whether this {@code RambleyPainter} will paint evil Rambley 
@@ -3856,6 +3915,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEyeShape
      * @see #RAMBLEY_EYE_WHITE_COLOR
      * @see #RAMBLEY_IRIS_COLOR
+     * @see #GLITCHY_RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
      * @see #RAMBLEY_PUPIL_COLOR
      * @see #RAMBLEY_IRIS_LINE_COLOR
@@ -3867,6 +3927,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyLineStroke 
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
+     * @see #isRambleyGlitchy 
+     * @see #setRambleyGlitchy 
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,Ellipse2D iris,
             Ellipse2D pupil){
@@ -3877,10 +3939,17 @@ public class RambleyPainter implements Painter<Component>{
             // Fill the eye white
         gEye.setColor(RAMBLEY_EYE_WHITE_COLOR);
         gEye.fill(eyeWhite);
-            // Set the color for Rambley's iris. If Rambley is evil, use the 
-            // evil Rambley iris color. Otherwise, use the normal Rambley iris 
-            // color
-        gEye.setColor((isRambleyEvil())?EVIL_RAMBLEY_IRIS_COLOR:RAMBLEY_IRIS_COLOR);
+            // Set the color for Rambley's iris. 
+            // If Rambley is glitching out
+        if (isRambleyGlitchy())
+                // Use the glitchy Rambley's iris color
+            gEye.setColor(GLITCHY_RAMBLEY_IRIS_COLOR);
+            // If Rambley is evil
+        else if (isRambleyEvil())
+                // Use the evil Rambley iris color
+            gEye.setColor(EVIL_RAMBLEY_IRIS_COLOR);
+        else    // Use the normal Rambley iris color
+            gEye.setColor(RAMBLEY_IRIS_COLOR);
             // Fill Rambley's iris
         gEye.fill(iris);
             // Fill Rambley's pupil
@@ -3932,6 +4001,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEyeShape
      * @see #RAMBLEY_EYE_WHITE_COLOR
      * @see #RAMBLEY_IRIS_COLOR
+     * @see #GLITCHY_RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
      * @see #RAMBLEY_PUPIL_COLOR
      * @see #RAMBLEY_IRIS_LINE_COLOR
@@ -3943,6 +4013,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyLineStroke 
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
+     * @see #isRambleyGlitchy 
+     * @see #setRambleyGlitchy 
      */
     protected void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x, 
             double y,Ellipse2D iris,Ellipse2D pupil){
@@ -3979,6 +4051,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEyeShape
      * @see #RAMBLEY_EYE_WHITE_COLOR
      * @see #RAMBLEY_IRIS_COLOR
+     * @see #GLITCHY_RAMBLEY_IRIS_COLOR
      * @see #EVIL_RAMBLEY_IRIS_COLOR
      * @see #RAMBLEY_PUPIL_COLOR
      * @see #RAMBLEY_IRIS_LINE_COLOR
@@ -3990,6 +4063,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyLineStroke 
      * @see #isRambleyEvil 
      * @see #setRambleyEvil 
+     * @see #isRambleyGlitchy 
+     * @see #setRambleyGlitchy 
      */
     private void paintRambleyEye(Graphics2D g,Shape eyeWhite,double x,
             double y,Rectangle2D bounds,double minXOff,double maxXOff,
