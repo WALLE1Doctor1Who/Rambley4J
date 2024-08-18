@@ -4837,6 +4837,20 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * @param x
      * @param y
+     * @param ellipse
+     * @return 
+     */
+    private Area getRambleyScarfKnot(double x, double y, Ellipse2D ellipse){
+            // If the given Ellipse2D object is null
+        if (ellipse == null)
+            ellipse = new Ellipse2D.Double();
+        ellipse.setFrameFromCenter(x,y, x-30,y-15);
+        return new Area(ellipse);
+    }
+    /**
+     * 
+     * @param x
+     * @param y
      * @param path 
      * @param point1 
      * @param point2 
@@ -4893,7 +4907,14 @@ public class RambleyPainter implements Painter<Component>{
             // Create and return an area with the scarf end
         return new Area(path);
     }
-    
+    /**
+     * 
+     * @param scarfEnd
+     * @param path
+     * @param quadCurve
+     * @param point
+     * @return 
+     */
     private Path2D getRambleyLowerScarfEndDetail(Area scarfEnd, Path2D path, 
             QuadCurve2D quadCurve, Point2D point){
             // If the given Path2D object is null
@@ -4901,39 +4922,72 @@ public class RambleyPainter implements Painter<Component>{
             path = new Path2D.Double();
         else    // Reset the given Path2D object
             path.reset();
+            // Get the bounds of the end of the scarf
         RectangularShape bounds = getBoundsOfShape(scarfEnd);
-        
-        double d1 = getTestDouble1();
-        double d2 = getTestDouble2();
-        
+            // This will get the first and last x-coordinates, which are 
+            // dependent on whether Rambley is flipped
         double x0, x2;
-        double x1 = RAMBLEY_SCARF_LOWER_END_WIDTH * (getTestDouble3()/100);
+            // Calculate the offset for the x-coordinate when 80% of the way to 
+            // the right (this will also be used for the x-coordinate of the 
+            // point the curve passes through)
+        double x1 = RAMBLEY_SCARF_LOWER_END_WIDTH * 0.8;
+            // Get the y-coordinate for the end of the scarf
         double y = bounds.getMinY();
+            // Get the starting y-coordinate for the curve
         double y0 = y + getRambleyLowerScarfTopY(RAMBLEY_SCARF_LOWER_END_WIDTH);
+            // Get the ending y-coordinate for the curve
         double y2 = y+getRambleyLowerScarfTopY(0);
-        double y1 = y+(getRambleyLowerScarfTopY(x1)*d1+getRambleyLowerScarfBottomY(x1)*d2)/(d1+d2);
+            // Get the y-coordinate of the point the curve passes through. This 
+            // y-coordinate is the average of the top and bottom curves
+        double y1 = y+(getRambleyLowerScarfTopY(x1)+getRambleyLowerScarfBottomY(x1))/2;
             // If Rambley is flipped
         if (isRambleyFlipped()){
+                // If Rambley is flipped, then the scarf ends are flipped too
             x2 = bounds.getMaxX();
             x0 = bounds.getMinX();
+                // We'll need to subtract from the end point instead of add
             x1 = -x1;
         } else {
             x2 = bounds.getMinX();
             x0 = bounds.getMaxX();
-        }
+        }   // Get the x-coordinate of the point the curve passes through
         x1 += x2;
-        quadCurve = GeometryMath.getQuadBezierCurve(x0, y0, x1, y1, x2, y2, quadCurve);
-        if (getABTesting()){
-            point = GeometryMath.getQuadBezierPoint(quadCurve, getTestDouble4()/100, point);
-            quadCurve = GeometryMath.getQuadBezierCurveSegment(quadCurve.getX1(), quadCurve.getY1(), 
-                    point.getX(), point.getY(), quadCurve, quadCurve);
-        }
+            // Get the curve that passes through points (x0, y0), (x1, y1), and 
+            // (x2, y2)
+        quadCurve = GeometryMath.getQuadBezierCurve(x0, y0, x1, y1, x2, y2, 
+                quadCurve);
+            // Get the point that is 80% of the way between points (x0, y0) and 
+            // (x1, y1).
+        point = GeometryMath.getQuadBezierPoint(quadCurve, 0.8, point);
+            // Truncate the curve to 80% of it's original length
+        quadCurve = GeometryMath.getQuadBezierCurveSegment(
+                quadCurve.getX1(), quadCurve.getY1(), point.getX(),point.getY(), 
+                quadCurve, quadCurve);
+            // Add the curve to the path
         path.append(quadCurve, false);
         return path;
     }
-    
-    
-    
+    /**
+     * 
+     * @param lowerScarf
+     * @param point
+     * @return 
+     */
+    private Area getRambleyUpperScarfEnd(Area lowerScarf, Point2D point){
+            // The angle to rotate to, in radians
+        double theta = Math.PI/5;
+            // The x-coordinate of the anchor point for the rotation
+        double x = point.getX()+40;
+            // The y-coordinate of the anchor point for the rotation
+        double y = point.getY()-6;
+            // If the scratch affine transform is null
+        if (afTx == null)
+                // Create a rotation transform
+            afTx = AffineTransform.getRotateInstance(theta,x,y);
+        else    // Set it to be a rotation transform
+            afTx.rotate(theta,x,y);
+        return lowerScarf.createTransformedArea(afTx);
+    }
     /**
      * This is used to render Rambley the Raccoon, his outline, his shadow, and 
      * his accessories. 
@@ -5064,39 +5118,26 @@ public class RambleyPainter implements Painter<Component>{
         Area scarf1 = getRambleyNeckScarf(
                 headBounds.getCenterX()+(isRambleyFlipped()?2:-2),
                 headEllipse.getMaxY()+6,scarfCurve1,cubicCurve1,path);
-        
-        
-        double scarfKnotX = getTestDouble9() + scarfCurve1.getX1();
-        double scarfKnotY = getTestDouble10() + scarfCurve1.getY1();
-            // TODO: Once the rest of the scarf stuff is in place, mess around 
-            // with the position to get the best one relative to the scarf
-            // This gets the knot part of Rambley's scarf.
-        Area scarf2 = null;
-            // This gets the upper end of Rambley's scarf
-        Area scarf3 = null;
-            // This gets the details for the upper end of Rambley's scarf
-        Path2D scarf4 = null;
+            // Create the knot part of Rambley's scarf.
+        Area scarf2 = getRambleyScarfKnot(scarfCurve1.getX1()+15,
+                scarfCurve1.getY1()+2,ellipse1);
             // Create the lower end of Rambley's scarf
-        Area scarf5 = getRambleyLowerScarfEnd(scarfKnotX,scarfKnotY,path,point1,
-                point2,point3,point4);
-        if (afTx == null)
-            afTx = AffineTransform.getRotateInstance(Math.PI/getTestDouble5(), point1.getX()+getTestDouble7(),point1.getY()+getTestDouble8());
-        else
-            afTx.rotate(Math.PI/getTestDouble5(), point1.getX()+getTestDouble7(),point1.getY()+getTestDouble8());
-        scarf3 = scarf5.createTransformedArea(afTx);
-        
+        Area scarf4 = getRambleyLowerScarfEnd(ellipse1.getCenterX(),
+                ellipse1.getCenterY()+2,path,point1,point2,point3,point4);
+            // Create the upper end of Rambley's scarf
+        Area scarf3 = getRambleyUpperScarfEnd(scarf4,point1);
             // If Rambley is flipped
         if (isRambleyFlipped()){
-                // Flip the lower end of Rambley's scarf
-            scarf5.transform(getHorizontalMirrorTransform(scarfCurve1.getX2(),
-                    scarf5,horizTx));
-                // Flip the upper end of Rambley's scarf
-            scarf3.transform(getHorizontalMirrorTransform(scarfCurve1.getX2(),
-                    scarf3,horizTx));
-                // Flip the details of the lower end of Rambley's scarf
-//            scarf6 = flipPathHorizontally(scarf6,scarfCurve1.getX2());
+                // Go through the elements of the back of Rambley's scarf
+            for (Area area : new Area[]{scarf2,scarf3,scarf4}){
+                    // Flip the current element of the scarf
+                area.transform(getHorizontalMirrorTransform(scarfCurve1.getX2(),
+                        area,horizTx));
+            }
         }
-
+        
+            // Code for any more shapes that affect Rambley's outline goes here
+        
             // This is an area that contains the entire shape of Rambley's 
             // outline. Start this area with the shape of his head.
         Area rambleyShape = new Area(headShape);
@@ -5105,17 +5146,11 @@ public class RambleyPainter implements Painter<Component>{
                 // Add the neck part of Rambley's scarf to the area
             rambleyShape.add(scarf1);
                 // Add the knot of Rambley's scarf to the area
-                // Temporary null check
-                if (scarf2 != null)
-                    rambleyShape.add(scarf2);
+            rambleyShape.add(scarf2);
                 // Add the upper end of Rambley's scarf to the area
-                // Temporary null check
-                if (scarf3 != null)
-                    rambleyShape.add(scarf3);
+            rambleyShape.add(scarf3);
                 // Add the lower end of Rambley's scarf to the area
-                // Temporary null check
-                if (scarf5 != null)
-                    rambleyShape.add(scarf5);
+            rambleyShape.add(scarf4);
         }
         
             // Code for adding other parts of Rambley's outline goes here
@@ -5140,16 +5175,18 @@ public class RambleyPainter implements Painter<Component>{
             g.setColor(Color.BLUE);
             g.draw(path);
             g.setColor(Color.GREEN);
-            g.draw(scarf5);
+            g.draw(scarf4);
             g.setColor(Color.MAGENTA);
             g.draw(scarf3);
+            g.setColor(Color.YELLOW);
+            g.draw(scarf2);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // Render Rambley's outline and shadow.
             paintRambleyOutlineAndShadow(g,rambleyShape);
                 // If Rambley's scarf is to be painted
             if (isRambleyScarfPainted())
                     // Draw the back part of Rambley's scarf here
-                paintRambleyScarfBack(g,scarf2,scarf3,scarf4,scarf5);
+                paintRambleyScarfBack(g,scarf2,scarf3,scarf4);
             
                 // Draw Rambley's body here. 
             
@@ -5470,61 +5507,45 @@ public class RambleyPainter implements Painter<Component>{
             // Dispose of the scarf graphics context
         g.dispose();
     }
-    
-    protected void paintRambleyScarfEnd(Graphics2D g, Area scarfEnd, 
-            Path2D scarfEndDetail){
-        // Temporary null check
-        if (scarfEnd != null){
-                // Create a copy of the graphics context to draw the scarf
-            g = (Graphics2D) g.create();
-                // Set the color to be the color for Rambley's scarf
-            g.setColor(RAMBLEY_SCARF_COLOR);
-                // Fill the area for the current end of Rambley's scarf
-            g.fill(scarfEnd);
-                // Set the color to be the color for the outline of Rambley's scarf
-            g.setColor(RAMBLEY_SCARF_LINE_COLOR);
-            // Temporary null check
-            if (scarfEndDetail != null){
-                    // Set the stroke to the detail stroke
-                g.setStroke(getRambleyDetailStroke());
-                    // Draw the details for the current end of Rambley's scarf
-                g.draw(scarfEndDetail);
-            }
-                // Set the stroke to the line stroke
-            g.setStroke(getRambleyLineStroke());
-                // Draw the outline for current end of Rambley's scarf
-            g.draw(scarfEnd);
-                // Dispose of the scarf graphics context
-            g.dispose();
-        }
-    }
-    
+    /**
+     * 
+     * @param g The graphics context to render to.
+     * @param scarfKnot
+     * @param scarfEndUpper
+     * @param scarfEndLower 
+     */
     protected void paintRambleyScarfBack(Graphics2D g, Area scarfKnot, 
-            Area scarfEndUpper, Path2D scarfEndUpperDetail, 
-            Area scarfEndLower){
+            Area scarfEndUpper, Area scarfEndLower){
             // Create the details for the lower end of Rambley's scarf
         path = getRambleyLowerScarfEndDetail(scarfEndLower,path,quadCurve1,point1);
-            // Paint the lower end of Rambley's scarf
-        paintRambleyScarfEnd(g,scarfEndLower,path);
-            // Paint the upper end of Rambley's scarf
-        paintRambleyScarfEnd(g,scarfEndUpper,scarfEndUpperDetail);
-        // Temporary null check
-        if (scarfKnot != null){
-                // Create a copy of the graphics context to draw the scarf knot
-            g = (Graphics2D) g.create();
+            // Create a copy of the graphics context to draw the scarf
+        g = (Graphics2D) g.create();
+            // Set the color to be the color for Rambley's scarf
+        g.setColor(RAMBLEY_SCARF_COLOR);
+            // Fill the area for the lower end of Rambley's scarf
+        g.fill(scarfEndLower);
+            // Set the color to be the color for the outline of Rambley's scarf
+        g.setColor(RAMBLEY_SCARF_LINE_COLOR);
+            // Set the stroke to the detail stroke
+        g.setStroke(getRambleyDetailStroke());
+            // Draw the details for the lower end of Rambley's scarf
+        g.draw(path);
+            // Set the stroke to the line stroke
+        g.setStroke(getRambleyLineStroke());
+            // Draw the outline for lower end of Rambley's scarf
+        g.draw(scarfEndLower);
+            // Go through the remaining parts of the back of the scarf to render
+        for (Area area : new Area[]{scarfEndUpper,scarfKnot}){
                 // Set the color to be the color for Rambley's scarf
             g.setColor(RAMBLEY_SCARF_COLOR);
-                // Fill the area for the knot of Rambley's scarf
-            g.fill(scarfKnot);
-                // Set the color to be the color for the outline of Rambley's scarf
-            g.setColor(RAMBLEY_SCARF_LINE_COLOR);
-                // Set the stroke to the line stroke
-            g.setStroke(getRambleyLineStroke());
-                // Draw the outline for knot of Rambley's scarf
-            g.draw(scarfKnot);
-                // Dispose of the scarf graphics context
-            g.dispose();
-        }
+                // Fill the area for the part of Rambley's scarf
+            g.fill(area);
+                // Set the color to be the color for the outline of Rambley's 
+            g.setColor(RAMBLEY_SCARF_LINE_COLOR);   // scarf
+                // Draw the outline for part of Rambley's scarf
+            g.draw(area);
+        }   // Dispose of the scarf graphics context
+        g.dispose();
     }
     
     
