@@ -2968,6 +2968,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyY
      * @see RAMBLEY_CHEEK_TRIANGLE_HEIGHT
      * @see #getRambleyEar 
+     * @see #isRambleyGlitchy 
+     * @see #setRambleyGlitchy 
      */
     private Area getRambleyEarlessHead(double x, double y, Rectangle2D rect, 
             Path2D path, Ellipse2D ellipse1, Ellipse2D ellipse2){
@@ -2992,17 +2994,6 @@ public class RambleyPainter implements Painter<Component>{
             // y-coordinate The rectangle will be 200 x 92.
             // This will form the lower half of the mask for the cheeks
         rect.setFrameFromCenter(x, y+130, x+100, y+84);
-            // Append the rectangle to the path
-        path.append(rect, false);
-            // Line to the top-left corner of the rectangle
-        path.lineTo(rect.getMinX(), rect.getMinY());
-            // Line to the center x, and to the top of the triangle that forms 
-            // the cheeks
-        path.lineTo(rect.getCenterX(), rect.getMinY()-RAMBLEY_CHEEK_TRIANGLE_HEIGHT);
-            // Line to the top-right corner of the rectangle
-        path.lineTo(rect.getMaxX(), rect.getMinY());
-            // Close the path to form the mask for the cheeks
-        path.closePath();
             // Set the frame of the first ellipse from the center to get a 
             // horizontally centered ellipse with the given y-coordinate, and 
             // that is 152 x 176. This will form the top of Rambley's head
@@ -3014,14 +3005,60 @@ public class RambleyPainter implements Painter<Component>{
             // when masked using the path.
         ellipse2.setFrameFromCenter(rect.getCenterX(), ellipse1.getCenterY()-12, 
                 rect.getMinX(), ellipse1.getMinY()+18);
-            // Create the area for the upper part of Rambley head
+            // This will get the shape of Rambley's head
+        Area headShape;
+            // If Rambley is glitchy
+        if(isRambleyGlitchy()){
+                // Get the points at which the top ellipse would normally 
+                // intersect with the cheeks
+            GeometryMath.getCircleIntersections(ellipse1, 
+                    rect.getMinX(), rect.getMinY(), 
+                    rect.getCenterX(), rect.getMinY()-RAMBLEY_CHEEK_TRIANGLE_HEIGHT, 
+                    point1, point2);
+                // Get the points on the bottom ellipse where it intersects at 
+                // the top of the cheeks
+            GeometryMath.getEllipseX(ellipse2, Math.max(point1.getY(), 
+                    point2.getY()), point1, point2);
+                // Move the path to the top-left point of the more angular
+            path.moveTo(point1.getX(), point1.getY());
+                // Draw a line to the other side of the ellipse
+            path.lineTo(point2.getX(), point2.getY());
+                // Get the points that are 12 pixels above the bottom of the 
+                // bottom ellipse
+            GeometryMath.getEllipseX(ellipse2, ellipse2.getMaxY()-12, 
+                    point1, point2);
+                // Draw a line that is 10 pixels to the right of the right-most 
+                // intersecting point
+            path.lineTo(point2.getX()+10, point2.getY());
+                // Draw a line to the bottom-center of the bottom ellipse
+            path.lineTo(ellipse2.getCenterX(), ellipse2.getMaxY());
+                // Draw a line that is 10 pixels to the left of the left-most 
+                // intersecting point
+            path.lineTo(point1.getX()-10, point1.getY());
+                // Close the path to form the cheeks
+            path.closePath();
+                // Create the shape of Rambley's head, starting with the cheeks
+            headShape = new Area(path);
+        } else {
+                // Append the rectangle to the path
+            path.append(rect, false);
+                // Line to the top-left corner of the rectangle
+            path.lineTo(rect.getMinX(), rect.getMinY());
+                // Line to the center x, and to the top of the triangle that forms 
+                // the cheeks
+            path.lineTo(rect.getCenterX(), rect.getMinY()-RAMBLEY_CHEEK_TRIANGLE_HEIGHT);
+                // Line to the top-right corner of the rectangle
+            path.lineTo(rect.getMaxX(), rect.getMinY());
+                // Close the path to form the mask for the cheeks
+            path.closePath();
+                // Create the shape of Rambley's head, starting with the cheek 
+            headShape = new Area(ellipse2); // area
+                // Mask off the unused parts of the cheek area using the path
+            headShape.intersect(new Area(path));
+        }   // Create the area for the upper part of Rambley head
         Area temp = new Area(ellipse1);
             // Remove the lower half of the ellipse, since it's not needed
         temp.subtract(new Area(rect));
-            // Create the shape of Rambley's head, starting with the cheek area
-        Area headShape = new Area(ellipse2);
-            // Mask off the unused parts of the cheek area using the path
-        headShape.intersect(new Area(path));
             // Add the upper part of his head to the lower part
         headShape.add(temp);
             // Get the amount by which the head shape will need to be shifted 
@@ -3294,6 +3331,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #getRambleyEarLowerTip
      * @see #RAMBLEY_EAR_HEIGHT
      * @see #RAMBLEY_EAR_TIP_ROUNDING
+     * @see #isRambleyGlitchy 
+     * @see #setRambleyGlitchy 
      */
     private Area getRambleyEar(double x, double y, Path2D path){
             // If the given Path2D object is null
@@ -3491,6 +3530,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
+     * @see #isRambleyGlitchy 
+     * @see #setRambleyGlitchy 
      */
     private Area getRambleyMaskFaceMarkings(RectangularShape headBounds, 
             Ellipse2D ellipse1, Ellipse2D ellipse2, Ellipse2D ellipse3, 
@@ -3587,6 +3628,8 @@ public class RambleyPainter implements Painter<Component>{
      * @see #paintRambleySnout 
      * @see #getRambleyEarlessHead
      * @see #getRambleyEar 
+     * @see #isRambleyGlitchy 
+     * @see #setRambleyGlitchy 
      */
     private Area getRambleySnout(RectangularShape headBounds, Area head, 
             Ellipse2D ellipse, Path2D path, Point2D point1, Point2D point2, 
