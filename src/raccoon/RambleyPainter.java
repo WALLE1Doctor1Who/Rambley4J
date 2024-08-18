@@ -5888,49 +5888,6 @@ public class RambleyPainter implements Painter<Component>{
             return listenerList.getListeners(listenerType);
     }
     /**
-     * This adds the given {@code ChangeListener} to this icon.
-     * @param l The listener to add.
-     * @see #removeChangeListener(ChangeListener) 
-     * @see #getChangeListeners() 
-     */
-    public void addChangeListener(ChangeListener l){
-        if (l != null)          // If the listener is not null
-            listenerList.add(ChangeListener.class, l);
-    }
-    /**
-     * This removes the given {@code ChangeListener} from this icon.
-     * @param l The listener to remove.
-     * @see #addChangeListener(ChangeListener) 
-     * @see #getChangeListeners() 
-     */
-    public void removeChangeListener(ChangeListener l){
-        listenerList.remove(ChangeListener.class, l);
-    }
-    /**
-     * This returns an array containing all the {@code ChangeListener}s that 
-     * have been added to this icon.
-     * @return An array containing the {@code ChangeListener}s that have been 
-     * added, or an empty array if none have been added.
-     * @see #addChangeListener(ChangeListener) 
-     * @see #removeChangeListener(ChangeListener) 
-     */
-    public ChangeListener[] getChangeListeners(){
-        return listenerList.getListeners(ChangeListener.class);
-    }
-    /**
-     * This is used to notify the {@code ChangeListener}s that the state of this  
-     * icon has changed.
-     */
-    protected void fireStateChanged(){
-            // This constructs the evet to fire
-        ChangeEvent evt = new ChangeEvent(this);
-            // A for loop to go through the change listeners
-        for (ChangeListener l : listenerList.getListeners(ChangeListener.class)){
-            if (l != null)  // If the listener is not null
-                l.stateChanged(evt);
-        }
-    }
-    /**
      * This adds a {@code PropertyChangeListener} to this painter. This listener 
      * is registered for all bound properties of this painter. 
      * @param l The listener to be added.
