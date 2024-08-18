@@ -2166,7 +2166,7 @@ public class RambleyPainter implements Painter<Component>{
      * 
      * 
      * @param g {@inheritDoc }
-     * @param c
+     * @param c A {@code Component} to get useful properties for painting.
      * @param width {@inheritDoc }
      * @param height {@inheritDoc }
      */
@@ -2180,7 +2180,7 @@ public class RambleyPainter implements Painter<Component>{
             return;
             // Create a copy of the given graphics context and configure it to 
             // render Rambley and the other stuff
-        g = configureGraphics((Graphics2D)g.create());
+        g = configureGraphics((Graphics2D)g.create(), c);
             // If the background is to be painted
         if (isBackgroundPainted())
                 // Paint the background
@@ -2200,6 +2200,7 @@ public class RambleyPainter implements Painter<Component>{
      * graphics context, or at least that the returned graphics context 
      * references the given graphics context in some way. 
      * @param g The graphics context to render to.
+     * @param c A {@code Component} to get useful properties for painting.
      * @return The given graphics context, now configured for rendering Rambley.
      * @see #paint 
      * @see #paintBackground 
@@ -2208,7 +2209,7 @@ public class RambleyPainter implements Painter<Component>{
      * @see #paintPixelGrid 
      * @see #paintPixelGrid 
      */
-    protected Graphics2D configureGraphics(Graphics2D g){
+    protected Graphics2D configureGraphics(Graphics2D g, Component c){
             // Enable antialiasing
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_ON);
