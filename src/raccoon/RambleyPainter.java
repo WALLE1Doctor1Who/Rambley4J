@@ -4,7 +4,7 @@
  */
 package raccoon;
 
-import geom.GeometryMath;
+import geom.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.beans.*;
@@ -953,6 +953,16 @@ public class RambleyPainter implements Painter<Component>{
      */
     private Path2D pixelGrid = null;
     /**
+     * A Rhombus2D object used to draw the background polka dots. This is 
+     * initially null and is initialized the first time it is used.
+     */
+    private Rhombus2D bgRhombus = null;
+    /**
+     * An Ellipse2D object used to draw the background polka dots. This is 
+     * initially null and is initialized the first time it is used.
+     */
+    private Ellipse2D bgEllipse = null;
+    /**
      * An Ellipse2D object used to render Rambley's irises. This is initially 
      * null and is initialized the first time it is used.
      */
@@ -1127,6 +1137,13 @@ public class RambleyPainter implements Painter<Component>{
      * a known state before being used.
      */
     private CubicCurve2D cubicCurve2 = null;
+//    /**
+//     * This is a scratch Rhombus2D object used for rendering Rambley. This is 
+//     * initialized the first time it is used. This scratch object may change at 
+//     * any time during the rendering process, and should not be assumed to be in 
+//     * a known state before being used.
+//     */
+//    private Rhombus2D rhombus = null;
     /**
      * This is a scratch AffineTransform used to transform shapes. This is 
      * initially null and is initialized the first time it is used. This scratch 
@@ -2384,7 +2401,6 @@ public class RambleyPainter implements Painter<Component>{
      * @param width The width of the area to fill with the background.
      * @return The offset for the x-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetY 
-     * @see #getBackgroundDotRhombus 
      * @see #getBackgroundDot 
      * @see #paintBackgroundDots
      * @see getBackgroundDotSpacing
@@ -2402,7 +2418,6 @@ public class RambleyPainter implements Painter<Component>{
      * @param height The height of the area to fill with the background.
      * @return The offset for the y-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetX 
-     * @see #getBackgroundDotRhombus 
      * @see #getBackgroundDot 
      * @see #paintBackgroundDots 
      * @see getBackgroundDotSpacing
@@ -2410,37 +2425,6 @@ public class RambleyPainter implements Painter<Component>{
      */
     protected double getBackgroundDotOffsetY(double height){
         return getBackgroundDotOffset(height);
-    }
-    /**
-     * This creates and returns the shape to use to draw a rhombus shaped 
-     * background polka dot, using the given {@code bounds} to determine the 
-     * size and position of the polka dot. 
-     * @param bounds A rectangle outlining the bounds for the background polka 
-     * dot to return.
-     * @param path A Path2D object to store the results in, or null.
-     * @return The rhombus shape object to use to draw a background polka dot.
-     * @see #getBackgroundDot 
-     * @see #getCircularBackgroundDots
-     * @see #setCircularBackgroundDots 
-     * @see #paintBackgroundDots 
-     */
-    protected Path2D getBackgroundDotRhombus(RectangularShape bounds,Path2D path){
-            // If the given Path2D object is null
-        if (path == null)
-            path = new Path2D.Double();
-        else    // Reset the given Path2D object
-            path.reset();
-            // Move to the top center point of the dot
-        path.moveTo(bounds.getCenterX(), bounds.getMinY());
-            // Line to the center left point
-        path.lineTo(bounds.getMinX(), bounds.getCenterY());
-            // Line to the bottom center point
-        path.lineTo(bounds.getCenterX(), bounds.getMaxY());
-            // Line to the center right point
-        path.lineTo(bounds.getMaxX(), bounds.getCenterY());
-            // Close the path
-        path.closePath();
-        return path;
     }
     /**
      * This creates and returns the shape to use to draw a background polka dot 
@@ -2451,29 +2435,28 @@ public class RambleyPainter implements Painter<Component>{
      * circle. Otherwise, the shape returned will be a rhombus.
      * @param x The x-coordinate for the center of the background polka dot.
      * @param y The y-coordinate for the center of the background polka dot.
-     * @param path A Path2D object to store the results in, or null.
-     * @param ellipse An Ellipse2D object to store the results in, or null.
      * @return The shape object to use to draw a background polka dot.
-     * @see #getBackgroundDotRhombus 
      * @see #getCircularBackgroundDots
      * @see #setCircularBackgroundDots 
      * @see #getBackgroundDotSize 
      * @see #setBackgroundDotSize 
      * @see #paintBackgroundDots 
      */
-    protected Shape getBackgroundDot(double x, double y, Path2D path, 
-            Ellipse2D ellipse){
-            // If the given Ellipse2D object is null
-        if (ellipse == null)
-            ellipse = new Ellipse2D.Double();
-            // Set the frame of the ellipse from the center to be the size of 
-            // a background polka dot.
-        ellipse.setFrameFromCenter(x, y, x-getBackgroundDotSize()/2.0, 
-                y-getBackgroundDotSize()/2.0);
+    protected Shape getBackgroundDot(double x, double y){
+            // This gets the shape that will be used to render the background 
+            // dots
+        RectangularShape shape;
             // If the background dots should be circular
         if (getCircularBackgroundDots())
-            return ellipse;
-        return getBackgroundDotRhombus(ellipse,path);
+            shape = bgEllipse;
+        else 
+            shape = bgRhombus;
+            // Get half of the set size for a background polka dot
+        double halfSize = getBackgroundDotSize() / 2.0;
+            // Set the frame of the shape from the center to be the size of a 
+            // background polka dot.
+        shape.setFrameFromCenter(x, y, x-halfSize, y-halfSize);
+        return shape;
     }
     /**
      * This is used to render the background. The area is first filled with a 
@@ -2548,12 +2531,12 @@ public class RambleyPainter implements Painter<Component>{
         g = (Graphics2D) g.create(x, y, w, h);
             // Set the color to the background polka dot color
         g.setColor(BACKGROUND_DOT_COLOR);
-            // If the first Ellipse2D scratch object has not been initialized 
-        if (ellipse1 == null)   // yet
-            ellipse1 = new Ellipse2D.Double();
-            // If the scratch Path2D object has not been initialized yet
-        if (path == null)
-            path = new Path2D.Double();
+            // If the background scratch Ellipse2D object has not been 
+        if (bgEllipse == null)   // initialized yet
+            bgEllipse = new Ellipse2D.Double();
+            // If the background scratch Rhombus2D object has not been 
+        if (bgRhombus == null)  // initialized yet
+            bgRhombus = new Rhombus2D.Double();
             // Get the x offset for the background polka dots
         double x1 = getBackgroundDotOffsetX(w);
             // Get the y offset for the background polka dots
@@ -2572,7 +2555,7 @@ public class RambleyPainter implements Painter<Component>{
             for (double xDot = getBackgroundDotSpacing() * (i % 2); xDot <= w; 
                     xDot+=getBackgroundDotSpacing()+getBackgroundDotSpacing()){
                     // Fill the current background polka dot
-                g.fill(getBackgroundDot(xDot+x1,yDot,path,ellipse1));
+                g.fill(getBackgroundDot(xDot+x1,yDot));
             }
         }   // Dispose of the copy of the graphics context
         g.dispose();
