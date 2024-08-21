@@ -31,8 +31,6 @@ replay_pid*
 # Windows ini file
 /desktop.ini
 
-/src/raccoon/RambleyTestViewer.java
-/src/raccoon/RambleyTestViewer.form
 /src/raccoon/Rambley4J.form
 /src/raccoon/Rambley4J.java
 
