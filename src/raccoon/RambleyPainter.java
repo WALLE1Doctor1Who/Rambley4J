@@ -571,7 +571,7 @@ public class RambleyPainter implements Painter<Component>{
     public static final int IGNORE_ASPECT_RATIO_FLAG =      0x00000010;
     /**
      * This is the flag for drawing the background polka dots as circles instead 
-     * of diamonds.
+     * of rhombuses.
      */
     public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000020;
     /**
@@ -673,7 +673,7 @@ public class RambleyPainter implements Painter<Component>{
             "IgnoreAspectRatioPropertyChanged";
     /**
      * This identifies that a change has been made to whether the background 
-     * polka dots are circular or diamonds.
+     * polka dots are circular or rhombuses.
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
      */
     public static final String CIRCULAR_BACKGROUND_DOTS_PROPERTY_CHANGED = 
@@ -1290,7 +1290,7 @@ public class RambleyPainter implements Painter<Component>{
      * RambleyPainter}. If this is {@code true}, then a background reminiscent 
      * of the one seen on Rambley's screens in Indigo Park will be painted 
      * behind Rambley. The background will consist of {@link 
-     * BACKGROUND_DOT_COLOR dark blue} diamond-shaped or circle-shaped polka 
+     * BACKGROUND_DOT_COLOR dark blue} rhombus-shaped or circle-shaped polka 
      * dots over a gradient going from {@link BACKGROUND_GRADIENT_COLOR dark 
      * blue} at the top to {@link BACKGROUND_COLOR light blue} at the bottom. 
      * The default value for this is {@code true}.
@@ -1524,14 +1524,14 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This returns whether the polka dots in the background will be circles or 
-     * diamonds. If this is {@code true}, then the background polka dots will be 
-     * circles. If this is {@code false} then the background polka dots will be 
-     * diamonds. The default value for this is {@code false}.
+     * rhombuses. If this is {@code true}, then the background polka dots will 
+     * be circles. If this is {@code false} then the background polka dots will 
+     * be rhombuses. The default value for this is {@code false}.
      * 
      * @todo Add references to other related methods.
      * 
      * @return {@code true} if the background polka dots are circles, {@code 
-     * false} if the background polka dots are diamonds.
+     * false} if the background polka dots are rhombuses.
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
      * @see #getFlag 
      * @see #setCircularBackgroundDots
@@ -1541,14 +1541,14 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This sets whether the polka dots in the background will be circles or 
-     * diamonds. If this is {@code true}, then the background polka dots will be 
-     * circles. If this is {@code false} then the background polka dots will be 
-     * diamonds. The default value for this is {@code false}.
+     * rhombuses. If this is {@code true}, then the background polka dots will 
+     * be circles. If this is {@code false} then the background polka dots will 
+     * be rhombuses. The default value for this is {@code false}.
      * 
      * @todo Add references to other related methods.
      * 
      * @param value {@code true} if the background polka dots should be circles, 
-     * {@code false} if the background polka dots should be diamonds.
+     * {@code false} if the background polka dots should be rhombuses.
      * @return This {@code RambleyPainter}.
      * @see CIRCULAR_BACKGROUND_DOTS_FLAG
      * @see #setFlag 
@@ -2384,7 +2384,7 @@ public class RambleyPainter implements Painter<Component>{
      * @param width The width of the area to fill with the background.
      * @return The offset for the x-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetY 
-     * @see #getBackgroundDotDiamond 
+     * @see #getBackgroundDotRhombus 
      * @see #getBackgroundDot 
      * @see #paintBackgroundDots
      * @see getBackgroundDotSpacing
@@ -2402,7 +2402,7 @@ public class RambleyPainter implements Painter<Component>{
      * @param height The height of the area to fill with the background.
      * @return The offset for the y-coordinate of the background polka dots.
      * @see #getBackgroundDotOffsetX 
-     * @see #getBackgroundDotDiamond 
+     * @see #getBackgroundDotRhombus 
      * @see #getBackgroundDot 
      * @see #paintBackgroundDots 
      * @see getBackgroundDotSpacing
@@ -2412,19 +2412,19 @@ public class RambleyPainter implements Painter<Component>{
         return getBackgroundDotOffset(height);
     }
     /**
-     * This creates and returns the shape to use to draw a diamond shaped 
+     * This creates and returns the shape to use to draw a rhombus shaped 
      * background polka dot, using the given {@code bounds} to determine the 
      * size and position of the polka dot. 
      * @param bounds A rectangle outlining the bounds for the background polka 
      * dot to return.
      * @param path A Path2D object to store the results in, or null.
-     * @return The diamond shape object to use to draw a background polka dot.
+     * @return The rhombus shape object to use to draw a background polka dot.
      * @see #getBackgroundDot 
      * @see #getCircularBackgroundDots
      * @see #setCircularBackgroundDots 
      * @see #paintBackgroundDots 
      */
-    protected Path2D getBackgroundDotDiamond(RectangularShape bounds,Path2D path){
+    protected Path2D getBackgroundDotRhombus(RectangularShape bounds,Path2D path){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -2448,13 +2448,13 @@ public class RambleyPainter implements Painter<Component>{
      * be the width and height set for the {@link #getBackgroundDotSize() 
      * background polka dot size}. If the background polka dots are {@link 
      * #getCircularBackgroundDots circular}, then the shape returned will be a 
-     * circle. Otherwise, the shape returned will be a diamond.
+     * circle. Otherwise, the shape returned will be a rhombus.
      * @param x The x-coordinate for the center of the background polka dot.
      * @param y The y-coordinate for the center of the background polka dot.
      * @param path A Path2D object to store the results in, or null.
      * @param ellipse An Ellipse2D object to store the results in, or null.
      * @return The shape object to use to draw a background polka dot.
-     * @see #getBackgroundDotDiamond 
+     * @see #getBackgroundDotRhombus 
      * @see #getCircularBackgroundDots
      * @see #setCircularBackgroundDots 
      * @see #getBackgroundDotSize 
@@ -2473,7 +2473,7 @@ public class RambleyPainter implements Painter<Component>{
             // If the background dots should be circular
         if (getCircularBackgroundDots())
             return ellipse;
-        return getBackgroundDotDiamond(ellipse,path);
+        return getBackgroundDotRhombus(ellipse,path);
     }
     /**
      * This is used to render the background. The area is first filled with a 
@@ -2516,7 +2516,7 @@ public class RambleyPainter implements Painter<Component>{
      * Each polka dot will be {@link getBackgroundDot getBackgroundDot()} in 
      * width and height, and will be spaced diagonally by {@link 
      * #getBackgroundDotSpacing getBackgroundDotSpacing}. The polka dots will be 
-     * either circular or diamond-shaped, depending on whether {@link 
+     * either circular or rhombus-shaped, depending on whether {@link 
      * #getCircularBackgroundDots getCircularBackgroundDots} is set to {@code 
      * true} or not. Each polka dot is generated using the {@link 
      * #getBackgroundDot getBackgroundDot} method. The polka dots will be offset 
