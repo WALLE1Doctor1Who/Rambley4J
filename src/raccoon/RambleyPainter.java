@@ -83,7 +83,7 @@ public class RambleyPainter implements Painter<Component>{
      * This is the color for the mask-like markings on Rambley the Raccoon's 
      * face.
      */
-    public static final Color RAMBLEY_FACE_MARKINGS_COLOR = RAMBLEY_STRIPE_COLOR;
+    public static final Color RAMBLEY_FACE_MARKINGS_COLOR=RAMBLEY_STRIPE_COLOR;
     /**
      * This is the color for Rambley the Raccoon's eyebrows.
      */
@@ -156,7 +156,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the color for Rambley the Raccoon's tongue.
      */
-    public static final Color RAMBLEY_TONGUE_COLOR = new Color(0x431188);
+    public static final Color RAMBLEY_TONGUE_COLOR = new Color(0x73488F);
     /**
      * This is the color for the lines around and on Rambley the Raccoon's 
      * tongue.
