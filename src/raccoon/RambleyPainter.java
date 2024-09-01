@@ -52,27 +52,27 @@ public class RambleyPainter implements Painter<Component>{
      * This is the main color of Rambley the Raccoon. That is to say, this is 
      * the color which most of Rambley's body is comprised of.
      */
-    public static final Color RAMBLEY_MAIN_BODY_COLOR = new Color(0xA591AE);
+    public static final Color RAMBLEY_MAIN_BODY_COLOR = new Color(0xA491AC);
     /**
      * This is the secondary color of Rambley the Raccoon. That is to say, this 
      * is the color for many of Rambley's patches of fur and markings.
      */
-    public static final Color RAMBLEY_SECONDARY_BODY_COLOR = new Color(0xEBDEE0);
+    public static final Color RAMBLEY_SECONDARY_BODY_COLOR = new Color(0xEBDEDF);
     /**
      * This is the main color that is used to draw the lines around and on 
      * Rambley the Raccoon. That is to say, this is the color which most of the 
      * lines for Rambley is comprised of.
      */
-    public static final Color RAMBLEY_LINE_COLOR = new Color(0x624361);
+    public static final Color RAMBLEY_LINE_COLOR = new Color(0x5E465C);
     /**
      * This is the color for the stripes on Rambley the Raccoon's tail.
      */
-    public static final Color RAMBLEY_STRIPE_COLOR = Color.BLACK;
+    public static final Color RAMBLEY_STRIPE_COLOR = new Color(0x161311);
     /**
      * This is the color for Rambley the Raccoon's paws. That is to say, this is 
      * the color for Rambley's hands and feet.
      */
-    public static final Color RAMBLEY_PAW_COLOR = new Color(0x161311);
+    public static final Color RAMBLEY_PAW_COLOR = RAMBLEY_STRIPE_COLOR;
     /**
      * This is the color for the lines around Rambley the Raccoon's paws. That 
      * is to say, this is the color for the lines around Rambley's hands and 
@@ -99,7 +99,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the color for Rambley the Raccoon's irises.
      */
-    public static final Color RAMBLEY_IRIS_COLOR = new Color(0x883EC1);
+    public static final Color RAMBLEY_IRIS_COLOR = new Color(0x813FBA);
     /**
      * This is the color for Rambley the Raccoon's irises when he is glitching 
      * out.
@@ -139,7 +139,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the color for the inside of Rambley the Raccoon's mouth.
      */
-    public static final Color RAMBLEY_MOUTH_COLOR = new Color(0x3D0D2F);
+    public static final Color RAMBLEY_MOUTH_COLOR = new Color(0x3A0E2D);
     /**
      * This is the color for the lines around and in Rambley the Raccoon's 
      * mouth.
@@ -156,7 +156,7 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the color for Rambley the Raccoon's tongue.
      */
-    public static final Color RAMBLEY_TONGUE_COLOR = new Color(0x724794);
+    public static final Color RAMBLEY_TONGUE_COLOR = new Color(0x431188);
     /**
      * This is the color for the lines around and on Rambley the Raccoon's 
      * tongue.
@@ -165,22 +165,22 @@ public class RambleyPainter implements Painter<Component>{
     /**
      * This is the color for Rambley the Raccoon's red scarf.
      */
-    public static final Color RAMBLEY_SCARF_COLOR = new Color(0xC64C57);
+    public static final Color RAMBLEY_SCARF_COLOR = new Color(0xC54C56);
     /**
      * This is the color for the lines around and on Rambley the Raccoon's red 
      * scarf.
      */
-    public static final Color RAMBLEY_SCARF_LINE_COLOR = new Color(0xA63442);
+    public static final Color RAMBLEY_SCARF_LINE_COLOR = new Color(0xA73642);
     /**
      * This is the color for Rambley the Raccoon's train conductor hat which he 
      * wears during the Rambley's Railroad ride.
      */
-    public static final Color RAMBLEY_CONDUCTOR_HAT_COLOR = new Color(0x431188);
+    public static final Color RAMBLEY_CONDUCTOR_HAT_COLOR = new Color(0x1F0090);
     /**
      * This is the color for the stripes on Rambley the Raccoon's train 
      * conductor hat.
      */
-    public static final Color RAMBLEY_CONDUCTOR_HAT_STRIPE_COLOR = new Color(0xF3E5FE);
+    public static final Color RAMBLEY_CONDUCTOR_HAT_STRIPE_COLOR = new Color(0xFFF9FF);
     /**
      * This is the color for the line around Rambley the Raccoon's train 
      * conductor hat.
