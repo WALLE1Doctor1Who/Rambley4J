@@ -5,26 +5,45 @@
 package raccoon;
 
 import java.awt.*;
+import java.awt.geom.RectangularShape;
 import javax.swing.*;
 
 /**
- *
+ * This is a Painter that paints the background behind Rambley the Raccoon.
  * @author Milo Steier
  */
-public class RambleyBackgroundPainter implements Painter<Object>{
+public class RambleyBackgroundPainter implements Painter<RectangularShape>{
     /**
      * This is the main color for the background.
      */
     public static final Color BACKGROUND_COLOR = new Color(0x2CDFFF);
     /**
-     * This is the color for the dots in the background.
+     * This is the color for the polka dots in the background.
      */
     public static final Color BACKGROUND_DOT_COLOR = new Color(0x1A73C9);
     /**
-     * This is the color for the background gradient. This transitions to a 
-     * transparent version of this color.
+     * This is the color for the background gradient. The background gradient 
+     * fades from this color to transparency.
      */
     public static final Color BACKGROUND_GRADIENT_COLOR = new Color(0x0068FF);
+    /**
+     * This is the color which the background gradient fades into. This is a 
+     * transparent color.
+     */
+    protected static final Color BACKGROUND_GRADIENT_COLOR_2 = 
+            new Color(BACKGROUND_GRADIENT_COLOR.getRGB()&0x00FFFFFF,true);
+    /**
+     * This is the default width and height of the background polka dots.
+     */
+    protected static final double DEFAULT_BACKGROUND_DOT_SIZE = 8.0;
+    /**
+     * This is the default diagonal spacing between the centers of the 
+     * background polka dots. Refer to the documentation for the {@link 
+     * #getBackgroundDotSpacing getBackgroundDotSpacing} method for a more in
+     * depth description on the background polka dot spacing.
+     */
+    protected static final double DEFAULT_BACKGROUND_DOT_SPACING = 12.0;
+    
     /**
      * This is the width and height of the background dots.
      */
@@ -91,7 +110,7 @@ public class RambleyBackgroundPainter implements Painter<Object>{
     }
 
     @Override
-    public void paint(Graphics2D g, Object object, int width, int height) {
+    public void paint(Graphics2D g, RectangularShape object, int width, int height) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     

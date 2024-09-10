@@ -9,14 +9,22 @@ import java.awt.geom.*;
 import javax.swing.*;
 
 /**
- *
+ * This is a Painter that paints the pixel grid overlay over Rambley the 
+ * Raccoon.
  * @author Milo Steier
  */
-public class RambleyPixelGridPainter implements Painter<Shape>{
+public class RambleyPixelGridPainter implements Painter<Integer>{
     /**
-     * 
+     * This is the color used to render the pixel grid effect. This color is a 
+     * translucent black.
      */
     public static final Color PIXEL_GRID_COLOR = new Color(0x60000000,true);
+    /**
+     * This is the default spacing between the lines in the pixel grid. For the 
+     * vertical lines, this is the horizontal spacing. For the horizontal lines, 
+     * this is the vertical spacing.
+     */
+    protected static final double DEFAULT_PIXEL_GRID_LINE_SPACING = 5;
     
     protected static final int PIXEL_GRID_SPACING = 5;
     
@@ -60,7 +68,7 @@ public class RambleyPixelGridPainter implements Painter<Shape>{
     }
 
     @Override
-    public void paint(Graphics2D g, Shape mask, int width, int height) {
+    public void paint(Graphics2D g, Integer spacing, int width, int height) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
