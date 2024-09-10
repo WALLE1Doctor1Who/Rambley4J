@@ -3362,6 +3362,10 @@ public class RambleyPainter implements Painter<Component>{
                 // Glitchy Rambley is more polygonal, and thus there are no 
                 // curves in his ear. His ear will be rhombus-like, though not 
                 // truely a rhombus.
+                // First line starts at point1 and ends at point2. The second 
+                // line starts at point2 and ends at point3. The third line 
+                // starts at point3, intersects point5 and point8, and ends at 
+                // point4. The fourth line starts at point4 and ends at point1.
                 
                 // Get the starting point of the glitched ear. This is the 
                 // bottom-right of the ear.
@@ -3370,6 +3374,12 @@ public class RambleyPainter implements Painter<Component>{
                 // way to the top of the ear (17% of the way down)
             point2.setLocation(point1.getX(), RAMBLEY_EAR_HEIGHT * 0.17 + y);
                 
+                // Calculate roughly the point at which the ear tip curve would 
+                // be broken into two curves to better fit the ear tip equation.
+                // This will be used as a point on the third line along with 
+                // point8 in order to calculate where the third line intersects 
+                // with the second and fourth lines to get point3 and point4, 
+                // respectively.
             
                 // Get the difference of the x-coordinates for points point7 and 
                 // point8 (these are the points where the ear tip curve 
@@ -3378,9 +3388,34 @@ public class RambleyPainter implements Painter<Component>{
                 // Calculate the offset for the x-coordinate when 80% of the way 
                 // to the left of the ear tip curve
             tempX = tempX - (tempX * 0.80);
+                // Get the point on the tip curve when 80% of the way to the 
+            point5.setLocation(tempX+x, y+getRambleyEarTipY(tempX));    // left
             
-            
+                // Calculate the offset for the y-coordinate when 10% of the way 
+            double tempY = RAMBLEY_EAR_HEIGHT * 0.10;   // down
+                // Get the point on the upper curve when 10% of the way down.
+                // This is a point on the second line to use to get the point 
+                // where the second and third lines intersect.
+            point6.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+                // Calculate where the second and third lines intersect. This is 
+                // where the second line will end and the third line starts. The 
+                // second line starts at point2 and intersects point6. The third
+                // line intersects point5 and point8
+            point3 = GeometryMath.getLineIntersection(point2,point6,point5,
+                    point8,point3);
                 
+                // Calculate the offset for the y-coordinate when 88% of the way 
+            tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
+                // Get the point on the lower curve when 88% of the way down.
+                // This is a point on the fourth line to use to get the point 
+                // where the third and fourth lines intersect.
+            point6.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+                // Calculate where the third and fourth lines intersect. This is 
+                // where the third line will end and the fourth line starts. The 
+                // third line starts at point3 and intersects point5 and point8. 
+                // The fourth line ends at point1 and intersects point6.
+            point4 = GeometryMath.getLineIntersection(point1, point6, point5, 
+                    point8, point4);
                 
                 // Move the path to the start of the first line
             path.moveTo(point1.getX(), point1.getY());
@@ -3389,22 +3424,10 @@ public class RambleyPainter implements Painter<Component>{
             path.lineTo(point2.getX(), point2.getY());
                 // Draw a line to the starting point of the third line (the end 
                 // of the second line)
-            
-            
-            
-                // Get the point on the tip curve when 80% of the way to the left
-            point3.setLocation(tempX+x, point7.getY());
-            
             path.lineTo(point3.getX(), point3.getY());
-            
-                // Calculate the offset for the y-coordinate when 88% of the way 
-            double tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
-                // Get the point on the lower curve when 88% of the way down
-            point5.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-            
-            point4 = GeometryMath.getLineIntersection(point1, point5, point3, point8, point4);
+                // Draw a line to the starting point of the fourth line (the end 
+                // of the third line)
             path.lineTo(point4.getX(), point4.getY());
-            
         } else {
                 // We will need to add a curve later on in order to smoothly 
                 // transition from the upper portion of the ear to the tip of the 
