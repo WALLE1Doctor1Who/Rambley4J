@@ -1089,21 +1089,10 @@ public final class GeometryMath {
      * line segment.
      * @param point A Point2D object to store the results in, or null.
      * @return The point at which the two given lines intersect, or null if the 
-     * two lines do not intersect.
+     * two lines do not intersect (i.e. the lines are parallel or coincident).
      */
     public static Point2D getLineIntersection(double x1, double y1, double x2, 
             double y2, double x3, double y3, double x4,double y4,Point2D point){
-            // If the two lines do not intersect
-        if (!Line2D.linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4)){
-                // If the given Point2D object is not null
-            if (point != null)
-                        // Set the point to return to NaN
-                    point.setLocation(Double.NaN, Double.NaN);
-                    // Return null
-                return null;
-        }   // If the given Point2D object is null
-        if (point == null)
-            point = new Point2D.Double();
             // Get the difference between the x-coordinates of the first line 
         double dx1 = x1 - x2;   // segment
             // Get the difference between the x-coordinates of the second line 
@@ -1112,11 +1101,30 @@ public final class GeometryMath {
         double dy1 = y1 - y2;   // segment
             // Get the difference between the y-coordinates of the second line 
         double dy2 = y3 - y4;   // segment
-            
-        double l1 = (x1 * y2) - (y1 * x2);
-        double l2 = (x3 * y4) - (y3 * x4);
-        double a = (dx1 * dy2) - (dy1 * dx2);
-        point.setLocation(((l1*dx2)-(dx1*l2))/a, ((l1*dy2)-(dy1*l2))/a);
+            // The denominator for the equations for finding the determinates
+            // ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
+        double d = (dx1 * dy2) - (dy1 * dx2);
+            // If the denominator is zero (indicates that the lines are parallel 
+        if (d == 0){        // or coincident)
+                // If the given Point2D object is not null
+            if (point != null)
+                    // Set the point to return to NaN
+                point.setLocation(Double.NaN, Double.NaN);
+                // Return null
+            return null;
+        }   // If the given Point2D object is null
+        if (point == null)
+            point = new Point2D.Double();
+            // The determinate of the matrix for the points of line 1
+            // | x1   y1 |
+            // | x2   y2 |
+        double det1 = (x1 * y2) - (y1 * x2);
+            // The determinate of the matrix for the points of line 2
+            // | x3   y3 |
+            // | x4   y4 |
+        double det2 = (x3 * y4) - (y3 * x4);
+            // Calculate the x and y points using the determinates 
+        point.setLocation(((det1*dx2)-(dx1*det2))/d, ((det1*dy2)-(dy1*det2))/d);
         return point;
     }
     /**
@@ -1127,7 +1135,7 @@ public final class GeometryMath {
      * @param p4 The end point of the second specified line segment.
      * @param point A Point2D object to store the results in, or null.
      * @return The point at which the two given lines intersect, or null if the 
-     * two lines do not intersect.
+     * two lines do not intersect (i.e. the lines are parallel or coincident).
      */
     public static Point2D getLineIntersection(Point2D p1, Point2D p2, 
             Point2D p3, Point2D p4, Point2D point){
@@ -1140,7 +1148,7 @@ public final class GeometryMath {
      * @param line2 The second specified line segment.
      * @param point A Point2D object to store the results in, or null.
      * @return The point at which the two given lines intersect, or null if the 
-     * two lines do not intersect.
+     * two lines do not intersect (i.e. the lines are parallel or coincident).
      */
     public static Point2D getLineIntersection(Line2D line1, Line2D line2, 
             Point2D point){
