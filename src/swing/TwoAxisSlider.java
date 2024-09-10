@@ -320,7 +320,49 @@ public class TwoAxisSlider extends JPanel{
     
     
     
-    
+    /**
+     * This adds the given {@code ChangeListener} to this component.
+     * @param l The listener to add.
+     * @see #removeChangeListener(ChangeListener) 
+     * @see #getChangeListeners() 
+     */
+    public void addChangeListener(ChangeListener l){
+        if (l != null)          // If the listener is not null
+            listenerList.add(ChangeListener.class, l);
+    }
+    /**
+     * This removes the given {@code ChangeListener} from this component.
+     * @param l The listener to remove.
+     * @see #addChangeListener(ChangeListener) 
+     * @see #getChangeListeners() 
+     */
+    public void removeChangeListener(ChangeListener l){
+        listenerList.remove(ChangeListener.class, l);
+    }
+    /**
+     * This returns an array containing all the {@code ChangeListener}s that 
+     * have been added to this component.
+     * @return An array containing the {@code ChangeListener}s that have been 
+     * added, or an empty array if none have been added.
+     * @see #addChangeListener(ChangeListener) 
+     * @see #removeChangeListener(ChangeListener) 
+     */
+    public ChangeListener[] getChangeListeners(){
+        return listenerList.getListeners(ChangeListener.class);
+    }
+    /**
+     * This is used to notify the {@code ChangeListener}s that the state of this  
+     * component has changed.
+     */
+    protected void fireStateChanged(){
+            // This constructs the evet to fire
+        ChangeEvent evt = new ChangeEvent(this);
+            // A for loop to go through the change listeners
+        for (ChangeListener l : listenerList.getListeners(ChangeListener.class)){
+            if (l != null)  // If the listener is not null
+                l.stateChanged(evt);
+        }
+    }
     
     private int majorTickSpacing = 10;
     private int minorTickSpacing = 5;
@@ -350,6 +392,7 @@ public class TwoAxisSlider extends JPanel{
 
         @Override
         public void stateChanged(ChangeEvent evt) {
+            fireStateChanged();
             displayPanel.repaint();
 //            System.out.println("xSlider: " + getPositionX());
 //            System.out.println("ySlider: " + getPositionY());
