@@ -79,6 +79,26 @@ public class TwoAxisSlider extends JPanel{
     
 //    public BoundedRangeModel get
     
+    public int getValueX(){
+        return xSlider.getValue();
+    }
+    
+    public void setValueX(int x){
+        if (getValueX() == x)
+            return;
+        xSlider.setValue(x);
+    }
+    
+    public int getValueY(){
+        return ySlider.getValue();
+    }
+    
+    public void setValueY(int y){
+        if (getValueY() == y)
+            return;
+        ySlider.setValue(y);
+    }
+    
     public int getMajorTickSpacing(){
         return majorTickSpacing;
     }
