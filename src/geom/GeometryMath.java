@@ -1156,6 +1156,120 @@ public final class GeometryMath {
                 line1.getX1(),line1.getY1(),line1.getX2(),line1.getY2(),
                 line2.getX1(),line2.getY1(),line2.getX2(),line2.getY2(),point);
     }
+    /**
+     * 
+     * @param x1 The x-coordinate for the first point on the line.
+     * @param y1 The y-coordinate for the first point on the line.
+     * @param x2 The x-coordinate for the second point on the line.
+     * @param y2 The y-coordinate for the second point on the line.
+     * @param x The x-coordinate of the point to get.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the line with the given x-coordinate, or null if the
+     * given line is a vertical line.
+     */
+    public static Point2D getLinePointForX(double x1, double y1, 
+            double x2, double y2, double x, Point2D point){
+            // If the first and second point's x values are the same (the line 
+        if (x1 == x2){      // is a vertical line)
+                // If the given Point2D object is not null
+            if (point != null)
+                    // Set the point to return to NaN
+                point.setLocation(Double.NaN, Double.NaN);
+                // Return null
+            return null;
+        }   // If the given Point2D object is null
+        if (point == null)
+            point = new Point2D.Double();
+            // Get the slope of the line.
+        double m = getLineSlope(x1,y1,x2,y2);
+            // Set the point to have the given x, and calculate the y-coordinate 
+            // using y = mx + b (b is the line coefficient)
+        point.setLocation(x, m * x + getLineCoefficient(m,x1,y1));
+        return point;
+    }
+    /**
+     * 
+     * @param p1 The first point on the line.
+     * @param p2 The second point on the line.
+     * @param x The x-coordinate of the point to get.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the line with the given x-coordinate, or null if the
+     * given line is a vertical line.
+     */
+    public static Point2D getLinePointForX(Point2D p1, Point2D p2, double x, 
+            Point2D point){
+        return getLinePointForX(p1.getX(),p1.getY(),p2.getX(),p2.getY(),x,
+                point);
+    }
+    /**
+     * 
+     * @param line The line to get the point on.
+     * @param x The x-coordinate of the point to get.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the line with the given x-coordinate, or null if the
+     * given line is a vertical line.
+     */
+    public static Point2D getLinePointForX(Line2D line,double x,Point2D point){
+        return getLinePointForX(line.getX1(),line.getY1(),
+                line.getX2(),line.getY2(),x,point);
+    }
+    /**
+     * 
+     * @param x1 The x-coordinate for the first point on the line.
+     * @param y1 The y-coordinate for the first point on the line.
+     * @param x2 The x-coordinate for the second point on the line.
+     * @param y2 The y-coordinate for the second point on the line.
+     * @param y The y-coordinate of the point to get.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the line with the given y-coordinate, or null if the
+     * given line is a horizontal line.
+     */
+    public static Point2D getLinePointForY(double x1, double y1, 
+            double x2, double y2, double y, Point2D point){
+            // If the first and second point's y values are the same (the line 
+        if (y1 == y2){      // is a horizontal line)
+                // If the given Point2D object is not null
+            if (point != null)
+                    // Set the point to return to NaN
+                point.setLocation(Double.NaN, Double.NaN);
+                // Return null
+            return null;
+        }   // If the given Point2D object is null
+        if (point == null)
+            point = new Point2D.Double();
+            // Get the slope of the line.
+        double m = getLineSlope(x1,y1,x2,y2);
+            // Set the point to have the given y, and calculate the x-coordinate 
+            // using x = (y - b) / m (b is the line coefficient)
+        point.setLocation((y - getLineCoefficient(m,x1,y1))/ m, y);
+        return point;
+    }
+    /**
+     * 
+     * @param p1 The first point on the line.
+     * @param p2 The second point on the line.
+     * @param y The y-coordinate of the point to get.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the line with the given y-coordinate, or null if the
+     * given line is a horizontal line.
+     */
+    public static Point2D getLinePointForY(Point2D p1, Point2D p2, double y, 
+            Point2D point){
+        return getLinePointForY(p1.getX(),p1.getY(),p2.getX(),p2.getY(),y,
+                point);
+    }
+    /**
+     * 
+     * @param line The line to get the point on.
+     * @param y The y-coordinate of the point to get.
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the line with the given y-coordinate, or null if the
+     * given line is a horizontal line.
+     */
+    public static Point2D getLinePointForY(Line2D line,double y,Point2D point){
+        return getLinePointForY(line.getX1(),line.getY1(),
+                line.getX2(),line.getY2(),y,point);
+    }
     
     
     
