@@ -89,6 +89,26 @@ public class TwoAxisSlider extends JPanel{
         xSlider.setValue(x);
     }
     
+    public int getMinimumX(){
+        return xSlider.getMinimum();
+    }
+    
+    public void setMinimumX(int min){
+        if (getMinimumX() == min)
+            return;
+        xSlider.setMinimum(min);
+    }
+    
+    public int getMaximumX(){
+        return xSlider.getMaximum();
+    }
+    
+    public void setMaximumX(int max){
+        if (getMaximumX() == max)
+            return;
+        xSlider.setMaximum(max);
+    }
+    
     public int getValueY(){
         return ySlider.getValue();
     }
@@ -97,6 +117,26 @@ public class TwoAxisSlider extends JPanel{
         if (getValueY() == y)
             return;
         ySlider.setValue(y);
+    }
+    
+    public int getMinimumY(){
+        return ySlider.getMinimum();
+    }
+    
+    public void setMinimumY(int min){
+        if (getMinimumY() == min)
+            return;
+        ySlider.setMinimum(min);
+    }
+    
+    public int getMaximumY(){
+        return ySlider.getMaximum();
+    }
+    
+    public void setMaximumY(int max){
+        if (getMaximumY() == max)
+            return;
+        ySlider.setMaximum(max);
     }
     
     public int getMajorTickSpacing(){
@@ -150,8 +190,6 @@ public class TwoAxisSlider extends JPanel{
     private double getRangePosition(BoundedRangeModel model){
             // The current value for the model, offset by the minimum value
         long value = model.getValue() - model.getMinimum();
-//            // The maximum value for the model, offset by the extent and minimum
-//        long max = model.getMaximum() - model.getExtent() - model.getMinimum();
             // The maximum value for the model, offset by the minimum value
         long max = model.getMaximum() - model.getMinimum();
         return value / ((double)max);
@@ -180,11 +218,9 @@ public class TwoAxisSlider extends JPanel{
     protected void paintAxisTicks(Graphics2D g, Rectangle2D bounds, int spacing, double length){
         if (spacing <= 0 || length <= 0)
             return;
-        double xSpacing = (spacing / 
-                ((double) (xSlider.getMaximum()-xSlider.getMinimum()))) * 
+        double xSpacing = (spacing / ((double) (getMaximumX()-getMinimumX()))) * 
                 bounds.getWidth();
-        double ySpacing = (spacing / 
-                ((double) (ySlider.getMaximum()-ySlider.getMinimum()))) * 
+        double ySpacing = (spacing / ((double) (getMaximumY()-getMinimumY()))) * 
                 bounds.getHeight();
         length /= 2.0;
         for (double x = bounds.getMinX()+xSpacing; x < bounds.getMaxX(); x+= xSpacing){
@@ -237,6 +273,10 @@ public class TwoAxisSlider extends JPanel{
         
         g.setColor(Color.BLACK);
         paintCenterLines(g,rect,rect);
+        if (paintTicks){
+            paintAxisTicks(g,rect,majorTickSpacing,12);
+            paintAxisTicks(g,rect,minorTickSpacing,8);
+        }
 
         g.setColor(Color.GRAY);
         g.setStroke(DASH_STROKE);
@@ -245,21 +285,15 @@ public class TwoAxisSlider extends JPanel{
         g.setStroke(new BasicStroke());
         
         g.setColor(Color.BLACK);
-        g.drawRect(0, 0, w, h);
+        g.drawRect(0, 0, w-1, h-1);
         g.draw(rect);
         line.setLine(0, 0, rect.getMinX(), rect.getMinY());
         g.draw(line);
         line.setLine(rect.getMaxX(), rect.getMaxY(), w, h);
         g.draw(line);
-        
-        if (paintTicks){
-            paintAxisTicks(g,rect,majorTickSpacing,10);
-            paintAxisTicks(g,rect,minorTickSpacing,5);
-        }
 
         g.setColor(Color.BLUE);
         g.fill(ellipse);
-        
         ellipse.setFrameFromCenter(ellipse.getCenterX(), ellipse.getCenterY(), 
                 ellipse.getMinX()+2, ellipse.getMinY()+2);
         g.setColor(new Color(0xB0B0FF));
