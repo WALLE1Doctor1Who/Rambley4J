@@ -30,6 +30,7 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
         jSlider1 = new javax.swing.JSlider();
         jSlider2 = new javax.swing.JSlider();
         printButton = new javax.swing.JButton();
+        enableToggle = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -51,6 +52,14 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
 
         printButton.setText("Print Data");
 
+        enableToggle.setSelected(true);
+        enableToggle.setText("Enabled");
+        enableToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                enableToggleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -65,6 +74,8 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(enableToggle)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(printButton)))
                 .addContainerGap())
         );
@@ -78,7 +89,8 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
                 .addGap(42, 42, 42)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(printButton))
+                    .addComponent(printButton)
+                    .addComponent(enableToggle))
                 .addContainerGap())
         );
 
@@ -88,6 +100,10 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
     private void jSlider2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider2StateChanged
         System.out.println(jSlider2.getModel());
     }//GEN-LAST:event_jSlider2StateChanged
+
+    private void enableToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enableToggleActionPerformed
+        twoAxisSlider1.setEnabled(enableToggle.isSelected());
+    }//GEN-LAST:event_enableToggleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -125,6 +141,7 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox enableToggle;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JSlider jSlider2;
     private javax.swing.JButton printButton;

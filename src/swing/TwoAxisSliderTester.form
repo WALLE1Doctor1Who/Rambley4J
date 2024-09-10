@@ -34,6 +34,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jSlider1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="enableToggle" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="printButton" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -53,6 +55,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jSlider1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="printButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="enableToggle" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -86,6 +89,15 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Print Data"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="enableToggle">
+      <Properties>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Enabled"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="enableToggleActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
