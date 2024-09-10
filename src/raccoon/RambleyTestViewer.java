@@ -524,7 +524,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
 
         jLabel5.setText("Right X:");
 
-        rightXSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -3.0d, 103.0d, 1.0d));
+        rightXSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
         rightXSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 rightEyeSpinnerStateChanged(evt);
@@ -533,7 +533,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
 
         jLabel6.setText("Right Y:");
 
-        rightYSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -3.0d, 103.0d, 1.0d));
+        rightYSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
         rightYSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 rightEyeSpinnerStateChanged(evt);
@@ -542,7 +542,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
 
         jLabel7.setText("Left X:");
 
-        leftXSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -3.0d, 103.0d, 1.0d));
+        leftXSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
         leftXSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 leftEyeSpinnerStateChanged(evt);
@@ -551,7 +551,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
 
         jLabel8.setText("Left Y:");
 
-        leftYSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -3.0d, 103.0d, 1.0d));
+        leftYSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
         leftYSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 leftEyeSpinnerStateChanged(evt);

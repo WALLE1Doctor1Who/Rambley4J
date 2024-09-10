@@ -859,27 +859,27 @@ public class RambleyPainter implements Painter<Component>{
     private float gridThickness;
     /**
      * The x component for the location of the center of Rambley's right iris and 
-     * pupil. 0.5 is the default position, 0.0 is the left-most bounds for Rambley's right eye 
+     * pupil. 0.0 is the default position, -1.0 is the left-most bounds for Rambley's right eye 
      * (screen's left, Rambley's right), 1.0 is the right-most bounds for 
      * Rambley's right eye (screen's right, Rambley's left).
      */
     private double eyeRightX;
     /**
      * The y component for the location of the center of Rambley's right iris and 
-     * pupil. 0.5 is center, 0.0 is the top-most bounds for Rambley's right eye, 
+     * pupil. 0.0 is center, -1.0 is the top-most bounds for Rambley's right eye, 
      * 1.0 is the bottom-most bounds for Rambley's right eye.
      */
     private double eyeRightY;
     /**
      * The x component for the location of the center of Rambley's left iris and 
-     * pupil. 0.5 is the default position, 0.0 is the left-most bounds for Rambley's left eye 
+     * pupil. 0.0 is the default position, -1.0 is the left-most bounds for Rambley's left eye 
      * (screen's left, Rambley's right), 1.0 is the right-most bounds for 
      * Rambley's left eye (screen's right, Rambley's left).
      */
     private double eyeLeftX;
     /**
      * The y component for the location of the center of Rambley's left iris and 
-     * pupil. 0.5 is center, 0.0 is the top-most bounds for Rambley's left eye, 
+     * pupil. 0.0 is center, -1.0 is the top-most bounds for Rambley's left eye, 
      * 1.0 is the bottom-most bounds for Rambley's left eye.
      */
     private double eyeLeftY;
@@ -1166,7 +1166,7 @@ public class RambleyPainter implements Painter<Component>{
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
         gridSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
         gridThickness = 1.0f;
-        eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.5;
+        eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.0;
         mouthOpenWidth = 1.0;
         mouthOpenHeight = 0.0;
         changeSupport = new PropertyChangeSupport(this);
@@ -1876,6 +1876,29 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * This checks the given value to see if it is different from the old value 
+     * and is between -1 and 1
+     * 
+     * @todo Rework the documentation for this method.
+     * 
+     * @param value The new value
+     * @param oldValue The old value
+     * @param name The name of the value
+     * @return Whether the value has changed.
+     * @IllegalArgumentException If the given new value is either less than 
+     * negative one or greater than positive one.
+     */
+    private boolean checkEyeDouble(double value,double oldValue,String name){
+            // If the old and new values are the same
+        if (value == oldValue)
+            return false;
+            // If the value is less than -1 or greater than 1
+        if (value < -1.0 || value > 1.0)
+            throw new IllegalArgumentException(name+" must be between -1 and 1,"
+                    + " inclusive (-1.0 <= "+value+" <= 1.0)");
+        return true;
+    }
+    /**
+     * This checks the given value to see if it is different from the old value 
      * and is between 0 and 1
      * 
      * @todo Rework the documentation for this method.
@@ -1921,8 +1944,8 @@ public class RambleyPainter implements Painter<Component>{
      */
     public RambleyPainter setRambleyRightEye(double x, double y){
             // If either the x position or the y position has changed
-        if (checkControlDouble(x,eyeRightX,"Right eye x value") || 
-                checkControlDouble(y,eyeRightY,"Right eye y value")){
+        if (checkEyeDouble(x,eyeRightX,"Right eye x value") || 
+                checkEyeDouble(y,eyeRightY,"Right eye y value")){
                 // Get the old value for the x
             double oldX = eyeRightX;
                 // Get the old value for the y
@@ -1964,8 +1987,8 @@ public class RambleyPainter implements Painter<Component>{
      */
     public RambleyPainter setRambleyLeftEye(double x, double y){
             // If either the x position or the y position has changed
-        if (checkControlDouble(x,eyeLeftX,"Left eye x value") || 
-                checkControlDouble(y,eyeLeftY,"Left eye y value")){
+        if (checkEyeDouble(x,eyeLeftX,"Left eye x value") || 
+                checkEyeDouble(y,eyeLeftY,"Left eye y value")){
                 // Get the old value for the x
             double oldX = eyeLeftX;
                 // Get the old value for the y
@@ -4106,6 +4129,16 @@ public class RambleyPainter implements Painter<Component>{
     }
     /**
      * 
+     * @param pos
+     * @param range
+     * @param value
+     * @return 
+     */
+    private double getRambleyEyeValue(double pos, double range, double value){
+        return pos + (range * (value / 2.0 + 0.5));
+    }
+    /**
+     * 
      * @param g The graphics context to render to.
      * @param eyeWhite The shape to use to paint the eye white for Rambley's 
      * eye.
@@ -4158,8 +4191,10 @@ public class RambleyPainter implements Painter<Component>{
             // Calculate the location for the iris and pupil using the given x 
             // and y values to determine how far right and down, respectively, 
             // they are in the eye white
-        paintRambleyEye(g,eyeWhite,bounds.getMinX()+(bounds.getWidth()*x),
-                bounds.getMinY()+(bounds.getHeight()*y),iris,pupil);
+        paintRambleyEye(g,eyeWhite,
+                getRambleyEyeValue(bounds.getMinX(),bounds.getWidth(),x),
+                getRambleyEyeValue(bounds.getMinY(),bounds.getHeight(),y),
+                iris,pupil);
     }
     /**
      * This creates and returns an Area that forms the shape of Rambley's nose. 

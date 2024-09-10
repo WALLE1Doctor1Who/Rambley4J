@@ -581,7 +581,7 @@
     <Component class="javax.swing.JSpinner" name="rightXSpinner">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-          <SpinnerModel initial="0.0" maximum="103.0" minimum="-3.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
+          <SpinnerModel initial="0.0" maximum="103.0" minimum="-103.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
         </Property>
       </Properties>
       <Events>
@@ -596,7 +596,7 @@
     <Component class="javax.swing.JSpinner" name="rightYSpinner">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-          <SpinnerModel initial="0.0" maximum="103.0" minimum="-3.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
+          <SpinnerModel initial="0.0" maximum="103.0" minimum="-103.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
         </Property>
       </Properties>
       <Events>
@@ -611,7 +611,7 @@
     <Component class="javax.swing.JSpinner" name="leftXSpinner">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-          <SpinnerModel initial="0.0" maximum="103.0" minimum="-3.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
+          <SpinnerModel initial="0.0" maximum="103.0" minimum="-103.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
         </Property>
       </Properties>
       <Events>
@@ -626,7 +626,7 @@
     <Component class="javax.swing.JSpinner" name="leftYSpinner">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-          <SpinnerModel initial="0.0" maximum="103.0" minimum="-3.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
+          <SpinnerModel initial="0.0" maximum="103.0" minimum="-103.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
         </Property>
       </Properties>
       <Events>
