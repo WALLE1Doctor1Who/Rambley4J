@@ -857,15 +857,34 @@ public class RambleyTestViewer extends javax.swing.JFrame {
     }//GEN-LAST:event_gridToggleActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
-            File file = fc.getSelectedFile();
-            if (file == null)
-                return;
-            if (ImageExtensions.PNG_FILTER.equals(fc.getFileFilter()) && 
-                    !ImageExtensions.PNG_FILTER.accept(file)){
-                file = new File(file.toString()+"."+ImageExtensions.PNG);
-                fc.setSelectedFile(file);
+        File file = null;
+        while (file == null && fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+            file = fc.getSelectedFile();
+            if (file != null){
+                if (ImageExtensions.PNG_FILTER.equals(fc.getFileFilter()) && 
+                        !ImageExtensions.PNG_FILTER.accept(file)){
+                    file = new File(file.toString()+"."+ImageExtensions.PNG);
+                    fc.setSelectedFile(file);
+                }
+                if (file.exists()){
+                    int option = JOptionPane.showConfirmDialog(this, 
+                            "A file named \""+file.getName()+"\" already exists.\n"
+                                    + "Would you like to replace it?", 
+                            "File Already Exists", JOptionPane.YES_NO_CANCEL_OPTION, 
+                            JOptionPane.WARNING_MESSAGE);
+                    switch(option){
+                        case(JOptionPane.NO_OPTION):
+                            file = null;
+                        case(JOptionPane.YES_OPTION):
+                            break;
+                        default:
+                            return;
+                    }
+                }
             }
+        }
+        
+        if (file != null){
             if (config != null)
                 config.put(SELECTED_SAVE_FILE_KEY, file.toString());
             BufferedImage image = debugIcon.toImage(viewLabel);
