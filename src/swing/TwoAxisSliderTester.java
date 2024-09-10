@@ -43,6 +43,11 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
         jSlider2.setOrientation(javax.swing.JSlider.VERTICAL);
         jSlider2.setPaintLabels(true);
         jSlider2.setPaintTicks(true);
+        jSlider2.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider2StateChanged(evt);
+            }
+        });
 
         printButton.setText("Print Data");
 
@@ -79,6 +84,10 @@ public class TwoAxisSliderTester extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jSlider2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider2StateChanged
+        System.out.println(jSlider2.getModel());
+    }//GEN-LAST:event_jSlider2StateChanged
 
     /**
      * @param args the command line arguments
