@@ -71,6 +71,57 @@ public final class GeometryMath {
         return roots;
     }
     /**
+     * This calculates the slope for the line that passes through the points 
+     * ({@code x1}, {@code y1}) and ({@code x2}, {@code y2}).
+     * @param x1 The x-coordinate for the first point on the line.
+     * @param y1 The y-coordinate for the first point on the line.
+     * @param x2 The x-coordinate for the second point on the line.
+     * @param y2 The y-coordinate for the second point on the line.
+     * @return The slope of the given line.
+     */
+    public static double getLineSlope(double x1,double y1,double x2,double y2){
+        return (y2 - y1) / (x2 - x1);
+    }
+    /**
+     * This calculates the slope for the line that passes through the points 
+     * {@code p1} and {@code p2}.
+     * @param p1 The first point on the line.
+     * @param p2 The second point on the line.
+     * @return The slope of the given line.
+     */
+    public static double getLineSlope(Point2D p1, Point2D p2){
+        return getLineSlope(p1.getX(),p1.getY(),p2.getX(),p2.getY());
+    }
+    /**
+     * This calculates the slope for the given line.
+     * @param line The line to get the slope of.
+     * @return The slope of the given line.
+     */
+    public static double getLineSlope(Line2D line){
+        return getLineSlope(line.getX1(),line.getY1(),line.getX2(),line.getY2());
+    }
+    /**
+     * This calculates the line coefficient for the line with a slope {@code m} 
+     * and that passes through point ({@code x}, {@code y}).
+     * @param m The slope of the line.
+     * @param x The x-coordinate of a point on the line.
+     * @param y The y-coordinate of a point on the line.
+     * @return The coefficient for the given line.
+     */
+    public static double getLineCoefficient(double m, double x, double y){
+        return y - m * x;
+    }
+    /**
+     * This calculates the line coefficient for the line with a slope {@code m} 
+     * and that passes through the given point.
+     * @param m The slope of the line.
+     * @param p A point on the line.
+     * @return The coefficient for the given line.
+     */
+    public static double getLineCoefficient(double m, Point2D p){
+        return getLineCoefficient(m,p.getX(),p.getY());
+    }
+    /**
      * This calculates the x-coordinates for points on the given ellipse for the 
      * given y-coordinate, and stores them in the given Point2D objects {@code 
      * p0} and {@code p1}. This is equivalent to determining the points where 
@@ -250,10 +301,10 @@ public final class GeometryMath {
      * will be set to ({@link Double#NaN Double.NaN}, {@link Double#NaN 
      * Double.NaN}) and this will return false.
      * @param ellipse The ellipse to intersect with the line.
-     * @param x1 The x-coordinate for the first point on the line
-     * @param y1 The y-coordinate for the first point on the line
-     * @param x2 The x-coordinate for the second point on the line
-     * @param y2 The y-coordinate for the second point on the line
+     * @param x1 The x-coordinate for the first point on the line.
+     * @param y1 The y-coordinate for the first point on the line.
+     * @param x2 The x-coordinate for the second point on the line.
+     * @param y2 The y-coordinate for the second point on the line.
      * @param point1 The Point2D object that the first point of intersection 
      * will be stored in.
      * @param point2 The Point2D object that the second point of intersection 
@@ -280,9 +331,9 @@ public final class GeometryMath {
             }   // Get the points on the ellipse for the given x-coordinates
             return getEllipseY(ellipse,x1,point1,point2);
         }   // Get the slope of the line
-        double k = (y2 - y1) / (x2 - x1);
+        double k = getLineSlope(x1,y1,x2,y2);
             // Get the coefficient for the line
-        double m = y2 - k * x2;
+        double m = getLineCoefficient(k,x2,y2);
             // Get half of the ellipse's width, squared
         double w = Math.pow(ellipse.getWidth()/2, 2);
             // Get half of the ellipse's height, squared
