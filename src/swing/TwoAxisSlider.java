@@ -29,6 +29,8 @@ public class TwoAxisSlider extends JPanel{
     
     private Line2D line = null;
     
+    private Path2D path = null;
+    
     
     
     private void initialize(){
@@ -125,9 +127,26 @@ public class TwoAxisSlider extends JPanel{
             ellipse = new Ellipse2D.Double();
         if (line == null)
             line = new Line2D.Double();
+        if (path == null)
+            path = new Path2D.Double();
+        else
+            path.reset();
         
         rect.setFrame(SLIDER_KNOB_WIDTH/2.0, SLIDER_KNOB_HEIGHT/2.0, 
                 w-SLIDER_KNOB_WIDTH, h-SLIDER_KNOB_HEIGHT);
+        
+        g.setColor(Color.GRAY);
+        g.fillRect(0, 0, w, h);
+        
+        path.moveTo(0, 0);
+        path.lineTo(rect.getMinX(), rect.getMinY());
+        path.lineTo(rect.getMaxX(), rect.getMaxY());
+        path.lineTo(w, h);
+        path.lineTo(w, 0);
+        path.closePath();
+        g.setColor(Color.LIGHT_GRAY);
+        g.fill(path);
+        
         g.setColor(Color.WHITE);
         g.fill(rect);
         
@@ -145,7 +164,12 @@ public class TwoAxisSlider extends JPanel{
         g.setStroke(new BasicStroke());
         
         g.setColor(Color.BLACK);
+        g.drawRect(0, 0, w, h);
         g.draw(rect);
+        line.setLine(0, 0, rect.getMinX(), rect.getMinY());
+        g.draw(line);
+        line.setLine(rect.getMaxX(), rect.getMaxY(), w, h);
+        g.draw(line);
 
         g.setColor(Color.BLUE);
         g.fill(ellipse);
@@ -175,7 +199,7 @@ public class TwoAxisSlider extends JPanel{
     private class ControlDisplayPanel extends JPaintedPanel{
         
         protected ControlDisplayPanel(){
-            
+//            setBorder(BorderFactory.createLineBorder(Color.BLACK));
         }
         
         @Override
