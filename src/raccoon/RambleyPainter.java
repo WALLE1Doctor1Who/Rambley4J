@@ -3357,136 +3357,184 @@ public class RambleyPainter implements Painter<Component>{
             // Get the point of intersection between the tip of the ear and the 
             // lower portion of the ear
         point8 = getRambleyEarLowerTip(x,y,point8);
-        
-            // We will need to add a curve later on in order to smoothly 
-            // transition from the upper portion of the ear to the tip of the 
-            // ear. As such, we need to calculate where the upper curve should 
-            // stop and where the tip curve should start
-        
-            // Get the x-coordinate for the start of the curve that joins the 
-            // upper portion and the tip (this is where the upper curve should 
-            // stop)
-        double tempX = point7.getX()+RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the upper curve stops and the transition 
-            // curve starts
-        point5.setLocation(tempX, getRambleyUpperEarY(tempX-x)+y);
-            // Get the x-coordinate for the end of the curve that joins the 
-            // upper portion and the tip (this is where the tip curve should 
-            // start)
-        tempX = point7.getX()-RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the transition curve stops and the tip 
-            // curve starts
-        point6.setLocation(tempX, getRambleyEarTipY(tempX-x)+y);
-        
-            // Create the upper portion of the ear
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // Glitchy Rambley is more polygonal, and thus there are no 
+                // curves in his ear. His ear will be rhombus-like, though not 
+                // truely a rhombus.
+                
+                // Get the starting point of the glitched ear. This is the 
+                // bottom-right of the ear.
+            point1.setLocation(x1, y1);
+                // The first line is a straight line from point1 to 83% of the 
+                // way to the top of the ear (17% of the way down)
+            point2.setLocation(point1.getX(), RAMBLEY_EAR_HEIGHT * 0.17 + y);
+                
             
-            // Start at the center right-most point of the ear
-        point1.setLocation(x1,y+RAMBLEY_EAR_HEIGHT/2.0);
-            // Move the path to the starting point
-        path.moveTo(point1.getX(), point1.getY());
-            // Calculate the offset for the y-coordinate when 26% of the way 
-        double tempY = RAMBLEY_EAR_HEIGHT * 0.26;   // down
-            // Get the point on the upper curve when 26% of the way down
-        point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
-            // Calculate the offset for the y-coordinate when 17% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT * 0.17;  // down
-            // Get the point on the upper curve when 17% of the way down
-        point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point1, point2, and point3, and add that curve to the path
-        point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
-            // Calculate the offset for the y-coordinate when 10% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT * 0.10;  // down
-            // Get the point on the upper curve when 10% of the way down
-        point2.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point3, point2, and point5, and add that curve to the path
-            // (point3 is the end of the previous curve, and point5 is the stop 
-            // of the upper curve and the start of the transition curve)
-        point4 = addQuadBezierCurve(point3,point2,point5,point4,path);
-        
-            // Curve to smooth the transition between the upper portion and the 
-            // tip of the ear, using the point of intersection as the control 
-            // point
-        path.quadTo(point7.getX(), point7.getY(), point6.getX(), point6.getY());
-        
-            // We will need to add a curve later on in order to smoothly 
-            // transition from the tip of the ear to the lower portion of the 
-            // ear. As such, we need to calculate where the tip curve should 
-            // stop and where the lower curve should start
-        
-            // Get the y-coordinate for the start of the curve that joins the 
-            // tip and the lower portion (this is where the tip curve should 
-            // stop)
-        tempY = point8.getY()-RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the tip curve stops and the transition 
-            // curve starts
-        point5.setLocation(getRambleyEarTipX(tempY-y)+x, tempY);
-            // Get the y-coordinate for the end of the curve that joins the 
-            // tip and the lower portion (this is where the lower curve should 
-            // start)
-        tempY = point8.getY()+RAMBLEY_EAR_TIP_ROUNDING;
-            // Get the point at which the transition curve stops and the 
-            // lower curve starts
-        point7.setLocation(getRambleyLowerEarX(tempY-y)+x, tempY);
-        
-            // Create the tip of the ear
-        
-            // Calculate the range that the x-coordinates will cover
-        double dxTip = Math.abs(point5.getX()-point6.getX());
-            // Calculate the offset for the x-coordinate when 40% of the way to 
-        tempX = dxTip - (dxTip * 0.40);     // the left
-            // Get the point on the tip curve when 40% of the way to the left
-        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-            // Calculate the offset for the x-coordinate when 75% of the way to 
-        tempX = dxTip - (dxTip * 0.75);     // the left
-            // Get the point on the tip curve when 75% of the way to the left
-        point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point6, point1, and point2, and add that curve to the path
-            // (point6 is the end of the last transition curve)
-        point4 = addQuadBezierCurve(point6,point1,point2,point4,path);
-            // Calculate the offset for the x-coordinate when 90% of the way to 
-        tempX = dxTip - (dxTip * 0.90);     // the left
-            // Get the point on the tip curve when 90% of the way to the left
-        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point2, point1, and point5, and add that curve to the path
-            // (point2 is the end of the previous curve, and point5 is the stop 
-            // of the tip curve and the start of the next transition curve)
-        point4 = addQuadBezierCurve(point2,point1,point5,point4,path);
-        
-            // Curve to smooth the transition between the tip and the lower 
-            // portion of the ear, using the point of intersection as the 
-            // control point
-        path.quadTo(point8.getX(), point8.getY(), point7.getX(), point7.getY());
-        
-            // Create the lower portion of the ear
+                // Get the difference of the x-coordinates for points point7 and 
+                // point8 (these are the points where the ear tip curve 
+                // intersects the upper and lower curves, respectively).
+            double tempX = Math.abs(point7.getX() - point8.getX());
+                // Calculate the offset for the x-coordinate when 80% of the way 
+                // to the left of the ear tip curve
+            tempX = tempX - (tempX * 0.80);
             
-            // Calculate the offset for the y-coordinate when 76% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT*0.76;  // down
-            // Get the point on the lower curve when 76% of the way down
-        point1.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-            // Calculate the offset for the y-coordinate when 88% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
-            // Get the point on the lower curve when 88% of the way down
-        point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point7, point1, and point2, and add that curve to the path
-            // (point7 is the end of the last transition curve)
-        point4 = addQuadBezierCurve(point7,point1,point2,point4,path);
-            // Calculate the offset for the y-coordinate when 93% of the way 
-        tempY = RAMBLEY_EAR_HEIGHT*0.93;  // down
-            // Get the point on the lower curve when 93% of the way down
-        point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-            // Set the location to the bottom-right corner
-        point1.setLocation(x1,y1);
-            // Calculate the quadratic bezier curve that passes through points 
-            // point2, point3, and point1, and add that curve to the path
-            // (point2 is the end of the previous curve, and point1 is the 
-            // bottom-right corner, and the end of the lower curve)
-        point4 = addQuadBezierCurve(point2,point3,point1,point4,path);
-            // Close the path to complete the ear
+            
+                
+                
+                // Move the path to the start of the first line
+            path.moveTo(point1.getX(), point1.getY());
+                // Draw a line from the starting point to the second point (the 
+                // end of the first line and the start of the second line)
+            path.lineTo(point2.getX(), point2.getY());
+                // Draw a line to the starting point of the third line (the end 
+                // of the second line)
+            
+            
+            
+                // Get the point on the tip curve when 80% of the way to the left
+            point3.setLocation(tempX+x, point7.getY());
+            
+            path.lineTo(point3.getX(), point3.getY());
+            
+                // Calculate the offset for the y-coordinate when 88% of the way 
+            double tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
+                // Get the point on the lower curve when 88% of the way down
+            point5.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+            
+            point4 = GeometryMath.getLineIntersection(point1, point5, point3, point8, point4);
+            path.lineTo(point4.getX(), point4.getY());
+            
+        } else {
+                // We will need to add a curve later on in order to smoothly 
+                // transition from the upper portion of the ear to the tip of the 
+                // ear. As such, we need to calculate where the upper curve should 
+                // stop and where the tip curve should start
+
+                // Get the x-coordinate for the start of the curve that joins the 
+                // upper portion and the tip (this is where the upper curve should 
+                // stop)
+            double tempX = point7.getX()+RAMBLEY_EAR_TIP_ROUNDING;
+                // Get the point at which the upper curve stops and the transition 
+                // curve starts
+            point5.setLocation(tempX, getRambleyUpperEarY(tempX-x)+y);
+                // Get the x-coordinate for the end of the curve that joins the 
+                // upper portion and the tip (this is where the tip curve should 
+                // start)
+            tempX = point7.getX()-RAMBLEY_EAR_TIP_ROUNDING;
+                // Get the point at which the transition curve stops and the tip 
+                // curve starts
+            point6.setLocation(tempX, getRambleyEarTipY(tempX-x)+y);
+
+                // Create the upper portion of the ear
+
+                // Start at the center right-most point of the ear
+            point1.setLocation(x1,y+RAMBLEY_EAR_HEIGHT/2.0);
+                // Move the path to the starting point
+            path.moveTo(point1.getX(), point1.getY());
+                // Calculate the offset for the y-coordinate when 26% of the way 
+            double tempY = RAMBLEY_EAR_HEIGHT * 0.26;   // down
+                // Get the point on the upper curve when 26% of the way down
+            point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+                // Calculate the offset for the y-coordinate when 17% of the way 
+            tempY = RAMBLEY_EAR_HEIGHT * 0.17;  // down
+                // Get the point on the upper curve when 17% of the way down
+            point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+                // Calculate the quadratic bezier curve that passes through points 
+                // point1, point2, and point3, and add that curve to the path
+            point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
+                // Calculate the offset for the y-coordinate when 10% of the way 
+            tempY = RAMBLEY_EAR_HEIGHT * 0.10;  // down
+                // Get the point on the upper curve when 10% of the way down
+            point2.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
+                // Calculate the quadratic bezier curve that passes through points 
+                // point3, point2, and point5, and add that curve to the path
+                // (point3 is the end of the previous curve, and point5 is the stop 
+                // of the upper curve and the start of the transition curve)
+            point4 = addQuadBezierCurve(point3,point2,point5,point4,path);
+
+                // Curve to smooth the transition between the upper portion and the 
+                // tip of the ear, using the point of intersection as the control 
+                // point
+            path.quadTo(point7.getX(), point7.getY(), point6.getX(), point6.getY());
+
+                // We will need to add a curve later on in order to smoothly 
+                // transition from the tip of the ear to the lower portion of the 
+                // ear. As such, we need to calculate where the tip curve should 
+                // stop and where the lower curve should start
+
+                // Get the y-coordinate for the start of the curve that joins the 
+                // tip and the lower portion (this is where the tip curve should 
+                // stop)
+            tempY = point8.getY()-RAMBLEY_EAR_TIP_ROUNDING;
+                // Get the point at which the tip curve stops and the transition 
+                // curve starts
+            point5.setLocation(getRambleyEarTipX(tempY-y)+x, tempY);
+                // Get the y-coordinate for the end of the curve that joins the 
+                // tip and the lower portion (this is where the lower curve should 
+                // start)
+            tempY = point8.getY()+RAMBLEY_EAR_TIP_ROUNDING;
+                // Get the point at which the transition curve stops and the 
+                // lower curve starts
+            point7.setLocation(getRambleyLowerEarX(tempY-y)+x, tempY);
+
+                // Create the tip of the ear
+
+                // Calculate the range that the x-coordinates will cover
+            double dxTip = Math.abs(point5.getX()-point6.getX());
+                // Calculate the offset for the x-coordinate when 40% of the way to 
+            tempX = dxTip - (dxTip * 0.40);     // the left
+                // Get the point on the tip curve when 40% of the way to the left
+            point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+                // Calculate the offset for the x-coordinate when 75% of the way to 
+            tempX = dxTip - (dxTip * 0.75);     // the left
+                // Get the point on the tip curve when 75% of the way to the left
+            point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+                // Calculate the quadratic bezier curve that passes through points 
+                // point6, point1, and point2, and add that curve to the path
+                // (point6 is the end of the last transition curve)
+            point4 = addQuadBezierCurve(point6,point1,point2,point4,path);
+                // Calculate the offset for the x-coordinate when 90% of the way to 
+            tempX = dxTip - (dxTip * 0.90);     // the left
+                // Get the point on the tip curve when 90% of the way to the left
+            point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+                // Calculate the quadratic bezier curve that passes through points 
+                // point2, point1, and point5, and add that curve to the path
+                // (point2 is the end of the previous curve, and point5 is the stop 
+                // of the tip curve and the start of the next transition curve)
+            point4 = addQuadBezierCurve(point2,point1,point5,point4,path);
+
+                // Curve to smooth the transition between the tip and the lower 
+                // portion of the ear, using the point of intersection as the 
+                // control point
+            path.quadTo(point8.getX(), point8.getY(), point7.getX(), point7.getY());
+
+                // Create the lower portion of the ear
+
+                // Calculate the offset for the y-coordinate when 76% of the way 
+            tempY = RAMBLEY_EAR_HEIGHT*0.76;  // down
+                // Get the point on the lower curve when 76% of the way down
+            point1.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+                // Calculate the offset for the y-coordinate when 88% of the way 
+            tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
+                // Get the point on the lower curve when 88% of the way down
+            point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+                // Calculate the quadratic bezier curve that passes through points 
+                // point7, point1, and point2, and add that curve to the path
+                // (point7 is the end of the last transition curve)
+            point4 = addQuadBezierCurve(point7,point1,point2,point4,path);
+                // Calculate the offset for the y-coordinate when 93% of the way 
+            tempY = RAMBLEY_EAR_HEIGHT*0.93;  // down
+                // Get the point on the lower curve when 93% of the way down
+            point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+                // Set the location to the bottom-right corner
+            point1.setLocation(x1,y1);
+                // Calculate the quadratic bezier curve that passes through points 
+                // point2, point3, and point1, and add that curve to the path
+                // (point2 is the end of the previous curve, and point1 is the 
+                // bottom-right corner, and the end of the lower curve)
+            point4 = addQuadBezierCurve(point2,point3,point1,point4,path);
+        }   // Close the path to complete the ear
         path.closePath();
         return new Area(path);
     }
@@ -5287,7 +5335,8 @@ public class RambleyPainter implements Painter<Component>{
             // features off it
         Rectangle2D headBounds = headShape.getBounds2D();
             // Get the area for Rambley's right ear
-        Area earR = getRambleyEar(headBounds.getCenterX()-84,headBounds.getMinY()-31.5,path);
+        Area earR = getRambleyEar(headBounds.getCenterX()-84,
+                headBounds.getMinY()-31.5,path);
             // Flip the area for Rambley's right ear to get his left ear
         Area earL = createHorizontallyMirroredArea(earR,headBounds.getCenterX());
             // Get the area for the inner portion of Rambley's right ear
@@ -5356,6 +5405,8 @@ public class RambleyPainter implements Painter<Component>{
 //                    RenderingHints.VALUE_ANTIALIAS_OFF);
             g.setColor(RAMBLEY_LINE_COLOR);
             g.draw(rambleyShape);
+            g.setColor(Color.PINK);
+            g.draw(earR);
             g.setColor(Color.ORANGE);
             g.draw(headBounds);
             g.setColor(Color.BLUE);
