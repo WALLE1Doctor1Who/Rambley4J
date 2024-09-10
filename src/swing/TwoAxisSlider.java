@@ -33,18 +33,19 @@ public class TwoAxisSlider extends JPanel{
     
     
     
+    private void configureSlider(JSlider slider, Handler handler){
+        slider.setMajorTickSpacing(majorTickSpacing);
+        slider.setMajorTickSpacing(minorTickSpacing);
+        slider.setPaintTicks(paintTicks);
+        slider.addChangeListener(handler);
+    }
+    
     private void initialize(){
         Handler handler = new Handler();
         
-        
         xSlider = new JSlider();
-        
-        
-        
         ySlider = new JSlider(JSlider.VERTICAL);
         ySlider.setInverted(true);
-        
-        
         
         displayPanel = new ControlDisplayPanel();
         
@@ -66,8 +67,9 @@ public class TwoAxisSlider extends JPanel{
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         add(xSlider,c);
-        xSlider.addChangeListener(handler);
-        ySlider.addChangeListener(handler);
+        
+        configureSlider(xSlider,handler);
+        configureSlider(ySlider,handler);
     }
     
     public TwoAxisSlider(){
@@ -77,7 +79,46 @@ public class TwoAxisSlider extends JPanel{
     
 //    public BoundedRangeModel get
     
+    public int getMajorTickSpacing(){
+        return majorTickSpacing;
+    }
     
+    public void setMajorTickSpacing(int spacing){
+        if (majorTickSpacing == spacing)
+            return;
+        majorTickSpacing = spacing;
+        xSlider.setMajorTickSpacing(spacing);
+        ySlider.setMajorTickSpacing(spacing);
+        displayPanel.repaint();
+    }
+    
+    public int getMinorTickSpacing(){
+        return minorTickSpacing;
+    }
+    
+    public void setMinorTickSpacing(int spacing){
+        if (minorTickSpacing == spacing)
+            return;
+        minorTickSpacing = spacing;
+        xSlider.setMinorTickSpacing(spacing);
+        ySlider.setMinorTickSpacing(spacing);
+        displayPanel.repaint();
+    }
+    
+    public boolean getPaintTicks(){
+        return paintTicks;
+    }
+    
+    public void setPaintTicks(boolean value){
+        if (value == paintTicks)
+            return;
+        paintTicks = value;
+        xSlider.setPaintTicks(value);
+        ySlider.setPaintTicks(value);
+        displayPanel.repaint();
+    }
+    
+
     
     private double getSliderPosition(JSlider slider){
         double value = getRangePosition(slider.getModel());
@@ -114,6 +155,26 @@ public class TwoAxisSlider extends JPanel{
         line.setLine(shape.getCenterX(), bounds.getMinY(), 
                 shape.getCenterX(), bounds.getMaxY());
         g.draw(line);
+    }
+    
+    protected void paintAxisTicks(Graphics2D g, Rectangle2D bounds, int spacing, double length){
+        if (spacing <= 0 || length <= 0)
+            return;
+        double xSpacing = (spacing / 
+                ((double) (xSlider.getMaximum()-xSlider.getMinimum()))) * 
+                bounds.getWidth();
+        double ySpacing = (spacing / 
+                ((double) (ySlider.getMaximum()-ySlider.getMinimum()))) * 
+                bounds.getHeight();
+        length /= 2.0;
+        for (double x = bounds.getMinX()+xSpacing; x < bounds.getMaxX(); x+= xSpacing){
+            line.setLine(x, bounds.getCenterY()-length, x, bounds.getCenterY()+length);
+            g.draw(line);
+        }
+        for (double y = bounds.getMinY()+ySpacing; y < bounds.getMaxY(); y+= ySpacing){
+            line.setLine(bounds.getCenterX()-length, y, bounds.getCenterX()+length,y);
+            g.draw(line);
+        }
     }
     
     protected void paintSliderAxis(Graphics2D g, int x, int y, int w, int h){
@@ -170,6 +231,11 @@ public class TwoAxisSlider extends JPanel{
         g.draw(line);
         line.setLine(rect.getMaxX(), rect.getMaxY(), w, h);
         g.draw(line);
+        
+        if (paintTicks){
+            paintAxisTicks(g,rect,majorTickSpacing,10);
+            paintAxisTicks(g,rect,minorTickSpacing,5);
+        }
 
         g.setColor(Color.BLUE);
         g.fill(ellipse);
@@ -187,6 +253,9 @@ public class TwoAxisSlider extends JPanel{
     
     
     
+    private int majorTickSpacing = 10;
+    private int minorTickSpacing = 5;
+    private boolean paintTicks = true;
     private JSlider xSlider;
     private JSlider ySlider;
     private ControlDisplayPanel displayPanel;
