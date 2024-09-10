@@ -77,6 +77,15 @@ public class TwoAxisSlider extends JPanel{
         initialize();
     }
     
+    @Override
+    public void setEnabled(boolean enabled){
+        try{
+            xSlider.setEnabled(enabled);
+            ySlider.setEnabled(enabled);
+        } catch (NullPointerException ex) {}
+        super.setEnabled(enabled);
+    }
+    
 //    public BoundedRangeModel get
     
     public int getValueX(){
@@ -252,19 +261,21 @@ public class TwoAxisSlider extends JPanel{
         rect.setFrame(SLIDER_KNOB_WIDTH/2.0, SLIDER_KNOB_HEIGHT/2.0, 
                 w-SLIDER_KNOB_WIDTH, h-SLIDER_KNOB_HEIGHT);
         
-        g.setColor(Color.GRAY);
+        Color bg = isEnabled() ? Color.WHITE : Color.LIGHT_GRAY;
+        
+        g.setColor(bg.darker());
         g.fillRect(0, 0, w, h);
         
         path.moveTo(0, 0);
         path.lineTo(rect.getMinX(), rect.getMinY());
         path.lineTo(rect.getMaxX(), rect.getMaxY());
         path.lineTo(w, h);
-        path.lineTo(w, 0);
+        path.lineTo(0,h);
         path.closePath();
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(g.getColor().darker());
         g.fill(path);
         
-        g.setColor(Color.WHITE);
+        g.setColor(bg);
         g.fill(rect);
         
         double xPos = getPositionX() * rect.getWidth();
@@ -278,7 +289,7 @@ public class TwoAxisSlider extends JPanel{
             paintAxisTicks(g,rect,minorTickSpacing,8);
         }
 
-        g.setColor(Color.GRAY);
+        g.setColor(isEnabled()?Color.GRAY:Color.DARK_GRAY);
         g.setStroke(DASH_STROKE);
         paintCenterLines(g,rect,ellipse);
         
@@ -293,10 +304,14 @@ public class TwoAxisSlider extends JPanel{
         g.draw(line);
 
         g.setColor(Color.BLUE);
+        if (!isEnabled())
+            g.setColor(g.getColor().darker());
         g.fill(ellipse);
         ellipse.setFrameFromCenter(ellipse.getCenterX(), ellipse.getCenterY(), 
                 ellipse.getMinX()+2, ellipse.getMinY()+2);
         g.setColor(new Color(0xB0B0FF));
+        if (!isEnabled())
+            g.setColor(g.getColor().darker());
         g.fill(ellipse);
         g.setColor(Color.BLACK);
         g.draw(ellipse);
