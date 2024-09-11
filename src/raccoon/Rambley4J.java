@@ -83,6 +83,7 @@ public class Rambley4J extends JFrame {
         linkEyesToggle = new javax.swing.JCheckBox();
         jawToggle = new javax.swing.JCheckBox();
         saveButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
         mouthPanel = new javax.swing.JPanel();
         mouthCtrl = new swing.TwoAxisSlider();
         filler8 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 7), new java.awt.Dimension(0, 7), new java.awt.Dimension(32767, 7));
@@ -266,6 +267,13 @@ public class Rambley4J extends JFrame {
             }
         });
 
+        resetButton.setText("Reset");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -275,7 +283,8 @@ public class Rambley4J extends JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jawToggle, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -285,7 +294,9 @@ public class Rambley4J extends JFrame {
                 .addComponent(jawToggle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(saveButton)
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resetButton)
+                .addContainerGap(102, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -645,6 +656,10 @@ public class Rambley4J extends JFrame {
             heightSpinner.setValue(widthSpinner.getValue());
     }//GEN-LAST:event_linkSizeToggleActionPerformed
 
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_resetButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -741,6 +756,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JPanel pixelGridPanel;
     private components.JThumbnailLabel placeholderLabel;
     private javax.swing.JMenuItem printButton;
+    private javax.swing.JButton resetButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JCheckBox scarfToggle;
     private javax.swing.JCheckBox shadowToggle;
