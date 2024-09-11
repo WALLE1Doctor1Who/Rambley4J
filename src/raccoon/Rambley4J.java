@@ -41,6 +41,8 @@ public class Rambley4J extends JFrame {
      */
     public Rambley4J(boolean debugMode) {
         this.debugMode = debugMode;
+        if (debugMode)
+            previewLabel.setComponentPopupMenu(debugPopup);
         rambleyPainter = new RambleyIcon2();
         initComponents();
         try{    // Try to load the settings from the preference node
@@ -141,8 +143,6 @@ public class Rambley4J extends JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Rambley4J");
-
-        previewLabel.setComponentPopupMenu(debugPopup);
 
         bgToggle.setSelected(true);
         bgToggle.setText("Background");

@@ -119,11 +119,6 @@
   </Layout>
   <SubComponents>
     <Component class="components.JThumbnailLabel" name="previewLabel">
-      <Properties>
-        <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="debugPopup"/>
-        </Property>
-      </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="bgToggle">
       <Properties>
