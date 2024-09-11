@@ -685,7 +685,7 @@ public class Rambley4J extends JFrame {
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void scalePreviewToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scalePreviewToggleActionPerformed
-        previewLabel.setAspectRatioMaintained(scalePreviewToggle.isSelected());
+        previewLabel.setImageAlwaysScaled(scalePreviewToggle.isSelected());
     }//GEN-LAST:event_scalePreviewToggleActionPerformed
 
     /**
