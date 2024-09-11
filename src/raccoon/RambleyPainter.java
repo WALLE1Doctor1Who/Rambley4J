@@ -3663,9 +3663,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // If the second of the two given Point2D objects is null
         if (point2 == null)
             point2 = new Point2D.Double();
-            // If the second given QuadCurve2D object is null
-        if (quadCurve == null)
-            quadCurve = new QuadCurve2D.Double();
             // If the bounds for the head are null but the area for the head is 
         if (headBounds == null && head != null)     // not
                 // Get the bounds for the head
@@ -3679,6 +3676,29 @@ public class RambleyPainter extends ListenedPainter<Component>{
         ellipse.setFrameFromCenter(
                 headBounds.getCenterX(), headBounds.getMaxY()-28, 
                 headBounds.getMinX()+63, headBounds.getMaxY());
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // Get the points where the ellipse intersects the horizontal 
+                // line that is 5 pixels above its bottom
+            GeometryMath.getEllipseX(ellipse,ellipse.getMaxY()-5,point1,point2);
+                // Start the path at 6 pixels above the center of the ellipse
+            path.moveTo(ellipse.getCenterX(), ellipse.getMinY()-6);
+                // Draw a line to 5 pixels left of left center of the ellipse
+            path.lineTo(ellipse.getMinX()-5, ellipse.getCenterY());
+                // Draw a line to the left point that is 5 pixels above the 
+                // bottom of the ellipse
+            path.lineTo(point1.getX(), point1.getY());
+                // Draw a line to the right point that is 5 pixels above the 
+                // bottom of the ellipse
+            path.lineTo(point2.getX(), point2.getY());
+                 // Draw a line to 5 pixels right of the right center of the 
+                 // ellipse
+            path.lineTo(ellipse.getMaxX()+5, ellipse.getCenterY());
+                // Close the path
+            path.closePath();
+            return new Area(path);
+        }   // If the second given QuadCurve2D object is null
+        if (quadCurve == null)
             // Get the points where the ellipse intersects the horizontal line 
             // that is two pixels above its center
         GeometryMath.getEllipseX(ellipse,ellipse.getCenterY()-3,point1,point2);
