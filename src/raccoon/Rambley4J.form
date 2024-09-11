@@ -73,7 +73,7 @@
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="placeholderLabel" pref="480" max="32767" attributes="0"/>
+                  <Component id="previewLabel" pref="480" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" pref="345" max="-2" attributes="0"/>
@@ -91,7 +91,7 @@
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="placeholderLabel" max="32767" attributes="0"/>
+                      <Component id="previewLabel" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="bgToggle" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -118,7 +118,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="components.JThumbnailLabel" name="placeholderLabel">
+    <Component class="components.JThumbnailLabel" name="previewLabel">
       <Properties>
         <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
           <ComponentRef name="debugPopup"/>

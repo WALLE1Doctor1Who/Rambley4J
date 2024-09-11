@@ -43,8 +43,6 @@ public class Rambley4J extends JFrame {
         this.debugMode = debugMode;
         rambleyPainter = new RambleyIcon2();
         initComponents();
-        placeholderLabel.setIcon((Icon)rambleyPainter);
-        rambleyPainter.addPropertyChangeListener(new RambleyHandler());
         try{    // Try to load the settings from the preference node
             config = Preferences.userRoot().node(PREFERENCE_NODE_NAME);
 //            rambleyPainter.setFlags(config.getInt(RAMBLEY_FLAGS_KEY, 
@@ -55,6 +53,8 @@ public class Rambley4J extends JFrame {
         } catch (IllegalArgumentException ex){
             System.out.println("Invalid setting: " + ex);
         }
+        previewLabel.setIcon((Icon)rambleyPainter);
+        rambleyPainter.addPropertyChangeListener(new RambleyHandler());
     }
     /**
      * Creates new form Rambley4J
@@ -74,7 +74,7 @@ public class Rambley4J extends JFrame {
 
         debugPopup = new javax.swing.JPopupMenu();
         printButton = new javax.swing.JMenuItem();
-        placeholderLabel = new components.JThumbnailLabel();
+        previewLabel = new components.JThumbnailLabel();
         bgToggle = new javax.swing.JCheckBox();
         gridToggle = new javax.swing.JCheckBox();
         scarfToggle = new javax.swing.JCheckBox();
@@ -142,7 +142,7 @@ public class Rambley4J extends JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Rambley4J");
 
-        placeholderLabel.setComponentPopupMenu(debugPopup);
+        previewLabel.setComponentPopupMenu(debugPopup);
 
         bgToggle.setSelected(true);
         bgToggle.setText("Background");
@@ -517,7 +517,7 @@ public class Rambley4J extends JFrame {
                                 .addComponent(flippedToggle))
                             .addComponent(sizePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
+                    .addComponent(previewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
@@ -531,7 +531,7 @@ public class Rambley4J extends JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(previewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(bgToggle)
@@ -667,12 +667,12 @@ public class Rambley4J extends JFrame {
     private void widthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSpinnerStateChanged
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
-        placeholderLabel.repaint();
+        previewLabel.repaint();
     }//GEN-LAST:event_widthSpinnerStateChanged
 
     private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
         if (!linkSizeToggle.isSelected())
-            placeholderLabel.repaint();
+            previewLabel.repaint();
     }//GEN-LAST:event_heightSpinnerStateChanged
 
     private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
@@ -686,7 +686,7 @@ public class Rambley4J extends JFrame {
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void scalePreviewToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scalePreviewToggleActionPerformed
-        placeholderLabel.setAspectRatioMaintained(scalePreviewToggle.isSelected());
+        previewLabel.setAspectRatioMaintained(scalePreviewToggle.isSelected());
     }//GEN-LAST:event_scalePreviewToggleActionPerformed
 
     /**
@@ -783,7 +783,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JPanel mouthPanel;
     private javax.swing.JCheckBox outlineToggle;
     private javax.swing.JPanel pixelGridPanel;
-    private components.JThumbnailLabel placeholderLabel;
+    private components.JThumbnailLabel previewLabel;
     private javax.swing.JMenuItem printButton;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton saveButton;
@@ -798,7 +798,7 @@ public class Rambley4J extends JFrame {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            placeholderLabel.repaint();
+            previewLabel.repaint();
         }
         
     }
