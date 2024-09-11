@@ -100,6 +100,13 @@ public class Rambley4J extends JFrame {
     
     private static final int DEFAULT_RAMBLEY_HEIGHT = 512;
     
+    private static final int DEFAULT_RAMBLEY_FLAGS = 
+            RambleyPainter.PAINT_BACKGROUND_FLAG | 
+            RambleyPainter.PAINT_PIXEL_GRID_FLAG | 
+            RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
+            RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG | 
+            RambleyPainter.PAINT_RAMBLEY_SCARF_FLAG;
+    
     
     
     /**
