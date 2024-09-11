@@ -7,6 +7,7 @@ package raccoon;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -1337,5 +1338,62 @@ public class Rambley4J extends JFrame {
                 return getIconWidth();
             return (int)heightSpinner.getValue();
         }
+    }
+    /**
+     * This attempts to create the given directories, opening an Error 
+     * JOptionPane if failed, and returns whether it was successful.
+     * @param dir The directory to create.
+     * @param existingMessage The message to display if the given directory 
+     * exists as a file.
+     * @param errorMessage The message to display if an error occurs.
+     * @return Whether this was successful at creating the directories.
+     */
+    private boolean createDirectories(File dir, String existingMessage, 
+            String errorMessage) {
+        String message;     // The message to display
+        try {
+            Files.createDirectories(dir.toPath());
+            return true;
+        }
+        catch(FileAlreadyExistsException exc) {
+            message = existingMessage+" already exists as a file.";
+        }
+        catch (IOException | SecurityException exc) {
+            message = "An error occurred while creating the "+errorMessage;
+        }
+        Toolkit.getDefaultToolkit().beep();
+        JOptionPane.showMessageDialog(this,message,
+                "ERROR - Error Creating Directory",
+            JOptionPane.ERROR_MESSAGE);
+        return false;
+    }
+    /**
+     * This attempts to create the given directories, opening an Error 
+     * JOptionPane if failed, and returns whether it was successful.
+     * @param dir The directory to create.
+     * @param multiple If there will be multiple directories created.
+     * @return Whether this was successful at creating the directories.
+     */
+    private boolean createDirectories(File dir, boolean multiple) {
+        if (multiple){  // If multiple directories will be created
+            return createDirectories(dir,"One of the directories",
+                    "directories.");
+        } else{
+            return createDirectories(dir,"The specified directory",
+                    "the specified directory.");
+        }
+    }
+    /**
+     * This attempts to create the given directory.
+     * @param dir The directory to create.
+     * @return Whether the directory was successfully created.
+     */
+    private boolean createDirectories(File dir){
+            // If the directory file does not exist
+        if (!dir.exists() || !dir.isDirectory()) {
+            if (!createDirectories(dir,true))   // If the directory was not created
+                return false;
+        }
+        return true;
     }
 }
