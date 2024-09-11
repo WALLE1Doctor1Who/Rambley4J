@@ -33,8 +33,12 @@ public class Rambley4J extends JFrame {
      */
     private static final String LINK_RAMBLEY_EYES_KEY = "LinkRambleyEyes";
     
+    private static final int DEFAULT_RAMBLEY_WIDTH = 512;
     
-
+    private static final int DEFAULT_RAMBLEY_HEIGHT = 512;
+    
+    
+    
     /**
      * Creates new form Rambley4J
      * @param debugMode
@@ -811,13 +815,13 @@ public class Rambley4J extends JFrame {
         @Override
         public int getIconWidth() {
             if (widthSpinner == null)
-                return 512;
+                return DEFAULT_RAMBLEY_WIDTH;
             return (int)widthSpinner.getValue();
         }
         @Override
         public int getIconHeight() {
             if (linkSizeToggle == null || heightSpinner == null)
-                return 512;
+                return DEFAULT_RAMBLEY_HEIGHT;
             if (linkSizeToggle.isSelected())
                 return getIconWidth();
             return (int)heightSpinner.getValue();
