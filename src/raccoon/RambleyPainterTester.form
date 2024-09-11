@@ -191,15 +191,17 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="backgroundToggle" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="gridToggle" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="evilToggle" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="ratioToggle" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="bgShapeCombo" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="shadowToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="outlineToggle" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="backgroundToggle" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="gridToggle" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="evilToggle" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="ratioToggle" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="bgShapeCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
