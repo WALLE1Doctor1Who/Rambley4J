@@ -96,6 +96,7 @@ public class Rambley4J extends JFrame {
         jawToggle = new javax.swing.JCheckBox();
         saveButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
+        scalePreviewToggle = new javax.swing.JCheckBox();
         mouthPanel = new javax.swing.JPanel();
         mouthCtrl = new swing.TwoAxisSlider();
         filler8 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 7), new java.awt.Dimension(0, 7), new java.awt.Dimension(32767, 7));
@@ -286,17 +287,26 @@ public class Rambley4J extends JFrame {
             }
         });
 
+        scalePreviewToggle.setText("Scale Preview");
+        scalePreviewToggle.setToolTipText("Whether the preview of the placeholder should be scaled to fit the preview window.");
+        scalePreviewToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                scalePreviewToggleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 67, Short.MAX_VALUE)
+                .addGap(0, 62, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jawToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scalePreviewToggle, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -308,7 +318,9 @@ public class Rambley4J extends JFrame {
                 .addComponent(saveButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(resetButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(scalePreviewToggle)
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -674,6 +686,10 @@ public class Rambley4J extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_resetButtonActionPerformed
 
+    private void scalePreviewToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scalePreviewToggleActionPerformed
+        placeholderLabel.setAspectRatioMaintained(scalePreviewToggle.isSelected());
+    }//GEN-LAST:event_scalePreviewToggleActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -772,6 +788,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JMenuItem printButton;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton saveButton;
+    private javax.swing.JCheckBox scalePreviewToggle;
     private javax.swing.JCheckBox scarfToggle;
     private javax.swing.JCheckBox shadowToggle;
     private javax.swing.JPanel sizePanel;
