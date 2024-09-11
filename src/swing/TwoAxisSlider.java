@@ -92,6 +92,7 @@ public class TwoAxisSlider extends JPanel{
         try{
             xSlider.setEnabled(enabled);
             ySlider.setEnabled(enabled);
+            centerButton.setEnabled(enabled);
         } catch (NullPointerException ex) {}
         super.setEnabled(enabled);
     }
