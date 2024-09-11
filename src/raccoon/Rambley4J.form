@@ -294,10 +294,9 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="0" pref="62" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="55" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="linkEyesToggle" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="jawToggle" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="saveButton" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="resetButton" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="scalePreviewToggle" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -310,14 +309,12 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="linkEyesToggle" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jawToggle" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="scalePreviewToggle" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                           <Component id="saveButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="resetButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="scalePreviewToggle" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="76" max="32767" attributes="0"/>
+                          <EmptySpace pref="117" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -330,14 +327,6 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="linkEyesToggleActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JCheckBox" name="jawToggle">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Jaw Closed"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jawToggleActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="saveButton">
@@ -388,7 +377,9 @@
                 </Constraint>
               </Constraints>
 
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
+                <Property name="verticalGap" type="int" value="6"/>
+              </Layout>
               <SubComponents>
                 <Component class="swing.TwoAxisSlider" name="mouthCtrl">
                   <Properties>
@@ -401,6 +392,19 @@
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jawToggle">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Jaw Closed"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jawToggleActionPerformed"/>
+                  </Events>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="Last"/>
                     </Constraint>
                   </Constraints>
                 </Component>

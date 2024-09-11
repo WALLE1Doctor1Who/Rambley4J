@@ -95,12 +95,12 @@ public class Rambley4J extends JFrame {
         jPanel6 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         linkEyesToggle = new javax.swing.JCheckBox();
-        jawToggle = new javax.swing.JCheckBox();
         saveButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
         scalePreviewToggle = new javax.swing.JCheckBox();
         mouthPanel = new javax.swing.JPanel();
         mouthCtrl = new swing.TwoAxisSlider();
+        jawToggle = new javax.swing.JCheckBox();
         filler8 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 7), new java.awt.Dimension(0, 7), new java.awt.Dimension(32767, 7));
         pixelGridPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -265,13 +265,6 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        jawToggle.setText("Jaw Closed");
-        jawToggle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jawToggleActionPerformed(evt);
-            }
-        });
-
         saveButton.setText("Save");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -299,10 +292,9 @@ public class Rambley4J extends JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 62, Short.MAX_VALUE)
+                .addGap(0, 55, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jawToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(scalePreviewToggle, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -312,14 +304,12 @@ public class Rambley4J extends JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(linkEyesToggle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jawToggle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(scalePreviewToggle)
+                .addGap(9, 9, 9)
                 .addComponent(saveButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(resetButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scalePreviewToggle)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -331,7 +321,7 @@ public class Rambley4J extends JFrame {
         jPanel6.add(jPanel2, gridBagConstraints);
 
         mouthPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Mouth"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
-        mouthPanel.setLayout(new java.awt.BorderLayout());
+        mouthPanel.setLayout(new java.awt.BorderLayout(0, 6));
 
         mouthCtrl.setValueX(100);
         mouthCtrl.setValueY(0);
@@ -341,6 +331,14 @@ public class Rambley4J extends JFrame {
             }
         });
         mouthPanel.add(mouthCtrl, java.awt.BorderLayout.CENTER);
+
+        jawToggle.setText("Jaw Closed");
+        jawToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jawToggleActionPerformed(evt);
+            }
+        });
+        mouthPanel.add(jawToggle, java.awt.BorderLayout.PAGE_END);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
