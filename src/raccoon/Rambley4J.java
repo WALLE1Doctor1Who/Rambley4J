@@ -5,9 +5,11 @@
 package raccoon;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 
@@ -32,6 +34,19 @@ public class Rambley4J extends JFrame {
      * Rambley's left and right eyes are linked.
      */
     private static final String LINK_RAMBLEY_EYES_KEY = "LinkRambleyEyes";
+    
+    /**
+     * This is the key in the component-specific preference node for the widths 
+     * of components.
+     */
+    private static final String PREFERENCE_WIDTH_KEY = "WindowWidth";
+    /**
+     * This is the key in the component-specific preference node for the heights 
+     * of components.
+     */
+    private static final String PREFERENCE_HEIGHT_KEY = "WindowHeight";
+    
+    
     
     private static final int DEFAULT_RAMBLEY_WIDTH = 512;
     
@@ -87,6 +102,113 @@ public class Rambley4J extends JFrame {
         glitchyToggle.setSelected(rambleyPainter.isRambleyGlitchy());
         hatToggle.setSelected(rambleyPainter.isConductorHatPainted());
         scalePreviewToggle.setSelected(previewLabel.isImageAlwaysScaled());
+    }
+    /**
+     * 
+     */
+    private void updateStateInSettings(){
+        if (config != null){
+            try{
+                config.putInt(RAMBLEY_FLAGS_KEY, rambleyPainter.getFlags());
+            } catch (IllegalStateException ex){ 
+                if (debugMode)      // If we are in debug mode
+                    System.out.println("Error: " + ex);
+            }
+        }
+    }
+    /**
+     * This updates the boolean value stored at the given key in the program's 
+     * preference node to reflect whether the given toggle button is selected or 
+     * not.
+     * @param key The key for the value in the preference node to update.
+     * @param toggleButton The toggle button to use to set the value in the 
+     * preference node.
+     */
+    private void updateConfigBoolean(String key, AbstractButton toggleButton){
+        if (config != null){        // If the preference node is available
+            try{
+                config.putBoolean(key, toggleButton.isSelected());
+            } catch (IllegalStateException ex){ 
+                if (debugMode)    // If we are in debug mode
+                    System.out.println("Error: " + ex);
+            }
+        }
+    }
+    /**
+     * This checks to see if the preference node is available, and if not, 
+     * throws an IllegalStateException.
+     * @throws IllegalStateException If the preference node was not available to 
+     * the program at initialization.
+     */
+    private void checkIfPreferencesIsAvailable(){
+            // If the preference node is not available
+        if (config == null)
+            throw new IllegalStateException("Preference node is not available");
+    }
+    /**
+     * This returns the size mapped to the given key in the preference node, or 
+     * {@code def} if no size is mapped to that key.
+     * @param key The key to get the associated size for.
+     * @param def The default size to use if there is no size associated with 
+     * the given key.
+     * @return The size mapped to the given key, or {@code def} if no size is 
+     * mapped to the given key.
+     * @throws IllegalStateException If the preference node is not available, 
+     * either due to not being available when the program started up or due to 
+     * the preference node being removed.
+     * @throws IllegalArgumentException If the key contains the null control 
+     * character.
+     */
+    private Dimension getPreferenceSize(String key, Dimension def){
+            // Use an empty String if given null
+        key = Objects.requireNonNullElse(key, "");
+            // Check as to whether the preference node is available
+        checkIfPreferencesIsAvailable();
+            // Get the node used to store the size
+        Preferences node = config.node(key);
+            // If both the width and height have not been set
+        if (node.get(PREFERENCE_WIDTH_KEY, null) == null && 
+                node.get(PREFERENCE_HEIGHT_KEY, null) == null)
+            return def;
+           // If the default size is null
+        if (def == null)
+            def = new Dimension(0,0);
+            // Get the width
+        int width = node.getInt(PREFERENCE_WIDTH_KEY, def.width);
+            // Get the height
+        int height = node.getInt(PREFERENCE_HEIGHT_KEY, def.height);
+        return new Dimension(width,height);
+    }
+    /**
+     * This maps the given key to the given size in the preference node. If the 
+     * given size is null, then the key will be removed.
+     * @param key The key to map the size to.
+     * @param size The size to map to the key.
+     * @throws IllegalStateException If the preference node is not available, 
+     * either due to not being available when the program started up or due to 
+     * the preference node being removed.
+     * @throws IllegalArgumentException If the key either contains the null 
+     * control character or is too long to be stored in the preference node. 
+     */
+    private void setPreferenceSize(String key, Dimension size){
+            // Check as to whether the preference node is available
+        checkIfPreferencesIsAvailable();
+            // Use an empty String if given null
+        key = Objects.requireNonNullElse(key, "");
+            // Get the node used to store the size
+        Preferences node = config.node(key);
+            // If the given size is null
+        if (size == null){
+                // Remove the width
+            node.remove(PREFERENCE_WIDTH_KEY);
+                // Remove the height
+            node.remove(PREFERENCE_HEIGHT_KEY);
+        } else {
+                // Set the width
+            node.putInt(PREFERENCE_WIDTH_KEY, size.width);
+                // Set the height
+            node.putInt(PREFERENCE_HEIGHT_KEY, size.height);
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
