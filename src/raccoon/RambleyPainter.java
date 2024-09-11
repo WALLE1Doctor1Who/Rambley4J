@@ -2952,14 +2952,16 @@ public class RambleyPainter extends ListenedPainter<Component>{
                     rect.getMinX(), rect.getMinY(), 
                     rect.getCenterX(), rect.getMinY()-RAMBLEY_CHEEK_TRIANGLE_HEIGHT, 
                     point1, point2);
-                // Get the points on the bottom ellipse where it intersects at 
-                // the top of the cheeks
-            GeometryMath.getEllipseX(ellipse2, Math.max(point1.getY(), 
-                    point2.getY()), point1, point2);
+                // Get the y-coordinate for where the bottom ellipse would 
+                // normally intersect the top of the cheeks
+            double tempY = Math.max(point1.getY(), point2.getY());
+                // Get the points on the bottom ellipse where it intersects the 
+                // top of the rectangle
+            GeometryMath.getEllipseX(ellipse2, rect.getMinY(), point1, point2);
                 // Move the path to the top-left point of the more angular
-            path.moveTo(point1.getX(), point1.getY());
+            path.moveTo(point1.getX(), tempY);      // cheeks
                 // Draw a line to the other side of the ellipse
-            path.lineTo(point2.getX(), point2.getY());
+            path.lineTo(point2.getX(), tempY);
                 // Get the points that are 12 pixels above the bottom of the 
                 // bottom ellipse
             GeometryMath.getEllipseX(ellipse2, ellipse2.getMaxY()-12, 
