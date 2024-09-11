@@ -5,19 +5,16 @@
 package raccoon;
 
 import files.extensions.ImageExtensions;
-import geom.GeometryMath;
 import icons.DebuggingIcon;
 import icons.Icon2D;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.DoubleUnaryOperator;
 import java.util.prefs.Preferences;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -133,10 +130,10 @@ public class RambleyTestViewer extends javax.swing.JFrame {
             double eyeLY = config.getDouble(
                     RambleyPainter.RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED, 
                     rambley.getRambleyLeftEyeY());
-            rightXSpinner.setValue(eyeRX*100);
-            rightYSpinner.setValue(eyeRY*100);
-            leftXSpinner.setValue(eyeLX*100);
-            leftYSpinner.setValue(eyeLY*100);
+            rightEyeControl.setValueX((int)(eyeRX*1000));
+            rightEyeControl.setValueY((int)(eyeRY*1000));
+            leftEyeControl.setValueX((int)(eyeLX*1000));
+            leftEyeControl.setValueY((int)(eyeLY*1000));
             setTestDoubleFromConfig(TEST_DOUBLE_1_KEY);
             setTestDoubleFromConfig(TEST_DOUBLE_2_KEY);
             setTestDoubleFromConfig(TEST_DOUBLE_3_KEY);
@@ -186,8 +183,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         shadowToggle.setSelected(rambley.isRambleyShadowPainted());
         outlineToggle.setSelected(rambley.isRambleyOutlinePainted());
         heightSpinner.setEnabled(!linkSizeToggle.isSelected());
-        leftXSpinner.setEnabled(!linkEyesToggle.isSelected());
-        leftYSpinner.setEnabled(!linkEyesToggle.isSelected());
+        leftEyeControl.setEnabled(!linkEyesToggle.isSelected());
         leftToggle.setSelected(rambley.isRambleyFlipped());
         showTeethToggle.setSelected(rambley.isRambleyJawClosed());
         scarfToggle.setSelected(rambley.isRambleyScarfPainted());
@@ -214,9 +210,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         debugToggle = new javax.swing.JCheckBox();
         printButton = new javax.swing.JButton();
         gridToggle = new javax.swing.JCheckBox();
-        linesToggle = new javax.swing.JCheckBox();
         scaleToggle = new javax.swing.JCheckBox();
-        abTestingToggle = new javax.swing.JCheckBox();
         evilToggle = new javax.swing.JCheckBox();
         ratioToggle = new javax.swing.JCheckBox();
         listenerToggle = new javax.swing.JCheckBox();
@@ -236,6 +230,8 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         jSpinner8 = new javax.swing.JSpinner();
         jSpinner9 = new javax.swing.JSpinner();
         jSpinner10 = new javax.swing.JSpinner();
+        abTestingToggle = new javax.swing.JCheckBox();
+        linesToggle = new javax.swing.JCheckBox();
         circleDotToggle = new javax.swing.JCheckBox();
         shadowToggle = new javax.swing.JCheckBox();
         resetButton = new javax.swing.JButton();
@@ -243,14 +239,6 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         bgDotSizeSpinner = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
         bgDotSpacingSpinner = new javax.swing.JSpinner();
-        jLabel5 = new javax.swing.JLabel();
-        rightXSpinner = new javax.swing.JSpinner();
-        jLabel6 = new javax.swing.JLabel();
-        rightYSpinner = new javax.swing.JSpinner();
-        jLabel7 = new javax.swing.JLabel();
-        leftXSpinner = new javax.swing.JSpinner();
-        jLabel8 = new javax.swing.JLabel();
-        leftYSpinner = new javax.swing.JSpinner();
         linkEyesToggle = new javax.swing.JCheckBox();
         jLabel9 = new javax.swing.JLabel();
         pGridSpinner = new javax.swing.JSpinner();
@@ -265,6 +253,8 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         outlineToggle = new javax.swing.JCheckBox();
         glitchyToggle = new javax.swing.JCheckBox();
         hatToggle = new javax.swing.JCheckBox();
+        rightEyeControl = new swing.TwoAxisSlider();
+        leftEyeControl = new swing.TwoAxisSlider();
 
         fc.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         fc.setFileFilter(ImageExtensions.PNG_FILTER);
@@ -333,24 +323,10 @@ public class RambleyTestViewer extends javax.swing.JFrame {
             }
         });
 
-        linesToggle.setText("Lines");
-        linesToggle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                linesToggleActionPerformed(evt);
-            }
-        });
-
         scaleToggle.setText("Scale");
         scaleToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 scaleToggleActionPerformed(evt);
-            }
-        });
-
-        abTestingToggle.setText("A-B Test");
-        abTestingToggle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                abTestingToggleActionPerformed(evt);
             }
         });
 
@@ -483,6 +459,22 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         });
         jPanel1.add(jSpinner10);
 
+        abTestingToggle.setText("A-B Test");
+        abTestingToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abTestingToggleActionPerformed(evt);
+            }
+        });
+        jPanel1.add(abTestingToggle);
+
+        linesToggle.setText("Lines");
+        linesToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                linesToggleActionPerformed(evt);
+            }
+        });
+        jPanel1.add(linesToggle);
+
         circleDotToggle.setText("Circle Dots");
         circleDotToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -519,42 +511,6 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         bgDotSpacingSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 bgDotSpacingSpinnerStateChanged(evt);
-            }
-        });
-
-        jLabel5.setText("Right X:");
-
-        rightXSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
-        rightXSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                rightEyeSpinnerStateChanged(evt);
-            }
-        });
-
-        jLabel6.setText("Right Y:");
-
-        rightYSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
-        rightYSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                rightEyeSpinnerStateChanged(evt);
-            }
-        });
-
-        jLabel7.setText("Left X:");
-
-        leftXSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
-        leftXSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                leftEyeSpinnerStateChanged(evt);
-            }
-        });
-
-        jLabel8.setText("Left Y:");
-
-        leftYSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, -103.0d, 103.0d, 1.0d));
-        leftYSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                leftEyeSpinnerStateChanged(evt);
             }
         });
 
@@ -643,6 +599,35 @@ public class RambleyTestViewer extends javax.swing.JFrame {
             }
         });
 
+        rightEyeControl.setMajorTickSpacing(200);
+        rightEyeControl.setMaximumX(1000);
+        rightEyeControl.setMaximumY(1000);
+        rightEyeControl.setMinimumX(-1000);
+        rightEyeControl.setMinimumY(-1000);
+        rightEyeControl.setMinorTickSpacing(100);
+        rightEyeControl.setValueX(0);
+        rightEyeControl.setValueY(0);
+        rightEyeControl.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rightEyeControlStateChanged(evt);
+            }
+        });
+
+        leftEyeControl.setEnabled(false);
+        leftEyeControl.setMajorTickSpacing(200);
+        leftEyeControl.setMaximumX(1000);
+        leftEyeControl.setMaximumY(1000);
+        leftEyeControl.setMinimumX(-1000);
+        leftEyeControl.setMinimumY(-1000);
+        leftEyeControl.setMinorTickSpacing(100);
+        leftEyeControl.setValueX(0);
+        leftEyeControl.setValueY(0);
+        leftEyeControl.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                leftEyeControlStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -654,6 +639,14 @@ public class RambleyTestViewer extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(mouthSpinnerX, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(mouthSpinnerY, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(widthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -662,11 +655,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(heightSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(linkSizeToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(abTestingToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(linesToggle))
+                                .addComponent(linkSizeToggle))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(debugToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -679,20 +668,6 @@ public class RambleyTestViewer extends javax.swing.JFrame {
                                 .addComponent(scaleToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(listenerToggle))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(mouthSpinnerX, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(mouthSpinnerY, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(showTeethToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(leftToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(glitchyToggle))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(backgroundToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -708,47 +683,36 @@ public class RambleyTestViewer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(outlineToggle))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(bgDotSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(bgDotSpacingSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel9)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(pGridSpinner))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(rightXSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel6)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(rightYSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel7)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(leftXSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel8)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(leftYSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(linkEyesToggle))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addGap(7, 7, 7)
-                                        .addComponent(gridThickSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bgDotSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bgDotSpacingSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pGridSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(7, 7, 7)
+                                .addComponent(gridThickSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(showTeethToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(leftToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(glitchyToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(scarfToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(hatToggle)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                        .addGap(0, 5, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(rightEyeControl, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(leftEyeControl, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(linkEyesToggle)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -756,7 +720,15 @@ public class RambleyTestViewer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(rightEyeControl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(leftEyeControl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(linkEyesToggle)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(viewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -768,7 +740,14 @@ public class RambleyTestViewer extends javax.swing.JFrame {
                             .addComponent(circleDotToggle)
                             .addComponent(shadowToggle)
                             .addComponent(outlineToggle))
-                        .addGap(5, 5, 5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(leftToggle)
+                            .addComponent(showTeethToggle)
+                            .addComponent(glitchyToggle)
+                            .addComponent(scarfToggle)
+                            .addComponent(hatToggle))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(bgDotSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -779,46 +758,26 @@ public class RambleyTestViewer extends javax.swing.JFrame {
                             .addComponent(gridThickSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(rightXSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6)
-                            .addComponent(rightYSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7)
-                            .addComponent(leftXSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)
-                            .addComponent(leftYSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(linkEyesToggle))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel10)
                             .addComponent(mouthSpinnerX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(mouthSpinnerY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11)
-                            .addComponent(leftToggle)
-                            .addComponent(showTeethToggle)
-                            .addComponent(glitchyToggle))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(scarfToggle)
-                            .addComponent(hatToggle))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(debugToggle)
-                            .addComponent(saveButton)
-                            .addComponent(printButton)
-                            .addComponent(scaleToggle)
-                            .addComponent(listenerToggle)
-                            .addComponent(resetButton))
+                            .addComponent(jLabel11))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(widthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2)
                             .addComponent(heightSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(linkSizeToggle)
-                            .addComponent(abTestingToggle)
-                            .addComponent(linesToggle)))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(linkSizeToggle))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(debugToggle)
+                            .addComponent(saveButton)
+                            .addComponent(printButton)
+                            .addComponent(scaleToggle)
+                            .addComponent(listenerToggle)
+                            .addComponent(resetButton)))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1007,103 +966,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
     }//GEN-LAST:event_jSpinnerAStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //        double earX = 0;
-        //        double earY = 0;
-        //        ArrayList<Point2D> upperPts = new ArrayList<>();
-        //        ArrayList<Point2D> lowerPts = new ArrayList<>();
-        //        ArrayList<Point2D> tipPts = new ArrayList<>();
-        //        ArrayList<Point2D> ctrlPts1U = new ArrayList<>();
-        //        ArrayList<Point2D> ctrlPts2U = new ArrayList<>();
-        //        ArrayList<Point2D> ctrlPts1L = new ArrayList<>();
-        //        ArrayList<Point2D> ctrlPts2L = new ArrayList<>();
-        //        ArrayList<Point2D> ctrlPts1T = new ArrayList<>();
-        //        ArrayList<Point2D> ctrlPts2T = new ArrayList<>();
-        //        DoubleUnaryOperator upperX = rambleyIcon.getRambleyEarX(0);
-        //        DoubleUnaryOperator upperY = rambleyIcon.getRambleyEarY(0);
-        //        DoubleUnaryOperator lowerX = rambleyIcon.getRambleyEarX(1);
-        //        DoubleUnaryOperator lowerY = rambleyIcon.getRambleyEarY(1);
-        //        DoubleUnaryOperator tipX = rambleyIcon.getRambleyEarX(2);
-        //        DoubleUnaryOperator tipY = rambleyIcon.getRambleyEarY(2);
-        //        rambleyIcon.calculateSplinePoints(earX, earY, 4, upperX, upperY,
-            //                upperPts, ctrlPts1U, ctrlPts2U);
-        //        rambleyIcon.calculateSplinePoints(earX, earY, 4, lowerX, lowerY,
-            //                lowerPts, ctrlPts1L, ctrlPts2L);
-        //        rambleyIcon.calculateSplinePoints(earX, earY, 7, tipX, tipY,
-            //                tipPts, ctrlPts1T, ctrlPts2T);
-        //        System.out.println(upperPts);
-        //        System.out.println(lowerPts);
-        //        System.out.println(tipPts);
-        //        Line2D upper1 = new Line2D.Double(upperPts.get(0),upperPts.get(1));
-        //        int tipOff = 0;
-        //        Line2D tip1 = new Line2D.Double(tipPts.get(tipOff+1),tipPts.get(tipOff));
-        //        while (!upper1.intersectsLine(tip1)){
-            //            tipOff ++;
-            //            tip1.setLine(tipPts.get(tipOff+1),tipPts.get(tipOff));
-            //        }
-        //        System.out.printf("Upper To Tip?: (%12.8f, %12.8f)%n",earX+15.5,earY+upperY.applyAsDouble(15.5));
-        //
-        //        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f))%n",
-            //                upper1.getX1(),upper1.getY1(),upper1.getX2(),upper1.getY2(),
-            //                tip1.getX1(),tip1.getY1(),tip1.getX2(),tip1.getY2());
-        //
-        ////        for (int i = 0; i < 25; i++){
-            ////            if (upper1.getP1().distance(upper1.getP2()) <= tip1.getP1().distance(tip1.getP2())){
-                ////                getIntersectingLine(tip1,upper1,earX,earY,tipY);
-                ////            } else {
-                ////                getIntersectingLine(upper1,tip1,earX,earY,upperY);
-                ////            }
-            ////        }
-        ////        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f))%n",
-            ////                upper1.getX1(),upper1.getY1(),upper1.getX2(),upper1.getY2(),
-            ////                tip1.getX1(),tip1.getY1(),tip1.getX2(),tip1.getY2());
-        ////        double tempX = (upper1.getX1()+upper1.getX2()+tip1.getX1()+tip1.getX2())/4.0;
-        ////        double tempY = (upperY.applyAsDouble(tempX-earX)+tipY.applyAsDouble(tempX-earX))/2.0+earY;
-        ////        System.out.printf("Upper To Tip:  (%9.5f, %9.5f)%n",tempX,tempY);
-        //
-        //        Point2D uTT = getLineIntersection(earX, earY, tip1, upper1, tipY, upperY);
-        //        System.out.printf("Upper To Tip:  (%12.8f, %12.8f)%n",uTT.getX(),uTT.getY());
-        //        uTT = rambleyIcon.getRambleyEarUpperTip(earX, earY, null);
-        //        System.out.printf("Upper To Tip:  (%12.8f, %12.8f)%n",uTT.getX(),uTT.getY());
-        //
-        //        tipOff = 0;
-        //        Line2D tip2 = new Line2D.Double();
-        //        Line2D lower1 = new Line2D.Double();
-        //        int lowerOff = 0;
-        //        do{
-            //            tip2.setLine(tipPts.get(tipPts.size()-2-tipOff),tipPts.get(tipPts.size()-1-tipOff));
-            //            lower1.setLine(lowerPts.get(0),lowerPts.get(1));
-            //            for (int off = 0; off < lowerPts.size()-1 && !tip2.intersectsLine(lower1); off++){
-                //                lower1.setLine(lowerPts.get(off+0),lowerPts.get(off+1));
-                //                lowerOff = off;
-                //            }
-            //            tipOff++;
-            //        }
-        //        while (!tip2.intersectsLine(lower1));
-        //
-        //        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f)) %2d %2d%n",
-            //                lower1.getX1(),lower1.getY1(),lower1.getX2(),lower1.getY2(),
-            //                tip2.getX1(),tip2.getY1(),tip2.getX2(),tip2.getY2(), tipOff-1, lowerOff);
-        //
-        ////        for (int i = 0; i < 25; i++){
-            ////            if (lower1.getP1().distance(lower1.getP2()) <= tip2.getP1().distance(tip2.getP2())){
-                ////                getIntersectingLine(tip2,lower1,earX,earY,tipY);
-                ////            } else {
-                ////                getIntersectingLine(lower1,tip2,earX,earY,lowerY);
-                ////            }
-            ////        }
-        ////
-        ////        double tempX1 = (lower1.getX1()+lower1.getX2()+tip2.getX1()+tip2.getX2())/4.0;
-        ////        double tempY1 = (lowerY.applyAsDouble(tempX1-earX)+tipY.applyAsDouble(tempX1-earX))/2.0+earY;
-        ////        System.out.printf("Lower To Tip:  (%9.5f, %9.5f)%n",tempX1,tempY1);
-        //
-        //        Point2D lTT = getLineIntersection(earX, earY, tip2, lower1, tipY, lowerY);
-        //        System.out.printf("Lower To Tip:  (%12.8f, %12.8f)%n",lTT.getX(),lTT.getY());
-        //        lTT = rambleyIcon.getRambleyEarLowerTip(earX, earY, null);
-        //        System.out.printf("Lower To Tip:  (%12.8f, %12.8f)%n",lTT.getX(),lTT.getY());
-
-        //        System.out.printf("((%9.5f, %9.5f), (%9.5f, %9.5f)), ((%9.5f, %9.5f), (%9.5f, %9.5f))%n",
-            //                lower1.getX1(),lower1.getY1(),lower1.getX2(),lower1.getY2(),
-            //                tip2.getX1(),tip2.getY1(),tip2.getX2(),tip2.getY2());
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
@@ -1161,10 +1024,10 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         bgDotSpacingSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SPACING);
         pGridSpinner.setValue(RambleyPainter.DEFAULT_PIXEL_GRID_LINE_SPACING);
         linkEyesToggle.setSelected(true);
-        rightXSpinner.setValue(50.0);
-        rightYSpinner.setValue(50.0);
-        leftXSpinner.setValue(rightXSpinner.getValue());
-        leftYSpinner.setValue(rightYSpinner.getValue());
+        rightEyeControl.setValueX(0);
+        rightEyeControl.setValueY(0);
+        leftEyeControl.setValueX(0);
+        leftEyeControl.setValueY(0);
         mouthSpinnerX.setValue(100.0);
         mouthSpinnerY.setValue(0.0);
         updateConfigFlags();
@@ -1183,52 +1046,15 @@ public class RambleyTestViewer extends javax.swing.JFrame {
         rambley.setBackgroundDotSpacing((Double)bgDotSpacingSpinner.getValue());
     }//GEN-LAST:event_bgDotSpacingSpinnerStateChanged
 
-    private void rightEyeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rightEyeSpinnerStateChanged
-        if (linkEyesToggle.isSelected()){
-            rambley.setRambleyEyes((double)rightXSpinner.getValue()/100, 
-                    (double)rightYSpinner.getValue()/100);
-        } else {
-            rambley.setRambleyRightEye((double)rightXSpinner.getValue()/100, 
-                    (double)rightYSpinner.getValue()/100);
-        }
-//        if (config != null){
-//            config.putDouble(RAMBLEY_RIGHT_EYE_X_KEY, rambleyIcon.getRambleyRightEyeX());
-//            config.putDouble(RAMBLEY_RIGHT_EYE_Y_KEY, rambleyIcon.getRambleyRightEyeY());
-//            if (linkEyesToggle.isSelected()){
-//                config.putDouble(RAMBLEY_LEFT_EYE_X_KEY, rambleyIcon.getRambleyLeftEyeX());
-//                config.putDouble(RAMBLEY_LEFT_EYE_Y_KEY, rambleyIcon.getRambleyLeftEyeY());
-//            }
-//        }
-    }//GEN-LAST:event_rightEyeSpinnerStateChanged
-
-    private void leftEyeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_leftEyeSpinnerStateChanged
-        if (linkEyesToggle.isSelected())
-            return;
-        rambley.setRambleyLeftEye((double)leftXSpinner.getValue()/100, 
-                (double)leftYSpinner.getValue()/100);
-//        if (config != null){
-//            config.putDouble(RAMBLEY_LEFT_EYE_X_KEY, rambleyIcon.getRambleyLeftEyeX());
-//            config.putDouble(RAMBLEY_LEFT_EYE_Y_KEY, rambleyIcon.getRambleyLeftEyeY());
-//        }
-    }//GEN-LAST:event_leftEyeSpinnerStateChanged
-
     private void linkEyesToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkEyesToggleActionPerformed
-        leftXSpinner.setEnabled(!linkEyesToggle.isSelected());
-        leftYSpinner.setEnabled(!linkEyesToggle.isSelected());
+        leftEyeControl.setEnabled(!linkEyesToggle.isSelected());
         if (linkEyesToggle.isSelected()){
-            rambley.setRambleyEyes((double)rightXSpinner.getValue()/100, 
-                    (double)rightYSpinner.getValue()/100);
-        } else {
-            rambley.setRambleyRightEye((double)rightXSpinner.getValue()/100, 
-                    (double)rightYSpinner.getValue()/100);
-            rambley.setRambleyLeftEye((double)leftXSpinner.getValue()/100, 
-                (double)leftYSpinner.getValue()/100);
+            rambley.setRambleyEyes(rightEyeControl.getValueX()/1000.0, 
+                    rightEyeControl.getValueY()/1000.0);
+            leftEyeControl.setValueX(rightEyeControl.getValueX());
+            leftEyeControl.setValueY(rightEyeControl.getValueY());
         }
         if (config != null){
-//            config.putDouble(RAMBLEY_RIGHT_EYE_X_KEY, rambleyIcon.getRambleyRightEyeX());
-//            config.putDouble(RAMBLEY_RIGHT_EYE_Y_KEY, rambleyIcon.getRambleyRightEyeY());
-//            config.putDouble(RAMBLEY_LEFT_EYE_X_KEY, rambleyIcon.getRambleyLeftEyeX());
-//            config.putDouble(RAMBLEY_LEFT_EYE_Y_KEY, rambleyIcon.getRambleyLeftEyeY());
             config.putBoolean(LINK_RAMBLEY_EYES_KEY, linkEyesToggle.isSelected());
         }
     }//GEN-LAST:event_linkEyesToggleActionPerformed
@@ -1288,15 +1114,25 @@ public class RambleyTestViewer extends javax.swing.JFrame {
     private void hatToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hatToggleActionPerformed
         rambley.setConductorHatPainted(hatToggle.isSelected());
     }//GEN-LAST:event_hatToggleActionPerformed
-    
-    private Point2D getLineIntersection(double x, double y, Line2D line1, Line2D line2, 
-            DoubleUnaryOperator getY1, DoubleUnaryOperator getY2){
-        double x1 = Math.min(Math.min(line1.getX1(), line1.getX2()), Math.min(line2.getX1(), line2.getX2()));
-        double x2 = Math.max(Math.max(line1.getX1(), line1.getX2()), Math.max(line2.getX1(), line2.getX2()));
-        Point2D point = GeometryMath.getLineIntersection(x1, x2, getY1, getY2, null);
-        point.setLocation(x+point.getX(), y+point.getY());
-        return point;
-    }
+
+    private void rightEyeControlStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rightEyeControlStateChanged
+        double x = rightEyeControl.getValueX()/1000.0;
+        double y = rightEyeControl.getValueY()/1000.0;
+        if (linkEyesToggle.isSelected()){
+            rambley.setRambleyEyes(x, y);
+            leftEyeControl.setValueX(rightEyeControl.getValueX());
+            leftEyeControl.setValueY(rightEyeControl.getValueY());
+        } else {
+            rambley.setRambleyRightEye(x, y);
+        }
+    }//GEN-LAST:event_rightEyeControlStateChanged
+
+    private void leftEyeControlStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_leftEyeControlStateChanged
+        if (linkEyesToggle.isSelected())
+            return;
+        rambley.setRambleyLeftEye(leftEyeControl.getValueX()/1000.0, 
+                leftEyeControl.getValueY()/1000.0);
+    }//GEN-LAST:event_leftEyeControlStateChanged
     
     /**
      * @param args the command line arguments
@@ -1362,10 +1198,6 @@ public class RambleyTestViewer extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSpinner jSpinner1;
@@ -1379,9 +1211,8 @@ public class RambleyTestViewer extends javax.swing.JFrame {
     private javax.swing.JSpinner jSpinner8;
     private javax.swing.JSpinner jSpinner9;
     private javax.swing.JSpinner jSpinnerA;
+    private swing.TwoAxisSlider leftEyeControl;
     private javax.swing.JCheckBox leftToggle;
-    private javax.swing.JSpinner leftXSpinner;
-    private javax.swing.JSpinner leftYSpinner;
     private javax.swing.JCheckBox linesToggle;
     private javax.swing.JCheckBox linkEyesToggle;
     private javax.swing.JCheckBox linkSizeToggle;
@@ -1393,8 +1224,7 @@ public class RambleyTestViewer extends javax.swing.JFrame {
     private javax.swing.JButton printButton;
     private javax.swing.JCheckBox ratioToggle;
     private javax.swing.JButton resetButton;
-    private javax.swing.JSpinner rightXSpinner;
-    private javax.swing.JSpinner rightYSpinner;
+    private swing.TwoAxisSlider rightEyeControl;
     private javax.swing.JButton saveButton;
     private javax.swing.JCheckBox scaleToggle;
     private javax.swing.JCheckBox scarfToggle;
