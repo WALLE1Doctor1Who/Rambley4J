@@ -152,6 +152,15 @@ public class Rambley4J extends JFrame {
             heightSpinner.setValue(config.getInt(RAMBLEY_HEIGHT_KEY, DEFAULT_RAMBLEY_HEIGHT));
             linkSizeToggle.setSelected(config.getBoolean(LINK_RAMBLEY_SIZE_KEY, 
                     linkSizeToggle.isSelected()));
+                // Get the size for the program
+            Dimension dim = getPreferenceSize(null,getPreferredSize());
+                // Get the minimum size for the program
+            Dimension min = getMinimumSize();
+                // Make sure the width and height are within range
+            dim.width = Math.max(dim.width, min.width);
+            dim.height = Math.max(dim.height, min.height);
+                // Set the size from the node
+            setSize(dim);
         } catch (SecurityException | IllegalStateException ex){
             config = null;
             System.out.println("Unable to load settings: " +ex);
@@ -373,6 +382,11 @@ public class Rambley4J extends JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Rambley4J");
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
         bgToggle.setSelected(true);
         bgToggle.setText("Background");
@@ -920,6 +934,18 @@ public class Rambley4J extends JFrame {
         previewLabel.setImageAlwaysScaled(scalePreviewToggle.isSelected());
         updateConfigBoolean(RAMBLEY_PREVIEW_SCALED_KEY,scalePreviewToggle);
     }//GEN-LAST:event_scalePreviewToggleActionPerformed
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+            // If the window is not maximized
+        if ((getExtendedState() & JFrame.MAXIMIZED_BOTH) == 0){
+            try{    // Set the stored size in the preference node
+                setPreferenceSize(null,getSize());
+            }catch (IllegalStateException ex){ 
+                if (debugMode)    // If we are in debug mode
+                    System.out.println("Error: " + ex);
+            }
+        }
+    }//GEN-LAST:event_formComponentResized
 
     /**
      * @param args the command line arguments
