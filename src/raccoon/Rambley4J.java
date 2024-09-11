@@ -388,7 +388,6 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        bgToggle.setSelected(true);
         bgToggle.setText("Background");
         bgToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -396,7 +395,6 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        gridToggle.setSelected(true);
         gridToggle.setText("Pixel Grid");
         gridToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -404,7 +402,6 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        scarfToggle.setSelected(true);
         scarfToggle.setText("Scarf");
         scarfToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -434,7 +431,6 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        shadowToggle.setSelected(true);
         shadowToggle.setText("Shadow");
         shadowToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -442,7 +438,6 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        outlineToggle.setSelected(true);
         outlineToggle.setText("Outline");
         outlineToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

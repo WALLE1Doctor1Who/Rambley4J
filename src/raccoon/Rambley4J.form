@@ -125,7 +125,6 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="bgToggle">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Background"/>
       </Properties>
       <Events>
@@ -134,7 +133,6 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="gridToggle">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Pixel Grid"/>
       </Properties>
       <Events>
@@ -143,7 +141,6 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="scarfToggle">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Scarf"/>
       </Properties>
       <Events>
@@ -177,7 +174,6 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="shadowToggle">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Shadow"/>
       </Properties>
       <Events>
@@ -186,7 +182,6 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="outlineToggle">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Outline"/>
       </Properties>
       <Events>
