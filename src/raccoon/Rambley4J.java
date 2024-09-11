@@ -30,11 +30,53 @@ public class Rambley4J extends JFrame {
      */
     private static final String RAMBLEY_FLAGS_KEY = "RambleyFlags";
     /**
+     * This is the key in the preference node for the size of the background 
+     * polka dots.
+     */
+    private static final String BACKGROUND_DOT_SIZE_KEY = "BackgroundDotSize";
+    /**
+     * This is the key in the preference node for the spacing of the background 
+     * polka dots.
+     */
+    private static final String BACKGROUND_DOT_SPACING_KEY = 
+            "BackgroundDotSpacing";
+    /**
+     * This is the key in the preference node for the shape of the background 
+     * polka dots.
+     */
+    private static final String BACKGROUND_DOT_SHAPE_KEY = "BackgroundDotShape";
+    
+    private static final String PIXEL_GRID_SPACING_KEY = "PixelGridSpacing";
+    
+    private static final String PIXEL_GRID_THICKNESS_KEY = "PixelGridThickness";
+    
+    private static final String RAMBLEY_RIGHT_EYE_X_KEY = "RightEyeX";
+    
+    private static final String RAMBLEY_RIGHT_EYE_Y_KEY = "RightEyeY";
+    
+    private static final String RAMBLEY_LEFT_EYE_X_KEY = "LeftEyeX";
+    
+    private static final String RAMBLEY_LEFT_EYE_Y_KEY = "LeftEyeY";
+    /**
      * This is the key in the preference node for whether the position of 
      * Rambley's left and right eyes are linked.
      */
     private static final String LINK_RAMBLEY_EYES_KEY = "LinkRambleyEyes";
     
+    private static final String RAMBLEY_MOUTH_WIDTH_KEY = "MouthWidth";
+    
+    private static final String RAMBLEY_MOUTH_HEIGHT_KEY = "MouthHeight";
+    /**
+     * This is the key in the preference node for whether the preview of  
+     * Rambley is scaled to fit the preview label.
+     */
+    private static final String RAMBLEY_PREVIEW_SCALED_KEY = "PreviewScaled";
+    
+    private static final String RAMBLEY_WIDTH_KEY = "ImageWidth";
+    
+    private static final String RAMBLEY_HEIGHT_KEY = "ImageHeight";
+    
+    private static final String LINK_RAMBLEY_SIZE_KEY = "LinkImageSize";
     /**
      * This is the key in the component-specific preference node for the widths 
      * of components.
@@ -45,6 +87,12 @@ public class Rambley4J extends JFrame {
      * of components.
      */
     private static final String PREFERENCE_HEIGHT_KEY = "WindowHeight";
+    /**
+     * This is the name of the child preference node used to store values 
+     * related to the save file chooser.
+     */
+    private static final String SAVE_FILE_CHOOSER_PREFERENCE_NODE = 
+            "SaveFileChooser";
     
     
     
