@@ -4,17 +4,24 @@
  */
 package raccoon;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import javax.swing.*;
+
 /**
  *
  * @author Milo Steier
  */
-public class Rambley4J extends javax.swing.JFrame {
+public class Rambley4J extends JFrame {
 
     /**
      * Creates new form Rambley4J
      */
     public Rambley4J() {
+        rambleyPainter = new RambleyIcon();
         initComponents();
+        placeholderLabel.setIcon((Icon)rambleyPainter);
+        rambleyPainter.addPropertyChangeListener(new RambleyHandler());
     }
 
     /**
@@ -26,21 +33,273 @@ public class Rambley4J extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        placeholderLabel = new components.JThumbnailLabel();
+        jPanel1 = new javax.swing.JPanel();
+        eyeCtrlR = new swing.TwoAxisSlider();
+        eyeCtrlL = new swing.TwoAxisSlider();
+        jPanel2 = new javax.swing.JPanel();
+        mouthCtrl = new swing.TwoAxisSlider();
+        bgToggle = new javax.swing.JCheckBox();
+        gridToggle = new javax.swing.JCheckBox();
+        scarfToggle = new javax.swing.JCheckBox();
+        evilToggle = new javax.swing.JCheckBox();
+        linkEyesToggle = new javax.swing.JCheckBox();
+        glitchyToggle = new javax.swing.JCheckBox();
+        ignoreARToggle = new javax.swing.JCheckBox();
+        shadowToggle = new javax.swing.JCheckBox();
+        outlineToggle = new javax.swing.JCheckBox();
+        hatToggle = new javax.swing.JCheckBox();
+        flippedToggle = new javax.swing.JCheckBox();
+        jawToggle = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        bgDotsComboBox = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Rambley4J (Prototype)");
+
+        placeholderLabel.setImageScaleMode(components.JThumbnailLabel.ALWAYS_SCALE_MAINTAIN_ASPECT_RATIO);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Eyes"));
+        jPanel1.setLayout(new java.awt.GridLayout(1, 0, 8, 0));
+
+        eyeCtrlR.setMajorTickSpacing(20);
+        eyeCtrlR.setMinimumX(-100);
+        eyeCtrlR.setMinimumY(-100);
+        eyeCtrlR.setMinorTickSpacing(10);
+        eyeCtrlR.setValueX(0);
+        eyeCtrlR.setValueY(0);
+        eyeCtrlR.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                eyeCtrlRStateChanged(evt);
+            }
+        });
+        jPanel1.add(eyeCtrlR);
+
+        eyeCtrlL.setMajorTickSpacing(20);
+        eyeCtrlL.setMinimumX(-100);
+        eyeCtrlL.setMinimumY(-100);
+        eyeCtrlL.setMinorTickSpacing(10);
+        eyeCtrlL.setValueX(0);
+        eyeCtrlL.setValueY(0);
+        eyeCtrlL.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                eyeCtrlLStateChanged(evt);
+            }
+        });
+        jPanel1.add(eyeCtrlL);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Mouth"));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        mouthCtrl.setValueX(100);
+        mouthCtrl.setValueY(0);
+        mouthCtrl.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                mouthCtrlStateChanged(evt);
+            }
+        });
+        jPanel2.add(mouthCtrl, java.awt.BorderLayout.CENTER);
+
+        bgToggle.setSelected(true);
+        bgToggle.setText("Background");
+        bgToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bgToggleActionPerformed(evt);
+            }
+        });
+
+        gridToggle.setSelected(true);
+        gridToggle.setText("Pixel Grid");
+        gridToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gridToggleActionPerformed(evt);
+            }
+        });
+
+        scarfToggle.setSelected(true);
+        scarfToggle.setText("Scarf");
+
+        evilToggle.setText("Evil");
+
+        linkEyesToggle.setSelected(true);
+        linkEyesToggle.setText("Link Eyes");
+        linkEyesToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                linkEyesToggleActionPerformed(evt);
+            }
+        });
+
+        glitchyToggle.setText("Glitchy");
+        glitchyToggle.setEnabled(false);
+
+        ignoreARToggle.setText("Ignore Aspect Ratio");
+
+        shadowToggle.setSelected(true);
+        shadowToggle.setText("Shadow");
+
+        outlineToggle.setSelected(true);
+        outlineToggle.setText("Outline");
+
+        hatToggle.setText("Conductor Hat");
+        hatToggle.setEnabled(false);
+
+        flippedToggle.setText("Flipped");
+
+        jawToggle.setText("Jaw Closed");
+
+        jLabel1.setText("Background Dots:");
+
+        bgDotsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rhombus", "Circle" }));
+        bgDotsComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bgDotsComboBoxActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Print");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 382, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(glitchyToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(ignoreARToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(shadowToggle))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(bgToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(gridToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(scarfToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(evilToggle))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(outlineToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(hatToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(flippedToggle))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bgDotsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 104, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(linkEyesToggle)
+                            .addComponent(jawToggle)
+                            .addComponent(jButton1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 339, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(bgToggle)
+                            .addComponent(gridToggle)
+                            .addComponent(scarfToggle)
+                            .addComponent(evilToggle))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(glitchyToggle)
+                            .addComponent(ignoreARToggle)
+                            .addComponent(shadowToggle))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(outlineToggle)
+                            .addComponent(hatToggle)
+                            .addComponent(flippedToggle))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(bgDotsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(linkEyesToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jawToggle)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)))
+                        .addGap(0, 33, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void eyeCtrlRStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_eyeCtrlRStateChanged
+        double eyeX = eyeCtrlR.getValueX()/100.0;
+        double eyeY = eyeCtrlR.getValueY()/100.0;
+        if (linkEyesToggle.isSelected()){
+            rambleyPainter.setRambleyEyes(eyeX, eyeY);
+            eyeCtrlL.setValueX(eyeCtrlR.getValueX());
+            eyeCtrlL.setValueY(eyeCtrlR.getValueY());
+        } else {
+            rambleyPainter.setRambleyRightEye(eyeX, eyeY);
+        }
+    }//GEN-LAST:event_eyeCtrlRStateChanged
+
+    private void eyeCtrlLStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_eyeCtrlLStateChanged
+        double eyeX = eyeCtrlL.getValueX()/100.0;
+        double eyeY = eyeCtrlL.getValueY()/100.0;
+        if (linkEyesToggle.isSelected()){
+            rambleyPainter.setRambleyEyes(eyeX, eyeY);
+            eyeCtrlR.setValueX(eyeCtrlL.getValueX());
+            eyeCtrlR.setValueY(eyeCtrlL.getValueY());
+        }  else {
+            rambleyPainter.setRambleyLeftEye(eyeX, eyeY);
+        }
+    }//GEN-LAST:event_eyeCtrlLStateChanged
+
+    private void linkEyesToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkEyesToggleActionPerformed
+        if (linkEyesToggle.isSelected()){
+            int x = Math.floorDiv(eyeCtrlR.getValueX() + eyeCtrlL.getValueX(),2);
+            int y = Math.floorDiv(eyeCtrlR.getValueY() + eyeCtrlL.getValueY(),2);
+            eyeCtrlR.setValueX(x);
+            eyeCtrlR.setValueY(y);
+        }
+    }//GEN-LAST:event_linkEyesToggleActionPerformed
+
+    private void mouthCtrlStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mouthCtrlStateChanged
+        rambleyPainter.setRambleyOpenMouthWidth(mouthCtrl.getValueX() / 100.0);
+        rambleyPainter.setRambleyOpenMouthHeight(mouthCtrl.getValueY() / 100.0);
+    }//GEN-LAST:event_mouthCtrlStateChanged
+
+    private void bgToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgToggleActionPerformed
+        rambleyPainter.setBackgroundPainted(bgToggle.isSelected());
+    }//GEN-LAST:event_bgToggleActionPerformed
+
+    private void gridToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gridToggleActionPerformed
+        rambleyPainter.setPixelGridPainted(gridToggle.isSelected());
+    }//GEN-LAST:event_gridToggleActionPerformed
+
+    private void bgDotsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgDotsComboBoxActionPerformed
+        rambleyPainter.setCircularBackgroundDots(bgDotsComboBox.getSelectedIndex() > 0);
+    }//GEN-LAST:event_bgDotsComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -76,7 +335,38 @@ public class Rambley4J extends javax.swing.JFrame {
             }
         });
     }
-
+    
+    private RambleyPainter rambleyPainter;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> bgDotsComboBox;
+    private javax.swing.JCheckBox bgToggle;
+    private javax.swing.JCheckBox evilToggle;
+    private swing.TwoAxisSlider eyeCtrlL;
+    private swing.TwoAxisSlider eyeCtrlR;
+    private javax.swing.JCheckBox flippedToggle;
+    private javax.swing.JCheckBox glitchyToggle;
+    private javax.swing.JCheckBox gridToggle;
+    private javax.swing.JCheckBox hatToggle;
+    private javax.swing.JCheckBox ignoreARToggle;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JCheckBox jawToggle;
+    private javax.swing.JCheckBox linkEyesToggle;
+    private swing.TwoAxisSlider mouthCtrl;
+    private javax.swing.JCheckBox outlineToggle;
+    private components.JThumbnailLabel placeholderLabel;
+    private javax.swing.JCheckBox scarfToggle;
+    private javax.swing.JCheckBox shadowToggle;
     // End of variables declaration//GEN-END:variables
+
+    private class RambleyHandler implements PropertyChangeListener{
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            placeholderLabel.repaint();
+        }
+        
+    }
 }
