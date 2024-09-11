@@ -2355,7 +2355,6 @@ public class RambleyPainter implements Painter<Component>{
      * @see #paintBackgroundDots 
      * @see #paintRambley 
      * @see #paintPixelGrid 
-     * @see #paintPixelGrid 
      */
     protected Graphics2D configureGraphics(Graphics2D g, Component c){
             // Enable antialiasing
@@ -2373,10 +2372,6 @@ public class RambleyPainter implements Painter<Component>{
             // Prioritize color rendering quality over speed
         g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, 
                 RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-            // Set the stroke normalization to be pure, i.e. geometry should be 
-            // left unmodified
-        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
-                RenderingHints.VALUE_STROKE_PURE);
         return g;
     }
     
@@ -5216,6 +5211,10 @@ public class RambleyPainter implements Painter<Component>{
             // Create a copy of the given graphics context limited to the given 
             // area to fill
         g = (Graphics2D) g.create(x,y,w,h);
+            // Set the stroke normalization to be pure, i.e. geometry should be 
+            // left unmodified
+        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, 
+                RenderingHints.VALUE_STROKE_PURE);
             // Get the scale factor for the x axis
         double scaleX = w/getRambleyWidth();
             // Get the scale factor for the y axis
@@ -5877,11 +5876,11 @@ public class RambleyPainter implements Painter<Component>{
         g.dispose();
     }
     /**
-     * This returns a String representation of this {@code RambleyIcon}. 
+     * This returns a String representation of this {@code RambleyPainter}. 
      * This method is primarily intended to be used only for debugging purposes, 
      * and the content and format of the returned String may vary between 
      * implementations.
-     * @return A String representation of this {@code RambleyIcon}.
+     * @return A String representation of this {@code RambleyPainter}.
      */
     protected String paramString(){
         return "flags="+getFlags()+
