@@ -38,11 +38,11 @@ public abstract class ListenedPainter<T> implements Painter<T> {
     @Override
     public abstract void paint(Graphics2D g, T object, int width, int height);
     /**
-     * This returns a String representation of this {@code ListenedPainter}. 
+     * This returns a String representation of this {@code Painter}. 
      * This method is primarily intended to be used only for debugging purposes, 
      * and the content and format of the returned String may vary between 
      * implementations.
-     * @return A String representation of this {@code ListenedPainter}.
+     * @return A String representation of this {@code Painter}.
      */
     protected String paramString(){
         return "";
