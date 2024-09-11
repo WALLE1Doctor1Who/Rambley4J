@@ -1396,4 +1396,52 @@ public class Rambley4J extends JFrame {
         }
         return true;
     }
+    /**
+     * This is used to save the image of Rambley to a file.
+     */
+    private class RambleySaver extends SwingWorker<Void,Void>{
+        /**
+         * The file to save the image to.
+         */
+        private final File file;
+        /**
+         * Whether the image was successfully saved
+         */
+        private boolean success = false;
+        /**
+         * This creates a RambleySaver that will save the image of Rambley to 
+         * the given file.
+         * @param file The file to save to (cannot be null).
+         */
+        RambleySaver(File file){
+            this.file = Objects.requireNonNull(file);
+        }
+        @Override
+        protected Void doInBackground() throws Exception {
+            setInputEnabled(false);
+                // If the file's parent was not created
+            if (!createDirectories(file.getParentFile()))
+                return null;
+            int width = (int) widthSpinner.getValue();
+            int height = (linkSizeToggle.isSelected()) ? width : (int) heightSpinner.getValue();
+                // Create the image of Rambley
+            BufferedImage image = createRambleyImage(width,height);
+                // Save the image
+            success = saveImage(image,file);
+            return null;
+        }
+        @Override
+        protected void done(){
+            if (success){   // If the image was successfully saved to the file
+                JOptionPane.showMessageDialog(Rambley4J.this, 
+                        "The image was successfully saved.", 
+                        "Image Saved Successfully", JOptionPane.INFORMATION_MESSAGE);
+            } else{
+                JOptionPane.showMessageDialog(Rambley4J.this, 
+                        "The image failed to save.", 
+                        "Image Failed To Save", JOptionPane.ERROR_MESSAGE);
+            }
+            setInputEnabled(true);
+        }
+    }
 }
