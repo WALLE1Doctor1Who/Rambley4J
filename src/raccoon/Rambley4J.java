@@ -59,6 +59,7 @@ public class Rambley4J extends JFrame {
         } catch (IllegalArgumentException ex){
             System.out.println("Invalid setting: " + ex);
         }
+        updateToggleSettings();
         previewLabel.setIcon((Icon)rambleyPainter);
         rambleyPainter.addPropertyChangeListener(new RambleyHandler());
     }
@@ -67,6 +68,25 @@ public class Rambley4J extends JFrame {
      */
     public Rambley4J(){
         this(false);
+    }
+    /**
+     * 
+     */
+    private void updateToggleSettings(){
+        bgToggle.setSelected(rambleyPainter.isBackgroundPainted());
+        gridToggle.setSelected(rambleyPainter.isPixelGridPainted());
+        evilToggle.setSelected(rambleyPainter.isRambleyEvil());
+        ignoreRatioToggle.setSelected(rambleyPainter.isAspectRatioIgnored());
+        bgDotsComboBox.setSelectedIndex(rambleyPainter.getCircularBackgroundDots() ? 1 : 0);
+        shadowToggle.setSelected(rambleyPainter.isRambleyShadowPainted());
+        outlineToggle.setSelected(rambleyPainter.isRambleyOutlinePainted());
+        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
+        flippedToggle.setSelected(rambleyPainter.isRambleyFlipped());
+        jawToggle.setSelected(rambleyPainter.isRambleyJawClosed());
+        scarfToggle.setSelected(rambleyPainter.isRambleyScarfPainted());
+        glitchyToggle.setSelected(rambleyPainter.isRambleyGlitchy());
+        hatToggle.setSelected(rambleyPainter.isConductorHatPainted());
+        scalePreviewToggle.setSelected(previewLabel.isImageAlwaysScaled());
     }
     /**
      * This method is called from within the constructor to initialize the form.
