@@ -4,6 +4,7 @@
  */
 package raccoon;
 
+import files.extensions.ImageExtensions;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -107,7 +108,8 @@ public class Rambley4J extends JFrame {
     private static final String SAVE_FILE_CHOOSER_PREFERENCE_NODE = 
             "SaveFileChooser";
     
-    
+    private static final String SAVE_FILE_CHOOSER_DIRECTORY_KEY = 
+            "SaveCurrentDirectory";
     
     private static final int DEFAULT_RAMBLEY_WIDTH = 512;
     
@@ -192,12 +194,25 @@ public class Rambley4J extends JFrame {
                 // Set the size of the save file chooser
             fc.setPreferredSize(getPreferenceSize(SAVE_FILE_CHOOSER_PREFERENCE_NODE,
                     fc.getPreferredSize()));
+                // Get the name of the current directory for the save file 
+                // chooser, or null
+            String dirName = config.get(SAVE_FILE_CHOOSER_DIRECTORY_KEY, null);
+                // If there is a current directory for the save file chooser
+            if (dirName != null){
+                    // Get the current directory as a File
+                File dir = new File(dirName);
+                    // If that file exists
+                if (dir.exists())
+                        // Set teh save file chooser's current directory
+                    fc.setCurrentDirectory(dir);
+            }
         } catch (SecurityException | IllegalStateException ex){
             config = null;
             System.out.println("Unable to load settings: " +ex);
         } catch (IllegalArgumentException ex){
             System.out.println("Invalid setting: " + ex);
         }
+        fc.setFileFilter(ImageExtensions.PNG_FILTER);
         updateToggleSettings();
         previewLabel.setIcon((Icon)rambleyPainter);
         rambleyPainter.addPropertyChangeListener(new RambleyHandler());
@@ -372,6 +387,9 @@ public class Rambley4J extends JFrame {
         if (fc == this.fc){
             try{    // Update the file chooser's size
                 setPreferenceSize(SAVE_FILE_CHOOSER_PREFERENCE_NODE,fc.getSize());
+                    // Update the file chooser's current directory
+                config.put(SAVE_FILE_CHOOSER_DIRECTORY_KEY, 
+                        fc.getCurrentDirectory().toString());
             }catch (IllegalStateException ex){ 
                 if (debugMode)    // If we are in debug mode
                     System.out.println("Error: " + ex);
@@ -1030,42 +1048,52 @@ public class Rambley4J extends JFrame {
      * @param evt The ActionEvent.
      */
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-            // Open the save file chooser and get the file the user selected
-        File file = showSaveFileChooser(fc);
-            // This gets whether to overwrite the file if the file exists
-        boolean overwrite = false;
-            // While the user has selected a file, that file exists, and the 
-            // user has not confirmed whether the file should be overwritten
-        while (file != null && file.exists() && !overwrite){
-                // Show the user a confirmation dialog asking if the user wants 
-                // to overwrite the file
-            int option = JOptionPane.showConfirmDialog(this, 
-                    "There is already a file with that name.\n"+
-                    "Should the file be overwritten?\n"+
-                    "File: \""+file+"\"", "File Already Exists", 
-                    JOptionPane.YES_NO_CANCEL_OPTION, 
-                    JOptionPane.WARNING_MESSAGE);
-            switch(option){ // Determine which option the user selected
-                case(JOptionPane.YES_OPTION):   // If the user selected yes
-                    overwrite = true;           // Overwrite the file
-                    break;
-                case(JOptionPane.NO_OPTION):    // If the user selected no
-                        // Prompt the user to select a different file
-                    file = showSaveFileChooser(fc);
-                    break;
-                case(JOptionPane.CANCEL_OPTION):// If the user selected cancel
-                        // Cancel the operation, and show a prompt notifying that 
-                        // nothing was saved.
-                    JOptionPane.showMessageDialog(this, "No file was saved.", 
-                            "File Already Exists", JOptionPane.INFORMATION_MESSAGE);
-                    return;
-            }
-        }   // If the user has selected a file (and that file either does not 
-            // exist or the user wants to overwrite the file)
-        if (file != null){  
-            saver = new RambleySaver(file);
-            saver.execute();
-        }
+            // This will get the file that the user selected
+        File file;
+        do{     // Open the save file chooser and get the file the user selected
+            file = showSaveFileChooser(fc);
+                // If no file was selected
+            if (file == null)
+                return;
+                // If the PNG file filter is in use and the entered file does 
+                // not have the PNG file extension
+            if (ImageExtensions.PNG_FILTER.equals(fc.getFileFilter()) && 
+                    !ImageExtensions.PNG_FILTER.accept(file)){
+                    // Add the PNG file extension to the file
+                file = new File(file.toString()+"."+ImageExtensions.PNG);
+                fc.setSelectedFile(file);
+            }   // If the file already exists
+            if (file.exists()){
+                    // Show the user a confirmation dialog asking if the user 
+                    // wants to overwrite the file
+                int option = JOptionPane.showConfirmDialog(this, 
+                        "There is already a file with that name.\n"+
+                        "Should the file be overwritten?\n"+
+                        "File: \""+file+"\"", "File Already Exists", 
+                        JOptionPane.YES_NO_CANCEL_OPTION, 
+                        JOptionPane.WARNING_MESSAGE);
+                    // Determine the action to perform based off the user's 
+                switch(option){ // choice
+                        // If the user selected No
+                    case(JOptionPane.NO_OPTION):
+                            // Set the file to null to run the loop again
+                        file = null;
+                        // If the user selected Yes
+                    case(JOptionPane.YES_OPTION):
+                        break;
+                        // If the user selected Cancel or exited the dialog
+                    default:
+                            // Cancel the operation, and show a prompt notifying 
+                            // that nothing was saved.
+                        JOptionPane.showMessageDialog(this,"No file was saved.", 
+                                "File Already Exists", 
+                                JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                }
+            }   // While the file is null (user decided to select a different 
+        } while (file == null);     // file)
+        saver = new RambleySaver(file);
+        saver.execute();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
