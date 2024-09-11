@@ -43,6 +43,16 @@ public class Rambley4J extends JFrame {
         initComponents();
         placeholderLabel.setIcon((Icon)rambleyPainter);
         rambleyPainter.addPropertyChangeListener(new RambleyHandler());
+        try{    // Try to load the settings from the preference node
+            config = Preferences.userRoot().node(PREFERENCE_NODE_NAME);
+//            rambleyPainter.setFlags(config.getInt(RAMBLEY_FLAGS_KEY, 
+//                    rambleyPainter.getFlags()));
+        } catch (SecurityException | IllegalStateException ex){
+            config = null;
+            System.out.println("Unable to load settings: " +ex);
+        } catch (IllegalArgumentException ex){
+            System.out.println("Invalid setting: " + ex);
+        }
     }
     /**
      * Creates new form Rambley4J
