@@ -48,7 +48,7 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="ignoreARToggle" min="-2" max="-2" attributes="0"/>
+                              <Component id="ignoreRatioToggle" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="shadowToggle" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -103,7 +103,7 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="ignoreARToggle" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ignoreRatioToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="shadowToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="outlineToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="hatToggle" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -170,12 +170,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="glitchyToggleActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="ignoreARToggle">
+    <Component class="javax.swing.JCheckBox" name="ignoreRatioToggle">
       <Properties>
         <Property name="text" type="java.lang.String" value="Ignore Aspect Ratio"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ignoreARToggleActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ignoreRatioToggleActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="shadowToggle">

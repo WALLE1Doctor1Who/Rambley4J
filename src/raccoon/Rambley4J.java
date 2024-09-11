@@ -80,7 +80,7 @@ public class Rambley4J extends JFrame {
         scarfToggle = new javax.swing.JCheckBox();
         evilToggle = new javax.swing.JCheckBox();
         glitchyToggle = new javax.swing.JCheckBox();
-        ignoreARToggle = new javax.swing.JCheckBox();
+        ignoreRatioToggle = new javax.swing.JCheckBox();
         shadowToggle = new javax.swing.JCheckBox();
         outlineToggle = new javax.swing.JCheckBox();
         hatToggle = new javax.swing.JCheckBox();
@@ -183,10 +183,10 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        ignoreARToggle.setText("Ignore Aspect Ratio");
-        ignoreARToggle.addActionListener(new java.awt.event.ActionListener() {
+        ignoreRatioToggle.setText("Ignore Aspect Ratio");
+        ignoreRatioToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ignoreARToggleActionPerformed(evt);
+                ignoreRatioToggleActionPerformed(evt);
             }
         });
 
@@ -485,7 +485,7 @@ public class Rambley4J extends JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(ignoreARToggle)
+                                .addComponent(ignoreRatioToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(shadowToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -531,7 +531,7 @@ public class Rambley4J extends JFrame {
                             .addComponent(flippedToggle))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(ignoreARToggle)
+                            .addComponent(ignoreRatioToggle)
                             .addComponent(shadowToggle)
                             .addComponent(outlineToggle)
                             .addComponent(hatToggle))
@@ -609,9 +609,9 @@ public class Rambley4J extends JFrame {
         rambleyPainter.setRambleyFlipped(flippedToggle.isSelected());
     }//GEN-LAST:event_flippedToggleActionPerformed
 
-    private void ignoreARToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreARToggleActionPerformed
-        rambleyPainter.setAspectRatioIgnored(ignoreARToggle.isSelected());
-    }//GEN-LAST:event_ignoreARToggleActionPerformed
+    private void ignoreRatioToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreRatioToggleActionPerformed
+        rambleyPainter.setAspectRatioIgnored(ignoreRatioToggle.isSelected());
+    }//GEN-LAST:event_ignoreRatioToggleActionPerformed
 
     private void shadowToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shadowToggleActionPerformed
         rambleyPainter.setRambleyShadowPainted(shadowToggle.isSelected());
@@ -749,7 +749,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JCheckBox gridToggle;
     private javax.swing.JCheckBox hatToggle;
     private javax.swing.JSpinner heightSpinner;
-    private javax.swing.JCheckBox ignoreARToggle;
+    private javax.swing.JCheckBox ignoreRatioToggle;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
