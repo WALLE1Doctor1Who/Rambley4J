@@ -929,7 +929,24 @@ public class Rambley4J extends JFrame {
     }//GEN-LAST:event_linkSizeToggleActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        // TODO add your handling code here:
+        rambleyPainter.setFlags(DEFAULT_RAMBLEY_FLAGS);
+        widthSpinner.setValue(DEFAULT_RAMBLEY_WIDTH);
+        heightSpinner.setValue(DEFAULT_RAMBLEY_HEIGHT);
+        linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), 
+                heightSpinner.getValue()));
+        bgDotSizeSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SIZE);
+        bgDotSpacingSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SPACING);
+        gridSpacingSpinner.setValue(RambleyPainter.DEFAULT_PIXEL_GRID_LINE_SPACING);
+        gridThicknessSpinner.setValue(PixelGridPainter.DEFAULT_LINE_THICKNESS);
+        linkEyesToggle.setSelected(true);
+        eyeCtrlR.setValueX(0);
+        eyeCtrlR.setValueY(0);
+        mouthCtrl.setValueX(100);
+        mouthCtrl.setValueY(0);
+        updateToggleSettings();
+        updateStateInSettings();
+        updateConfigBoolean(LINK_RAMBLEY_EYES_KEY,linkEyesToggle);
+        updateConfigBoolean(LINK_RAMBLEY_SIZE_KEY,linkSizeToggle);
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void scalePreviewToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scalePreviewToggleActionPerformed
