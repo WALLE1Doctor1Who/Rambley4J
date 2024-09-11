@@ -179,7 +179,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
         gridToggle.setSelected(rambley.isPixelGridPainted());
         evilToggle.setSelected(rambley.isRambleyEvil());
         ratioToggle.setSelected(!rambley.isAspectRatioIgnored());
-        circleDotToggle.setSelected(rambley.getCircularBackgroundDots());
+        bgShapeCombo.setSelectedIndex(rambley.getCircularBackgroundDots() ? 1 : 0);
         shadowToggle.setSelected(rambley.isRambleyShadowPainted());
         outlineToggle.setSelected(rambley.isRambleyOutlinePainted());
         heightSpinner.setEnabled(!linkSizeToggle.isSelected());
@@ -232,7 +232,6 @@ public class RambleyPainterTester extends javax.swing.JFrame {
         jSpinner10 = new javax.swing.JSpinner();
         abTestingToggle = new javax.swing.JCheckBox();
         linesToggle = new javax.swing.JCheckBox();
-        circleDotToggle = new javax.swing.JCheckBox();
         shadowToggle = new javax.swing.JCheckBox();
         resetButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
@@ -255,6 +254,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
         hatToggle = new javax.swing.JCheckBox();
         rightEyeControl = new swing.TwoAxisSlider();
         leftEyeControl = new swing.TwoAxisSlider();
+        bgShapeCombo = new javax.swing.JComboBox<>();
 
         fc.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
         fc.setFileFilter(ImageExtensions.PNG_FILTER);
@@ -475,13 +475,6 @@ public class RambleyPainterTester extends javax.swing.JFrame {
         });
         jPanel1.add(linesToggle);
 
-        circleDotToggle.setText("Circle Dots");
-        circleDotToggle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                circleDotToggleActionPerformed(evt);
-            }
-        });
-
         shadowToggle.setText("Shadow");
         shadowToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -628,6 +621,13 @@ public class RambleyPainterTester extends javax.swing.JFrame {
             }
         });
 
+        bgShapeCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rhombus", "Circle" }));
+        bgShapeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bgShapeComboActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -669,20 +669,6 @@ public class RambleyPainterTester extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(listenerToggle))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(backgroundToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(gridToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(evilToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ratioToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(circleDotToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(shadowToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(outlineToggle))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bgDotSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -697,15 +683,31 @@ public class RambleyPainterTester extends javax.swing.JFrame {
                                 .addGap(7, 7, 7)
                                 .addComponent(gridThickSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(showTeethToggle)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(backgroundToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(gridToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(evilToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(ratioToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(bgShapeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(showTeethToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(leftToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(glitchyToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(scarfToggle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(hatToggle)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(leftToggle)
+                                .addComponent(shadowToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(glitchyToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(scarfToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(hatToggle)))
+                                .addComponent(outlineToggle)))
                         .addGap(0, 5, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -737,9 +739,10 @@ public class RambleyPainterTester extends javax.swing.JFrame {
                             .addComponent(gridToggle)
                             .addComponent(evilToggle)
                             .addComponent(ratioToggle)
-                            .addComponent(circleDotToggle)
-                            .addComponent(shadowToggle)
-                            .addComponent(outlineToggle))
+                            .addComponent(bgShapeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(shadowToggle)
+                                .addComponent(outlineToggle)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(leftToggle)
@@ -1002,10 +1005,6 @@ public class RambleyPainterTester extends javax.swing.JFrame {
             config.putBoolean(PRINT_LISTENERS_KEY, listenerToggle.isSelected());
     }//GEN-LAST:event_listenerToggleActionPerformed
 
-    private void circleDotToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_circleDotToggleActionPerformed
-        rambley.setCircularBackgroundDots(circleDotToggle.isSelected());
-    }//GEN-LAST:event_circleDotToggleActionPerformed
-
     private void shadowToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shadowToggleActionPerformed
         rambley.setRambleyShadowPainted(shadowToggle.isSelected());
     }//GEN-LAST:event_shadowToggleActionPerformed
@@ -1133,6 +1132,10 @@ public class RambleyPainterTester extends javax.swing.JFrame {
         rambley.setRambleyLeftEye(leftEyeControl.getValueX()/1000.0, 
                 leftEyeControl.getValueY()/1000.0);
     }//GEN-LAST:event_leftEyeControlStateChanged
+
+    private void bgShapeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgShapeComboActionPerformed
+        rambley.setCircularBackgroundDots(bgShapeCombo.getSelectedIndex() > 0);
+    }//GEN-LAST:event_bgShapeComboActionPerformed
     
     /**
      * @param args the command line arguments
@@ -1183,7 +1186,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
     private javax.swing.JCheckBox backgroundToggle;
     private javax.swing.JSpinner bgDotSizeSpinner;
     private javax.swing.JSpinner bgDotSpacingSpinner;
-    private javax.swing.JCheckBox circleDotToggle;
+    private javax.swing.JComboBox<String> bgShapeCombo;
     private javax.swing.JCheckBox debugToggle;
     private javax.swing.JCheckBox evilToggle;
     private javax.swing.JFileChooser fc;
