@@ -322,6 +322,7 @@ public class Rambley4J extends JFrame {
 
         debugPopup = new javax.swing.JPopupMenu();
         printButton = new javax.swing.JMenuItem();
+        fc = new javax.swing.JFileChooser();
         previewLabel = new components.JThumbnailLabel();
         bgToggle = new javax.swing.JCheckBox();
         gridToggle = new javax.swing.JCheckBox();
@@ -386,6 +387,8 @@ public class Rambley4J extends JFrame {
             }
         });
         debugPopup.add(printButton);
+
+        fc.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Rambley4J");
@@ -1021,6 +1024,7 @@ public class Rambley4J extends JFrame {
     private swing.TwoAxisSlider eyeCtrlL;
     private swing.TwoAxisSlider eyeCtrlR;
     private javax.swing.JPanel eyesPanel;
+    private javax.swing.JFileChooser fc;
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler11;
     private javax.swing.Box.Filler filler12;
