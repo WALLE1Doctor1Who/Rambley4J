@@ -1025,9 +1025,47 @@ public class Rambley4J extends JFrame {
     private void jawToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jawToggleActionPerformed
         rambleyPainter.setRambleyJawClosed(jawToggle.isSelected());
     }//GEN-LAST:event_jawToggleActionPerformed
-
+    /**
+     * This saves the image of Rambley to a file selected by the user.
+     * @param evt The ActionEvent.
+     */
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
+            // Open the save file chooser and get the file the user selected
+        File file = showSaveFileChooser(fc);
+            // This gets whether to overwrite the file if the file exists
+        boolean overwrite = false;
+            // While the user has selected a file, that file exists, and the 
+            // user has not confirmed whether the file should be overwritten
+        while (file != null && file.exists() && !overwrite){
+                // Show the user a confirmation dialog asking if the user wants 
+                // to overwrite the file
+            int option = JOptionPane.showConfirmDialog(this, 
+                    "There is already a file with that name.\n"+
+                    "Should the file be overwritten?\n"+
+                    "File: \""+file+"\"", "File Already Exists", 
+                    JOptionPane.YES_NO_CANCEL_OPTION, 
+                    JOptionPane.WARNING_MESSAGE);
+            switch(option){ // Determine which option the user selected
+                case(JOptionPane.YES_OPTION):   // If the user selected yes
+                    overwrite = true;           // Overwrite the file
+                    break;
+                case(JOptionPane.NO_OPTION):    // If the user selected no
+                        // Prompt the user to select a different file
+                    file = showSaveFileChooser(fc);
+                    break;
+                case(JOptionPane.CANCEL_OPTION):// If the user selected cancel
+                        // Cancel the operation, and show a prompt notifying that 
+                        // nothing was saved.
+                    JOptionPane.showMessageDialog(this, "No file was saved.", 
+                            "File Already Exists", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+            }
+        }   // If the user has selected a file (and that file either does not 
+            // exist or the user wants to overwrite the file)
+        if (file != null){  
+            saver = new RambleySaver(file);
+            saver.execute();
+        }
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
@@ -1184,6 +1222,10 @@ public class Rambley4J extends JFrame {
      * This is a preference node to store the settings for this program.
      */
     private Preferences config;
+    /**
+     * This is the last RambleySaver used to save the image of Rambley.
+     */
+    private RambleySaver saver = null;
     /**
      * Whether this program is currently accepting input.
      */
