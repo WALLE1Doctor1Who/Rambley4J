@@ -41,10 +41,10 @@ public class Rambley4J extends JFrame {
      */
     public Rambley4J(boolean debugMode) {
         this.debugMode = debugMode;
-        if (debugMode)
-            previewLabel.setComponentPopupMenu(debugPopup);
         rambleyPainter = new RambleyIcon2();
         initComponents();
+        if (debugMode)
+            previewLabel.setComponentPopupMenu(debugPopup);
         try{    // Try to load the settings from the preference node
             config = Preferences.userRoot().node(PREFERENCE_NODE_NAME);
 //            rambleyPainter.setFlags(config.getInt(RAMBLEY_FLAGS_KEY, 
