@@ -142,7 +142,6 @@ public class Rambley4J extends JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Rambley4J");
 
-        placeholderLabel.setImageScaleMode(components.JThumbnailLabel.ALWAYS_SCALE_MAINTAIN_ASPECT_RATIO);
         placeholderLabel.setComponentPopupMenu(debugPopup);
 
         bgToggle.setSelected(true);
