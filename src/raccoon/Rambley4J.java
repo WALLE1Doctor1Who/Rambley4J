@@ -214,7 +214,7 @@ public class Rambley4J extends JFrame {
         jPanel1.add(eyesPanel);
         jPanel1.add(filler7);
 
-        jPanel6.setLayout(new java.awt.GridLayout(1, 0, 8, 0));
+        jPanel6.setLayout(new java.awt.GridBagLayout());
 
         linkEyesToggle.setSelected(true);
         linkEyesToggle.setText("Link Eyes");
@@ -243,7 +243,7 @@ public class Rambley4J extends JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 87, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jawToggle, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -260,7 +260,13 @@ public class Rambley4J extends JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel6.add(jPanel2);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
+        jPanel6.add(jPanel2, gridBagConstraints);
 
         mouthPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Mouth"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
         mouthPanel.setLayout(new java.awt.BorderLayout());
@@ -274,7 +280,13 @@ public class Rambley4J extends JFrame {
         });
         mouthPanel.add(mouthCtrl, java.awt.BorderLayout.CENTER);
 
-        jPanel6.add(mouthPanel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.6;
+        gridBagConstraints.weighty = 0.9;
+        jPanel6.add(mouthPanel, gridBagConstraints);
 
         jPanel1.add(jPanel6);
         jPanel1.add(filler8);
