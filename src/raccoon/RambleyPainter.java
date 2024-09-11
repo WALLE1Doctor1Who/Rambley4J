@@ -568,43 +568,43 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     public static final int IGNORE_ASPECT_RATIO_FLAG =      0x00000010;
     /**
-     * This is the flag for drawing the background polka dots as circles instead 
-     * of rhombuses.
-     */
-    public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000020;
-    /**
      * This is the flag for whether Rambley will be painted in his glitchy 
      * state. When Rambley is glitching out, his eyes become a turquoise green 
      * and he becomes more angular.
      */
-    public static final int GLITCHY_RAMBLEY_FLAG =          0x00000040;
+    public static final int GLITCHY_RAMBLEY_FLAG =          0x00000020;
     /**
      * This is the flag for whether evil Rambley will be painted instead of 
      * normal Rambley. Evil Rambley is a version of Rambley the Raccoon with red 
      * eyes that first appeared on thumbnails of videos from the YouTube channel 
      * GameTheory on the topic of Indigo Park.
      */
-    public static final int EVIL_RAMBLEY_FLAG =             0x00000080;
+    public static final int EVIL_RAMBLEY_FLAG =             0x00000040;
     /**
      * This is the flag which controls which side certain elements of Rambley 
      * will appear on. This includes which side of Rambley's face his fang will 
      * show on when his mouth is open, and which side the knot on Rambley's 
      * scarf will appear on.
      */
-    public static final int RAMBLEY_FLIPPED_FLAG =          0x00000100;
+    public static final int RAMBLEY_FLIPPED_FLAG =          0x00000080;
     /**
      * This is the flag which controls whether Rambley's jaw is closed when his 
      * mouth is open.
      */
-    public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000200;
+    public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000100;
     /**
      * This is the flag for whether Rambley's scarf will be painted.
      */
-    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000400;
+    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000200;
     /**
      * This is the flag for whether Rambley's conductor hat will be painted.
      */
-    public static final int PAINT_CONDUCTOR_HAT_FLAG =      0x00000800;
+    public static final int PAINT_CONDUCTOR_HAT_FLAG =      0x00000400;
+    /**
+     * This is the flag for drawing the background polka dots as circles instead 
+     * of rhombuses.
+     */
+    public static final int CIRCULAR_BACKGROUND_DOTS_FLAG = 0x00000800;
     /**
      * This stores the flags that are set initially when a RambleyPainter is 
      * first constructed.
