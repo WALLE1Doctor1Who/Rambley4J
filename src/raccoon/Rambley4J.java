@@ -10,9 +10,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.prefs.Preferences;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -375,6 +380,54 @@ public class Rambley4J extends JFrame {
             return fc.getSelectedFile();
         else
             return null;
+    }
+    /**
+     * This creates and returns an image of Rambley with the given width and 
+     * height.
+     * @param width The width for the image.
+     * @param height The height for the image.
+     * @return The generated image of Rambley.
+     */
+    private BufferedImage createRambleyImage(int width, int height){
+            // This creates the placeholder image
+        BufferedImage image = new BufferedImage(width, height, 
+                BufferedImage.TYPE_INT_ARGB);
+            // This creates the graphics for the image
+        Graphics2D g = image.createGraphics();
+        rambleyPainter.paint(g, null, width, height);
+        g.dispose();
+        return image;
+    }
+    /**
+     * This attempts to save the given image to the given file, as a png. If the 
+     * image fails to save, then this will open a prompt to retry, and will 
+     * try again and again as long as the image fails to save and the user wants 
+     * to retry.
+     * @param image The image to save.
+     * @param file The file to save to.
+     * @return Whether the image was successfully saved to the file.
+     */
+    private boolean saveImage(BufferedImage image, File file){
+            // This gets whether the user wants to retry if the image fails to 
+        boolean retry;  // save
+        do{
+            try {   // Try to save the image
+                return ImageIO.write(image, "png", file);
+            } catch (IOException ex) {
+                    // Show the user a prompt asking if the program should try 
+                    // again, and if the user says yes, then tis should try again
+                retry = JOptionPane.showConfirmDialog(this, 
+                        "There was an error saving the image to file\n"+
+                                "\""+file+"\".\n"+
+                                "Would you like to try again?"+
+                                    // If we are in debug, show the error
+                                ((debugMode)?"\nError: "+ex:""), 
+                        "Image Failed To Save", JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION;
+            }
+        }   // While the image fails to save and the user wants to try again
+        while(retry);
+        return false;
     }
     /**
      * This method is called from within the constructor to initialize the form.
