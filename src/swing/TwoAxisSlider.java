@@ -319,16 +319,18 @@ public class TwoAxisSlider extends JPanel{
         g.draw(line);
         line.setLine(rect.getMaxX(), rect.getMaxY(), w, h);
         g.draw(line);
-
-        g.setColor(Color.BLUE);
-        if (!isEnabled())
-            g.setColor(g.getColor().darker());
-        g.fill(ellipse);
+        
+        if (isEnabled()){
+            g.setColor(new Color(0x73A4D1));
+            g.fill(ellipse);
+        }
         ellipse.setFrameFromCenter(ellipse.getCenterX(), ellipse.getCenterY(), 
                 ellipse.getMinX()+2, ellipse.getMinY()+2);
-        g.setColor(new Color(0xB0B0FF));
-        if (!isEnabled())
-            g.setColor(g.getColor().darker());
+        Color c1 = (isEnabled()) ? new Color(0x0078D7) : new Color(0xCCCCCC);
+        Color c2 = (isEnabled()) ? new Color(0x00D7D7) : new Color(0xF8F8F8);
+        g.setPaint(new RadialGradientPaint((float)ellipse.getCenterX(),(float)ellipse.getCenterY(),
+                (float)((ellipse.getWidth()+ellipse.getHeight())/4.0), 
+                new float[]{0.0f, 0.8f},new Color[]{c2,c1}));
         g.fill(ellipse);
         g.setColor(Color.BLACK);
         g.draw(ellipse);
