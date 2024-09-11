@@ -186,7 +186,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
         leftEyeControl.setEnabled(!linkEyesToggle.isSelected());
         leftToggle.setSelected(rambley.isRambleyFlipped());
         showTeethToggle.setSelected(rambley.isRambleyJawClosed());
-        scarfToggle.setSelected(rambley.isRambleyScarfPainted());
+        scarfToggle.setSelected(rambley.isRambleyBandanaPainted());
         glitchyToggle.setSelected(rambley.isRambleyGlitchy());
         hatToggle.setSelected(rambley.isConductorHatPainted());
     }
@@ -1015,7 +1015,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
             RambleyPainter.PAINT_PIXEL_GRID_FLAG | 
                 RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
                 RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG | 
-                RambleyPainter.PAINT_RAMBLEY_SCARF_FLAG);
+                RambleyPainter.PAINT_RAMBLEY_BANDANA_FLAG);
         widthSpinner.setValue(256);
         heightSpinner.setValue(256);
         linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), 
@@ -1080,7 +1080,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
     }//GEN-LAST:event_mouthSpinnerYStateChanged
 
     private void scarfToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scarfToggleActionPerformed
-        rambley.setRambleyScarfPainted(scarfToggle.isSelected());
+        rambley.setRambleyBandanaPainted(scarfToggle.isSelected());
     }//GEN-LAST:event_scarfToggleActionPerformed
 
     private void gridThickSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_gridThickSpinnerStateChanged

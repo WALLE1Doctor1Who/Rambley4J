@@ -118,7 +118,7 @@ public class Rambley4J extends JFrame {
             RambleyPainter.PAINT_PIXEL_GRID_FLAG | 
             RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
             RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG | 
-            RambleyPainter.PAINT_RAMBLEY_SCARF_FLAG;
+            RambleyPainter.PAINT_RAMBLEY_BANDANA_FLAG;
     
     private static final int ICON_IMAGES_RAMBLEY_FLAGS = 
             RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
@@ -246,7 +246,7 @@ public class Rambley4J extends JFrame {
         updateHeightSpinnerEnabled();
         flippedToggle.setSelected(rambleyPainter.isRambleyFlipped());
         jawToggle.setSelected(rambleyPainter.isRambleyJawClosed());
-        scarfToggle.setSelected(rambleyPainter.isRambleyScarfPainted());
+        scarfToggle.setSelected(rambleyPainter.isRambleyBandanaPainted());
         glitchyToggle.setSelected(rambleyPainter.isRambleyGlitchy());
         hatToggle.setSelected(rambleyPainter.isConductorHatPainted());
         scalePreviewToggle.setSelected(previewLabel.isImageAlwaysScaled());
@@ -542,7 +542,7 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        scarfToggle.setText("Scarf");
+        scarfToggle.setText("Bandana");
         scarfToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 scarfToggleActionPerformed(evt);
@@ -991,7 +991,7 @@ public class Rambley4J extends JFrame {
     }//GEN-LAST:event_bgDotsComboBoxActionPerformed
 
     private void scarfToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scarfToggleActionPerformed
-        rambleyPainter.setRambleyScarfPainted(scarfToggle.isSelected());
+        rambleyPainter.setRambleyBandanaPainted(scarfToggle.isSelected());
     }//GEN-LAST:event_scarfToggleActionPerformed
 
     private void evilToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evilToggleActionPerformed
@@ -1357,7 +1357,6 @@ public class Rambley4J extends JFrame {
                 }
             }
         }
-        
     }
     
     private class RambleyIcon2 extends RambleyIcon{

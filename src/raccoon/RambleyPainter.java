@@ -150,7 +150,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
     /**
      * This is the color for the lines around Rambley the Raccoon's teeth.
      */
-    public static final Color RAMBLEY_TEETH_LINE_COLOR = RAMBLEY_MOUTH_LINE_COLOR;
+    public static final Color RAMBLEY_TEETH_LINE_COLOR=RAMBLEY_MOUTH_LINE_COLOR;
     /**
      * This is the color for Rambley the Raccoon's tongue.
      */
@@ -161,14 +161,14 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     public static final Color RAMBLEY_TONGUE_LINE_COLOR = RAMBLEY_TONGUE_COLOR;
     /**
-     * This is the color for Rambley the Raccoon's red scarf.
+     * This is the color for Rambley the Raccoon's red bandana.
      */
-    public static final Color RAMBLEY_SCARF_COLOR = new Color(0xC54C56);
+    public static final Color RAMBLEY_BANDANA_COLOR = new Color(0xC54C56);
     /**
      * This is the color for the lines around and on Rambley the Raccoon's red 
-     * scarf.
+     * bandana.
      */
-    public static final Color RAMBLEY_SCARF_LINE_COLOR = new Color(0xA73642);
+    public static final Color RAMBLEY_BANDANA_LINE_COLOR = new Color(0xA73642);
     /**
      * This is the color for Rambley the Raccoon's train conductor hat which he 
      * wears during the Rambley's Railroad ride.
@@ -178,7 +178,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * This is the color for the stripes on Rambley the Raccoon's train 
      * conductor hat.
      */
-    public static final Color RAMBLEY_CONDUCTOR_HAT_STRIPE_COLOR = new Color(0xFFF9FF);
+    public static final Color RAMBLEY_CONDUCTOR_HAT_STRIPE_COLOR = 
+            new Color(0xFFF9FF);
     /**
      * This is the color for the line around Rambley the Raccoon's train 
      * conductor hat.
@@ -194,47 +195,47 @@ public class RambleyPainter extends ListenedPainter<Component>{
     public static final Color RAMBLEY_DROP_SHADOW_COLOR = Color.BLACK;
     /**
      * This is the width at which Rambley is rendered at internally when without 
-     * his scarf.
+     * his bandana.
      * @todo Figure out a more controllable method for the internal rendering 
      * size, instead of having it change depending on whether Rambley has his 
-     * scarf or not.
+     * bandana or not.
      * @see INTERNAL_RENDER_WIDTH_2
      * @see #getRambleyWidth
      */
     private static final double INTERNAL_RENDER_WIDTH_1 = 256;
     /**
      * This is the width at which Rambley is rendered at internally when he has 
-     * his scarf.
+     * his bandana.
      * @todo Figure out a more controllable method for the internal rendering 
      * size, instead of having it change depending on whether Rambley has his 
-     * scarf or not.
+     * bandana or not.
      * @see INTERNAL_RENDER_WIDTH_1
      * @see #getRambleyWidth
      */
     private static final double INTERNAL_RENDER_WIDTH_2 = 320;
     /**
-     * This is the height at which Rambley is rendered at internally when without 
-     * his scarf.
+     * This is the height at which Rambley is rendered at internally when 
+     * without his bandana.
      * @todo Figure out a more controllable method for the internal rendering 
      * size, instead of having it change depending on whether Rambley has his 
-     * scarf or not.
+     * bandana or not.
      * @see INTERNAL_RENDER_HEIGHT_2
      * @see #getRambleyHeight() 
      */
     private static final double INTERNAL_RENDER_HEIGHT_1 = 256;
     /**
      * This is the height at which Rambley is rendered at internally when he has 
-     * his scarf.
+     * his bandana.
      * @todo Figure out a more controllable method for the internal rendering 
      * size, instead of having it change depending on whether Rambley has his 
-     * scarf or not.
+     * bandana or not.
      * @see INTERNAL_RENDER_HEIGHT_1
      * @see #getRambleyHeight() 
      */
     private static final double INTERNAL_RENDER_HEIGHT_2 = 320;
     /**
      * The offset for the y-coordinate of the top center of Rambley's earless 
-     * head when Rambley does not have his scarf.
+     * head when Rambley does not have his bandana.
      * @todo Figure out a more controllable method for determining Rambley's 
      * position in the image.
      * @see RAMBLEY_Y_OFFSET_2
@@ -243,7 +244,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
     private static final double RAMBLEY_Y_OFFSET_1 = 70;
     /**
      * The offset for the y-coordinate of the top center of Rambley's earless 
-     * head when Rambley has his scarf.
+     * head when Rambley has his bandana.
      * @todo Figure out a more controllable method for determining Rambley's 
      * position in the image.
      * @see RAMBLEY_Y_OFFSET_1
@@ -467,80 +468,80 @@ public class RambleyPainter extends ListenedPainter<Component>{
     private static final double RAMBLEY_FANG_OBSCURED_HEIGHT = 
             RAMBLEY_FANG_HEIGHT - RAMBLEY_FANG_VISIBLE_HEIGHT;
     /**
-     * This is the amount by which the upper portion of the neck portion of 
-     * Rambley's scarf is shifted up from the bottom portion of the scarf.
+     * This is the amount by which the upper portion of the front of Rambley's 
+     * bandana is shifted up from the bottom portion of the bandana.
      */
-    private static final double RAMBLEY_NECK_SCARF_Y_OFFSET = 23;
+    private static final double RAMBLEY_BANDANA_FRONT_Y_OFFSET = 23;
     /**
-     * This is the width of the neck portion of Rambley's scarf.
-     * @see RAMBLEY_NECK_SCARF_HEIGHT
+     * This is the width of the front of Rambley's bandana.
+     * @see #RAMBLEY_BANDANA_FRONT_HEIGHT
      */
-    protected static final double RAMBLEY_NECK_SCARF_WIDTH = 80;
+    protected static final double RAMBLEY_BANDANA_FRONT_WIDTH = 80;
     /**
-     * This is half the width of the neck portion of Rambley's scarf.
-     * @see RAMBLEY_NECK_SCARF_WIDTH
+     * This is half the width of the front of Rambley's bandana.
+     * @see RAMBLEY_BANDANA_FRONT_WIDTH
      */
-    private static final double RAMBLEY_NECK_SCARF_HALF_WIDTH = 
-            RAMBLEY_NECK_SCARF_WIDTH/2.0;
+    private static final double RAMBLEY_BANDANA_FRONT_HALF_WIDTH = 
+            RAMBLEY_BANDANA_FRONT_WIDTH/2.0;
     /**
-     * This is the height of the neck portion of Rambley's scarf.
-     * @see RAMBLEY_NECK_SCARF_WIDTH
+     * This is the height of the neck portion of Rambley's bandana.
+     * @see #RAMBLEY_BANDANA_FRONT_WIDTH
      */
-    protected static final double RAMBLEY_NECK_SCARF_HEIGHT = 56;
+    protected static final double RAMBLEY_BANDANA_FRONT_HEIGHT = 56;
     /**
-     * This is half the height of the neck portion of Rambley's scarf.
-     * @see RAMBLEY_NECK_SCARF_HEIGHT
+     * This is half the height of the neck portion of Rambley's bandana.
+     * @see #RAMBLEY_BANDANA_FRONT_HEIGHT
      */
-    private static final double RAMBLEY_NECK_SCARF_HALF_HEIGHT = 
-            RAMBLEY_NECK_SCARF_HEIGHT/2.0;
+    private static final double RAMBLEY_BANDANA_FRONT_HALF_HEIGHT = 
+            RAMBLEY_BANDANA_FRONT_HEIGHT/2.0;
     
-    private static final double RAMBLEY_SCARF_LOWER_END_CONST = 3.62;
+    private static final double RAMBLEY_BANDANA_LOWER_END_CONST = 3.62;
     
-    private static final double RAMBLEY_SCARF_LOWER_END_SQRT = Math.sqrt(6.5528);
+    private static final double RAMBLEY_BANDANA_LOWER_END_SQRT=Math.sqrt(6.5528);
     
-    private static final double RAMBLEY_SCARF_LOWER_END_DENOM = 2.2;
+    private static final double RAMBLEY_BANDANA_LOWER_END_DENOM = 2.2;
     /**
      * This is the offset for the x-coordinates in the equations used to 
-     * calculate the curves for the lower end of Rambley's scarf. This is 
-     * effectively used to flip the scarf end horizontally since the equations 
-     * used produce a horizontally flipped version of the scarf.
+     * calculate the curves for the lower end of Rambley's bandana. This is 
+     * effectively used to flip the bandana end horizontally since the equations 
+     * used produce a horizontally flipped version of the bandana.
      */
-    private static final double RAMBLEY_SCARF_LOWER_END_X_OFFSET = 
-            (RAMBLEY_SCARF_LOWER_END_CONST + RAMBLEY_SCARF_LOWER_END_SQRT) / 
-            RAMBLEY_SCARF_LOWER_END_DENOM;
+    private static final double RAMBLEY_BANDANA_LOWER_END_X_OFFSET = 
+            (RAMBLEY_BANDANA_LOWER_END_CONST + RAMBLEY_BANDANA_LOWER_END_SQRT)/ 
+            RAMBLEY_BANDANA_LOWER_END_DENOM;
     /**
-     * This is the width of the lower end of Rambley's scarf.
+     * This is the width of the lower end of Rambley's bandana.
      */
-    protected static final double RAMBLEY_SCARF_LOWER_END_WIDTH = 
-            (RAMBLEY_SCARF_LOWER_END_X_OFFSET - 
-            ((RAMBLEY_SCARF_LOWER_END_CONST - RAMBLEY_SCARF_LOWER_END_SQRT) / 
-            RAMBLEY_SCARF_LOWER_END_DENOM)) * RAMBLEY_ANIMALWAVE_MULTIPLIER;
+    protected static final double RAMBLEY_BANDANA_LOWER_END_WIDTH = 
+            (RAMBLEY_BANDANA_LOWER_END_X_OFFSET - 
+            ((RAMBLEY_BANDANA_LOWER_END_CONST - RAMBLEY_BANDANA_LOWER_END_SQRT)/ 
+            RAMBLEY_BANDANA_LOWER_END_DENOM)) * RAMBLEY_ANIMALWAVE_MULTIPLIER;
     /**
      * This converts the given x-coordinate in the image coordinate system to a 
      * X-coordinate in the coordinate system used by the equations used to 
-     * calculate the curves that make up the lower end of Rambley's scarf. 
+     * calculate the curves that make up the lower end of Rambley's bandana. 
      * @param x The x-coordinate in the image coordinate system to convert.
-     * @return The x-coordinate in the lower scarf end equation coordinate 
+     * @return The x-coordinate in the lower bandana end equation coordinate 
      * system.
-     * @see #lowScarfEquToGraphicsY 
+     * @see #lowBandanaEquToGraphicsY 
      * @see RAMBLEY_ANIMALWAVE_MULTIPLIER
-     * @see RAMBLEY_SCARF_LOWER_END_X_OFFSET
+     * @see #RAMBLEY_BANDANA_LOWER_END_X_OFFSET
      */
-    private static double graphicsToLowScarfEquX(double x){
+    private static double graphicsToLowBandanaEquX(double x){
         x /= RAMBLEY_ANIMALWAVE_MULTIPLIER;
-        return RAMBLEY_SCARF_LOWER_END_X_OFFSET - x;
+        return RAMBLEY_BANDANA_LOWER_END_X_OFFSET - x;
     }
     /**
      * This converts the given y-coordinate in the coordinate system used by the 
      * equations used to calculate the curves that make up the lower end of 
-     * Rambley's scarf to a y-coordinate in the image coordinate system.
-     * @param y The y-coordinate in the lower scarf end equation coordinate 
+     * Rambley's bandana to a y-coordinate in the image coordinate system.
+     * @param y The y-coordinate in the lower bandana end equation coordinate 
      * system to convert.
      * @return The y-coordinate in the image coordinate system.
-     * @see #graphicsToLowScarfEquX 
+     * @see #graphicsToLowBandanaEquX 
      * @see RAMBLEY_ANIMALWAVE_MULTIPLIER
      */
-    private static double lowScarfEquToGraphicsY(double y){
+    private static double lowBandanaEquToGraphicsY(double y){
         return y * RAMBLEY_ANIMALWAVE_MULTIPLIER;
     }
     
@@ -584,7 +585,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * This is the flag which controls which side certain elements of Rambley 
      * will appear on. This includes which side of Rambley's face his fang will 
      * show on when his mouth is open, and which side the knot on Rambley's 
-     * scarf will appear on.
+     * bandana will appear on.
      */
     public static final int RAMBLEY_FLIPPED_FLAG =          0x00000080;
     /**
@@ -593,9 +594,9 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     public static final int RAMBLEY_JAW_CLOSED_FLAG =       0x00000100;
     /**
-     * This is the flag for whether Rambley's scarf will be painted.
+     * This is the flag for whether Rambley's bandana will be painted.
      */
-    public static final int PAINT_RAMBLEY_SCARF_FLAG =      0x00000200;
+    public static final int PAINT_RAMBLEY_BANDANA_FLAG =    0x00000200;
     /**
      * This is the flag for whether Rambley's conductor hat will be painted.
      */
@@ -611,7 +612,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private static final int DEFAULT_FLAG_SETTINGS = PAINT_BACKGROUND_FLAG | 
             PAINT_PIXEL_GRID_FLAG | PAINT_RAMBLEY_OUTLINE_FLAG | 
-            PAINT_RAMBLEY_SHADOW_FLAG | PAINT_RAMBLEY_SCARF_FLAG;
+            PAINT_RAMBLEY_SHADOW_FLAG | PAINT_RAMBLEY_BANDANA_FLAG;
     /**
      * This stores the maximum value a {@code RambleyPainter}'s flags can be and 
      * still be considered valid.
@@ -625,7 +626,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see EVIL_RAMBLEY_FLAG
      * @see RAMBLEY_FLIPPED_FLAG
      * @see RAMBLEY_JAW_CLOSED_FLAG
-     * @see PAINT_RAMBLEY_SCARF_FLAG
+     * @see #PAINT_RAMBLEY_BANDANA_FLAG
      * @see PAINT_CONDUCTOR_HAT_FLAG
      */
     public static final int MAXIMUM_VALID_FLAGS = PAINT_BACKGROUND_FLAG | 
@@ -633,7 +634,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             PAINT_RAMBLEY_SHADOW_FLAG | IGNORE_ASPECT_RATIO_FLAG | 
             CIRCULAR_BACKGROUND_DOTS_FLAG | GLITCHY_RAMBLEY_FLAG | 
             EVIL_RAMBLEY_FLAG | RAMBLEY_FLIPPED_FLAG | RAMBLEY_JAW_CLOSED_FLAG | 
-            PAINT_RAMBLEY_SCARF_FLAG | PAINT_CONDUCTOR_HAT_FLAG;
+            PAINT_RAMBLEY_BANDANA_FLAG | PAINT_CONDUCTOR_HAT_FLAG;
     /**
      * This identifies that a change has been made to whether the background 
      * should be painted.
@@ -705,12 +706,12 @@ public class RambleyPainter extends ListenedPainter<Component>{
     public static final String RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED = 
             "RambleyJawClosedPropertyChanged";
     /**
-     * This identifies that a change has been made to whether Rambley's scarf 
+     * This identifies that a change has been made to whether Rambley's bandana 
      * should be painted.
-     * @see PAINT_RAMBLEY_SCARF_FLAG
+     * @see #PAINT_RAMBLEY_BANDANA_FLAG
      */
-    public static final String RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED = 
-            "RambleyScarfPaintedPropertyChanged";
+    public static final String RAMBLEY_BANDANA_PAINTED_PROPERTY_CHANGED = 
+            "RambleyBandanaPaintedPropertyChanged";
     /**
      * This identifies that a change has been made to whether Rambley's 
      * conductor hat should be painted.
@@ -742,8 +743,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
         nameMap.put(RAMBLEY_FLIPPED_FLAG, RAMBLEY_FLIPPED_PROPERTY_CHANGED);
         nameMap.put(RAMBLEY_JAW_CLOSED_FLAG, 
                 RAMBLEY_JAW_CLOSED_PROPERTY_CHANGED);
-        nameMap.put(PAINT_RAMBLEY_SCARF_FLAG, 
-                RAMBLEY_SCARF_PAINTED_PROPERTY_CHANGED);
+        nameMap.put(PAINT_RAMBLEY_BANDANA_FLAG, 
+                RAMBLEY_BANDANA_PAINTED_PROPERTY_CHANGED);
         nameMap.put(GLITCHY_RAMBLEY_FLAG, GLITCHY_RAMBLEY_PROPERTY_CHANGED);
         nameMap.put(PAINT_CONDUCTOR_HAT_FLAG, 
                 CONDUCTOR_HAT_PAINTED_PROPERTY_CHANGED);
@@ -982,10 +983,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
     private Path2D mouthPath = null;
     /**
      * A CubicCurve2D object used for generating the details on the neck portion 
-     * of Rambley's scarf. This is initially null and is initialized the first 
+     * of Rambley's bandana. This is initially null and is initialized the first 
      * time it is used.
      */
-    private CubicCurve2D scarfCurve1 = null;
+    private CubicCurve2D bandanaCurve = null;
     /**
      * This is a scratch AffineTransform used to flip shapes horizontally. This 
      * is initially null and is initialized the first time it is used.
@@ -1223,7 +1224,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
             int changed = this.flags ^ flags;
                 // Set the flags
             this.flags = flags;
-                // Go through the flags that have a property name assigned to them
+                // Go through the flags that have a property name assigned to 
+                // them
             for (Integer flag : FLAG_PROPERTY_NAMES_MAP.navigableKeySet()){
                     // If the flag is somehow null
                 if (flag == null)
@@ -1565,10 +1567,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * This returns whether certain elements of Rambley will appear on the 
      * opposite side they typically appear on. When this is {@code true}, 
      * Rambley's fang will show on the left side of his mouth and the knot on 
-     * Rambley's scarf will appear on Rambley's left. When this is {@code 
+     * Rambley's bandana will appear on Rambley's left. When this is {@code 
      * false}, Rambley's fang will show on the right side of his mouth and the 
-     * knot on Rambley's scarf will appear on Rambley's right. The default value 
-     * for this is {@code false}.
+     * knot on Rambley's bandana will appear on Rambley's right. The default 
+     * value for this is {@code false}.
      * 
      * @todo Add references to other related methods. State which elements are 
      * effected as they are added, and which sides they appear on for which 
@@ -1586,10 +1588,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * This sets whether certain elements of Rambley will appear on the opposite 
      * side they typically appear on. When this is {@code true}, 
      * Rambley's fang will show on the left side of his mouth and the knot on 
-     * Rambley's scarf will appear on Rambley's left. When this is {@code 
+     * Rambley's bandana will appear on Rambley's left. When this is {@code 
      * false}, Rambley's fang will show on the right side of his mouth and the 
-     * knot on Rambley's scarf will appear on Rambley's right. The default value 
-     * for this is {@code false}.
+     * knot on Rambley's bandana will appear on Rambley's right. The default 
+     * value for this is {@code false}.
      * 
      * @todo Add references to other related methods. State which elements are 
      * effected as they are added, and which sides they appear on for which 
@@ -1621,33 +1623,33 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return getFlag(RAMBLEY_JAW_CLOSED_FLAG);
     }
     /**
-     * This returns whether Rambley's scarf will be painted by this {@code 
+     * This returns whether Rambley's bandana will be painted by this {@code 
      * RambleyPainter}. The default value for this is {@code true}.
      * 
      * @todo Add references to other related methods.
      * 
-     * @return Whether Rambley's scarf will be painted.
-     * @see #PAINT_RAMBLEY_SCARF_FLAG
+     * @return Whether Rambley's bandana will be painted.
+     * @see #PAINT_RAMBLEY_BANDANA_FLAG
      * @see #getFlag 
-     * @see #setRambleyScarfPainted 
+     * @see #setRambleyBandanaPainted 
      */
-    public boolean isRambleyScarfPainted(){
-        return getFlag(PAINT_RAMBLEY_SCARF_FLAG);
+    public boolean isRambleyBandanaPainted(){
+        return getFlag(PAINT_RAMBLEY_BANDANA_FLAG);
     }
     /**
-     * This sets whether Rambley's scarf will be painted by this {@code 
+     * This sets whether Rambley's bandana will be painted by this {@code 
      * RambleyPainter}. The default value for this is {@code true}.
      * 
      * @todo Add references to other related methods.
      * 
-     * @param enabled Whether Rambley's scarf should be painted.
+     * @param enabled Whether Rambley's bandana should be painted.
      * @return This {@code RambleyPainter}.
-     * @see #PAINT_RAMBLEY_SCARF_FLAG
+     * @see #PAINT_RAMBLEY_BANDANA_FLAG
      * @see #setFlag 
-     * @see #isRambleyScarfPainted 
+     * @see #isRambleyBandanaPainted 
      */
-    public RambleyPainter setRambleyScarfPainted(boolean enabled){
-        return setFlag(PAINT_RAMBLEY_SCARF_FLAG,enabled);
+    public RambleyPainter setRambleyBandanaPainted(boolean enabled){
+        return setFlag(PAINT_RAMBLEY_BANDANA_FLAG,enabled);
     }
     /**
      * This returns whether Rambley's conductor hat will be painted by this 
@@ -2841,8 +2843,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #getRambleyEarlessHead
      */
     protected double getRambleyY(){
-            // If Rambley's scarf is painted
-        if (isRambleyScarfPainted())
+            // If Rambley's bandana is painted
+        if (isRambleyBandanaPainted())
             return RAMBLEY_Y_OFFSET_2;
         return RAMBLEY_Y_OFFSET_1;
     }
@@ -2852,7 +2854,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * method of {@code RambleyPainter}.
      * @todo Figure out a more controllable method for the internal rendering 
      * size, instead of having it change depending on whether Rambley has his 
-     * scarf or not.
+     * bandana or not.
      * @return The internal rendering width of Rambley.
      * @see #getRambleyX
      * @see #getRambleyY 
@@ -2860,8 +2862,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #paintRambley 
      */
     protected double getRambleyWidth(){
-            // If Rambley's scarf is painted
-        if (isRambleyScarfPainted())
+            // If Rambley's bandana is painted
+        if (isRambleyBandanaPainted())
             return INTERNAL_RENDER_WIDTH_2;
         return INTERNAL_RENDER_WIDTH_1;
     }
@@ -2871,7 +2873,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * method of {@code RambleyPainter}.
      * @todo Figure out a more controllable method for the internal rendering 
      * size, instead of having it change depending on whether Rambley has his 
-     * scarf or not.
+     * bandana or not.
      * @return The internal rendering height of Rambley.
      * @see #getRambleyX
      * @see #getRambleyY 
@@ -2879,8 +2881,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #paintRambley 
      */
     protected double getRambleyHeight(){
-            // If Rambley's scarf is painted
-        if (isRambleyScarfPainted())
+            // If Rambley's bandana is painted
+        if (isRambleyBandanaPainted())
             return INTERNAL_RENDER_HEIGHT_2;
         return INTERNAL_RENDER_HEIGHT_1;
     }
@@ -3363,16 +3365,16 @@ public class RambleyPainter extends ListenedPainter<Component>{
             path.lineTo(point4.getX(), point4.getY());
         } else {
                 // We will need to add a curve later on in order to smoothly 
-                // transition from the upper portion of the ear to the tip of the 
-                // ear. As such, we need to calculate where the upper curve should 
-                // stop and where the tip curve should start
+                // transition from the upper portion of the ear to the tip of 
+                // the ear. As such, we need to calculate where the upper curve 
+                // should stop and where the tip curve should start
 
-                // Get the x-coordinate for the start of the curve that joins the 
-                // upper portion and the tip (this is where the upper curve should 
-                // stop)
+                // Get the x-coordinate for the start of the curve that joins 
+                // the upper portion and the tip (this is where the upper curve 
+                // should stop)
             double tempX = point7.getX()+RAMBLEY_EAR_TIP_ROUNDING;
-                // Get the point at which the upper curve stops and the transition 
-                // curve starts
+                // Get the point at which the upper curve stops and the 
+                // transition curve starts
             point5.setLocation(tempX, getRambleyUpperEarY(tempX-x)+y);
                 // Get the x-coordinate for the end of the curve that joins the 
                 // upper portion and the tip (this is where the tip curve should 
@@ -3396,39 +3398,41 @@ public class RambleyPainter extends ListenedPainter<Component>{
             tempY = RAMBLEY_EAR_HEIGHT * 0.17;  // down
                 // Get the point on the upper curve when 17% of the way down
             point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
-                // Calculate the quadratic bezier curve that passes through points 
-                // point1, point2, and point3, and add that curve to the path
+                // Calculate the quadratic bezier curve that passes through 
+                // points point1, point2, and point3, and add that curve to the 
+                // path
             point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
                 // Calculate the offset for the y-coordinate when 10% of the way 
             tempY = RAMBLEY_EAR_HEIGHT * 0.10;  // down
                 // Get the point on the upper curve when 10% of the way down
             point2.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
-                // Calculate the quadratic bezier curve that passes through points 
-                // point3, point2, and point5, and add that curve to the path
-                // (point3 is the end of the previous curve, and point5 is the stop 
-                // of the upper curve and the start of the transition curve)
+                // Calculate the quadratic bezier curve that passes through 
+                // points point3, point2, and point5, and add that curve to the 
+                // path(point3 is the end of the previous curve, and point5 is 
+                // the stop of the upper curve and the start of the transition 
+                // curve)
             point4 = addQuadBezierCurve(point3,point2,point5,point4,path);
 
-                // Curve to smooth the transition between the upper portion and the 
-                // tip of the ear, using the point of intersection as the control 
-                // point
-            path.quadTo(point7.getX(), point7.getY(), point6.getX(), point6.getY());
+                // Curve to smooth the transition between the upper portion and 
+                // the tip of the ear, using the point of intersection as the 
+                // control point
+            path.quadTo(point7.getX(),point7.getY(),point6.getX(),point6.getY());
 
                 // We will need to add a curve later on in order to smoothly 
-                // transition from the tip of the ear to the lower portion of the 
-                // ear. As such, we need to calculate where the tip curve should 
-                // stop and where the lower curve should start
+                // transition from the tip of the ear to the lower portion of 
+                // the ear. As such, we need to calculate where the tip curve 
+                // should stop and where the lower curve should start
 
-                // Get the y-coordinate for the start of the curve that joins the 
-                // tip and the lower portion (this is where the tip curve should 
-                // stop)
+                // Get the y-coordinate for the start of the curve that joins 
+                // the tip and the lower portion (this is where the tip curve 
+                // should stop)
             tempY = point8.getY()-RAMBLEY_EAR_TIP_ROUNDING;
                 // Get the point at which the tip curve stops and the transition 
                 // curve starts
             point5.setLocation(getRambleyEarTipX(tempY-y)+x, tempY);
                 // Get the y-coordinate for the end of the curve that joins the 
-                // tip and the lower portion (this is where the lower curve should 
-                // start)
+                // tip and the lower portion (this is where the lower curve 
+                // should start)
             tempY = point8.getY()+RAMBLEY_EAR_TIP_ROUNDING;
                 // Get the point at which the transition curve stops and the 
                 // lower curve starts
@@ -3438,32 +3442,33 @@ public class RambleyPainter extends ListenedPainter<Component>{
 
                 // Calculate the range that the x-coordinates will cover
             double dxTip = Math.abs(point5.getX()-point6.getX());
-                // Calculate the offset for the x-coordinate when 40% of the way to 
-            tempX = dxTip - (dxTip * 0.40);     // the left
-                // Get the point on the tip curve when 40% of the way to the left
-            point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-                // Calculate the offset for the x-coordinate when 75% of the way to 
-            tempX = dxTip - (dxTip * 0.75);     // the left
-                // Get the point on the tip curve when 75% of the way to the left
-            point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-                // Calculate the quadratic bezier curve that passes through points 
-                // point6, point1, and point2, and add that curve to the path
-                // (point6 is the end of the last transition curve)
+                // Calculate the offset for the x-coordinate when 40% of the way 
+            tempX = dxTip - (dxTip * 0.40);     // to the left
+                // Get the point on the tip curve when 40% of the way to the 
+            point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));    // left
+                // Calculate the offset for the x-coordinate when 75% of the way 
+            tempX = dxTip - (dxTip * 0.75);     // to the left
+                // Get the point on the tip curve when 75% of the way to the 
+            point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));    // left
+                // Calculate the quadratic bezier curve that passes through 
+                // points point6, point1, and point2, and add that curve to the 
+                // path (point6 is the end of the last transition curve)
             point4 = addQuadBezierCurve(point6,point1,point2,point4,path);
-                // Calculate the offset for the x-coordinate when 90% of the way to 
-            tempX = dxTip - (dxTip * 0.90);     // the left
-                // Get the point on the tip curve when 90% of the way to the left
-            point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
-                // Calculate the quadratic bezier curve that passes through points 
-                // point2, point1, and point5, and add that curve to the path
-                // (point2 is the end of the previous curve, and point5 is the stop 
-                // of the tip curve and the start of the next transition curve)
+                // Calculate the offset for the x-coordinate when 90% of the way 
+            tempX = dxTip - (dxTip * 0.90);     // to the left
+                // Get the point on the tip curve when 90% of the way to the 
+            point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));    // left
+                // Calculate the quadratic bezier curve that passes through 
+                // points point2, point1, and point5, and add that curve to the 
+                // path (point2 is the end of the previous curve, and point5 is 
+                // the stop of the tip curve and the start of the next 
+                // transition curve)
             point4 = addQuadBezierCurve(point2,point1,point5,point4,path);
 
                 // Curve to smooth the transition between the tip and the lower 
                 // portion of the ear, using the point of intersection as the 
                 // control point
-            path.quadTo(point8.getX(), point8.getY(), point7.getX(), point7.getY());
+            path.quadTo(point8.getX(),point8.getY(),point7.getX(),point7.getY());
 
                 // Create the lower portion of the ear
 
@@ -3475,9 +3480,9 @@ public class RambleyPainter extends ListenedPainter<Component>{
             tempY = RAMBLEY_EAR_HEIGHT*0.88;  // down
                 // Get the point on the lower curve when 88% of the way down
             point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
-                // Calculate the quadratic bezier curve that passes through points 
-                // point7, point1, and point2, and add that curve to the path
-                // (point7 is the end of the last transition curve)
+                // Calculate the quadratic bezier curve that passes through 
+                // points point7, point1, and point2, and add that curve to the 
+                // path (point7 is the end of the last transition curve)
             point4 = addQuadBezierCurve(point7,point1,point2,point4,path);
                 // Calculate the offset for the y-coordinate when 93% of the way 
             tempY = RAMBLEY_EAR_HEIGHT*0.93;  // down
@@ -3485,10 +3490,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
             point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
                 // Set the location to the bottom-right corner
             point1.setLocation(x1,y1);
-                // Calculate the quadratic bezier curve that passes through points 
-                // point2, point3, and point1, and add that curve to the path
-                // (point2 is the end of the previous curve, and point1 is the 
-                // bottom-right corner, and the end of the lower curve)
+                // Calculate the quadratic bezier curve that passes through 
+                // points point2, point3, and point1, and add that curve to the 
+                // path (point2 is the end of the previous curve, and point1 is 
+                // the bottom-right corner, and the end of the lower curve)
             point4 = addQuadBezierCurve(point2,point3,point1,point4,path);
         }   // Close the path to complete the ear
         path.closePath();
@@ -4859,24 +4864,24 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return path;
     }
     /**
-     * This creates and returns the Area that forms Rambley's scarf without the 
-     * knot at the back. That is to say, this returns the area that forms the 
-     * neck portion of Rambley's scarf.
+     * This creates and returns the Area that forms Rambley's bandana without 
+     * the knot at the back. That is to say, this returns the area that forms 
+     * the neck portion of Rambley's bandana.
      * 
      * @todo Add references to other related methods. 
      * 
-     * @param x The x-coordinate of the bottom center of the scarf.
-     * @param y The y-coordinate of the bottom center of the scarf.
+     * @param x The x-coordinate of the bottom center of the bandana.
+     * @param y The y-coordinate of the bottom center of the bandana.
      * @param cubicCurve1 A CubicCurve2D object to store the bottom-left curve 
-     * of the top portion of the scarf, or null.
+     * of the top portion of the bandana, or null.
      * @param cubicCurve2 A CubicCurve2D object to store the top-left curve of 
-     * the top portion of the scarf, or null.
-     * @param path A Path2D object to use to form the top portion of the scarf, 
-     * or null. 
-     * @return The area that forms the shape of Rambley's scarf without the 
+     * the top portion of the bandana, or null.
+     * @param path A Path2D object to use to form the top portion of the 
+     * bandana, or null. 
+     * @return The area that forms the shape of Rambley's bandana without the 
      * knot.
      */
-    private Area getRambleyNeckScarf(double x, double y, 
+    private Area getRambleyBandanaFront(double x, double y, 
             CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
             // If the given Path2D object is null
         if (path == null)
@@ -4889,23 +4894,23 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // If the second given CubicCurve2D object is null
         if (cubicCurve2 == null)
             cubicCurve2 = new CubicCurve2D.Double();
-            // Shift it up to get the bottom of the top part of the scarf 
-        y -= RAMBLEY_NECK_SCARF_Y_OFFSET;
-            // This gets the left-most x-coordinate for the scarf
-        double x1 = x-RAMBLEY_NECK_SCARF_HALF_WIDTH;
-            // This gets the center y-coordinate for the top part of the scarf
-        double y1 = y-RAMBLEY_NECK_SCARF_HALF_HEIGHT;
+            // Shift it up to get the bottom of the top part of the bandana 
+        y -= RAMBLEY_BANDANA_FRONT_Y_OFFSET;
+            // This gets the left-most x-coordinate for the bandana
+        double x1 = x-RAMBLEY_BANDANA_FRONT_HALF_WIDTH;
+            // This gets the center y-coordinate for the top part of the bandana
+        double y1 = y-RAMBLEY_BANDANA_FRONT_HALF_HEIGHT;
             // Set the first curve of the top part to be from the center left of 
-            // the top of the scarf to the bottom center of the top of the 
-            // scarf. The first control coordinate is at 7.5 pixels below the 
+            // the top of the bandana to the bottom center of the top of the 
+            // bandana. The first control coordinate is at 7.5 pixels below the 
             // start of the curve. The second control point is 15 pixels to the 
             // left of the end of the curve. This forms the bottom-left curve 
-            // used for the top part of the scarf
+            // used for the top part of the bandana
         cubicCurve1.setCurve(x1, y1, x1, y1+7.5, x-15, y, x, y);
             // Set the second curve to be a vertically flipped version of the 
             // first curve that starts at the top center of the top part of the 
-            // scarf and ends where the first curve starts. This forms the 
-            // top-left curve for the top part of the scarf
+            // bandana and ends where the first curve starts. This forms the 
+            // top-left curve for the top part of the bandana
         cubicCurve2.setCurve(
                 cubicCurve1.getX2(), y1-(cubicCurve1.getY2()-y1), 
                 cubicCurve1.getCtrlX2(), y1-(cubicCurve1.getCtrlY2()-y1), 
@@ -4918,44 +4923,45 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Close the path
         path.closePath();
             // Mirror the path horizontally to get the other side of the top of 
-            // the scarf
+            // the bandana
         path = mirrorPathHorizontally(path,x);
-            // Create an area with the path to get the neck portion of the scarf
-        Area scarf = new Area(path);
+            // Create an area with the path to get the neck portion of the 
+        Area bandana = new Area(path);    // bandana
             // If the scratch AffineTransform is null
         if (afTx == null)
-                // Create a translation transform to move the top of the scarf 
-                // down to form the bottom of the scarf
-            afTx = AffineTransform.getTranslateInstance(0, RAMBLEY_NECK_SCARF_Y_OFFSET);
+                // Create a translation transform to move the top of the bandana 
+                // down to form the bottom of the bandana
+            afTx = AffineTransform.getTranslateInstance(0, 
+                    RAMBLEY_BANDANA_FRONT_Y_OFFSET);
         else    // Set the transform to be a translation transform to move the 
-                // top of the scarf down to form the bottom of the scarf
-            afTx.setToTranslation(0, RAMBLEY_NECK_SCARF_Y_OFFSET);
-            // Add a version of the scarf area that has been translated 
-            // downwards to form the bottom part of the scarf
-        scarf.add(scarf.createTransformedArea(afTx));
-        return scarf;
+                // top of the bandana down to form the bottom of the bandana
+            afTx.setToTranslation(0, RAMBLEY_BANDANA_FRONT_Y_OFFSET);
+            // Add a version of the bandana area that has been translated 
+            // downwards to form the bottom part of the bandana
+        bandana.add(bandana.createTransformedArea(afTx));
+        return bandana;
     }
     /**
      * This creates and returns the path to use to draw the details for 
-     * Rambley's scarf without the knot at the back. That is to say, this 
-     * returns the details for the neck portion of Rambley's scarf. This uses 
-     * the first curve passed to the {@link #getRambleyNeckScarf 
-     * getRambleyNeckScarf} method ({@code scarfCurve}) to form the details for 
-     * the scarf.
+     * Rambley's bandana without the knot at the back. That is to say, this 
+     * returns the details for the neck portion of Rambley's bandana. This uses 
+     * the first curve passed to the {@link #getRambleyBandanaFront 
+     * getRambleyBandanaFront} method ({@code bandanaCurve}) to form the details 
+     * for the bandana.
      * 
      * @todo Add references to other related methods. 
      * 
-     * @param scarfCurve The CubicCurve2D object with the bottom-left curve of 
-     * the top portion of the scarf (cannot be null).
+     * @param bandanaCurve The CubicCurve2D object with the bottom-left curve of 
+     * the top portion of the bandana (cannot be null).
      * @param cubicCurve1 A CubicCurve2D object to use to split a CubicCurve2D 
      * object, or null.
      * @param cubicCurve2 A second CubicCurve2D object to use to split a 
      * CubicCurve2D object, or null.
      * @param path A Path2D object to store the results in, or null.
-     * @return A Path2D object to use to draw the details for Rambley's scarf 
+     * @return A Path2D object to use to draw the details for Rambley's bandana 
      * without the knot.
      */
-    private Path2D getRambleyNeckScarfDetail(CubicCurve2D scarfCurve, 
+    private Path2D getRambleyBandanaFrontDetail(CubicCurve2D bandanaCurve, 
             CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
             // If the given Path2D object is null
         if (path == null)
@@ -4969,7 +4975,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
         if (cubicCurve2 == null)
             cubicCurve2 = new CubicCurve2D.Double();
             // Divide the curve
-        scarfCurve.subdivide(cubicCurve1, cubicCurve2);
+        bandanaCurve.subdivide(cubicCurve1, cubicCurve2);
             // Add the left side of the curve to the path
         path.append(cubicCurve1, false);
             // Divide the right side of the curve
@@ -4985,7 +4991,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Add a line that goes down and to the left
         path.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
             // Mirror the path to get the other side
-        path = mirrorPathHorizontally(path,scarfCurve.getX2());
+        path = mirrorPathHorizontally(path,bandanaCurve.getX2());
         return path;
     }
     /**
@@ -4998,13 +5004,13 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @param x
      * @return 
      */
-    private double getRambleyLowerScarfTopY(double x){
+    private double getRambleyLowerBandanaTopY(double x){
             // Convert the x-coordinate to the equation coord. system
-        x = graphicsToLowScarfEquX(x);
+        x = graphicsToLowBandanaEquX(x);
             // Calculate y = 0.7 * (x-1.5)^2
         double y = 0.7*Math.pow(x-1.5, 2);
             // Convert the y-coordinate to the graphics coord. system
-        return lowScarfEquToGraphicsY(y);
+        return lowBandanaEquToGraphicsY(y);
     }
     /**
      * 
@@ -5015,13 +5021,13 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @param x
      * @return 
      */
-    private double getRambleyLowerScarfBottomY(double x){
+    private double getRambleyLowerBandanaBottomY(double x){
             // Convert the x-coordinate to the equation coord. system
-        x = graphicsToLowScarfEquX(x);
+        x = graphicsToLowBandanaEquX(x);
             // Calculate y = -0.4 * (x-1.9)^2 + 1.53
         double y = -0.4*Math.pow(x-1.9, 2)+1.53;
             // Convert the y-coordinate to the graphics coord. system
-        return lowScarfEquToGraphicsY(y);
+        return lowBandanaEquToGraphicsY(y);
     }
     /**
      * 
@@ -5030,7 +5036,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @param ellipse
      * @return 
      */
-    private Area getRambleyScarfKnot(double x, double y, Ellipse2D ellipse){
+    private Area getRambleyBandanaKnot(double x, double y, Ellipse2D ellipse){
             // If the given Ellipse2D object is null
         if (ellipse == null)
             ellipse = new Ellipse2D.Double();
@@ -5048,7 +5054,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @param point4 
      * @return 
      */
-    private Area getRambleyLowerScarfEnd(double x, double y, Path2D path, 
+    private Area getRambleyLowerBandanaEnd(double x, double y, Path2D path, 
             Point2D point1, Point2D point2, Point2D point3, Point2D point4){
             // If the given Path2D object is null
         if (path == null)
@@ -5067,72 +5073,72 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // If the fourth of the four given scratch Point2D objects is null
         if (point4 == null)
             point4 = new Point2D.Double();
-            // Start at the left-most point of the end of the scarf
+            // Start at the left-most point of the end of the bandana
         point1.setLocation(x,y);
             // Move the path to the starting point
         path.moveTo(point1.getX(), point1.getY());
-            // Offset the x-coordinate to get the left-most side of the scarf 
+            // Offset the x-coordinate to get the left-most side of the bandana 
             // end
-        x -= RAMBLEY_SCARF_LOWER_END_WIDTH;
-            // Offset the y-coordinate to get the top of the end of the scarf 
-        y -= getRambleyLowerScarfTopY(RAMBLEY_SCARF_LOWER_END_WIDTH);
+        x -= RAMBLEY_BANDANA_LOWER_END_WIDTH;
+            // Offset the y-coordinate to get the top of the end of the bandana 
+        y -= getRambleyLowerBandanaTopY(RAMBLEY_BANDANA_LOWER_END_WIDTH);
             // Calculate the offset for the x-coordinate when 53.5% of the way 
-        double tempX = RAMBLEY_SCARF_LOWER_END_WIDTH * 0.535;   // to the right
+        double tempX = RAMBLEY_BANDANA_LOWER_END_WIDTH * 0.535;  // to the right
             // Get the point on the upper curve when 53.5% of the way right
-        point2.setLocation(x+tempX,y+getRambleyLowerScarfTopY(tempX));
+        point2.setLocation(x+tempX,y+getRambleyLowerBandanaTopY(tempX));
             // Get the point at the end of the upper curve
-        point3.setLocation(x, y+getRambleyLowerScarfTopY(0));
+        point3.setLocation(x, y+getRambleyLowerBandanaTopY(0));
             // Calculate the quadratic bezier curve that passes through points 
             // point1, point2, and point3, and add that curve to the path
         point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
             // Calculate the offset for the x-coordinate when 47% of the way 
-        tempX = RAMBLEY_SCARF_LOWER_END_WIDTH * 0.47;    // to the right
+        tempX = RAMBLEY_BANDANA_LOWER_END_WIDTH * 0.47;    // to the right
             // Get the point on the lower curve when 47% of the way right
-        point2.setLocation(x+tempX,y+getRambleyLowerScarfBottomY(tempX));
+        point2.setLocation(x+tempX,y+getRambleyLowerBandanaBottomY(tempX));
             // Calculate the quadratic bezier curve that passes through points 
             // point3, point2, and point1, and add that curve to the path
         addQuadBezierCurve(point3,point2,point1,point4,path);
             // Close the path
         path.closePath();
-            // Create and return an area with the scarf end
+            // Create and return an area with the bandana end
         return new Area(path);
     }
     /**
      * 
-     * @param scarfEnd
+     * @param bandanaEnd
      * @param path
      * @param quadCurve
      * @param point
      * @return 
      */
-    private Path2D getRambleyLowerScarfEndDetail(Area scarfEnd, Path2D path, 
+    private Path2D getRambleyLowerBandanaEndDetail(Area bandanaEnd, Path2D path, 
             QuadCurve2D quadCurve, Point2D point){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
         else    // Reset the given Path2D object
             path.reset();
-            // Get the bounds of the end of the scarf
-        RectangularShape bounds = getBoundsOfShape(scarfEnd);
+            // Get the bounds of the end of the bandana
+        RectangularShape bounds = getBoundsOfShape(bandanaEnd);
             // This will get the first and last x-coordinates, which are 
             // dependent on whether Rambley is flipped
         double x0, x2;
             // Calculate the offset for the x-coordinate when 80% of the way to 
             // the right (this will also be used for the x-coordinate of the 
             // point the curve passes through)
-        double x1 = RAMBLEY_SCARF_LOWER_END_WIDTH * 0.8;
-            // Get the y-coordinate for the end of the scarf
+        double x1 = RAMBLEY_BANDANA_LOWER_END_WIDTH * 0.8;
+            // Get the y-coordinate for the end of the bandana
         double y = bounds.getMinY();
             // Get the starting y-coordinate for the curve
-        double y0 = y + getRambleyLowerScarfTopY(RAMBLEY_SCARF_LOWER_END_WIDTH);
+        double y0 = y + getRambleyLowerBandanaTopY(RAMBLEY_BANDANA_LOWER_END_WIDTH);
             // Get the ending y-coordinate for the curve
-        double y2 = y+getRambleyLowerScarfTopY(0);
+        double y2 = y+getRambleyLowerBandanaTopY(0);
             // Get the y-coordinate of the point the curve passes through. This 
             // y-coordinate is the average of the top and bottom curves
-        double y1 = y+(getRambleyLowerScarfTopY(x1)+getRambleyLowerScarfBottomY(x1))/2;
+        double y1 = y+(getRambleyLowerBandanaTopY(x1)+getRambleyLowerBandanaBottomY(x1))/2;
             // If Rambley is flipped
         if (isRambleyFlipped()){
-                // If Rambley is flipped, then the scarf ends are flipped too
+                // If Rambley is flipped, then the bandana ends are flipped too
             x2 = bounds.getMaxX();
             x0 = bounds.getMinX();
                 // We'll need to subtract from the end point instead of add
@@ -5159,11 +5165,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
     }
     /**
      * 
-     * @param lowerScarf
+     * @param lowerBandana
      * @param point
      * @return 
      */
-    private Area getRambleyUpperScarfEnd(Area lowerScarf, Point2D point){
+    private Area getRambleyUpperBandanaEnd(Area lowerBandana, Point2D point){
             // The angle to rotate to, in radians
         double theta = Math.PI/5;
             // The x-coordinate of the anchor point for the rotation
@@ -5176,7 +5182,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             afTx = AffineTransform.getRotateInstance(theta,x,y);
         else    // Set it to be a rotation transform
             afTx.rotate(theta,x,y);
-        return lowerScarf.createTransformedArea(afTx);
+        return lowerBandana.createTransformedArea(afTx);
     }
     /**
      * This is used to render Rambley the Raccoon, his outline, his shadow, and 
@@ -5200,7 +5206,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #paintPixelGrid
      * @see #paintRambleyOutlineAndShadow 
      * @see #paintRambleyHead
-     * @see #paintRambleyNeckScarf 
+     * @see #paintRambleyBandanaFront 
      */
     protected Shape paintRambley(Graphics2D g, int x, int y, int w, int h){
             // Create a copy of the given graphics context limited to the given 
@@ -5283,9 +5289,9 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // If the head Ellipse2D scratch object has not been initialized yet
         if (headEllipse == null)
             headEllipse = new Ellipse2D.Double();
-            // If the CubicCurve2D object for the scarf has not been initialized 
-        if (scarfCurve1 == null)     // yet
-            scarfCurve1 = new CubicCurve2D.Double();
+            // If the CubicCurve2D object for the bandana has not been 
+        if (bandanaCurve == null)     // initialized yet
+            bandanaCurve = new CubicCurve2D.Double();
         
             // Create the shape for Rambley's head (without his ears for now)
         Area headShape = getRambleyEarlessHead(getRambleyX(),getRambleyY(),
@@ -5306,26 +5312,26 @@ public class RambleyPainter extends ListenedPainter<Component>{
         headShape.add(earR);
             // Add Rambley's left ear to the shape of his head.
         headShape.add(earL);
-            // Create the front (neck) part of Rambley's scarf. If Rambley is 
-            // flipped, the scarf will be offset two pixels to the right. 
-            // Otherwise, the scarf will be offset two pixels to the left
-        Area scarf1 = getRambleyNeckScarf(
+            // Create the front part of Rambley's bandana. If Rambley is 
+            // flipped, the bandana will be offset two pixels to the right. 
+            // Otherwise, the bandana will be offset two pixels to the left
+        Area bandana1 = getRambleyBandanaFront(
                 headBounds.getCenterX()+(isRambleyFlipped()?2:-2),
-                headEllipse.getMaxY()+6,scarfCurve1,cubicCurve1,path);
-            // Create the knot part of Rambley's scarf.
-        Area scarf2 = getRambleyScarfKnot(scarfCurve1.getX1()+15,
-                scarfCurve1.getY1()+2,ellipse1);
-            // Create the lower end of Rambley's scarf
-        Area scarf4 = getRambleyLowerScarfEnd(ellipse1.getCenterX(),
+                headEllipse.getMaxY()+6,bandanaCurve,cubicCurve1,path);
+            // Create the knot part of Rambley's bandana.
+        Area bandana2 = getRambleyBandanaKnot(bandanaCurve.getX1()+15,
+                bandanaCurve.getY1()+2,ellipse1);
+            // Create the lower end of Rambley's bandana
+        Area bandana4 = getRambleyLowerBandanaEnd(ellipse1.getCenterX(),
                 ellipse1.getCenterY()+2,path,point1,point2,point3,point4);
-            // Create the upper end of Rambley's scarf
-        Area scarf3 = getRambleyUpperScarfEnd(scarf4,point1);
+            // Create the upper end of Rambley's bandana
+        Area bandana3 = getRambleyUpperBandanaEnd(bandana4,point1);
             // If Rambley is flipped
         if (isRambleyFlipped()){
-                // Go through the elements of the back of Rambley's scarf
-            for (Area area : new Area[]{scarf2,scarf3,scarf4}){
-                    // Flip the current element of the scarf
-                area.transform(getHorizontalMirrorTransform(scarfCurve1.getX2(),
+                // Go through the elements of the back of Rambley's bandana
+            for (Area area : new Area[]{bandana2,bandana3,bandana4}){
+                    // Flip the current element of the bandana
+                area.transform(getHorizontalMirrorTransform(bandanaCurve.getX2(),
                         area,horizTx));
             }
         }
@@ -5335,16 +5341,16 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // This is an area that contains the entire shape of Rambley's 
             // outline. Start this area with the shape of his head.
         Area rambleyShape = new Area(headShape);
-            // If Rambley's scarf is to be painted
-        if (isRambleyScarfPainted()){
-                // Add the neck part of Rambley's scarf to the area
-            rambleyShape.add(scarf1);
-                // Add the knot of Rambley's scarf to the area
-            rambleyShape.add(scarf2);
-                // Add the upper end of Rambley's scarf to the area
-            rambleyShape.add(scarf3);
-                // Add the lower end of Rambley's scarf to the area
-            rambleyShape.add(scarf4);
+            // If Rambley's bandana is to be painted
+        if (isRambleyBandanaPainted()){
+                // Add the neck part of Rambley's bandana to the area
+            rambleyShape.add(bandana1);
+                // Add the knot of Rambley's bandana to the area
+            rambleyShape.add(bandana2);
+                // Add the upper end of Rambley's bandana to the area
+            rambleyShape.add(bandana3);
+                // Add the lower end of Rambley's bandana to the area
+            rambleyShape.add(bandana4);
         }
         
             // Code for adding other parts of Rambley's outline goes here
@@ -5359,7 +5365,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             GeometryMath.printShape("earR", earR);
             GeometryMath.printShape("rambleyShape",rambleyShape);
             GeometryMath.printShape("headEllipse",headEllipse);
-            GeometryMath.printCubicCurve("scarfCurve1", scarfCurve1);
+            GeometryMath.printCubicCurve("bandanaCurve", bandanaCurve);
 //            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 //                    RenderingHints.VALUE_ANTIALIAS_OFF);
             g.setColor(RAMBLEY_LINE_COLOR);
@@ -5371,25 +5377,25 @@ public class RambleyPainter extends ListenedPainter<Component>{
             g.setColor(Color.BLUE);
             g.draw(path);
             g.setColor(Color.GREEN);
-            g.draw(scarf4);
+            g.draw(bandana4);
             g.setColor(Color.MAGENTA);
-            g.draw(scarf3);
+            g.draw(bandana3);
             g.setColor(Color.YELLOW);
-            g.draw(scarf2);
+            g.draw(bandana2);
         } else {    // DEBUG: If we are not showing the lines that make up Rambley 
                 // Render Rambley's outline and shadow.
             paintRambleyOutlineAndShadow(g,rambleyShape);
-                // If Rambley's scarf is to be painted
-            if (isRambleyScarfPainted())
-                    // Draw the back part of Rambley's scarf here
-                paintRambleyScarfBack(g,scarf2,scarf3,scarf4);
+                // If Rambley's bandana is to be painted
+            if (isRambleyBandanaPainted())
+                    // Draw the back part of Rambley's bandana here
+                paintRambleyBandanaBack(g,bandana2,bandana3,bandana4);
             
                 // Draw Rambley's body here. 
             
-                // If Rambley's scarf is to be painted
-            if (isRambleyScarfPainted())
-                    // Draw the front part of Rambley's scarf
-                paintRambleyNeckScarf(g,scarf1,scarfCurve1);
+                // If Rambley's bandana is to be painted
+            if (isRambleyBandanaPainted())
+                    // Draw the front part of Rambley's bandana
+                paintRambleyBandanaFront(g,bandana1,bandanaCurve);
                 // Draw Rambley's head and face
             paintRambleyHead(g,headBounds,headShape,earR,earL,earInR,earInL);
                 // If Rambley's conductor hat is to be painted
@@ -5678,71 +5684,75 @@ public class RambleyPainter extends ListenedPainter<Component>{
     /**
      * This is used to render 
      * @param g The graphics context to render to.
-     * @param scarfArea
-     * @param scarfCurve 
+     * @param bandanaArea
+     * @param bandanaCurve 
      */
-    protected void paintRambleyNeckScarf(Graphics2D g, Area scarfArea, 
-            CubicCurve2D scarfCurve){
-            // Calculate the path containing the details of the scarf
-        path = getRambleyNeckScarfDetail(scarfCurve,cubicCurve1,cubicCurve2,
+    protected void paintRambleyBandanaFront(Graphics2D g, Area bandanaArea, 
+            CubicCurve2D bandanaCurve){
+            // Calculate the path containing the details of the bandana
+        path = getRambleyBandanaFrontDetail(bandanaCurve,cubicCurve1,cubicCurve2,
                 path);
-            // Create a copy of the graphics context to draw the scarf
+            // Create a copy of the graphics context to draw the bandana
         g = (Graphics2D) g.create();
-            // Set the color to be the color for Rambley's scarf
-        g.setColor(RAMBLEY_SCARF_COLOR);
-            // Fill in the neck of Rambley's scarf
-        g.fill(scarfArea);
-            // Set the color to be the color for the outline of Rambley's scarf
-        g.setColor(RAMBLEY_SCARF_LINE_COLOR);
+            // Set the color to be the color for Rambley's bandana
+        g.setColor(RAMBLEY_BANDANA_COLOR);
+            // Fill in the neck of Rambley's bandana
+        g.fill(bandanaArea);
+            // Set the color to be the color for the outline of Rambley's 
+            // bandana
+        g.setColor(RAMBLEY_BANDANA_LINE_COLOR);
             // Set the stroke to the detail stroke
         g.setStroke(getRambleyDetailStroke());
-            // Draw the path containing the details of the scarf
+            // Draw the path containing the details of the bandana
         g.draw(path);
             // Set the stroke to the line stroke
         g.setStroke(getRambleyLineStroke());
-            // Draw the outline of the scarf
-        g.draw(scarfArea);
-            // Dispose of the scarf graphics context
+            // Draw the outline of the bandana
+        g.draw(bandanaArea);
+            // Dispose of the bandana graphics context
         g.dispose();
     }
     /**
      * 
      * @param g The graphics context to render to.
-     * @param scarfKnot
-     * @param scarfEndUpper
-     * @param scarfEndLower 
+     * @param bandanaKnot
+     * @param bandanaEndUpper
+     * @param bandanaEndLower 
      */
-    protected void paintRambleyScarfBack(Graphics2D g, Area scarfKnot, 
-            Area scarfEndUpper, Area scarfEndLower){
-            // Create the details for the lower end of Rambley's scarf
-        path = getRambleyLowerScarfEndDetail(scarfEndLower,path,quadCurve1,point1);
-            // Create a copy of the graphics context to draw the scarf
+    protected void paintRambleyBandanaBack(Graphics2D g, Area bandanaKnot, 
+            Area bandanaEndUpper, Area bandanaEndLower){
+            // Create the details for the lower end of Rambley's bandana
+        path = getRambleyLowerBandanaEndDetail(bandanaEndLower,path,quadCurve1,
+                point1);
+            // Create a copy of the graphics context to draw the bandana
         g = (Graphics2D) g.create();
-            // Set the color to be the color for Rambley's scarf
-        g.setColor(RAMBLEY_SCARF_COLOR);
-            // Fill the area for the lower end of Rambley's scarf
-        g.fill(scarfEndLower);
-            // Set the color to be the color for the outline of Rambley's scarf
-        g.setColor(RAMBLEY_SCARF_LINE_COLOR);
+            // Set the color to be the color for Rambley's bandana
+        g.setColor(RAMBLEY_BANDANA_COLOR);
+            // Fill the area for the lower end of Rambley's bandana
+        g.fill(bandanaEndLower);
+            // Set the color to be the color for the outline of Rambley's 
+            // bandana
+        g.setColor(RAMBLEY_BANDANA_LINE_COLOR);
             // Set the stroke to the detail stroke
         g.setStroke(getRambleyDetailStroke());
-            // Draw the details for the lower end of Rambley's scarf
+            // Draw the details for the lower end of Rambley's bandana
         g.draw(path);
             // Set the stroke to the line stroke
         g.setStroke(getRambleyLineStroke());
-            // Draw the outline for lower end of Rambley's scarf
-        g.draw(scarfEndLower);
-            // Go through the remaining parts of the back of the scarf to render
-        for (Area area : new Area[]{scarfEndUpper,scarfKnot}){
-                // Set the color to be the color for Rambley's scarf
-            g.setColor(RAMBLEY_SCARF_COLOR);
-                // Fill the area for the part of Rambley's scarf
+            // Draw the outline for lower end of Rambley's bandana
+        g.draw(bandanaEndLower);
+            // Go through the remaining parts of the back of the bandana to 
+            // render
+        for (Area area : new Area[]{bandanaEndUpper,bandanaKnot}){
+                // Set the color to be the color for Rambley's bandana
+            g.setColor(RAMBLEY_BANDANA_COLOR);
+                // Fill the area for the part of Rambley's bandana
             g.fill(area);
                 // Set the color to be the color for the outline of Rambley's 
-            g.setColor(RAMBLEY_SCARF_LINE_COLOR);   // scarf
-                // Draw the outline for part of Rambley's scarf
+            g.setColor(RAMBLEY_BANDANA_LINE_COLOR);   // bandana
+                // Draw the outline for part of Rambley's bandana
             g.draw(area);
-        }   // Dispose of the scarf graphics context
+        }   // Dispose of the bandana graphics context
         g.dispose();
     }
     

@@ -155,7 +155,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="scarfToggle">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Scarf"/>
+        <Property name="text" type="java.lang.String" value="Bandana"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="scarfToggleActionPerformed"/>
