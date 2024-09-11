@@ -10,21 +10,46 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 
 /**
- *
+ * This is a program that renders Rambley the Raccoon.
  * @author Milo Steier
  */
 public class Rambley4J extends JFrame {
+    /**
+     * This is the name of the preference node used to store the settings for 
+     * this program.
+     */
+    private static final String PREFERENCE_NODE_NAME = 
+            "milo/raccoon/Rambley4J";
+    /**
+     * This is the key in the preference node for the state of the painter used 
+     * to render Rambley the Raccoon.
+     */
+    private static final String RAMBLEY_FLAGS_KEY = "RambleyFlags";
+    /**
+     * This is the key in the preference node for whether the position of 
+     * Rambley's left and right eyes are linked.
+     */
+    private static final String LINK_RAMBLEY_EYES_KEY = "LinkRambleyEyes";
+    
+    
 
     /**
      * Creates new form Rambley4J
+     * @param debugMode
      */
-    public Rambley4J() {
+    public Rambley4J(boolean debugMode) {
+        this.debugMode = debugMode;
         rambleyPainter = new RambleyIcon();
         initComponents();
         placeholderLabel.setIcon((Icon)rambleyPainter);
         rambleyPainter.addPropertyChangeListener(new RambleyHandler());
     }
-
+    /**
+     * Creates new form Rambley4J
+     */
+    public Rambley4J(){
+        this(false);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -656,6 +681,14 @@ public class Rambley4J extends JFrame {
     }
     
     private RambleyPainter rambleyPainter;
+    /**
+     * This is a preference node to store the settings for this program.
+     */
+    private Preferences config;
+    /**
+     * Whether this application is in debug mode.
+     */
+    private final boolean debugMode;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner bgDotSizeSpinner;
     private javax.swing.JSpinner bgDotSpacingSpinner;
