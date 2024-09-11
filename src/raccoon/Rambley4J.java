@@ -642,6 +642,7 @@ public class Rambley4J extends JFrame {
         pixelGridPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Pixel Grid"));
         pixelGridPanel.setLayout(new javax.swing.BoxLayout(pixelGridPanel, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel2.setLabelFor(gridSpacingSpinner);
         jLabel2.setText("Spacing:");
         pixelGridPanel.add(jLabel2);
         pixelGridPanel.add(filler1);
@@ -655,6 +656,7 @@ public class Rambley4J extends JFrame {
         pixelGridPanel.add(gridSpacingSpinner);
         pixelGridPanel.add(filler2);
 
+        jLabel3.setLabelFor(gridThicknessSpinner);
         jLabel3.setText("Thickness:");
         pixelGridPanel.add(jLabel3);
         pixelGridPanel.add(filler3);
@@ -672,6 +674,7 @@ public class Rambley4J extends JFrame {
 
         bgDotsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Background Polka-Dots"));
 
+        jLabel1.setLabelFor(bgDotsComboBox);
         jLabel1.setText("Shape:");
 
         bgDotsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rhombus", "Circle" }));
@@ -683,6 +686,7 @@ public class Rambley4J extends JFrame {
 
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel4.setLabelFor(bgDotSizeSpinner);
         jLabel4.setText("Size:");
         jPanel5.add(jLabel4);
         jPanel5.add(filler4);
@@ -696,6 +700,7 @@ public class Rambley4J extends JFrame {
         jPanel5.add(bgDotSizeSpinner);
         jPanel5.add(filler5);
 
+        jLabel5.setLabelFor(bgDotSpacingSpinner);
         jLabel5.setText("Spacing:");
         jPanel5.add(jLabel5);
         jPanel5.add(filler6);
@@ -738,6 +743,7 @@ public class Rambley4J extends JFrame {
         sizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Size"));
         sizePanel.setLayout(new javax.swing.BoxLayout(sizePanel, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel6.setLabelFor(widthSpinner);
         jLabel6.setText("Width:");
         sizePanel.add(jLabel6);
         sizePanel.add(filler11);
@@ -751,6 +757,7 @@ public class Rambley4J extends JFrame {
         sizePanel.add(widthSpinner);
         sizePanel.add(filler12);
 
+        jLabel7.setLabelFor(heightSpinner);
         jLabel7.setText("Height:");
         sizePanel.add(jLabel7);
         sizePanel.add(filler13);

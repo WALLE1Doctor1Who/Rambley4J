@@ -430,6 +430,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
+                <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                  <ComponentRef name="gridSpacingSpinner"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Spacing:"/>
               </Properties>
             </Component>
@@ -477,6 +480,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel3">
               <Properties>
+                <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                  <ComponentRef name="gridThicknessSpinner"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Thickness:"/>
               </Properties>
             </Component>
@@ -567,6 +573,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
+                <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                  <ComponentRef name="bgDotsComboBox"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Shape:"/>
               </Properties>
             </Component>
@@ -592,6 +601,9 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel4">
                   <Properties>
+                    <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="bgDotSizeSpinner"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Size:"/>
                   </Properties>
                 </Component>
@@ -639,6 +651,9 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel5">
                   <Properties>
+                    <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                      <ComponentRef name="bgDotSpacingSpinner"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Spacing:"/>
                   </Properties>
                 </Component>
@@ -687,6 +702,9 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel6">
           <Properties>
+            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="widthSpinner"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Width:"/>
           </Properties>
         </Component>
@@ -734,6 +752,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>
+            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="heightSpinner"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Height:"/>
           </Properties>
         </Component>
