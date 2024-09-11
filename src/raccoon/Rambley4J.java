@@ -234,7 +234,7 @@ public class Rambley4J extends JFrame {
         bgDotsComboBox.setSelectedIndex(rambleyPainter.getCircularBackgroundDots() ? 1 : 0);
         shadowToggle.setSelected(rambleyPainter.isRambleyShadowPainted());
         outlineToggle.setSelected(rambleyPainter.isRambleyOutlinePainted());
-        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
+        updateHeightSpinnerEnabled();
         flippedToggle.setSelected(rambleyPainter.isRambleyFlipped());
         jawToggle.setSelected(rambleyPainter.isRambleyJawClosed());
         scarfToggle.setSelected(rambleyPainter.isRambleyScarfPainted());
@@ -361,6 +361,7 @@ public class Rambley4J extends JFrame {
 
         debugPopup = new javax.swing.JPopupMenu();
         printButton = new javax.swing.JMenuItem();
+        inputEnabledToggle = new javax.swing.JCheckBoxMenuItem();
         fc = new javax.swing.JFileChooser();
         previewLabel = new components.JThumbnailLabel();
         bgToggle = new javax.swing.JCheckBox();
@@ -426,6 +427,15 @@ public class Rambley4J extends JFrame {
             }
         });
         debugPopup.add(printButton);
+
+        inputEnabledToggle.setSelected(true);
+        inputEnabledToggle.setText("Input Enabled");
+        inputEnabledToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputEnabledToggleActionPerformed(evt);
+            }
+        });
+        debugPopup.add(inputEnabledToggle);
 
         fc.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
 
@@ -971,7 +981,7 @@ public class Rambley4J extends JFrame {
     }//GEN-LAST:event_heightSpinnerStateChanged
 
     private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
-        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
+        updateHeightSpinnerEnabled();
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
         updateConfigBoolean(LINK_RAMBLEY_SIZE_KEY,linkSizeToggle);
@@ -1015,6 +1025,10 @@ public class Rambley4J extends JFrame {
         }
     }//GEN-LAST:event_formComponentResized
 
+    private void inputEnabledToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputEnabledToggleActionPerformed
+        setInputEnabled(inputEnabledToggle.isSelected());
+    }//GEN-LAST:event_inputEnabledToggleActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1050,11 +1064,49 @@ public class Rambley4J extends JFrame {
         });
     }
     
+    private void updateHeightSpinnerEnabled(){
+        heightSpinner.setEnabled(!linkSizeToggle.isSelected() && inputEnabled);
+    }
+    
+    private void setInputEnabled(boolean enabled){
+        inputEnabled = enabled;
+        bgToggle.setEnabled(enabled);
+        gridToggle.setEnabled(enabled);
+        scarfToggle.setEnabled(enabled);
+        evilToggle.setEnabled(enabled);
+        flippedToggle.setEnabled(enabled);
+        ignoreRatioToggle.setEnabled(enabled);
+//        glitchyToggle.setEnabled(enabled);
+//        hatToggle.setEnabled(enabled);
+        shadowToggle.setEnabled(enabled);
+        outlineToggle.setEnabled(enabled);
+        eyeCtrlR.setEnabled(enabled);
+        eyeCtrlL.setEnabled(enabled);
+        linkEyesToggle.setEnabled(enabled);
+        mouthCtrl.setEnabled(enabled);
+        jawToggle.setEnabled(enabled);
+        saveButton.setEnabled(enabled);
+        resetButton.setEnabled(enabled);
+        widthSpinner.setEnabled(enabled);
+        updateHeightSpinnerEnabled();
+        linkSizeToggle.setEnabled(enabled);
+        gridSpacingSpinner.setEnabled(enabled);
+        gridThicknessSpinner.setEnabled(enabled);
+        bgDotSizeSpinner.setEnabled(enabled);
+        bgDotSpacingSpinner.setEnabled(enabled);
+        bgDotsComboBox.setEnabled(enabled);
+        fc.setEnabled(enabled);
+    }
+    
     private RambleyPainter rambleyPainter;
     /**
      * This is a preference node to store the settings for this program.
      */
     private Preferences config;
+    /**
+     * Whether this program is currently accepting input.
+     */
+    private volatile boolean inputEnabled = true;
     /**
      * Whether this application is in debug mode.
      */
@@ -1092,6 +1144,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JCheckBox hatToggle;
     private javax.swing.JSpinner heightSpinner;
     private javax.swing.JCheckBox ignoreRatioToggle;
+    private javax.swing.JCheckBoxMenuItem inputEnabledToggle;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
