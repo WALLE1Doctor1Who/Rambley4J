@@ -5,6 +5,7 @@
 package swing;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -49,6 +50,10 @@ public class TwoAxisSlider extends JPanel{
         
         displayPanel = new ControlDisplayPanel();
         
+        centerButton = new JButton("C");
+        centerButton.addActionListener(handler);
+        centerButton.setMargin(new Insets(0,-3,0,-3));
+        
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -67,6 +72,11 @@ public class TwoAxisSlider extends JPanel{
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         add(xSlider,c);
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.BOTH;
+        add(centerButton,c);
         
         configureSlider(xSlider,handler);
         configureSlider(ySlider,handler);
@@ -118,6 +128,10 @@ public class TwoAxisSlider extends JPanel{
         xSlider.setMaximum(max);
     }
     
+    protected int getRangeX(){
+        return getMaximumX() - getMinimumX();
+    }
+    
     public int getValueY(){
         return ySlider.getValue();
     }
@@ -146,6 +160,10 @@ public class TwoAxisSlider extends JPanel{
         if (getMaximumY() == max)
             return;
         ySlider.setMaximum(max);
+    }
+    
+    protected int getRangeY(){
+        return getMaximumY() - getMinimumY();
     }
     
     public int getMajorTickSpacing(){
@@ -227,10 +245,8 @@ public class TwoAxisSlider extends JPanel{
     protected void paintAxisTicks(Graphics2D g, Rectangle2D bounds, int spacing, double length){
         if (spacing <= 0 || length <= 0)
             return;
-        double xSpacing = (spacing / ((double) (getMaximumX()-getMinimumX()))) * 
-                bounds.getWidth();
-        double ySpacing = (spacing / ((double) (getMaximumY()-getMinimumY()))) * 
-                bounds.getHeight();
+        double xSpacing = (spacing / ((double) getRangeX())) * bounds.getWidth();
+        double ySpacing = (spacing / ((double) getRangeY())) * bounds.getHeight();
         length /= 2.0;
         for (double x = bounds.getMinX()+xSpacing; x < bounds.getMaxX(); x+= xSpacing){
             line.setLine(x, bounds.getCenterY()-length, x, bounds.getCenterY()+length);
@@ -369,6 +385,7 @@ public class TwoAxisSlider extends JPanel{
     private boolean paintTicks = true;
     private JSlider xSlider;
     private JSlider ySlider;
+    private JButton centerButton;
     private ControlDisplayPanel displayPanel;
     
     
@@ -388,7 +405,7 @@ public class TwoAxisSlider extends JPanel{
         }
     }
     
-    private class Handler implements ChangeListener{
+    private class Handler implements ChangeListener, ActionListener{
 
         @Override
         public void stateChanged(ChangeEvent evt) {
@@ -396,6 +413,12 @@ public class TwoAxisSlider extends JPanel{
             displayPanel.repaint();
 //            System.out.println("xSlider: " + getPositionX());
 //            System.out.println("ySlider: " + getPositionY());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            setValueX((int)(getRangeX()/2.0)+getMinimumX());
+            setValueY((int)(getRangeY()/2.0)+getMinimumY());
         }
         
     }
