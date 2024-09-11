@@ -467,8 +467,8 @@ public class Rambley4J extends JFrame {
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
-        eyesPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Eyes"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
-        eyesPanel.setLayout(new java.awt.GridLayout(1, 0, 8, 0));
+        eyesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Eyes"));
+        eyesPanel.setLayout(new java.awt.GridLayout(1, 0, 10, 0));
 
         eyeCtrlR.setMajorTickSpacing(20);
         eyeCtrlR.setMinimumX(-100);
@@ -536,7 +536,7 @@ public class Rambley4J extends JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 55, Short.MAX_VALUE)
+                .addGap(0, 60, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -553,7 +553,7 @@ public class Rambley4J extends JFrame {
                 .addComponent(saveButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(resetButton)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addContainerGap(127, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -564,7 +564,7 @@ public class Rambley4J extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
         jPanel6.add(jPanel2, gridBagConstraints);
 
-        mouthPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Mouth"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
+        mouthPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Mouth"));
         mouthPanel.setLayout(new java.awt.BorderLayout(0, 6));
 
         mouthCtrl.setValueX(100);
@@ -595,7 +595,7 @@ public class Rambley4J extends JFrame {
         jPanel1.add(jPanel6);
         jPanel1.add(filler8);
 
-        pixelGridPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Pixel Grid"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
+        pixelGridPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Pixel Grid"));
         pixelGridPanel.setLayout(new javax.swing.BoxLayout(pixelGridPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel2.setText("Spacing:");
@@ -669,14 +669,14 @@ public class Rambley4J extends JFrame {
         bgDotsPanelLayout.setHorizontalGroup(
             bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bgDotsPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(bgDotsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bgDotsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         bgDotsPanelLayout.setVerticalGroup(
             bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -686,12 +686,12 @@ public class Rambley4J extends JFrame {
                 .addGroup(bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(bgDotsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
 
         jPanel1.add(bgDotsPanel);
 
-        sizePanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Image Size"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
+        sizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Size"));
         sizePanel.setLayout(new javax.swing.BoxLayout(sizePanel, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel6.setText("Width:");
