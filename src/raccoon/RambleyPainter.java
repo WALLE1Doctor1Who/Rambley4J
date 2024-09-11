@@ -3699,6 +3699,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             return new Area(path);
         }   // If the second given QuadCurve2D object is null
         if (quadCurve == null)
+            quadCurve = new QuadCurve2D.Double();
             // Get the points where the ellipse intersects the horizontal line 
             // that is two pixels above its center
         GeometryMath.getEllipseX(ellipse,ellipse.getCenterY()-3,point1,point2);
