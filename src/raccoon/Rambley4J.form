@@ -724,7 +724,7 @@
         <Component class="javax.swing.JSpinner" name="widthSpinner">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-              <SpinnerModel initial="256" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
+              <SpinnerModel initial="512" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
             </Property>
           </Properties>
           <Events>
@@ -771,7 +771,7 @@
         <Component class="javax.swing.JSpinner" name="heightSpinner">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-              <SpinnerModel initial="256" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
+              <SpinnerModel initial="512" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
             </Property>
           </Properties>
           <Events>

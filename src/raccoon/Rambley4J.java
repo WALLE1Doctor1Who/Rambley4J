@@ -4,6 +4,8 @@
  */
 package raccoon;
 
+import java.awt.Component;
+import java.awt.Graphics2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.Preferences;
@@ -39,7 +41,7 @@ public class Rambley4J extends JFrame {
      */
     public Rambley4J(boolean debugMode) {
         this.debugMode = debugMode;
-        rambleyPainter = new RambleyIcon();
+        rambleyPainter = new RambleyIcon2();
         initComponents();
         placeholderLabel.setIcon((Icon)rambleyPainter);
         rambleyPainter.addPropertyChangeListener(new RambleyHandler());
@@ -443,7 +445,7 @@ public class Rambley4J extends JFrame {
         sizePanel.add(jLabel6);
         sizePanel.add(filler11);
 
-        widthSpinner.setModel(new javax.swing.SpinnerNumberModel(256, 0, null, 1));
+        widthSpinner.setModel(new javax.swing.SpinnerNumberModel(512, 0, null, 1));
         widthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 widthSpinnerStateChanged(evt);
@@ -456,7 +458,7 @@ public class Rambley4J extends JFrame {
         sizePanel.add(jLabel7);
         sizePanel.add(filler13);
 
-        heightSpinner.setModel(new javax.swing.SpinnerNumberModel(256, 0, null, 1));
+        heightSpinner.setModel(new javax.swing.SpinnerNumberModel(512, 0, null, 1));
         heightSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 heightSpinnerStateChanged(evt);
@@ -654,10 +656,12 @@ public class Rambley4J extends JFrame {
     private void widthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSpinnerStateChanged
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
+        placeholderLabel.repaint();
     }//GEN-LAST:event_widthSpinnerStateChanged
 
     private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
-        // TODO add your handling code here:
+        if (!linkSizeToggle.isSelected())
+            placeholderLabel.repaint();
     }//GEN-LAST:event_heightSpinnerStateChanged
 
     private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
@@ -781,5 +785,27 @@ public class Rambley4J extends JFrame {
             placeholderLabel.repaint();
         }
         
+    }
+    
+    private class RambleyIcon2 extends RambleyIcon{
+        @Override
+        public void paintIcon2D(Component c, Graphics2D g, int x, int y) {
+            g.translate(x, y);
+            paint(g, c, getIconWidth(), getIconHeight());
+        }
+        @Override
+        public int getIconWidth() {
+            if (widthSpinner == null)
+                return 512;
+            return (int)widthSpinner.getValue();
+        }
+        @Override
+        public int getIconHeight() {
+            if (linkSizeToggle == null || heightSpinner == null)
+                return 512;
+            if (linkSizeToggle.isSelected())
+                return getIconWidth();
+            return (int)heightSpinner.getValue();
+        }
     }
 }
