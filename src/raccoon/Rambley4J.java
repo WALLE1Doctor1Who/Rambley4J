@@ -34,6 +34,8 @@ public class Rambley4J extends JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        debugPopup = new javax.swing.JPopupMenu();
+        printButton = new javax.swing.JMenuItem();
         placeholderLabel = new components.JThumbnailLabel();
         jPanel1 = new javax.swing.JPanel();
         eyeCtrlR = new swing.TwoAxisSlider();
@@ -52,7 +54,6 @@ public class Rambley4J extends JFrame {
         hatToggle = new javax.swing.JCheckBox();
         flippedToggle = new javax.swing.JCheckBox();
         jawToggle = new javax.swing.JCheckBox();
-        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
@@ -72,12 +73,16 @@ public class Rambley4J extends JFrame {
         jLabel5 = new javax.swing.JLabel();
         filler6 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         bgDotSpacingSpinner = new javax.swing.JSpinner();
-        jButton2 = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+
+        printButton.setText("Print Data");
+        debugPopup.add(printButton);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Rambley4J (Prototype)");
+        setTitle("Rambley4J");
 
         placeholderLabel.setImageScaleMode(components.JThumbnailLabel.ALWAYS_SCALE_MAINTAIN_ASPECT_RATIO);
+        placeholderLabel.setComponentPopupMenu(debugPopup);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Eyes"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
         jPanel1.setLayout(new java.awt.GridLayout(1, 0, 8, 0));
@@ -168,21 +173,49 @@ public class Rambley4J extends JFrame {
         });
 
         ignoreARToggle.setText("Ignore Aspect Ratio");
+        ignoreARToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ignoreARToggleActionPerformed(evt);
+            }
+        });
 
         shadowToggle.setSelected(true);
         shadowToggle.setText("Shadow");
+        shadowToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                shadowToggleActionPerformed(evt);
+            }
+        });
 
         outlineToggle.setSelected(true);
         outlineToggle.setText("Outline");
+        outlineToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outlineToggleActionPerformed(evt);
+            }
+        });
 
         hatToggle.setText("Conductor Hat");
         hatToggle.setEnabled(false);
+        hatToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hatToggleActionPerformed(evt);
+            }
+        });
 
         flippedToggle.setText("Flipped");
+        flippedToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                flippedToggleActionPerformed(evt);
+            }
+        });
 
         jawToggle.setText("Jaw Closed");
-
-        jButton1.setText("Print");
+        jawToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jawToggleActionPerformed(evt);
+            }
+        });
 
         jPanel3.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Pixel Grid"), javax.swing.BorderFactory.createEmptyBorder(0, 6, 7, 6)));
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
@@ -255,7 +288,7 @@ public class Rambley4J extends JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton2.setText("Save");
+        saveButton.setText("Save");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -287,8 +320,8 @@ public class Rambley4J extends JFrame {
                                 .addComponent(glitchyToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(flippedToggle)))
-                        .addGap(0, 53, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(0, 46, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
@@ -298,8 +331,7 @@ public class Rambley4J extends JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(linkEyesToggle)
                                     .addComponent(jawToggle)
-                                    .addComponent(jButton1)
-                                    .addComponent(jButton2))
+                                    .addComponent(saveButton))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -313,7 +345,7 @@ public class Rambley4J extends JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(bgToggle)
                             .addComponent(gridToggle)
@@ -337,15 +369,13 @@ public class Rambley4J extends JFrame {
                                 .addComponent(linkEyesToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jawToggle)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 10, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -414,6 +444,30 @@ public class Rambley4J extends JFrame {
         rambleyPainter.setRambleyGlitchy(glitchyToggle.isSelected());
     }//GEN-LAST:event_glitchyToggleActionPerformed
 
+    private void flippedToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flippedToggleActionPerformed
+        rambleyPainter.setRambleyFlipped(flippedToggle.isSelected());
+    }//GEN-LAST:event_flippedToggleActionPerformed
+
+    private void ignoreARToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreARToggleActionPerformed
+        rambleyPainter.setAspectRatioIgnored(ignoreARToggle.isSelected());
+    }//GEN-LAST:event_ignoreARToggleActionPerformed
+
+    private void shadowToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shadowToggleActionPerformed
+        rambleyPainter.setRambleyShadowPainted(shadowToggle.isSelected());
+    }//GEN-LAST:event_shadowToggleActionPerformed
+
+    private void outlineToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outlineToggleActionPerformed
+        rambleyPainter.setRambleyOutlinePainted(outlineToggle.isSelected());
+    }//GEN-LAST:event_outlineToggleActionPerformed
+
+    private void hatToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hatToggleActionPerformed
+        rambleyPainter.setConductorHatPainted(hatToggle.isSelected());
+    }//GEN-LAST:event_hatToggleActionPerformed
+
+    private void jawToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jawToggleActionPerformed
+        rambleyPainter.setRambleyJawClosed(jawToggle.isSelected());
+    }//GEN-LAST:event_jawToggleActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -455,6 +509,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JSpinner bgDotSpacingSpinner;
     private javax.swing.JComboBox<String> bgDotsComboBox;
     private javax.swing.JCheckBox bgToggle;
+    private javax.swing.JPopupMenu debugPopup;
     private javax.swing.JCheckBox evilToggle;
     private swing.TwoAxisSlider eyeCtrlL;
     private swing.TwoAxisSlider eyeCtrlR;
@@ -471,8 +526,6 @@ public class Rambley4J extends JFrame {
     private javax.swing.JCheckBox gridToggle;
     private javax.swing.JCheckBox hatToggle;
     private javax.swing.JCheckBox ignoreARToggle;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -488,6 +541,8 @@ public class Rambley4J extends JFrame {
     private swing.TwoAxisSlider mouthCtrl;
     private javax.swing.JCheckBox outlineToggle;
     private components.JThumbnailLabel placeholderLabel;
+    private javax.swing.JMenuItem printButton;
+    private javax.swing.JButton saveButton;
     private javax.swing.JCheckBox scarfToggle;
     private javax.swing.JCheckBox shadowToggle;
     // End of variables declaration//GEN-END:variables
