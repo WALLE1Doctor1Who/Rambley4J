@@ -348,7 +348,7 @@
                 <Component class="javax.swing.JCheckBox" name="scalePreviewToggle">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Scale Preview"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Whether the preview of the placeholder should be scaled to fit the preview window."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Whether the preview of the image should be scaled to fit the preview window."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="scalePreviewToggleActionPerformed"/>

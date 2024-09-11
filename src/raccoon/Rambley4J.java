@@ -280,7 +280,7 @@ public class Rambley4J extends JFrame {
         });
 
         scalePreviewToggle.setText("Scale Preview");
-        scalePreviewToggle.setToolTipText("Whether the preview of the placeholder should be scaled to fit the preview window.");
+        scalePreviewToggle.setToolTipText("Whether the preview of the image should be scaled to fit the preview window.");
         scalePreviewToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 scalePreviewToggleActionPerformed(evt);
