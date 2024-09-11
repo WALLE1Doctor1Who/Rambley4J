@@ -243,7 +243,7 @@ public class Rambley4J extends JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 67, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jawToggle, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -256,8 +256,8 @@ public class Rambley4J extends JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jawToggle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(saveButton)
+                .addContainerGap(129, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -394,7 +394,7 @@ public class Rambley4J extends JFrame {
         sizePanel.add(jLabel6);
         sizePanel.add(filler11);
 
-        widthSpinner.setModel(new javax.swing.SpinnerNumberModel(256.0d, 0.0d, null, 1.0d));
+        widthSpinner.setModel(new javax.swing.SpinnerNumberModel(256, 0, null, 1));
         widthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 widthSpinnerStateChanged(evt);
@@ -407,7 +407,7 @@ public class Rambley4J extends JFrame {
         sizePanel.add(jLabel7);
         sizePanel.add(filler13);
 
-        heightSpinner.setModel(new javax.swing.SpinnerNumberModel(256.0f, 0.0f, null, 1.0f));
+        heightSpinner.setModel(new javax.swing.SpinnerNumberModel(256, 0, null, 1));
         heightSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 heightSpinnerStateChanged(evt);
@@ -460,7 +460,7 @@ public class Rambley4J extends JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
+                        .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(bgToggle)

@@ -91,7 +91,7 @@
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="placeholderLabel" pref="522" max="32767" attributes="0"/>
+                      <Component id="placeholderLabel" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="bgToggle" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -300,7 +300,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="67" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="linkEyesToggle" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="jawToggle" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -316,8 +316,8 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jawToggle" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="saveButton" min="-2" pref="25" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="saveButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="129" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -713,7 +713,7 @@
         <Component class="javax.swing.JSpinner" name="widthSpinner">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-              <SpinnerModel initial="256.0" minimum="0.0" numberType="java.lang.Double" stepSize="1.0" type="number"/>
+              <SpinnerModel initial="256" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
             </Property>
           </Properties>
           <Events>
@@ -760,7 +760,7 @@
         <Component class="javax.swing.JSpinner" name="heightSpinner">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-              <SpinnerModel initial="256.0" minimum="0.0" numberType="java.lang.Float" stepSize="1.0" type="number"/>
+              <SpinnerModel initial="256" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
             </Property>
           </Properties>
           <Events>
