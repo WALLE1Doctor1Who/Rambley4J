@@ -814,6 +814,7 @@ public class Rambley4J extends JFrame {
             eyeCtrlR.setValueX(x);
             eyeCtrlR.setValueY(y);
         }
+        updateConfigBoolean(LINK_RAMBLEY_EYES_KEY,linkEyesToggle);
     }//GEN-LAST:event_linkEyesToggleActionPerformed
 
     private void mouthCtrlStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mouthCtrlStateChanged
@@ -908,6 +909,7 @@ public class Rambley4J extends JFrame {
         heightSpinner.setEnabled(!linkSizeToggle.isSelected());
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
+        updateConfigBoolean(LINK_RAMBLEY_SIZE_KEY,linkSizeToggle);
     }//GEN-LAST:event_linkSizeToggleActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
@@ -916,6 +918,7 @@ public class Rambley4J extends JFrame {
 
     private void scalePreviewToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scalePreviewToggleActionPerformed
         previewLabel.setImageAlwaysScaled(scalePreviewToggle.isSelected());
+        updateConfigBoolean(RAMBLEY_PREVIEW_SCALED_KEY,scalePreviewToggle);
     }//GEN-LAST:event_scalePreviewToggleActionPerformed
 
     /**
@@ -1028,6 +1031,60 @@ public class Rambley4J extends JFrame {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             previewLabel.repaint();
+            if (config != null){
+                try{
+                    if (RambleyPainter.FLAG_PROPERTY_NAMES_MAP.values().
+                            contains(evt.getPropertyName())){
+                        updateStateInSettings();
+                    } else {
+                        switch(evt.getPropertyName()){
+                            case(RambleyPainter.BACKGROUND_DOT_SIZE_PROPERTY_CHANGED):
+                                config.putDouble(BACKGROUND_DOT_SIZE_KEY, 
+                                        rambleyPainter.getBackgroundDotSize());
+                                break;
+                            case(RambleyPainter.BACKGROUND_DOT_SPACING_PROPERTY_CHANGED):
+                                config.putDouble(BACKGROUND_DOT_SPACING_KEY, 
+                                        rambleyPainter.getBackgroundDotSpacing());
+                                break;
+                            // BACKGROUND_DOT_SHAPE_KEY goes here
+                            case(RambleyPainter.PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED):
+                                config.putDouble(PIXEL_GRID_SPACING_KEY, 
+                                        rambleyPainter.getPixelGridLineSpacing());
+                                break;
+                            case(RambleyPainter.PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED):
+                                config.putFloat(PIXEL_GRID_THICKNESS_KEY, 
+                                        rambleyPainter.getPixelGridLineThickness());
+                                break;
+                            case(RambleyPainter.RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED):
+                                config.putDouble(RAMBLEY_RIGHT_EYE_X_KEY, 
+                                        rambleyPainter.getRambleyRightEyeX());
+                                break;
+                            case(RambleyPainter.RAMBLEY_RIGHT_EYE_Y_PROPERTY_CHANGED):
+                                config.putDouble(RAMBLEY_RIGHT_EYE_Y_KEY, 
+                                        rambleyPainter.getRambleyRightEyeY());
+                                break;
+                            case(RambleyPainter.RAMBLEY_LEFT_EYE_X_PROPERTY_CHANGED):
+                                config.putDouble(RAMBLEY_LEFT_EYE_X_KEY, 
+                                        rambleyPainter.getRambleyLeftEyeX());
+                                break;
+                            case(RambleyPainter.RAMBLEY_LEFT_EYE_Y_PROPERTY_CHANGED):
+                                config.putDouble(RAMBLEY_LEFT_EYE_Y_KEY, 
+                                        rambleyPainter.getRambleyLeftEyeY());
+                                break;
+                            case(RambleyPainter.RAMBLEY_OPEN_MOUTH_WIDTH_PROPERTY_CHANGED):
+                                config.putDouble(RAMBLEY_MOUTH_WIDTH_KEY, 
+                                        rambleyPainter.getRambleyOpenMouthWidth());
+                                break;
+                            case(RambleyPainter.RAMBLEY_OPEN_MOUTH_HEIGHT_PROPERTY_CHANGED):
+                                config.putDouble(RAMBLEY_MOUTH_HEIGHT_KEY, 
+                                        rambleyPainter.getRambleyOpenMouthHeight());
+                        }
+                    }
+                } catch (IllegalStateException ex){ 
+                    if (debugMode)      // If we are in debug mode
+                        System.out.println("Error: " + ex);
+                }
+            }
         }
         
     }
