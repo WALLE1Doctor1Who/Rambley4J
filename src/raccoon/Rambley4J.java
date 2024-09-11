@@ -114,8 +114,44 @@ public class Rambley4J extends JFrame {
             previewLabel.setComponentPopupMenu(debugPopup);
         try{    // Try to load the settings from the preference node
             config = Preferences.userRoot().node(PREFERENCE_NODE_NAME);
-//            rambleyPainter.setFlags(config.getInt(RAMBLEY_FLAGS_KEY, 
-//                    rambleyPainter.getFlags()));
+            rambleyPainter.setFlags(config.getInt(RAMBLEY_FLAGS_KEY, 
+                    rambleyPainter.getFlags()));
+            bgDotSizeSpinner.setValue(config.getDouble(BACKGROUND_DOT_SIZE_KEY, 
+                    rambleyPainter.getBackgroundDotSize()));
+            bgDotSpacingSpinner.setValue(config.getDouble(BACKGROUND_DOT_SPACING_KEY, 
+                    rambleyPainter.getBackgroundDotSpacing()));
+            // Insert setting bgDotsComboBox from BACKGROUND_DOT_SHAPE_KEY here
+            gridSpacingSpinner.setValue(config.getDouble(PIXEL_GRID_SPACING_KEY, 
+                    rambleyPainter.getPixelGridLineSpacing()));
+            gridThicknessSpinner.setValue(config.getFloat(PIXEL_GRID_THICKNESS_KEY, 
+                    rambleyPainter.getPixelGridLineThickness()));
+            double eyeRX = config.getDouble(RAMBLEY_RIGHT_EYE_X_KEY, 
+                    rambleyPainter.getRambleyRightEyeX());
+            double eyeRY = config.getDouble(RAMBLEY_RIGHT_EYE_Y_KEY, 
+                    rambleyPainter.getRambleyRightEyeY());
+            double eyeLX = config.getDouble(RAMBLEY_LEFT_EYE_X_KEY, 
+                    rambleyPainter.getRambleyLeftEyeX());
+            double eyeLY = config.getDouble(RAMBLEY_LEFT_EYE_Y_KEY, 
+                    rambleyPainter.getRambleyLeftEyeY());
+            eyeCtrlR.setValueX((int)(eyeRX*100));
+            eyeCtrlR.setValueY((int)(eyeRY*100));
+            eyeCtrlL.setValueX((int)(eyeLX*100));
+            eyeCtrlL.setValueY((int)(eyeLY*100));
+            linkEyesToggle.setSelected(config.getBoolean(LINK_RAMBLEY_EYES_KEY,
+                    linkEyesToggle.isSelected()));
+            double mouthW = config.getDouble(RAMBLEY_MOUTH_WIDTH_KEY, 
+                    rambleyPainter.getRambleyOpenMouthWidth());
+            double mouthH = config.getDouble(RAMBLEY_MOUTH_HEIGHT_KEY, 
+                    rambleyPainter.getRambleyOpenMouthHeight());
+            mouthCtrl.setValueX((int)(mouthW*100));
+            mouthCtrl.setValueY((int)(mouthH*100));
+            previewLabel.setImageAlwaysScaled(config.getBoolean(
+                    RAMBLEY_PREVIEW_SCALED_KEY, 
+                    previewLabel.isImageAlwaysScaled()));
+            widthSpinner.setValue(config.getInt(RAMBLEY_WIDTH_KEY, DEFAULT_RAMBLEY_WIDTH));
+            heightSpinner.setValue(config.getInt(RAMBLEY_HEIGHT_KEY, DEFAULT_RAMBLEY_HEIGHT));
+            linkSizeToggle.setSelected(config.getBoolean(LINK_RAMBLEY_SIZE_KEY, 
+                    linkSizeToggle.isSelected()));
         } catch (SecurityException | IllegalStateException ex){
             config = null;
             System.out.println("Unable to load settings: " +ex);
