@@ -6,6 +6,7 @@ package raccoon;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 
 /**
@@ -88,6 +89,8 @@ public class Rambley4J extends JFrame {
         jLabel7 = new javax.swing.JLabel();
         filler13 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         heightSpinner = new javax.swing.JSpinner();
+        filler14 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
+        linkSizeToggle = new javax.swing.JCheckBox();
 
         printButton.setText("Print Data");
         printButton.addActionListener(new java.awt.event.ActionListener() {
@@ -414,6 +417,15 @@ public class Rambley4J extends JFrame {
             }
         });
         sizePanel.add(heightSpinner);
+        sizePanel.add(filler14);
+
+        linkSizeToggle.setText("Link Size");
+        linkSizeToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                linkSizeToggleActionPerformed(evt);
+            }
+        });
+        sizePanel.add(linkSizeToggle);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -422,10 +434,8 @@ public class Rambley4J extends JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(sizePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(ignoreARToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -445,8 +455,10 @@ public class Rambley4J extends JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(glitchyToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(flippedToggle)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(flippedToggle))
+                            .addComponent(sizePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(placeholderLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
@@ -594,12 +606,19 @@ public class Rambley4J extends JFrame {
     }//GEN-LAST:event_bgDotSpacingSpinnerStateChanged
 
     private void widthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSpinnerStateChanged
-        // TODO add your handling code here:
+        if (linkSizeToggle.isSelected())
+            heightSpinner.setValue(widthSpinner.getValue());
     }//GEN-LAST:event_widthSpinnerStateChanged
 
     private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
         // TODO add your handling code here:
     }//GEN-LAST:event_heightSpinnerStateChanged
+
+    private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
+        heightSpinner.setEnabled(!linkSizeToggle.isSelected());
+        if (linkSizeToggle.isSelected())
+            heightSpinner.setValue(widthSpinner.getValue());
+    }//GEN-LAST:event_linkSizeToggleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -652,6 +671,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.Box.Filler filler11;
     private javax.swing.Box.Filler filler12;
     private javax.swing.Box.Filler filler13;
+    private javax.swing.Box.Filler filler14;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.Box.Filler filler4;
@@ -681,6 +701,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JCheckBox jawToggle;
     private javax.swing.JCheckBox linkEyesToggle;
+    private javax.swing.JCheckBox linkSizeToggle;
     private swing.TwoAxisSlider mouthCtrl;
     private javax.swing.JPanel mouthPanel;
     private javax.swing.JCheckBox outlineToggle;
