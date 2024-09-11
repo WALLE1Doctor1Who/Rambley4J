@@ -806,6 +806,7 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="linkSizeToggle">
           <Properties>
+            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Link Size"/>
           </Properties>
           <Events>

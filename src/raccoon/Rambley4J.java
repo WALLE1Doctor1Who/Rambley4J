@@ -476,6 +476,7 @@ public class Rambley4J extends JFrame {
         sizePanel.add(heightSpinner);
         sizePanel.add(filler14);
 
+        linkSizeToggle.setSelected(true);
         linkSizeToggle.setText("Link Size");
         linkSizeToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
