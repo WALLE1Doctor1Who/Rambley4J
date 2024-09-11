@@ -78,7 +78,7 @@
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="gridToggle" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="scarfToggle" min="-2" max="-2" attributes="0"/>
+                              <Component id="bandanaToggle" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="evilToggle" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -113,7 +113,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="bgToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="gridToggle" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="scarfToggle" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bandanaToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="evilToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="glitchyToggle" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="flippedToggle" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -153,12 +153,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gridToggleActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="scarfToggle">
+    <Component class="javax.swing.JCheckBox" name="bandanaToggle">
       <Properties>
         <Property name="text" type="java.lang.String" value="Bandana"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="scarfToggleActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bandanaToggleActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="evilToggle">

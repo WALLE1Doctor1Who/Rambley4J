@@ -246,7 +246,7 @@ public class Rambley4J extends JFrame {
         updateHeightSpinnerEnabled();
         flippedToggle.setSelected(rambleyPainter.isRambleyFlipped());
         jawToggle.setSelected(rambleyPainter.isRambleyJawClosed());
-        scarfToggle.setSelected(rambleyPainter.isRambleyBandanaPainted());
+        bandanaToggle.setSelected(rambleyPainter.isRambleyBandanaPainted());
         glitchyToggle.setSelected(rambleyPainter.isRambleyGlitchy());
         hatToggle.setSelected(rambleyPainter.isConductorHatPainted());
         scalePreviewToggle.setSelected(previewLabel.isImageAlwaysScaled());
@@ -447,7 +447,7 @@ public class Rambley4J extends JFrame {
         previewLabel = new components.JThumbnailLabel();
         bgToggle = new javax.swing.JCheckBox();
         gridToggle = new javax.swing.JCheckBox();
-        scarfToggle = new javax.swing.JCheckBox();
+        bandanaToggle = new javax.swing.JCheckBox();
         evilToggle = new javax.swing.JCheckBox();
         glitchyToggle = new javax.swing.JCheckBox();
         ignoreRatioToggle = new javax.swing.JCheckBox();
@@ -542,10 +542,10 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        scarfToggle.setText("Bandana");
-        scarfToggle.addActionListener(new java.awt.event.ActionListener() {
+        bandanaToggle.setText("Bandana");
+        bandanaToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                scarfToggleActionPerformed(evt);
+                bandanaToggleActionPerformed(evt);
             }
         });
 
@@ -893,7 +893,7 @@ public class Rambley4J extends JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(gridToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(scarfToggle)
+                                .addComponent(bandanaToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(evilToggle)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -921,7 +921,7 @@ public class Rambley4J extends JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(bgToggle)
                             .addComponent(gridToggle)
-                            .addComponent(scarfToggle)
+                            .addComponent(bandanaToggle)
                             .addComponent(evilToggle)
                             .addComponent(glitchyToggle)
                             .addComponent(flippedToggle))
@@ -990,9 +990,9 @@ public class Rambley4J extends JFrame {
         rambleyPainter.setCircularBackgroundDots(bgDotsComboBox.getSelectedIndex() > 0);
     }//GEN-LAST:event_bgDotsComboBoxActionPerformed
 
-    private void scarfToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scarfToggleActionPerformed
-        rambleyPainter.setRambleyBandanaPainted(scarfToggle.isSelected());
-    }//GEN-LAST:event_scarfToggleActionPerformed
+    private void bandanaToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bandanaToggleActionPerformed
+        rambleyPainter.setRambleyBandanaPainted(bandanaToggle.isSelected());
+    }//GEN-LAST:event_bandanaToggleActionPerformed
 
     private void evilToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evilToggleActionPerformed
         rambleyPainter.setRambleyEvil(evilToggle.isSelected());
@@ -1191,7 +1191,7 @@ public class Rambley4J extends JFrame {
         inputEnabled = enabled;
         bgToggle.setEnabled(enabled);
         gridToggle.setEnabled(enabled);
-        scarfToggle.setEnabled(enabled);
+        bandanaToggle.setEnabled(enabled);
         evilToggle.setEnabled(enabled);
         flippedToggle.setEnabled(enabled);
         ignoreRatioToggle.setEnabled(enabled);
@@ -1235,6 +1235,7 @@ public class Rambley4J extends JFrame {
      */
     private final boolean debugMode;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox bandanaToggle;
     private javax.swing.JSpinner bgDotSizeSpinner;
     private javax.swing.JSpinner bgDotSpacingSpinner;
     private javax.swing.JComboBox<String> bgDotsComboBox;
@@ -1291,7 +1292,6 @@ public class Rambley4J extends JFrame {
     private javax.swing.JButton resetButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JCheckBox scalePreviewToggle;
-    private javax.swing.JCheckBox scarfToggle;
     private javax.swing.JCheckBox shadowToggle;
     private javax.swing.JPanel sizePanel;
     private javax.swing.JSpinner widthSpinner;
