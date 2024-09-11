@@ -7,8 +7,10 @@ package raccoon;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 import javax.swing.*;
@@ -18,6 +20,11 @@ import javax.swing.*;
  * @author Milo Steier
  */
 public class Rambley4J extends JFrame {
+    /**
+     * This is an array containing the widths and heights for the icon images 
+     * for this program. The icon images are generated on the fly.
+     */
+    private static final int[] ICON_SIZES = {16, 24, 32, 48, 64, 128, 256, 512};
     /**
      * This is the name of the preference node used to store the settings for 
      * this program.
@@ -107,7 +114,9 @@ public class Rambley4J extends JFrame {
             RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG | 
             RambleyPainter.PAINT_RAMBLEY_SCARF_FLAG;
     
-    
+    private static final int ICON_IMAGES_RAMBLEY_FLAGS = 
+            RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
+            RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG;
     
     /**
      * Creates new form Rambley4J
@@ -116,6 +125,12 @@ public class Rambley4J extends JFrame {
     public Rambley4J(boolean debugMode) {
         this.debugMode = debugMode;
         rambleyPainter = new RambleyIcon2();
+            // This is a RambleyPainter used to generate the icon images for 
+            // this program
+        RambleyPainter iconImgPainter = new RambleyPainter(ICON_IMAGES_RAMBLEY_FLAGS);
+        iconImgPainter.setRambleyOpenMouthHeight(1.0);
+            // Generate the icon images for this program
+        setIconImages(generateIconImages(iconImgPainter));
         initComponents();
         if (debugMode)
             previewLabel.setComponentPopupMenu(debugPopup);
@@ -183,6 +198,30 @@ public class Rambley4J extends JFrame {
      */
     public Rambley4J(){
         this(false);
+    }
+    /**
+     * This generates a list of BufferedImages using the given RambleyPainter to 
+     * be used as the icon images for this program. The  width and height for 
+     * the images are stored in the {@link #ICON_SIZES} array.
+     * @param painter The RambleyPainter to use to generate the images.
+     * @return A list of images to use as the icon images for this program.
+     * @see #ICON_SIZES
+     */
+    private java.util.List<BufferedImage> generateIconImages(RambleyPainter painter){
+            // Create a list to get the images
+        ArrayList<BufferedImage> iconImages = new ArrayList<>();
+            // Go through the sizes for the images
+        for (int size : ICON_SIZES){
+                // Create a new image that is the current size
+            BufferedImage image = new BufferedImage(size, size, 
+                    BufferedImage.TYPE_INT_ARGB);
+                // Create the graphics for that image
+            Graphics2D g = image.createGraphics();
+            painter.paint(g, null, size, size);
+            g.dispose();
+            iconImages.add(image);
+        }
+        return iconImages;
     }
     /**
      * 
