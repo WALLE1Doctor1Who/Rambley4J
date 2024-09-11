@@ -175,9 +175,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="rightEyeControl" min="-2" pref="170" max="-2" attributes="0"/>
+                      <Component id="rightEyeControl" min="-2" pref="173" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="leftEyeControl" min="-2" pref="170" max="-2" attributes="0"/>
+                      <Component id="leftEyeControl" min="-2" pref="173" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="linkEyesToggle" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
