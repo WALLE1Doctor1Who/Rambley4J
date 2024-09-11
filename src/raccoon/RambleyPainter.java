@@ -1809,6 +1809,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * this is the vertical spacing.
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code RambleyPainter}.
+     * @throws IllegalArgumentException If the given line spacing is less than 
+     * or equal to 1.
      * @see #getPixelGridLineSpacing 
      * @see #getPixelGridLineThickness 
      * @see #setPixelGridLineThickness 
@@ -1816,6 +1818,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public RambleyPainter setPixelGridLineSpacing(double spacing){
+            // If the new spacing is less than or equal to 1
+        if (spacing <= 1)
+            throw new IllegalArgumentException("Pixel grid line spacing must be"
+                    + " greater than 1 ("+spacing + " <= 1)");
             // If the new spacing is different from the old spacing
         if (spacing != gridSpacing){
                 // Get the old line spacing

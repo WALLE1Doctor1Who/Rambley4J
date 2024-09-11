@@ -69,6 +69,8 @@ public class PixelGridPainter extends ListenedPainter<Component>{
         gridThickness = DEFAULT_LINE_THICKNESS;
     }
     
+    
+    
     /**
      * This returns the spacing between the lines in the pixel grid. For the 
      * vertical lines, this is the horizontal spacing. For the horizontal lines, 
@@ -87,11 +89,17 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * this is the vertical spacing.
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code PixelGridPainter}.
+     * @throws IllegalArgumentException If the given line spacing is less than 
+     * or equal to 1.
      * @see #getLineSpacing 
      * @see #getLineThickness 
      * @see #setLineThickness 
      */
     public PixelGridPainter setLineSpacing(double spacing){
+            // If the new spacing is less than or equal to 1
+        if (spacing <= 1)
+            throw new IllegalArgumentException("Pixel grid line spacing must be"
+                    + " greater than 1 ("+spacing + " <= 1)");
             // If the new spacing is different from the old spacing
         if (spacing != gridSpacing){
                 // Get the old line spacing
@@ -123,7 +131,7 @@ public class PixelGridPainter extends ListenedPainter<Component>{
     public PixelGridPainter setLineThickness(float thickness){
             // If the line thickness is less than zero
         if (thickness < 0.0f)
-            throw new IllegalArgumentException("Pixel Grid line thickness must "
+            throw new IllegalArgumentException("Pixel grid line thickness must "
                     + "be greater than or equal to zero ("+thickness+ " < 0)");
             // If the new thickness is different from the old thickness
         if (thickness != gridThickness){
