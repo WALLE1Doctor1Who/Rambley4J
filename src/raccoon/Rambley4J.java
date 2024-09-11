@@ -183,6 +183,9 @@ public class Rambley4J extends JFrame {
             dim.height = Math.max(dim.height, min.height);
                 // Set the size from the node
             setSize(dim);
+                // Set the size of the save file chooser
+            fc.setPreferredSize(getPreferenceSize(SAVE_FILE_CHOOSER_PREFERENCE_NODE,
+                    fc.getPreferredSize()));
         } catch (SecurityException | IllegalStateException ex){
             config = null;
             System.out.println("Unable to load settings: " +ex);
@@ -348,6 +351,30 @@ public class Rambley4J extends JFrame {
                 // Set the height
             node.putInt(PREFERENCE_HEIGHT_KEY, size.height);
         }
+    }
+    /**
+     * This opens the given file chooser as a save file chooser to allow the 
+     * user to select the file or folder to save to.
+     * @param fc The file chooser to open.
+     * @return The selected file, or null if the user canceled the file chooser.
+     */
+    private File showSaveFileChooser(JFileChooser fc){
+            // This is used to store which button the user pressed
+        int option = fc.showSaveDialog(this);
+        fc.setPreferredSize(fc.getSize());
+            // If the given file chooser is the normal save file chooser
+        if (fc == this.fc){
+            try{    // Update the file chooser's size
+                setPreferenceSize(SAVE_FILE_CHOOSER_PREFERENCE_NODE,fc.getSize());
+            }catch (IllegalStateException ex){ 
+                if (debugMode)    // If we are in debug mode
+                    System.out.println("Error: " + ex);
+            }
+        }   // If the user wants to save the file
+        if (option == JFileChooser.APPROVE_OPTION)
+            return fc.getSelectedFile();
+        else
+            return null;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1173,7 +1200,7 @@ public class Rambley4J extends JFrame {
     private javax.swing.JPanel sizePanel;
     private javax.swing.JSpinner widthSpinner;
     // End of variables declaration//GEN-END:variables
-
+    
     private class RambleyHandler implements PropertyChangeListener{
 
         @Override
