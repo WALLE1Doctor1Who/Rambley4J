@@ -585,7 +585,6 @@ public class RambleyPainterTester extends javax.swing.JFrame {
         });
 
         hatToggle.setText("Conductor Hat");
-        hatToggle.setEnabled(false);
         hatToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hatToggleActionPerformed(evt);
