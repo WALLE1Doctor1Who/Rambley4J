@@ -1092,6 +1092,7 @@ public class Rambley4J extends JFrame {
                 }
             }   // While the file is null (user decided to select a different 
         } while (file == null);     // file)
+                // Save Rambley to the file
         saver = new RambleySaver(file);
         saver.execute();
     }//GEN-LAST:event_saveButtonActionPerformed
@@ -1120,11 +1121,15 @@ public class Rambley4J extends JFrame {
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
         previewLabel.repaint();
+        if (config != null)
+            config.putInt(RAMBLEY_WIDTH_KEY, (int)widthSpinner.getValue());
     }//GEN-LAST:event_widthSpinnerStateChanged
 
     private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
         if (!linkSizeToggle.isSelected())
             previewLabel.repaint();
+        if (config != null)
+            config.putInt(RAMBLEY_HEIGHT_KEY, (int)heightSpinner.getValue());
     }//GEN-LAST:event_heightSpinnerStateChanged
 
     private void linkSizeToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkSizeToggleActionPerformed
