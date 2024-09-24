@@ -34,3 +34,6 @@ replay_pid*
 
 # Ignore the references folder
 /DevStuff/References/*
+
+# Ignore the image files created by the program during testing
+/DevStuff/Rambley4J Tests/*
