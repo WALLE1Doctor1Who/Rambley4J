@@ -1,0 +1,897 @@
+
+    
+    
+    
+    private DoubleUnaryOperator earUpperEquation = null;
+    
+    private DoubleUnaryOperator earLowerEquation = null;
+    
+    private DoubleUnaryOperator earTipEquation = null;
+    
+    private DoubleUnaryOperator getRambleyUpperEarEquation(){
+        if (earUpperEquation == null)
+            earUpperEquation = (double operand) -> getRambleyUpperEarY(operand);
+        return earUpperEquation;
+    }
+    
+    private DoubleUnaryOperator getRambleyLowerEarEquation(){
+        if (earLowerEquation == null)
+            earLowerEquation = (double operand) -> getRambleyLowerEarY(operand);
+        return earLowerEquation;
+    }
+    
+    private DoubleUnaryOperator getRambleyEarTipEquation(){
+        if (earTipEquation == null)
+            earTipEquation = (double operand) -> getRambleyEarTipY(operand);
+        return earTipEquation;
+    }
+    
+    
+    
+    
+    
+    protected Point2D getRambleyEarUpperTip(double x, double y, Point2D point){
+        return getLineIntersection(x,y,9,10.5,
+                getRambleyUpperEarEquation(),getRambleyEarTipEquation(),point);
+    }
+    
+    protected Point2D getRambleyEarLowerTip(double x, double y, Point2D point){
+        return getLineIntersection(x,y,getRambleyEarTipX(RAMBLEY_EAR_HEIGHT),1,
+                getRambleyEarTipEquation(),getRambleyLowerEarEquation(),point);
+    }
+    
+    
+    
+    
+    protected DoubleUnaryOperator getRambleyEarY(int test){
+        switch(test){
+            case(0):
+                return getRambleyUpperEarEquation();
+            case(1):
+                return getRambleyLowerEarEquation();
+            default:
+                return getRambleyEarTipEquation();
+        }
+    }
+    
+    private void addRambleyEarPoint(double y, Path2D upper, Path2D lower, Path2D tip, double xOff, double yOff){
+        double y2 = y + yOff;
+        if (upper != null){
+            double upperX = getRambleyUpperEarX(y) + xOff;
+            if (upper.getCurrentPoint() == null)
+                upper.moveTo(upperX, y2);
+            else
+                upper.lineTo(upperX, y2);
+//            System.out.println("Upper: " + y + " " + upper.getCurrentPoint() + " " + (getRambleyEarUpperY(upperX-xOff)+yOff));
+        }
+        if (lower != null){
+            double lowerX = getRambleyLowerEarX(y) + xOff;
+            if (lower.getCurrentPoint() == null)
+                lower.moveTo(lowerX, y2);
+            else
+                lower.lineTo(lowerX, y2);
+        }
+        if (tip != null){
+            double tipX = getRambleyEarTipX(y) + xOff;
+            Point2D c1 = tip.getCurrentPoint();
+            if (c1 == null)
+                tip.moveTo(tipX, y2);
+            else
+                tip.lineTo(tipX, y2);
+            Point2D c2 = tip.getCurrentPoint();
+            double d, dx;
+            if (c1 == null){
+                d = dx = 0;
+            } else {
+                d = c1.distance(c2);
+                dx = Math.abs(c2.getX() - c1.getX());
+            }
+//            System.out.printf("Tip %5.2f: (%9.5f, %9.5f), d=%8.5f, dx=%10.7f%n", y,c2.getX(),c2.getY(),d,dx);
+//            System.out.println("Tip " + y + ": " + c2 + ", d=" +d + ", dx="+dx);
+        }
+    }
+    
+    private Path2D getRambleyEarPath(double x, double y, double t1, double t2, 
+            double t3, double t4, double t5, Path2D path, DoubleUnaryOperator getX, 
+            DoubleUnaryOperator getY){
+        if (path == null)
+            path = new Path2D.Double();
+        else
+            path.reset();
+        double x1 = getX.applyAsDouble(0);
+        if (x1 >= 0)
+            point1.setLocation(x1+x,y);
+        else
+            point1.setLocation(x,y+getY.applyAsDouble(0));
+//        double tempY = RAMBLEY_EAR_HEIGHT*t1;
+//        point2.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+//        point3.setLocation(getX.applyAsDouble(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y);
+//        point6 = getQuadBezierControlPoint(point1,point2,point3,point6);
+        point4.setLocation(getX.applyAsDouble(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y);
+//        double tempY = RAMBLEY_EAR_HEIGHT/3;
+//        point2.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+//        tempY *= 2;
+//        point3.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+        
+//        double xOff = x-point1.getX();
+        double dx = point4.getX() - point1.getX();
+        x = point1.getX();
+        double tempX = dx / 3;
+        dx = Math.abs(dx);
+        point2.setLocation(x+tempX, getY.applyAsDouble((dx+tempX)%dx)+y);
+        tempX *= 2;
+        point3.setLocation(x+tempX, getY.applyAsDouble((dx+tempX)%dx)+y);
+        getCubicBezierControlPoints(point1,point2,point3,point4,point6,point7);
+        
+//        tempY = RAMBLEY_EAR_HEIGHT*t2;
+//        point3.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+//        tempY = RAMBLEY_EAR_HEIGHT*t3;
+//        point4.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+//        point5.setLocation(getX.applyAsDouble(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y);
+//        point6 = getQuadBezierControlPoint(point1,point2,point3,t4,point6);
+//        point7 = getQuadBezierControlPoint(point3,point4,point5,t5,point7);
+        path.moveTo(point1.getX(),point1.getY());
+        path.curveTo(point6.getX(), point6.getY(), point7.getX(), point7.getY(), point4.getX(), point4.getY());
+//        path.quadTo(point6.getX(),point6.getY(), point3.getX(),point3.getY());
+//        path.quadTo(point7.getX(), point7.getY(), point5.getX(),point5.getY());
+        return path;
+    }
+    
+    private int earTestValue = 0;
+    private int earSplits = 1;
+    
+    protected void setEarTest(int value){
+        if (value == earTestValue)
+            return;
+        earTestValue = value;
+        fireStateChanged();
+    }
+    
+    protected int getEarTest(){
+        return earTestValue;
+    }
+    
+    protected void setEarSplits(int value){
+        if (value == earSplits)
+            return;
+        earSplits = value;
+        fireStateChanged();
+    }
+    
+    protected int getEarSplits(){
+        return earSplits;
+    }
+    
+    protected Path2D splineToPath(java.util.List<Point2D> pts, 
+            java.util.List<Point2D>ctrlPts1, java.util.List<Point2D> ctrlPts2,
+            Path2D path){
+        if (path == null)
+            path = new Path2D.Double();
+        if (path.getCurrentPoint() == null)
+            path.moveTo(pts.get(0).getX(), pts.get(0).getY());
+        else if (!path.getCurrentPoint().equals(pts.get(0))){
+            Point2D p1 = path.getCurrentPoint();
+            Point2D p2 = pts.get(0);
+            pts = new ArrayList<>(pts);
+            pts.add(0,new Point2D.Double((p1.getX()+p2.getX())/2.0,(p1.getY()+p2.getY())/2.0));
+            pts.add(0,p1);
+            ArrayList<Point2D> tempC1 = new ArrayList<>();
+            ArrayList<Point2D> tempC2 = new ArrayList<>();
+            getCubicBezierSplineControlPoints(pts.subList(0, 3),tempC1,tempC2);
+            tempC1.addAll(ctrlPts1);
+            tempC2.addAll(ctrlPts2);
+            ctrlPts1 = tempC1;
+            ctrlPts2 = tempC2;
+        }
+        for (int i = 0; i < pts.size()-1; i++){
+            Point2D point = pts.get(i+1);
+            Point2D ctrl1 = (i < ctrlPts1.size()) ? ctrlPts1.get(i) : null;
+            Point2D ctrl2 = (i < ctrlPts2.size()) ? ctrlPts2.get(i) : null;
+            if (ctrl1 != null && ctrl2 != null)
+                path.curveTo(ctrl1.getX(), ctrl1.getY(), ctrl2.getX(), ctrl2.getY(), point.getX(), point.getY());
+            else if (ctrl1 != null)
+                path.quadTo(ctrl1.getX(), ctrl1.getY(), point.getX(), point.getY());
+            else
+                path.lineTo(point.getX(), point.getY());
+        }
+        return path;
+    }
+    
+    private Path2D calculateEarSpline(double x, double y, int splits, 
+            Path2D path, DoubleUnaryOperator getX, 
+            DoubleUnaryOperator getY){
+        if (path != null)
+            path.reset();
+        ArrayList<Point2D> pts;
+        ArrayList<Point2D> ctrl1 = new ArrayList<>();
+        ArrayList<Point2D> ctrl2 = new ArrayList<>();
+//        if (getABTesting()){
+//            pts = new ArrayList<>();
+//            calculateSplinePoints(x,y,splits,getX,getY,pts,ctrl1,ctrl2);
+//        } else {
+            pts = calculateSplinePoints(x,y,splits,getX,getY);
+            getCubicBezierSplineControlPoints(pts,ctrl1,ctrl2);
+//        }
+        return splineToPath(pts,ctrl1,ctrl2,path);
+    }
+    
+    private ArrayList<Point2D> calculateSplinePoints(double x, double y, 
+            int splits, DoubleUnaryOperator getX, DoubleUnaryOperator getY){
+        ArrayList<Point2D> pts = new ArrayList<>();
+        double x0 = getX.applyAsDouble(0);
+        if (x0 >= 0)
+            pts.add(new Point2D.Double(x0+x,y));
+        else
+            pts.add(new Point2D.Double(x,y+getY.applyAsDouble(0)));
+        pts.add(new Point2D.Double(getX.applyAsDouble(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y));
+        for (int s = 0; s < splits; s++){
+            for (int i = 1; i < pts.size(); i+=2){
+                Point2D p1 = pts.get(i-1);
+                Point2D p2 = pts.get(i);
+                double dx = p2.getX() - p1.getX();
+                double dy = p2.getY() - p1.getY();
+                if (i == Math.ceil(pts.size()/2.0) && s < 2){
+                    double x1 = (dx / 2.0) + p1.getX();
+                    double y1 = getY.applyAsDouble(x1-x)+y;
+                    if (dx == dy)
+                        pts.add(i, new Point2D.Double(x1,y1));
+                    else{
+                        double y2 = (dy / 2.0) + p1.getY();
+                        double x2 = getX.applyAsDouble(y2-y)+x;
+                        Point2D p3 = new Point2D.Double(x1,y1);
+                        Point2D p4 = new Point2D.Double(x2,y2);
+                        if (p1.distance(p3) < p1.distance(p4)){
+                            pts.add(i++, p3);
+                            pts.add(i, p4);
+                        } else {
+                            pts.add(i++, p4);
+                            pts.add(i, p3);
+                        }
+                    }
+                } else {
+                    double x1, y1;
+                    if (Math.abs(dx) >= Math.abs(dy)){
+                        x1 = (dx / 2.0) + p1.getX();
+                        y1 = getY.applyAsDouble(x1-x)+y;
+                    } else {
+                        y1 = (dy / 2.0) + p1.getY();
+                        x1 = getX.applyAsDouble(y1-y)+x;
+                    }
+                    pts.add(i, new Point2D.Double(x1,y1));
+                }
+            }
+        }
+        return pts;
+    }
+    
+    private static final double LINE_DISTANCE_ROUNDING = 0.01;
+    
+    private boolean isSegmentLine(double d1, double d2){
+        d1 = Math.abs(d1);
+        d2 = Math.abs(d2);
+        return d1 >= d2 - LINE_DISTANCE_ROUNDING && d1 <= d2 + LINE_DISTANCE_ROUNDING;
+    }
+    
+    private boolean isSegmentLine(Point2D p1, Point2D p2, Point2D p3){
+        double dx1 = p2.getX()-p1.getX();
+        double dy1 = p2.getY()-p1.getY();
+        double dx2 = p3.getX()-p2.getX();
+        double dy2 = p3.getY()-p2.getY();
+        if ((isSegmentLine(dx1,0) && isSegmentLine(dx2,0)) || 
+                (isSegmentLine(dy1,0) && isSegmentLine(dy2,0)))
+            return true;
+        boolean lineX = isSegmentLine(dx1,dx2);
+        boolean lineY = isSegmentLine(dy1,dy2);
+        if (lineX || lineY){
+            Line2D line = new Line2D.Double(p1,p3);
+            Rectangle2D r2 = new Rectangle2D.Double();
+            r2.setFrameFromCenter(p2.getX(), p2.getY(), 
+                    p2.getX()+0.15, p2.getY()+0.15);
+            return line.intersects(r2);
+        }
+        return false;
+    }
+    
+    private Point2D getSpliceMidPoint(double x, double y, Point2D p1, Point2D p2, 
+            DoubleUnaryOperator getX, DoubleUnaryOperator getY){
+        if (Math.abs(p2.getX()-p1.getX()) >= Math.abs(p2.getY()-p1.getY())){
+            double x1 = (p1.getX()+p2.getX()) / 2.0;
+            return new Point2D.Double(x1,getY.applyAsDouble(x1-x)+y);
+        } else {
+            double y1 = (p1.getY()+p2.getY()) / 2.0;
+            return new Point2D.Double(getX.applyAsDouble(y1-y)+x,y1);
+        }
+    }
+    
+    protected void calculateSplinePoints(double x, double y, int splits, 
+            DoubleUnaryOperator getX, DoubleUnaryOperator getY, 
+            ArrayList<Point2D> pts, ArrayList<Point2D> ctrlPts1, ArrayList<Point2D> ctrlPts2){
+        pts.clear();
+        ctrlPts1.clear();
+        ctrlPts2.clear();
+        double x0 = getX.applyAsDouble(0);
+        ArrayList<Integer> lines = new ArrayList<>();
+        if (x0 >= 0)
+            pts.add(new Point2D.Double(x0+x,y));
+        else
+            pts.add(new Point2D.Double(x,y+getY.applyAsDouble(0)));
+        pts.add(new Point2D.Double(getX.applyAsDouble(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y));
+        int start = 1;
+        int end = 0;
+        for (int s = 0; s < splits; s++){
+            int h = Math.floorDiv(pts.size(), 2);
+            int offset = 0;
+            if (s > 0){
+                for (int i = start; i < pts.size()-end; i++){
+                    Point2D p1 = pts.get(i-1);
+                    Point2D p3 = pts.get(i);
+                    Point2D p2 = getSpliceMidPoint(x,y,p1,p3,getX,getY);
+//                    System.out.printf("Start: %2d %3d: ", s,i);
+                    boolean line = isSegmentLine(p1,p2,p3);
+//                    System.out.printf(" line=%5b%n",line);
+                    if (line){
+                        lines.add(i-1);
+                        lines.add(i);
+                        start++;
+                    } else {
+                        break;
+                    }
+                }
+                for (int i = end; i < pts.size()-start-1; i++){
+                    int j = pts.size()-i-1;
+                    Point2D p1 = pts.get(j-1);
+                    Point2D p3 = pts.get(j);
+                    Point2D p2 = getSpliceMidPoint(x,y,p1,p3,getX,getY);
+//                    System.out.printf("  End: %2d %3d: ", s,j);
+                    boolean line = isSegmentLine(p1,p2,p3);
+//                    System.out.printf(" line=%5b%n",line);
+                    if (line){
+                        lines.add(-(i+1));
+                        lines.add(-(i+2));
+                        end++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            for (int i = start; i < pts.size()-end; i++){
+                Point2D p1 = pts.get(i-1);
+                Point2D p2 = pts.get(i);
+                double dx = p2.getX() - p1.getX();
+                double dy = p2.getY() - p1.getY();
+                if (i == (h+offset) && s < 2){
+                    double x1 = (p1.getX()+p2.getX()) / 2.0;
+                    double y1 = getY.applyAsDouble(x1-x)+y;
+                    if (dx == dy)
+                        pts.add(i, new Point2D.Double(x1,y1));
+                    else{
+                        double y2 = (p1.getY()+p2.getY()) / 2.0;
+                        double x2 = getX.applyAsDouble(y2-y)+x;
+                        Point2D p3 = new Point2D.Double(x1,y1);
+                        Point2D p4 = new Point2D.Double(x2,y2);
+                        if (p1.distance(p3) < p1.distance(p4)){
+                            pts.add(i++, p3);
+                            pts.add(i++, p4);
+                        } else {
+                            pts.add(i++, p4);
+                            pts.add(i++, p3);
+                        }
+                        offset+=2;
+                    }
+                } else {
+                    pts.add(i++, getSpliceMidPoint(x,y,p1,p2,getX,getY));
+                    offset++;
+                }
+            }
+        }
+        lines.replaceAll((Integer t) -> {
+            if (t != null && t < 0)
+                return pts.size() + t;
+            return t;
+        });
+        lines.sort(null);
+//        System.out.println(lines);
+        start--;
+        for (int i = 1; i < pts.size(); i++){
+            Point2D p1 = pts.get(i-1);
+            Point2D p3 = pts.get(i);
+            Point2D p2 = getSpliceMidPoint(x,y,p1,p3,getX,getY);
+            ctrlPts1.add(getQuadBezierControlPoint(p1,p2,p3,null));
+        }
+//        java.util.List<Point2D> cubicPts = pts.subList(start, pts.size()-end);
+//        getCubicBezierSplineControlPoints(pts,ctrlPts1,ctrlPts2);
+//        for (int i = 0; i < start; i++){
+//            ctrlPts1.add(0,null);
+//            ctrlPts2.add(0,null);
+//        }
+//        System.out.println(lines);
+//        System.out.println(start + " " + (pts.size()-end));
+    }
+    
+    protected DoubleUnaryOperator getRambleyEarX(int test){
+        switch(test){
+            case(0):
+                return (double operand) -> getRambleyUpperEarX(operand);
+            case(1):
+                return (double operand) -> getRambleyLowerEarX(operand);
+            default:
+                return (double operand) -> getRambleyEarTipX(operand);
+        }
+    }
+    
+    
+    
+    private void rambleyEarTest(double x, double y, Graphics2D g){
+//        if (getABTesting())
+//            return;
+        if (path == null)
+            path = new Path2D.Double();
+        else
+            path.reset();
+        System.out.println("Ear Points: (" + x + ", " +y+")");
+//        ArrayList<Point2D> pts = new ArrayList<>();
+//        ArrayList<Point2D> ctrlPts1 = new ArrayList<>();
+//        ArrayList<Point2D> ctrlPts2 = new ArrayList<>();
+//        calculateSplinePoints(x,y,getEarSplits(),getX,getY,pts,ctrlPts1,ctrlPts2);
+//        for (int i = 0; i < pts.size(); i++){
+//            Point2D point = pts.get(i);
+//            System.out.printf("Point%-3d: (%9.5f, %9.5f)", i,point.getX(),point.getY());
+//            if (i > 0){
+//                int j = i-1;
+//                Point2D ctrl1 = null;
+//                if (j < ctrlPts1.size())
+//                    ctrl1 = ctrlPts1.get(j);
+//                if (ctrl1 != null)
+//                    System.out.printf(" (%9.5f, %9.5f)",ctrl1.getX(),ctrl1.getY());
+//                else
+//                    System.out.print(" (---------, ---------)");
+//                Point2D ctrl2 = null;
+//                if (j < ctrlPts2.size())
+//                    ctrl2 = ctrlPts2.get(j);
+//                if (ctrl2 != null)
+//                    System.out.printf(" (%9.5f, %9.5f)",ctrl2.getX(),ctrl2.getY());
+//                else
+//                    System.out.print(" (---------, ---------)");
+//                Point2D last = pts.get(j);
+//                System.out.printf(" d=%12.8f dx=%12.8f dy=%12.8f", 
+//                        point.distance(last),
+//                        Math.abs(point.getX()-last.getX()),
+//                        Math.abs(point.getY()-last.getY()));
+//            }
+//            System.out.println();
+//        }
+//        System.out.println();
+//        ArrayList<Point2D> pts1 = calculateSplinePoints(x,y,getEarSplits(),getX,getY);
+//        ArrayList<Point2D> ctrlPts1a = new ArrayList<>();
+//        ArrayList<Point2D> ctrlPts2a = new ArrayList<>();
+//        getCubicBezierSplineControlPoints(pts1,ctrlPts1a,ctrlPts2a);
+//        for (int i = 0; i < pts1.size(); i++){
+//            Point2D point = pts1.get(i);
+//            System.out.printf("Point%-3d: (%9.5f, %9.5f)", i,point.getX(),point.getY());
+//            if (i > 0){
+//                Point2D ctrl1 = ctrlPts1a.get(i-1);
+//                Point2D ctrl2 = ctrlPts2a.get(i-1);
+//                Point2D last = pts1.get(i-1);
+//                System.out.printf(" (%9.5f, %9.5f) (%9.5f, %9.5f) d=%12.8f dx=%12.8f dy=%12.8f", 
+//                        ctrl1.getX(),ctrl1.getY(),ctrl2.getX(),ctrl2.getY(),
+//                        point.distance(last),
+//                        Math.abs(point.getX()-last.getX()),
+//                        Math.abs(point.getY()-last.getY()));
+//            }
+//            System.out.println();
+//        }
+//        System.out.println();
+//        if (getEarTest() < 2){
+            double tempX, tempY;
+            Point2D[] tempArr = {point1,point2,point3,point4,point5,point6,point7,point8};
+            Point2D[] arr1, arr2, arr3;
+            arr3 = new Point2D[]{point6, point7};
+            switch (getEarTest()) {
+                case 0:
+                    point1.setLocation(Math.max(getRambleyUpperEarX(RAMBLEY_EAR_HEIGHT),
+                            getRambleyLowerEarX(RAMBLEY_EAR_HEIGHT))+x, RAMBLEY_EAR_HEIGHT+y);
+                    tempY = RAMBLEY_EAR_HEIGHT*0.5;
+                    point8.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
+                    tempY = RAMBLEY_EAR_HEIGHT*getTestDouble1();
+                    point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+                    tempY = RAMBLEY_EAR_HEIGHT*getTestDouble2();
+                    point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+                    tempY = RAMBLEY_EAR_HEIGHT*getTestDouble3();
+                    point4.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+                    point5 = getRambleyEarUpperTip(x,y,point5);
+                    tempX = point5.getX() + getTestDouble6();
+                    point5.setLocation(tempX, y+getRambleyUpperEarY(tempX-x));
+                    point6 = getQuadBezierControlPoint(point8,point2,point3,point6);
+                    point7 = getQuadBezierControlPoint(point3,point4,point5,point7);
+                    path.moveTo(point1.getX(), point1.getY());
+                    path.lineTo(point8.getX(), point8.getY());
+                    path.quadTo(point6.getX(), point6.getY(), point3.getX(), point3.getY());
+                    path.quadTo(point7.getX(), point7.getY(), point5.getX(), point5.getY()); 
+                    arr1 = new Point2D[]{point8, point6, point3, point7, point5};
+                    arr2 = new Point2D[]{point1, point8, point2,point3,point4,point5};
+                    break;
+                case 1:
+                    point1 = getRambleyEarLowerTip(x, y, point1);
+                    tempY = RAMBLEY_EAR_HEIGHT*getTestDouble1();
+                    point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+                    tempY = RAMBLEY_EAR_HEIGHT*getTestDouble2();
+                    point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+                    tempY = RAMBLEY_EAR_HEIGHT*getTestDouble3();
+                    point4.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+                    point5.setLocation(getRambleyLowerEarX(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y);
+                    point6 = getQuadBezierControlPoint(point1,point2,point3,point6);
+                    point7 = getQuadBezierControlPoint(point3,point4,point5,point7);
+                    path.moveTo(point1.getX(), point1.getY());
+                    path.quadTo(point6.getX(), point6.getY(), point3.getX(), point3.getY());
+                    path.quadTo(point7.getX(), point7.getY(), point5.getX(), point5.getY());
+                    arr1 = new Point2D[]{point6, point3, point7, point5};
+                    arr2 = new Point2D[]{point1,point2,point3,point4,point5};
+                    break;
+                case 2:
+                    point1 = getRambleyEarUpperTip(x,y,point1);
+                    tempX = point1.getX()-getTestDouble6();
+                    point1.setLocation(tempX, y+getRambleyEarTipY(tempX-x));
+                    point8 = getRambleyEarLowerTip(x,y,point8);
+                    double dx = Math.abs(point8.getX()-point1.getX());
+                    double dy = Math.abs(point8.getY()-point1.getY());
+                    tempX = dx - (dx * getTestDouble1());
+                    point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+                    tempX = dx - (dx * getTestDouble2());
+                    point3.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+                    tempX = dx - (dx * getTestDouble3());
+                    point4.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+                    point6 = getQuadBezierControlPoint(point1,point2,point3,point6);
+                    point7 = getQuadBezierControlPoint(point3,point4,point8,point7);
+                    path.moveTo(point1.getX(), point1.getY());
+                    path.quadTo(point6.getX(), point6.getY(), point3.getX(), point3.getY());
+                    path.quadTo(point7.getX(), point7.getY(), point8.getX(), point8.getY());
+                    
+//                    tempY = 
+                    
+                    
+                    arr1 = new Point2D[]{point6, point3,point7,point8};
+                    arr2 = new Point2D[]{point1,point2,point3,point4,point8};
+                    break;
+                default:
+                    return;
+            }
+            for (int i = 0; i < tempArr.length; i++){
+                System.out.println("point"+(i+1)+": "+ tempArr[i]);
+            }
+            g.setColor(RAMBLEY_CONDUCTOR_HAT_COLOR);
+            g.draw(path);
+            g.setColor(Color.CYAN);
+            path.reset();
+            path.moveTo(point1.getX(), point1.getY());
+            for (Point2D point : arr1){
+                path.lineTo(point.getX(), point.getY());
+            }
+            g.draw(path);
+            g.setColor(Color.WHITE);
+            for (Point2D point : arr2){
+                Rectangle2D pE = new Rectangle2D.Double();
+                pE.setFrameFromCenter(point.getX(), point.getY(), point.getX()-0.75, point.getY()-0.75);
+                g.fill(pE);
+            }
+            g.setColor(new Color(255,127,0));
+            for (Point2D point : arr3){
+                Ellipse2D pE = new Ellipse2D.Double();
+                pE.setFrameFromCenter(point.getX(), point.getY(), point.getX()-0.75, point.getY()-0.75);
+                g.fill(pE);
+            }
+//        } else {
+//            ArrayList<Point2D> pts = new ArrayList<>();
+//            ArrayList<Point2D> ctrlPts1 = new ArrayList<>();
+//            ArrayList<Point2D> ctrlPts2 = new ArrayList<>();
+//            point1 = getRambleyEarUpperTip(x,y,point1);
+//            point2 = getRambleyEarLowerTip(x,y,point2);
+//            pts.add(point1);
+//            double dx = Math.abs(point2.getX()-point1.getX()) / Math.max(getEarSplits(), 1);
+//            for (double x2 = point1.getX()-dx; x2 > point2.getX(); x2-=dx){
+//                pts.add(new Point2D.Double(x2,y+getRambleyEarTipY(x2-x)));
+//            }
+//            pts.add(point2);
+//            
+//            getCubicBezierSplineControlPoints(pts,ctrlPts1,ctrlPts2);
+////            if (getABTesting())
+////                path = splineToPath(pts,ctrlPts1,ctrlPts2,path);
+////            else
+////                path = splineToPath(pts1,ctrlPts1a,ctrlPts2a,path);
+//            
+//            path.moveTo(pts.get(0).getX(), pts.get(0).getY());
+//            for (int i = 1; i < pts.size(); i++){
+//                Point2D p = pts.get(i);
+//                Point2D c1 = ctrlPts1.get(i-1);
+//                Point2D c2 = ctrlPts2.get(i-1);
+//                path.curveTo(c1.getX(), c1.getY(), c2.getX(), c2.getY(), p.getX(), p.getY());
+//            }
+//            g.setColor(RAMBLEY_CONDUCTOR_HAT_COLOR);
+//            g.draw(path);
+//            g.setColor(Color.WHITE);
+//            for (Point2D point : pts){
+//                Rectangle2D pE = new Rectangle2D.Double();
+//                pE.setFrameFromCenter(point.getX(), point.getY(), point.getX()-0.75, point.getY()-0.75);
+//                g.fill(pE);
+//            }
+//            g.setColor(Color.CYAN);
+//            for (Point2D point : ctrlPts1){
+//                if (point == null)
+//                    continue;
+//                Ellipse2D pE = new Ellipse2D.Double();
+//                pE.setFrameFromCenter(point.getX(), point.getY(), point.getX()-0.75, point.getY()-0.75);
+//                g.fill(pE);
+//            }
+//            g.setColor(new Color(255,127,0));
+//            for (Point2D point : ctrlPts2){
+//                if (point == null)
+//                    continue;
+//                Ellipse2D pE = new Ellipse2D.Double();
+//                pE.setFrameFromCenter(point.getX(), point.getY(), point.getX()-0.75, point.getY()-0.75);
+//                g.fill(pE);
+//            }
+//        }
+        g.setColor(new Color(127,0,255));
+        for (Point2D point : new Point2D[]{getRambleyEarUpperTip(x,y,null),getRambleyEarLowerTip(x,y,null)}){
+            Ellipse2D pE = new Ellipse2D.Double();
+            pE.setFrameFromCenter(point.getX(), point.getY(), point.getX()-0.75, point.getY()-0.75);
+            g.fill(pE);
+        }
+    }
+    
+//    private Area getRambleyEar2(){
+//        if (path == null)
+//            path = new Path2D.Double();
+//        else
+//            path.reset();
+//        ArrayList<Point2D> upperPts = calculateSplinePoints(x,y,6,
+//                (double operand) -> getRambleyEarUpperX(operand),
+//                (double operand) -> getRambleyEarUpperY(operand));
+//        ArrayList<Point2D> lowerPts = calculateSplinePoints(x,y,6,
+//                (double operand) -> getRambleyEarLowerX(operand),
+//                (double operand) -> getRambleyEarLowerY(operand));
+//        ArrayList<Point2D> tipPts = calculateSplinePoints(x,y,9,
+//                (double operand) -> getRambleyEarTipX(operand),
+//                (double operand) -> getRambleyEarTipY(operand));
+//        Point2D upperTip = null;
+//        for (int i = 0; i < upperPts.size() && upperTip == null; i++){
+//            Point2D upperP = upperPts.get(i);
+//
+//        }
+//
+//        upperPts.removeIf(new Predicate<>(){
+//            @Override
+//            public boolean test(Point2D t) {
+//                return t.getY() >= tipPts.get(0).getY();
+//            }
+//        });
+//
+//        return new Area(path);
+//    }
+//    
+    
+    protected double getBezierControlPointOld(double x0, double x1, double x2, double t){
+        x0 = Math.pow(1-t, 2) * x0;
+        x2 = Math.pow(t, 2)*x2;
+        double b = 2 * t * (1-t);
+        return (x1 - x0 - x2) / b;
+    }
+    
+    protected Point2D getBezierControlPointOld(Point2D p0, Point2D p1, Point2D p2, double t, Point2D point){
+        if (point == null)
+            point = new Point2D.Double();
+        point.setLocation(getBezierControlPointOld(p0.getX(),p1.getX(),p2.getX(),t),
+                getBezierControlPointOld(p0.getY(),p1.getY(),p2.getY(),t));
+        return point;
+    }
+    
+    private Path2D getRambleyEarPathOld(double x, double y, double t1, double t2, 
+            double t3, double t4, double t5, Path2D path, DoubleUnaryOperator getX){
+        if (path == null)
+            path = new Path2D.Double();
+        else
+            path.reset();
+        point1.setLocation(getX.applyAsDouble(0)+x,y);
+        double tempY = RAMBLEY_EAR_HEIGHT*t1;
+        point2.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+        tempY = RAMBLEY_EAR_HEIGHT*t2;
+        point3.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+        tempY = RAMBLEY_EAR_HEIGHT*t3;
+        point4.setLocation(getX.applyAsDouble(tempY)+x, tempY+y);
+        point5.setLocation(getX.applyAsDouble(RAMBLEY_EAR_HEIGHT)+x,RAMBLEY_EAR_HEIGHT+y);
+        point6 = getBezierControlPointOld(point1,point2,point3,t4,point6);
+        point7 = getBezierControlPointOld(point3,point4,point5,t5,point7);
+        path.moveTo(point1.getX(),point1.getY());
+        path.quadTo(point6.getX(),point6.getY(), point3.getX(),point3.getY());
+        path.quadTo(point7.getX(), point7.getY(), point5.getX(),point5.getY());
+        return path;
+    }
+    
+    private static final double RAMBLEY_EAR_TIP_ROUNDING = 2;
+    
+    private Area getRambleyEar(double x, double y, Path2D path){
+        if (path == null)
+            path = new Path2D.Double();
+        else
+            path.reset();
+        double y1 = RAMBLEY_EAR_HEIGHT+y;
+        double x1 = Math.max(getRambleyUpperEarX(RAMBLEY_EAR_HEIGHT), 
+                getRambleyLowerEarX(RAMBLEY_EAR_HEIGHT))+x;
+        
+            // The point of intersection between the upper portion of the ear 
+            // and the tip of the ear
+        point7 = getRambleyEarUpperTip(x,y,point7);
+            // The point of intersection between the tip of the ear and the 
+            // lower portion of the ear
+        point8 = getRambleyEarLowerTip(x,y,point8);
+        
+            // Upper component of the ear
+        point1.setLocation(x1,y+RAMBLEY_EAR_HEIGHT/2.0);
+        path.moveTo(point1.getX(), point1.getY());
+        
+        double tempY = RAMBLEY_EAR_HEIGHT * 0.26;
+        point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+        tempY = RAMBLEY_EAR_HEIGHT * 0.17;
+        point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+        point4 = getQuadBezierControlPoint(point1,point2,point3,point4);
+        path.quadTo(point4.getX(), point4.getY(), point3.getX(), point3.getY());
+        tempY = RAMBLEY_EAR_HEIGHT/10.0;
+        point2.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
+        double tempX = point7.getX()+RAMBLEY_EAR_TIP_ROUNDING;
+        point5.setLocation(tempX, getRambleyUpperEarY(tempX-x)+y);
+        point4 = getQuadBezierControlPoint(point3,point2,point5,point4);
+        path.quadTo(point4.getX(), point4.getY(), point5.getX(), point5.getY());
+        
+            // Curve to smooth the transition between the upper portion and the 
+            // tip of the ear
+        tempX = point7.getX()-RAMBLEY_EAR_TIP_ROUNDING;
+        point6.setLocation(tempX, getRambleyEarTipY(tempX-x)+y);
+        path.quadTo(point7.getX(), point7.getY(), point6.getX(), point6.getY());
+        
+            // Tip of the ear
+        double dxTip = Math.abs(point8.getX()-point6.getX());
+        tempX = dxTip - (dxTip * 0.4);
+        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+        tempX = dxTip - (dxTip * 0.75);
+        point2.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+        point4 = getQuadBezierControlPoint(point6,point1,point2,point4);
+        path.quadTo(point4.getX(), point4.getY(), point2.getX(), point2.getY());
+        tempX = dxTip - (dxTip * 0.9);
+        point1.setLocation(tempX+x, y+getRambleyEarTipY(tempX));
+        point4 = getQuadBezierControlPoint(point2,point1,point8,point4);
+        path.quadTo(point4.getX(), point4.getY(), point8.getX(), point8.getY());
+        
+            // Lower component of the ear
+        tempY = RAMBLEY_EAR_HEIGHT*0.76;
+        point1.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+        tempY = RAMBLEY_EAR_HEIGHT*0.88;
+        point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+        point4 = getQuadBezierControlPoint(point8,point1,point2,point4);
+        path.quadTo(point4.getX(), point4.getY(), point2.getX(), point2.getY());
+        tempY = RAMBLEY_EAR_HEIGHT*0.93;
+        point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+        point1.setLocation(x1,y1);
+        point4 = getQuadBezierControlPoint(point2,point3,point1,point4);
+        path.quadTo(point4.getX(), point4.getY(), point1.getX(), point1.getY());
+        path.closePath();
+        
+        return new Area(path);
+    }
+    
+    private Area getRambleyEar(double x, double y, Path2D upper, Path2D lower, Path2D tip){
+        if (upper == null)
+            upper = new Path2D.Double();
+        else
+            upper.reset();
+        if (lower == null)
+            lower = new Path2D.Double();
+        else
+            lower.reset();
+        if (tip == null)
+            tip = new Path2D.Double();
+        else
+            tip.reset();
+        double y1 = RAMBLEY_EAR_HEIGHT+y;
+        double x1 = Math.max(getRambleyUpperEarX(RAMBLEY_EAR_HEIGHT), 
+                getRambleyLowerEarX(RAMBLEY_EAR_HEIGHT))+x;
+        
+        
+//        upper = getRambleyEarPath(x,y,0.08,0.22,0.35,0.49,1/3.0,upper, 
+//                (double operand) -> getRambleyEarUpperX(operand));
+//        lower = getRambleyEarPath(x,y,0.39,0.71,0.84,0.39,1/3.0,lower, 
+//                (double operand) -> getRambleyEarLowerX(operand));
+        
+        if (getABTesting()){
+            Point2D[] tempArr = {point1,point2,point3,point4,point5,point6,point7};
+            double tempY;
+//            getRambleyEarPathOld(x,y,0.08,0.22,0.35,0.49,1/3.0,null, 
+//                (double operand) -> getRambleyEarUpperX(operand));
+            
+//            for (int i = 0; i < tempArr.length; i++){
+//                System.out.println("point"+(i+1)+": "+ tempArr[i]);
+//            }
+            point1.setLocation(x1, y1);
+            tempY = RAMBLEY_EAR_HEIGHT*getTestDouble5();
+            point8.setLocation(getRambleyUpperEarX(tempY)+x, tempY+y);
+            tempY = RAMBLEY_EAR_HEIGHT*getTestDouble1();
+            point2.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+            tempY = RAMBLEY_EAR_HEIGHT*getTestDouble2();
+            point3.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+            tempY = RAMBLEY_EAR_HEIGHT*getTestDouble3();
+            point4.setLocation(getRambleyUpperEarX(tempY)+x,tempY+y);
+            point5 = getRambleyEarUpperTip(x,y,point5);
+            point6 = getQuadBezierControlPoint(point8,point2,point3,point6);
+            point7 = getQuadBezierControlPoint(point3,point4,point5,point7);
+            upper.moveTo(point1.getX(), point1.getY());
+            upper.lineTo(point8.getX(), point8.getY());
+            upper.quadTo(point6.getX(), point6.getY(), point3.getX(), point3.getY());
+            upper.quadTo(point7.getX(), point7.getY(), point5.getX(), point5.getY());
+            upper.lineTo(x, y);
+
+            point1 = getRambleyEarLowerTip(x, y, point1);
+            tempY = RAMBLEY_EAR_HEIGHT*0.76;
+            point2.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+            tempY = RAMBLEY_EAR_HEIGHT*0.88;
+            point3.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+            tempY = RAMBLEY_EAR_HEIGHT*0.93;
+            point4.setLocation(getRambleyLowerEarX(tempY)+x,tempY+y);
+            point5.setLocation(x1,y1);
+            point6 = getQuadBezierControlPoint(point1,point2,point3,point6);
+            point7 = getQuadBezierControlPoint(point3,point4,point5,point7);
+            lower.moveTo(x, y);
+            lower.lineTo(point1.getX(), point1.getY());
+            lower.quadTo(point6.getX(), point6.getY(), point3.getX(), point3.getY());
+            lower.quadTo(point7.getX(), point7.getY(), point5.getX(), point5.getY());
+//            lower = getRambleyEarPathOld(x,y,0.39,0.71,0.84,0.39,1/3.0,lower, 
+//                (double operand) -> getRambleyEarLowerX(operand));
+            for (int i = 0; i < tempArr.length; i++){
+                System.out.println("point"+(i+1)+": "+ tempArr[i]);
+            }
+            
+            
+            
+//            tip = getRambleyEarPath(x,y,getTestDouble1(),getTestDouble2(),getTestDouble3(),
+//                    getTestDouble4(),getTestDouble5(),tip, 
+//                    (double operand) -> getRambleyEarTipX(operand));
+//            upper = calculateEarSpline(x,y,getEarSplits(),upper,
+//                    (double operand) -> getRambleyEarUpperX(operand),
+//                    (double operand) -> getRambleyEarUpperY(operand));
+//            lower = calculateEarSpline(x,y,getEarSplits(),lower,
+//                    (double operand) -> getRambleyEarLowerX(operand),
+//                    (double operand) -> getRambleyEarLowerY(operand));
+//            tip = calculateEarSpline(x,y,getEarSplits()+3,tip,
+//                    (double operand) -> getRambleyEarTipX(operand),
+//                    (double operand) -> getRambleyEarTipY(operand));
+            for (double y2 = 0; y2 <= RAMBLEY_EAR_HEIGHT; y2+=0.5){
+                addRambleyEarPoint(y2,null,null,tip, x, y);
+            }
+            addRambleyEarPoint(RAMBLEY_EAR_HEIGHT,null,null,tip, x, y);
+            System.out.println();
+        } else {
+            for (double y2 = 0; y2 <= RAMBLEY_EAR_HEIGHT; y2+=0.5){
+                addRambleyEarPoint(y2,upper,lower,tip, x, y);
+            }
+            addRambleyEarPoint(RAMBLEY_EAR_HEIGHT,upper,lower,tip, x, y);
+            System.out.println();
+        }
+        
+        Point2D upperP = upper.getCurrentPoint();
+        Point2D lowerP = lower.getCurrentPoint();
+        Point2D tipP = tip.getCurrentPoint();
+        upper.lineTo(upperP.getX(), y+RAMBLEY_EAR_HEIGHT);
+        upper.lineTo(x, y+RAMBLEY_EAR_HEIGHT);
+        upper.closePath();
+        x = Math.max(upperP.getX(), lowerP.getX());
+        lower.lineTo(x, lowerP.getY());
+        lower.lineTo(x, y);
+        lower.closePath();
+        tip.lineTo(tipP.getX(), y+RAMBLEY_EAR_HEIGHT);
+        tip.lineTo(x, y+RAMBLEY_EAR_HEIGHT);
+        tip.lineTo(x, y);
+        tip.closePath();
+
+        Area ear = new Area(upper);
+        ear.intersect(new Area(lower));
+        ear.intersect(new Area(tip));
+
+        return ear;
+    }
