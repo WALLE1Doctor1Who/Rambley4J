@@ -107,13 +107,16 @@ public class Rambley4J extends JFrame {
      */
     private static final String SAVE_FILE_CHOOSER_PREFERENCE_NODE = 
             "SaveFileChooser";
-    
+    /**
+     * This is the key in the preference node for the directory for the save 
+     * file chooser.
+     */
     private static final String SAVE_FILE_CHOOSER_DIRECTORY_KEY = 
             "SaveCurrentDirectory";
     
-    private static final int DEFAULT_RAMBLEY_WIDTH = 512;
+    private static final int DEFAULT_RAMBLEY_WIDTH = 256;
     
-    private static final int DEFAULT_RAMBLEY_HEIGHT = 512;
+    private static final int DEFAULT_RAMBLEY_HEIGHT = 256;
     
     private static final int DEFAULT_RAMBLEY_FLAGS = 
             RambleyPainter.PAINT_BACKGROUND_FLAG | 
