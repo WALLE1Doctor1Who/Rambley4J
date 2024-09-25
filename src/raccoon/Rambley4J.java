@@ -1319,6 +1319,24 @@ public class Rambley4J extends JFrame {
         fc.setEnabled(enabled);
     }
     
+    private void updatePixelGridInputEnabled(){
+        pixelGridPanel.setEnabled(rambleyPainter.isPixelGridPainted());
+        gridSpacingLabel.setEnabled(pixelGridPanel.isEnabled());
+        gridSpacingSpinner.setEnabled(inputEnabled && gridSpacingLabel.isEnabled());
+        gridThicknessLabel.setEnabled(pixelGridPanel.isEnabled());
+        gridThicknessSpinner.setEnabled(gridSpacingSpinner.isEnabled());
+    }
+    
+    private void updatePolkaDotsInputEnabled(){
+        bgDotsPanel.setEnabled(rambleyPainter.isBackgroundPainted());
+        bgDotSizeLabel.setEnabled(bgDotsPanel.isEnabled());
+        bgDotSpacingLabel.setEnabled(bgDotsPanel.isEnabled());
+        bgDotsShapeLabel.setEnabled(bgDotsPanel.isEnabled());
+        bgDotSizeSpinner.setEnabled(inputEnabled && bgDotsPanel.isEnabled());
+        bgDotSpacingSpinner.setEnabled(bgDotSizeSpinner.isEnabled());
+        bgDotsShapeCombo.setEnabled(bgDotSizeSpinner.isEnabled());
+    }
+    
     private RambleyPainter rambleyPainter;
     /**
      * This is a preference node to store the settings for this program.
