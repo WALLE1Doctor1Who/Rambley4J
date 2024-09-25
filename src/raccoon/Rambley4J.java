@@ -24,8 +24,8 @@ import javax.swing.*;
 
 /**
  * This is a program that renders Rambley the Raccoon.
- * @author Milo Steier
- * @version 0.4.0
+ * @author WALLE1Doctor1Who
+ * @version 0.5.0
  */
 public class Rambley4J extends JFrame {
     /**
@@ -35,7 +35,7 @@ public class Rambley4J extends JFrame {
     /**
      * This is the version of the program.
      */
-    public static final String PROGRAM_VERSION = "0.4.0";
+    public static final String PROGRAM_VERSION = "0.5.0";
     /**
      * This is the credits for the program. This is currently private as I plan 
      * to rework it.
@@ -44,7 +44,7 @@ public class Rambley4J extends JFrame {
      */
     private static final String[] CREDITS = {
         "                         ---- Developers ----",
-        "Milo Steier - Main developer and artist.",
+        "WALLE1Doctor1Who - Main developer and artist.",
         "                          ---- Testers ----",
         "*Insert Testers Here*",
         "                       ---- Special Thanks ----",

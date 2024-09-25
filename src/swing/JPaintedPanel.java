@@ -12,7 +12,7 @@ import javax.swing.*;
  * This is a JPanel that can be used for custom painting using a Graphics2D 
  * graphics context. To use this class, override the {@link #paintComponent2D 
  * paintComponent2D} method in order to paint whatever you need.
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public abstract class JPaintedPanel extends JPanel {
     /**

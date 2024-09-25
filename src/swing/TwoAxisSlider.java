@@ -12,7 +12,7 @@ import javax.swing.event.*;
 
 /**
  *
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public class TwoAxisSlider extends JPanel{
     

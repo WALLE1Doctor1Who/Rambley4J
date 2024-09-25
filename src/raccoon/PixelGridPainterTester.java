@@ -13,7 +13,7 @@ import java.beans.PropertyChangeListener;
 
 /**
  *
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public class PixelGridPainterTester extends javax.swing.JFrame {
 

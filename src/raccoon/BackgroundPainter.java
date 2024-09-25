@@ -9,7 +9,7 @@ import swing.ListenedPainter;
 
 /**
  *
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public class BackgroundPainter extends ListenedPainter<Component>{
     

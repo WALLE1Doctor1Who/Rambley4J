@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * This class is only the abstract superclass for all objects which store a 2D 
  * rhombus, and the actual storage representation of the coordinates is left to 
  * the subclass.
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public abstract class Rhombus2D extends RectangularShape {
     /**

@@ -12,7 +12,7 @@ import swing.ListenedPainter;
 /**
  * This is a Painter that paints the pixel grid overlay over Rambley the 
  * Raccoon.
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public class PixelGridPainter extends ListenedPainter<Component>{
     /**

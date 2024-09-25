@@ -10,7 +10,7 @@ import swing.JPaintedPanel;
 
 /**
  *
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public class JRambley extends JPaintedPanel{
     

@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  *
- * @author Milo Steier
+ * @author WALLE1Doctor1Who
  */
 public class Rhombus2DTester extends javax.swing.JFrame {
 
