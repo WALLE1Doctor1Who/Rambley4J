@@ -247,6 +247,7 @@ public class Rambley4J extends JFrame {
         previewLabel.setIcon((Icon)rambleyPainter);
         rambleyPainter.addPropertyChangeListener(new RambleyHandler());
         updatePixelGridInputEnabled();
+        updatePolkaDotsInputEnabled();
     }
     /**
      * Creates new form Rambley4J
@@ -1311,11 +1312,9 @@ public class Rambley4J extends JFrame {
         widthSpinner.setEnabled(enabled);
         updateHeightSpinnerEnabled();
         linkSizeToggle.setEnabled(enabled);
-        bgDotSizeSpinner.setEnabled(enabled);
-        bgDotSpacingSpinner.setEnabled(enabled);
-        bgDotsShapeCombo.setEnabled(bgDotSizeSpinner.isEnabled());
         aboutButton.setEnabled(enabled);
         updatePixelGridInputEnabled();
+        updatePolkaDotsInputEnabled();
         fc.setEnabled(enabled);
     }
     
@@ -1425,6 +1424,9 @@ public class Rambley4J extends JFrame {
             previewLabel.repaint();
             if (config != null){
                 switch(evt.getPropertyName()){
+                    case(RambleyPainter.BACKGROUND_PAINTED_PROPERTY_CHANGED):
+                        updatePolkaDotsInputEnabled();
+                        break;
                     case(RambleyPainter.PIXEL_GRID_PAINTED_PROPERTY_CHANGED):
                         updatePixelGridInputEnabled();
                 }
