@@ -1183,6 +1183,7 @@ public class Rambley4J extends JFrame {
         if (linkSizeToggle.isSelected())
             heightSpinner.setValue(widthSpinner.getValue());
         updateConfigBoolean(LINK_RAMBLEY_SIZE_KEY,linkSizeToggle);
+        previewLabel.repaint();
     }//GEN-LAST:event_linkSizeToggleActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
