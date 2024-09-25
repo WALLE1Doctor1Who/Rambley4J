@@ -514,6 +514,7 @@ public class Rambley4J extends JFrame {
         saveButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
         scalePreviewToggle = new javax.swing.JCheckBox();
+        aboutButton = new javax.swing.JButton();
         mouthPanel = new javax.swing.JPanel();
         mouthCtrl = new swing.TwoAxisSlider();
         jawToggle = new javax.swing.JCheckBox();
@@ -714,17 +715,28 @@ public class Rambley4J extends JFrame {
             }
         });
 
+        aboutButton.setText("About");
+        aboutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(0, 60, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scalePreviewToggle, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(scalePreviewToggle, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(aboutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -736,7 +748,9 @@ public class Rambley4J extends JFrame {
                 .addComponent(saveButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(resetButton)
-                .addContainerGap(127, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(aboutButton)
+                .addContainerGap(100, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1211,6 +1225,30 @@ public class Rambley4J extends JFrame {
         setInputEnabled(inputEnabledToggle.isSelected());
     }//GEN-LAST:event_inputEnabledToggleActionPerformed
 
+    private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
+            // TODO: Rework the about window to look good.
+        String message = "About "+PROGRAM_NAME+
+                "\nVersion: "+PROGRAM_VERSION+
+                "\n\nCredits: ";
+        for (String value : CREDITS)
+            message += "\n"+value;
+        RambleyIcon icon = new RambleyIcon(){
+            @Override
+            public int getIconWidth(){
+                return 128;
+            }
+            @Override
+            public int getIconHeight(){
+                return 256;
+            }
+        };
+        icon.setFlags(ICON_IMAGES_RAMBLEY_FLAGS);
+        icon.setRambleyOpenMouthHeight(1.0);
+        
+        JOptionPane.showMessageDialog(this, message, "About "+PROGRAM_NAME,
+                JOptionPane.PLAIN_MESSAGE,icon);
+    }//GEN-LAST:event_aboutButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1298,6 +1336,7 @@ public class Rambley4J extends JFrame {
      */
     private final boolean debugMode;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton aboutButton;
     private javax.swing.JCheckBox bandanaToggle;
     private javax.swing.JSpinner bgDotSizeSpinner;
     private javax.swing.JSpinner bgDotSpacingSpinner;
