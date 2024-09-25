@@ -25,8 +25,17 @@ import javax.swing.*;
 /**
  * This is a program that renders Rambley the Raccoon.
  * @author Milo Steier
+ * @version 0.4.0-beta
  */
 public class Rambley4J extends JFrame {
+    /**
+     * This is the name of the program.
+     */
+    public static final String PROGRAM_NAME = "Rambley4J";
+    /**
+     * This is the version of the program.
+     */
+    public static final String PROGRAM_VERSION = "0.4.0-beta";
     /**
      * This is an array containing the widths and heights for the icon images 
      * for this program. The icon images are generated on the fly.
