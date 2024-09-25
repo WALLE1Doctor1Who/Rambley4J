@@ -503,13 +503,13 @@ public class Rambley4J extends JFrame {
         outlineToggle = new javax.swing.JCheckBox();
         hatToggle = new javax.swing.JCheckBox();
         flippedToggle = new javax.swing.JCheckBox();
-        jPanel1 = new javax.swing.JPanel();
+        sidePanel = new javax.swing.JPanel();
         eyesPanel = new javax.swing.JPanel();
         eyeCtrlR = new swing.TwoAxisSlider();
         eyeCtrlL = new swing.TwoAxisSlider();
         filler7 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 7), new java.awt.Dimension(0, 7), new java.awt.Dimension(32767, 7));
-        jPanel6 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        centerSidePanel = new javax.swing.JPanel();
+        leftCenterSidePanel = new javax.swing.JPanel();
         linkEyesToggle = new javax.swing.JCheckBox();
         saveButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
@@ -520,31 +520,31 @@ public class Rambley4J extends JFrame {
         jawToggle = new javax.swing.JCheckBox();
         filler8 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 7), new java.awt.Dimension(0, 7), new java.awt.Dimension(32767, 7));
         pixelGridPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        gridSpacingLabel = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         gridSpacingSpinner = new javax.swing.JSpinner();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
-        jLabel3 = new javax.swing.JLabel();
+        gridThicknessLabel = new javax.swing.JLabel();
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         gridThicknessSpinner = new javax.swing.JSpinner();
         filler9 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 7), new java.awt.Dimension(0, 7), new java.awt.Dimension(32767, 7));
         bgDotsPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        bgDotsShapeLabel = new javax.swing.JLabel();
         bgDotsShapeCombo = new javax.swing.JComboBox<>();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        bgDotsSpinnerPanel = new javax.swing.JPanel();
+        bgDotSizeLabel = new javax.swing.JLabel();
         filler4 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         bgDotSizeSpinner = new javax.swing.JSpinner();
         filler5 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
-        jLabel5 = new javax.swing.JLabel();
+        bgDotSpacingLabel = new javax.swing.JLabel();
         filler6 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         bgDotSpacingSpinner = new javax.swing.JSpinner();
         sizePanel = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
+        widthLabel = new javax.swing.JLabel();
         filler11 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         widthSpinner = new javax.swing.JSpinner();
         filler12 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
-        jLabel7 = new javax.swing.JLabel();
+        heightLabel = new javax.swing.JLabel();
         filler13 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
         heightSpinner = new javax.swing.JSpinner();
         filler14 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
@@ -649,7 +649,7 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        sidePanel.setLayout(new javax.swing.BoxLayout(sidePanel, javax.swing.BoxLayout.Y_AXIS));
 
         eyesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Eyes"));
         eyesPanel.setLayout(new java.awt.GridLayout(1, 0, 10, 0));
@@ -680,10 +680,10 @@ public class Rambley4J extends JFrame {
         });
         eyesPanel.add(eyeCtrlL);
 
-        jPanel1.add(eyesPanel);
-        jPanel1.add(filler7);
+        sidePanel.add(eyesPanel);
+        sidePanel.add(filler7);
 
-        jPanel6.setLayout(new java.awt.GridBagLayout());
+        centerSidePanel.setLayout(new java.awt.GridBagLayout());
 
         linkEyesToggle.setSelected(true);
         linkEyesToggle.setText("Link Eyes");
@@ -722,25 +722,25 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout leftCenterSidePanelLayout = new javax.swing.GroupLayout(leftCenterSidePanel);
+        leftCenterSidePanel.setLayout(leftCenterSidePanelLayout);
+        leftCenterSidePanelLayout.setHorizontalGroup(
+            leftCenterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftCenterSidePanelLayout.createSequentialGroup()
                 .addGap(0, 60, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(leftCenterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(scalePreviewToggle, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(leftCenterSidePanelLayout.createSequentialGroup()
                         .addGap(19, 19, 19)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(leftCenterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(aboutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        leftCenterSidePanelLayout.setVerticalGroup(
+            leftCenterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftCenterSidePanelLayout.createSequentialGroup()
                 .addComponent(linkEyesToggle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(scalePreviewToggle)
@@ -759,7 +759,7 @@ public class Rambley4J extends JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.4;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 6);
-        jPanel6.add(jPanel2, gridBagConstraints);
+        centerSidePanel.add(leftCenterSidePanel, gridBagConstraints);
 
         mouthPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Mouth"));
         mouthPanel.setLayout(new java.awt.BorderLayout(0, 6));
@@ -787,17 +787,17 @@ public class Rambley4J extends JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 0.9;
-        jPanel6.add(mouthPanel, gridBagConstraints);
+        centerSidePanel.add(mouthPanel, gridBagConstraints);
 
-        jPanel1.add(jPanel6);
-        jPanel1.add(filler8);
+        sidePanel.add(centerSidePanel);
+        sidePanel.add(filler8);
 
         pixelGridPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Pixel Grid"));
         pixelGridPanel.setLayout(new javax.swing.BoxLayout(pixelGridPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel2.setLabelFor(gridSpacingSpinner);
-        jLabel2.setText("Spacing:");
-        pixelGridPanel.add(jLabel2);
+        gridSpacingLabel.setLabelFor(gridSpacingSpinner);
+        gridSpacingLabel.setText("Spacing:");
+        pixelGridPanel.add(gridSpacingLabel);
         pixelGridPanel.add(filler1);
 
         gridSpacingSpinner.setModel(new javax.swing.SpinnerNumberModel(5.0d, 1.0d, null, 1.0d));
@@ -809,9 +809,9 @@ public class Rambley4J extends JFrame {
         pixelGridPanel.add(gridSpacingSpinner);
         pixelGridPanel.add(filler2);
 
-        jLabel3.setLabelFor(gridThicknessSpinner);
-        jLabel3.setText("Thickness:");
-        pixelGridPanel.add(jLabel3);
+        gridThicknessLabel.setLabelFor(gridThicknessSpinner);
+        gridThicknessLabel.setText("Thickness:");
+        pixelGridPanel.add(gridThicknessLabel);
         pixelGridPanel.add(filler3);
 
         gridThicknessSpinner.setModel(new javax.swing.SpinnerNumberModel(1.0f, 0.0f, null, 1.0f));
@@ -822,13 +822,13 @@ public class Rambley4J extends JFrame {
         });
         pixelGridPanel.add(gridThicknessSpinner);
 
-        jPanel1.add(pixelGridPanel);
-        jPanel1.add(filler9);
+        sidePanel.add(pixelGridPanel);
+        sidePanel.add(filler9);
 
         bgDotsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Background Polka-Dots"));
 
-        jLabel1.setLabelFor(bgDotsComboBox);
-        jLabel1.setText("Shape:");
+        bgDotsShapeLabel.setLabelFor(bgDotsShapeCombo);
+        bgDotsShapeLabel.setText("Shape:");
 
         bgDotsShapeCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rhombus", "Circle" }));
         bgDotsShapeCombo.addActionListener(new java.awt.event.ActionListener() {
@@ -837,12 +837,12 @@ public class Rambley4J extends JFrame {
             }
         });
 
-        jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.LINE_AXIS));
+        bgDotsSpinnerPanel.setLayout(new javax.swing.BoxLayout(bgDotsSpinnerPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel4.setLabelFor(bgDotSizeSpinner);
-        jLabel4.setText("Size:");
-        jPanel5.add(jLabel4);
-        jPanel5.add(filler4);
+        bgDotSizeLabel.setLabelFor(bgDotSizeSpinner);
+        bgDotSizeLabel.setText("Size:");
+        bgDotsSpinnerPanel.add(bgDotSizeLabel);
+        bgDotsSpinnerPanel.add(filler4);
 
         bgDotSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(8.0d, null, null, 1.0d));
         bgDotSizeSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -850,13 +850,13 @@ public class Rambley4J extends JFrame {
                 bgDotSizeSpinnerStateChanged(evt);
             }
         });
-        jPanel5.add(bgDotSizeSpinner);
-        jPanel5.add(filler5);
+        bgDotsSpinnerPanel.add(bgDotSizeSpinner);
+        bgDotsSpinnerPanel.add(filler5);
 
-        jLabel5.setLabelFor(bgDotSpacingSpinner);
-        jLabel5.setText("Spacing:");
-        jPanel5.add(jLabel5);
-        jPanel5.add(filler6);
+        bgDotSpacingLabel.setLabelFor(bgDotSpacingSpinner);
+        bgDotSpacingLabel.setText("Spacing:");
+        bgDotsSpinnerPanel.add(bgDotSpacingLabel);
+        bgDotsSpinnerPanel.add(filler6);
 
         bgDotSpacingSpinner.setModel(new javax.swing.SpinnerNumberModel(12.0d, null, null, 1.0d));
         bgDotSpacingSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -864,7 +864,7 @@ public class Rambley4J extends JFrame {
                 bgDotSpacingSpinnerStateChanged(evt);
             }
         });
-        jPanel5.add(bgDotSpacingSpinner);
+        bgDotsSpinnerPanel.add(bgDotSpacingSpinner);
 
         javax.swing.GroupLayout bgDotsPanelLayout = new javax.swing.GroupLayout(bgDotsPanel);
         bgDotsPanel.setLayout(bgDotsPanelLayout);
@@ -873,9 +873,9 @@ public class Rambley4J extends JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bgDotsPanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bgDotsSpinnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(bgDotsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(bgDotsShapeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bgDotsShapeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(0, 0, 0))
@@ -883,22 +883,22 @@ public class Rambley4J extends JFrame {
         bgDotsPanelLayout.setVerticalGroup(
             bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bgDotsPanelLayout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bgDotsSpinnerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(bgDotsShapeLabel)
                     .addComponent(bgDotsShapeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0))
         );
 
-        jPanel1.add(bgDotsPanel);
+        sidePanel.add(bgDotsPanel);
 
         sizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Size"));
         sizePanel.setLayout(new javax.swing.BoxLayout(sizePanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel6.setLabelFor(widthSpinner);
-        jLabel6.setText("Width:");
-        sizePanel.add(jLabel6);
+        widthLabel.setLabelFor(widthSpinner);
+        widthLabel.setText("Width:");
+        sizePanel.add(widthLabel);
         sizePanel.add(filler11);
 
         widthSpinner.setModel(new javax.swing.SpinnerNumberModel(512, 0, null, 1));
@@ -910,9 +910,9 @@ public class Rambley4J extends JFrame {
         sizePanel.add(widthSpinner);
         sizePanel.add(filler12);
 
-        jLabel7.setLabelFor(heightSpinner);
-        jLabel7.setText("Height:");
-        sizePanel.add(jLabel7);
+        heightLabel.setLabelFor(heightSpinner);
+        heightLabel.setText("Height:");
+        sizePanel.add(heightLabel);
         sizePanel.add(filler13);
 
         heightSpinner.setModel(new javax.swing.SpinnerNumberModel(512, 0, null, 1));
@@ -966,7 +966,7 @@ public class Rambley4J extends JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(previewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
         );
         layout.setVerticalGroup(
@@ -975,7 +975,7 @@ public class Rambley4J extends JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(sidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(previewLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1338,11 +1338,16 @@ public class Rambley4J extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
     private javax.swing.JCheckBox bandanaToggle;
+    private javax.swing.JLabel bgDotSizeLabel;
     private javax.swing.JSpinner bgDotSizeSpinner;
+    private javax.swing.JLabel bgDotSpacingLabel;
     private javax.swing.JSpinner bgDotSpacingSpinner;
     private javax.swing.JPanel bgDotsPanel;
     private javax.swing.JComboBox<String> bgDotsShapeCombo;
+    private javax.swing.JLabel bgDotsShapeLabel;
+    private javax.swing.JPanel bgDotsSpinnerPanel;
     private javax.swing.JCheckBox bgToggle;
+    private javax.swing.JPanel centerSidePanel;
     private javax.swing.JPopupMenu debugPopup;
     private javax.swing.JCheckBox evilToggle;
     private swing.TwoAxisSlider eyeCtrlL;
@@ -1364,25 +1369,18 @@ public class Rambley4J extends JFrame {
     private javax.swing.Box.Filler filler9;
     private javax.swing.JCheckBox flippedToggle;
     private javax.swing.JCheckBox glitchyToggle;
+    private javax.swing.JLabel gridSpacingLabel;
     private javax.swing.JSpinner gridSpacingSpinner;
+    private javax.swing.JLabel gridThicknessLabel;
     private javax.swing.JSpinner gridThicknessSpinner;
     private javax.swing.JCheckBox gridToggle;
     private javax.swing.JCheckBox hatToggle;
+    private javax.swing.JLabel heightLabel;
     private javax.swing.JSpinner heightSpinner;
     private javax.swing.JCheckBox ignoreRatioToggle;
     private javax.swing.JCheckBoxMenuItem inputEnabledToggle;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JCheckBox jawToggle;
+    private javax.swing.JPanel leftCenterSidePanel;
     private javax.swing.JCheckBox linkEyesToggle;
     private javax.swing.JCheckBox linkSizeToggle;
     private swing.TwoAxisSlider mouthCtrl;
@@ -1395,7 +1393,9 @@ public class Rambley4J extends JFrame {
     private javax.swing.JButton saveButton;
     private javax.swing.JCheckBox scalePreviewToggle;
     private javax.swing.JCheckBox shadowToggle;
+    private javax.swing.JPanel sidePanel;
     private javax.swing.JPanel sizePanel;
+    private javax.swing.JLabel widthLabel;
     private javax.swing.JSpinner widthSpinner;
     // End of variables declaration//GEN-END:variables
     
