@@ -1315,6 +1315,7 @@ public class Rambley4J extends JFrame {
         bgDotSizeSpinner.setEnabled(enabled);
         bgDotSpacingSpinner.setEnabled(enabled);
         bgDotsShapeCombo.setEnabled(bgDotSizeSpinner.isEnabled());
+        aboutButton.setEnabled(enabled);
         fc.setEnabled(enabled);
     }
     
