@@ -850,6 +850,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * This is the thickness of the lines in the pixel grid.
      */
     private float gridThickness;
+    
+    private PixelGridPainter pixelGridPainter;
     /**
      * The x component for the location of the center of Rambley's right iris and 
      * pupil. 0.0 is the default position, -1.0 is the left-most bounds for Rambley's right eye 
