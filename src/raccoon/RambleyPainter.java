@@ -837,6 +837,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private double dotSpacing;
     /**
+     * This is the 
+     */
+    private int dotShape;
+    /**
      * This is the spacing between the lines in the pixel grid. For the vertical 
      * lines, this is the horizontal spacing. For the horizontal lines, this is 
      * the vertical spacing.
