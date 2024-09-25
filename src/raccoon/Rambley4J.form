@@ -303,8 +303,7 @@
                       <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="60" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="linkEyesToggle" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="scalePreviewToggle" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="scalePreviewToggle" alignment="1" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="19" pref="19" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -313,6 +312,7 @@
                                       <Component id="aboutButton" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
+                              <Component id="linkEyesToggle" alignment="1" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>

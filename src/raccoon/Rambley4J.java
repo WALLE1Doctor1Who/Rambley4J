@@ -729,14 +729,14 @@ public class Rambley4J extends JFrame {
             .addGroup(leftCenterSidePanelLayout.createSequentialGroup()
                 .addGap(0, 60, Short.MAX_VALUE)
                 .addGroup(leftCenterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scalePreviewToggle, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scalePreviewToggle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(leftCenterSidePanelLayout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addGroup(leftCenterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(aboutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                            .addComponent(aboutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(linkEyesToggle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         leftCenterSidePanelLayout.setVerticalGroup(
             leftCenterSidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
