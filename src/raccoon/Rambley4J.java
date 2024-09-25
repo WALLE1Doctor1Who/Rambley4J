@@ -37,6 +37,24 @@ public class Rambley4J extends JFrame {
      */
     public static final String PROGRAM_VERSION = "0.4.0-beta";
     /**
+     * This is the credits for the program. This is currently private as I plan 
+     * to rework it.
+     * @todo Rework this and then make it public. Also add any additional 
+     * credits necessary
+     */
+    private static final String[] CREDITS = {
+        "                         ---- Developers ----",
+        "Milo Steier - Main developer and artist.",
+        "                          ---- Testers ----",
+        "*Insert Testers Here*",
+        "                       ---- Special Thanks ----",
+        "Special thanks to UniqueGeese and his team for creating Indigo Park and",
+        "    thus Rambley.",
+        "Special thanks to AnimalWave on Discord for help with the calculations.",
+        "Special thanks to the UniqueGeese/Indigo Park server for encouraging me",
+        "    to make this and for giving moral support."
+    };
+    /**
      * This is an array containing the widths and heights for the icon images 
      * for this program. The icon images are generated on the fly.
      */
