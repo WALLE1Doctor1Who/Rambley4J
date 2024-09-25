@@ -53,6 +53,7 @@ public class TwoAxisSlider extends JPanel{
         centerButton = new JButton("C");
         centerButton.addActionListener(handler);
         centerButton.setMargin(new Insets(0,-3,0,-3));
+        centerButton.setToolTipText("Center");
         
         
         GridBagConstraints c = new GridBagConstraints();
