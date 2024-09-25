@@ -34,6 +34,7 @@ public class TwoAxisSlider extends JPanel{
     
     
     
+    
     private void configureSlider(JSlider slider, Handler handler){
         slider.setMajorTickSpacing(majorTickSpacing);
         slider.setMajorTickSpacing(minorTickSpacing);
@@ -49,12 +50,14 @@ public class TwoAxisSlider extends JPanel{
         ySlider.setInverted(true);
         
         displayPanel = new ControlDisplayPanel();
+        displayPanel.setFocusable(true);
+        displayPanel.addMouseListener(handler);
+        displayPanel.addMouseMotionListener(handler);
         
         centerButton = new JButton("C");
         centerButton.addActionListener(handler);
         centerButton.setMargin(new Insets(0,-3,0,-3));
         centerButton.setToolTipText("Center");
-        
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -409,8 +412,7 @@ public class TwoAxisSlider extends JPanel{
         }
     }
     
-    private class Handler implements ChangeListener, ActionListener{
-
+    private class Handler extends MouseAdapter implements ChangeListener, ActionListener{
         @Override
         public void stateChanged(ChangeEvent evt) {
             fireStateChanged();
@@ -418,12 +420,43 @@ public class TwoAxisSlider extends JPanel{
 //            System.out.println("xSlider: " + getPositionX());
 //            System.out.println("ySlider: " + getPositionY());
         }
-
         @Override
         public void actionPerformed(ActionEvent evt) {
             setValueX((int)(getRangeX()/2.0)+getMinimumX());
             setValueY((int)(getRangeY()/2.0)+getMinimumY());
         }
-        
+        @Override
+        public void mouseClicked(MouseEvent evt) {
+            
+        }
+        @Override
+        public void mousePressed(MouseEvent evt) {
+//            System.out.println(evt.getPoint());
+//            System.out.println(ellipse.contains(evt.getPoint()));
+//            if (ellipse.contains(evt.getPoint())){
+//                
+//            }
+        }
+        @Override
+        public void mouseReleased(MouseEvent evt) {
+            
+        }
+        @Override
+        public void mouseEntered(MouseEvent evt) {
+            
+        }
+        @Override
+        public void mouseExited(MouseEvent evt) {
+            
+        }
+        @Override
+        public void mouseDragged(MouseEvent evt){
+//            System.out.println("Dragged: " + evt);
+//            System.out.println(ellipse.contains(evt.getPoint()));
+        }
+        @Override
+        public void mouseMoved(MouseEvent evt){
+            
+        }
     }
 }
