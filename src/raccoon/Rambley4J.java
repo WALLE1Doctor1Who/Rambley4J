@@ -285,7 +285,7 @@ public class Rambley4J extends JFrame {
         gridToggle.setSelected(rambleyPainter.isPixelGridPainted());
         evilToggle.setSelected(rambleyPainter.isRambleyEvil());
         ignoreRatioToggle.setSelected(rambleyPainter.isAspectRatioIgnored());
-        bgDotsComboBox.setSelectedIndex(rambleyPainter.getCircularBackgroundDots() ? 1 : 0);
+        bgDotsShapeCombo.setSelectedIndex(rambleyPainter.getCircularBackgroundDots() ? 1 : 0);
         shadowToggle.setSelected(rambleyPainter.isRambleyShadowPainted());
         outlineToggle.setSelected(rambleyPainter.isRambleyOutlinePainted());
         updateHeightSpinnerEnabled();
@@ -530,7 +530,7 @@ public class Rambley4J extends JFrame {
         filler9 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 7), new java.awt.Dimension(0, 7), new java.awt.Dimension(32767, 7));
         bgDotsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        bgDotsComboBox = new javax.swing.JComboBox<>();
+        bgDotsShapeCombo = new javax.swing.JComboBox<>();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         filler4 = new javax.swing.Box.Filler(new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 0), new java.awt.Dimension(6, 32767));
@@ -830,10 +830,10 @@ public class Rambley4J extends JFrame {
         jLabel1.setLabelFor(bgDotsComboBox);
         jLabel1.setText("Shape:");
 
-        bgDotsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rhombus", "Circle" }));
-        bgDotsComboBox.addActionListener(new java.awt.event.ActionListener() {
+        bgDotsShapeCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rhombus", "Circle" }));
+        bgDotsShapeCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bgDotsComboBoxActionPerformed(evt);
+                bgDotsShapeComboActionPerformed(evt);
             }
         });
 
@@ -877,7 +877,7 @@ public class Rambley4J extends JFrame {
                     .addGroup(bgDotsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bgDotsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(bgDotsShapeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(0, 0, 0))
         );
         bgDotsPanelLayout.setVerticalGroup(
@@ -887,7 +887,7 @@ public class Rambley4J extends JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(bgDotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(bgDotsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bgDotsShapeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0))
         );
 
@@ -1048,9 +1048,9 @@ public class Rambley4J extends JFrame {
         rambleyPainter.setPixelGridPainted(gridToggle.isSelected());
     }//GEN-LAST:event_gridToggleActionPerformed
 
-    private void bgDotsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgDotsComboBoxActionPerformed
-        rambleyPainter.setCircularBackgroundDots(bgDotsComboBox.getSelectedIndex() > 0);
-    }//GEN-LAST:event_bgDotsComboBoxActionPerformed
+    private void bgDotsShapeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgDotsShapeComboActionPerformed
+        rambleyPainter.setCircularBackgroundDots(bgDotsShapeCombo.getSelectedIndex() > 0);
+    }//GEN-LAST:event_bgDotsShapeComboActionPerformed
 
     private void bandanaToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bandanaToggleActionPerformed
         rambleyPainter.setRambleyBandanaPainted(bandanaToggle.isSelected());
@@ -1314,7 +1314,7 @@ public class Rambley4J extends JFrame {
         gridThicknessSpinner.setEnabled(enabled);
         bgDotSizeSpinner.setEnabled(enabled);
         bgDotSpacingSpinner.setEnabled(enabled);
-        bgDotsComboBox.setEnabled(enabled);
+        bgDotsShapeCombo.setEnabled(bgDotSizeSpinner.isEnabled());
         fc.setEnabled(enabled);
     }
     
@@ -1340,8 +1340,8 @@ public class Rambley4J extends JFrame {
     private javax.swing.JCheckBox bandanaToggle;
     private javax.swing.JSpinner bgDotSizeSpinner;
     private javax.swing.JSpinner bgDotSpacingSpinner;
-    private javax.swing.JComboBox<String> bgDotsComboBox;
     private javax.swing.JPanel bgDotsPanel;
+    private javax.swing.JComboBox<String> bgDotsShapeCombo;
     private javax.swing.JCheckBox bgToggle;
     private javax.swing.JPopupMenu debugPopup;
     private javax.swing.JCheckBox evilToggle;

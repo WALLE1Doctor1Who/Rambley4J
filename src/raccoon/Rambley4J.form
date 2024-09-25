@@ -576,7 +576,7 @@
                           <Group type="102" attributes="0">
                               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="bgDotsComboBox" max="32767" attributes="0"/>
+                              <Component id="bgDotsShapeCombo" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -590,7 +590,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="bgDotsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bgDotsShapeCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
@@ -601,12 +601,12 @@
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
                 <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="bgDotsComboBox"/>
+                  <ComponentRef name="bgDotsShapeCombo"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Shape:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="bgDotsComboBox">
+            <Component class="javax.swing.JComboBox" name="bgDotsShapeCombo">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="2">
@@ -616,7 +616,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bgDotsComboBoxActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bgDotsShapeComboActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
