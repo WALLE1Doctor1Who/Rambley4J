@@ -114,7 +114,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
                     RambleyPainter.BACKGROUND_DOT_SPACING_PROPERTY_CHANGED, 
                     rambley.getBackgroundDotSpacing()));
             pGridSpinner.setValue(config.getDouble(
-                    RambleyPainter.PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED, 
+                    PixelGridPainter.LINE_SPACING_PROPERTY_CHANGED, 
                     rambley.getPixelGridLineSpacing()));
             linkEyesToggle.setSelected(config.getBoolean(LINK_RAMBLEY_EYES_KEY,
                     linkEyesToggle.isSelected()));
@@ -151,7 +151,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
                     RambleyPainter.RAMBLEY_OPEN_MOUTH_HEIGHT_PROPERTY_CHANGED,
                     rambley.getRambleyOpenMouthHeight(),100);
             gridThickSpinner.setValue(config.getFloat(
-                    RambleyPainter.PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED, 
+                    PixelGridPainter.LINE_THICKNESS_PROPERTY_CHANGED, 
                     rambley.getPixelGridLineThickness()));
             String selFile = config.get(SELECTED_SAVE_FILE_KEY, null);
             if (selFile != null)
@@ -1021,7 +1021,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
                 heightSpinner.getValue()));
         bgDotSizeSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SIZE);
         bgDotSpacingSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SPACING);
-        pGridSpinner.setValue(RambleyPainter.DEFAULT_PIXEL_GRID_LINE_SPACING);
+        pGridSpinner.setValue(PixelGridPainter.DEFAULT_LINE_SPACING);
         linkEyesToggle.setSelected(true);
         rightEyeControl.setValueX(0);
         rightEyeControl.setValueY(0);

@@ -25,8 +25,8 @@ replay_pid*
 /build/
 /dist/
 
-# The open files and bookmarks config file for the project
-/nbproject/private/private.xml
+# The settings for the netbeans IDE for this project
+/nbproject/private/*
 
 # Windows ini file
 /desktop.ini

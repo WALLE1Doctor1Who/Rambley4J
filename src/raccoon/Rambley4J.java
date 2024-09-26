@@ -802,7 +802,7 @@ public class Rambley4J extends JFrame {
         pixelGridPanel.add(gridSpacingLabel);
         pixelGridPanel.add(filler1);
 
-        gridSpacingSpinner.setModel(new javax.swing.SpinnerNumberModel(5.0d, 1.0d, null, 1.0d));
+        gridSpacingSpinner.setModel(new javax.swing.SpinnerNumberModel(5.0d, 0.0d, null, 1.0d));
         gridSpacingSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 gridSpacingSpinnerStateChanged(evt);
@@ -1194,7 +1194,7 @@ public class Rambley4J extends JFrame {
                 heightSpinner.getValue()));
         bgDotSizeSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SIZE);
         bgDotSpacingSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SPACING);
-        gridSpacingSpinner.setValue(RambleyPainter.DEFAULT_PIXEL_GRID_LINE_SPACING);
+        gridSpacingSpinner.setValue(PixelGridPainter.DEFAULT_LINE_SPACING);
         gridThicknessSpinner.setValue(PixelGridPainter.DEFAULT_LINE_THICKNESS);
         linkEyesToggle.setSelected(true);
         eyeCtrlR.setValueX(0);
@@ -1445,12 +1445,12 @@ public class Rambley4J extends JFrame {
                                 config.putDouble(BACKGROUND_DOT_SPACING_KEY, 
                                         rambleyPainter.getBackgroundDotSpacing());
                                 break;
-                            // BACKGROUND_DOT_SHAPE_KEY goes here
-                            case(RambleyPainter.PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED):
+                            // TODO: BACKGROUND_DOT_SHAPE_KEY goes here
+                            case(PixelGridPainter.LINE_SPACING_PROPERTY_CHANGED):
                                 config.putDouble(PIXEL_GRID_SPACING_KEY, 
                                         rambleyPainter.getPixelGridLineSpacing());
                                 break;
-                            case(RambleyPainter.PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED):
+                            case(PixelGridPainter.LINE_THICKNESS_PROPERTY_CHANGED):
                                 config.putFloat(PIXEL_GRID_THICKNESS_KEY, 
                                         rambleyPainter.getPixelGridLineThickness());
                                 break;

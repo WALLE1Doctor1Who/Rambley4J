@@ -7,6 +7,8 @@ package raccoon;
 import geom.*;
 import java.awt.*;
 import java.awt.geom.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import swing.ListenedPainter;
@@ -41,11 +43,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     protected static final Color BACKGROUND_GRADIENT_COLOR_2 = 
             new Color(BACKGROUND_GRADIENT_COLOR.getRGB()&0x00FFFFFF,true);
-    /**
-     * This is the color used to render the pixel grid effect that goes over 
-     * Rambley. This color is a translucent black.
-     */
-    public static final Color PIXEL_GRID_COLOR = new Color(0x60000000,true);
     /**
      * This is the main color of Rambley the Raccoon. That is to say, this is 
      * the color which most of Rambley's body is comprised of.
@@ -263,11 +260,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     protected static final double DEFAULT_BACKGROUND_DOT_SPACING = 12.0;
     /**
-     * This is the default spacing between the lines in the pixel grid. For the 
-     * vertical lines, this is the horizontal spacing. For the horizontal lines, 
-     * this is the vertical spacing.
+     * This is the width and height at which the background dots are drawn at 
+     * internally.
      */
-    protected static final double DEFAULT_PIXEL_GRID_LINE_SPACING = 5;
+    private static final double INTERNAL_BG_DOT_RENDER_SIZE = 256;
     /**
      * This is the angle of elevation for Rambley's cheeks.
      */
@@ -772,18 +768,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
     public static final String BACKGROUND_DOT_SPACING_PROPERTY_CHANGED = 
             "BackgroundDotSpacingPropertyChanged"; 
     /**
-     * This identifies that a change has been made to the spacing of the lines 
-     * in the pixel grid.
-     */
-    public static final String PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED = 
-            "PixelGridSpacingPropertyChanged"; 
-    /**
-     * This identifies that a change has been made to the thickness of the lines 
-     * in the pixel grid.
-     */
-    public static final String PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED = 
-            "PixelGridThicknessPropertyChanged"; 
-    /**
      * 
      */
     public static final String RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED = 
@@ -826,6 +810,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private int flags;
     /**
+     * A handler to use to listen to the painters RambleyPainter delegates tasks 
+     * to.
+     */
+    private Handler handler;
+    /**
      * The width and height of the background polka dots.
      */
     private double dotSize;
@@ -841,16 +830,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private int dotShape;
     /**
-     * This is the spacing between the lines in the pixel grid. For the vertical 
-     * lines, this is the horizontal spacing. For the horizontal lines, this is 
-     * the vertical spacing.
+     * This is a PixelGridPainter used to paint the pixel grid effect.
      */
-    private double gridSpacing;
-    /**
-     * This is the thickness of the lines in the pixel grid.
-     */
-    private float gridThickness;
-    
     private PixelGridPainter pixelGridPainter;
     /**
      * The x component for the location of the center of Rambley's right iris and 
@@ -942,11 +923,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
     of these objects, and that assumption turns out to be wrong.
     */
     
-    /**
-     * A Path2D object used to render the pixel grid effect. This is initially 
-     * null and is initialized the first time it is used.
-     */
-    private Path2D pixelGrid = null;
     /**
      * A Rhombus2D object used to draw the background polka dots. This is 
      * initially null and is initialized the first time it is used.
@@ -1157,10 +1133,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     public RambleyPainter(){
         flags = DEFAULT_FLAG_SETTINGS;
+        handler = new Handler();
         dotSize = DEFAULT_BACKGROUND_DOT_SIZE;
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
-        gridSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
-        gridThickness = 1.0f;
+        pixelGridPainter = new PixelGridPainter();
+        pixelGridPainter.addPropertyChangeListener(handler);
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.0;
         mouthOpenWidth = 1.0;
         mouthOpenHeight = 0.0;
@@ -1798,6 +1775,14 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return this;
     }
     /**
+     * This returns the {@code PixelGridPainter} used to draw the pixel grid 
+     * effect over Rambley.
+     * @return The {@code PixelGridPainter}.
+     */
+    public PixelGridPainter getPixelGridPainter(){
+        return pixelGridPainter;
+    }
+    /**
      * This returns the spacing between the lines in the pixel grid. For the 
      * vertical lines, this is the horizontal spacing. For the horizontal lines, 
      * this is the vertical spacing.
@@ -1809,7 +1794,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public double getPixelGridLineSpacing(){
-        return gridSpacing;
+        return getPixelGridPainter().getLineSpacing();
     }
     /**
      * This sets the spacing between the lines in the pixel grid. For the 
@@ -1817,8 +1802,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * this is the vertical spacing.
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code RambleyPainter}.
-     * @throws IllegalArgumentException If the given line spacing is less than 
-     * one.
+     * @throws IllegalArgumentException If the given line spacing is negative.
      * @see #getPixelGridLineSpacing 
      * @see #getPixelGridLineThickness 
      * @see #setPixelGridLineThickness 
@@ -1826,17 +1810,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public RambleyPainter setPixelGridLineSpacing(double spacing){
-            // If the new spacing is less than 1
-        if (spacing < 1)
-            throw new IllegalArgumentException("Pixel grid line spacing cannot "
-                    + "be less than 1 ("+spacing + " < 1)");
-            // If the new spacing is different from the old spacing
-        if (spacing != gridSpacing){
-                // Get the old line spacing
-            double old = gridSpacing;
-            gridSpacing = spacing;
-            firePropertyChange(PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED,old,spacing);
-        }
+        getPixelGridPainter().setLineSpacing(spacing);
         return this;
     }
     /**
@@ -1849,7 +1823,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public float getPixelGridLineThickness(){
-        return gridThickness;
+        return getPixelGridPainter().getLineThickness();
     }
     /**
      * This sets the thickness of the lines in the pixel grid.
@@ -1863,16 +1837,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public RambleyPainter setPixelGridLineThickness(float thickness){
-        if (thickness < 0.0f)
-            throw new IllegalArgumentException("Pixel Grid line thickness must "
-                    + "be greater than or equal to zero ("+thickness+ " < 0)");
-            // If the new thickness is different from the old thickness
-        if (thickness != gridThickness){
-                // Get the old line thickness
-            float old = gridThickness;
-            gridThickness = thickness;
-            firePropertyChange(PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED,old,thickness);
-        }
+        getPixelGridPainter().setLineThickness(thickness);
         return this;
     }
     /**
@@ -2339,7 +2304,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // If the pixel grid effect is to be painted
         if (isPixelGridPainted())
                 // Paint the pixel grid effect
-            paintPixelGrid(g,0,0,width,height);
+            paintPixelGrid(g,c,width,height);
             // Dispose of the copy of the graphics context
         g.dispose();
     }
@@ -2548,6 +2513,15 @@ public class RambleyPainter extends ListenedPainter<Component>{
     protected void paintBackgroundDots(Graphics2D g, int x, int y, int w, int h){
             // Create a copy of the given graphics context over the given area
         g = (Graphics2D) g.create(x, y, w, h);
+        // Lazy way to implement the scaling of the background dots, but it works
+            // Get the scale for the background dots
+        double scale = Math.min(w, h) / INTERNAL_BG_DOT_RENDER_SIZE;
+            // Scale the background dots
+        g.scale(scale, scale);
+            // Scale the width
+        w /= scale;
+            // Scale the height
+        h /= scale;
             // Set the color to the background polka dot color
         g.setColor(BACKGROUND_DOT_COLOR);
             // If the background scratch Ellipse2D object has not been 
@@ -2583,132 +2557,14 @@ public class RambleyPainter extends ListenedPainter<Component>{
     
     
     /**
-     * This is used to calculate the offset for the pixel grid effect using the 
-     * given size value.
-     * @param size The value to use to get the offset.
-     * @return The offset for the pixel grid effect.
-     * @see getPixelGridOffsetX
-     * @see getPixelGridOffsetY
-     * @see getPixelGridLineSpacing
-     */
-    private double getPixelGridOffset(double size){
-        return ((size-1)%getPixelGridLineSpacing())/2.0;
-    }
-    /**
-     * This returns the x offset to use for the horizontal lines of the pixel 
-     * grid effect.
-     * 
-     * @implSpec The default implementation is equivalent to {@code ((width-1) 
-     * %} {@link getPixelGridLineSpacing() 
-     * getPixelGridLineSpacing()}{@code )/2.0}.
-     * 
-     * @param width The width of the area to fill with the pixel grid effect.
-     * @return The offset for the x-coordinate of the pixel grid effect.
-     * @see #getPixelGridOffsetY
-     * @see #getPixelGrid 
-     * @see #paintPixelGrid
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     */
-    protected double getPixelGridOffsetX(double width){
-        return getPixelGridOffset(width);
-    }
-    /**
-     * This returns the y offset to use for the vertical lines of the pixel grid 
-     * effect. 
-     * 
-     * @implSpec The default implementation is equivalent to {@code ((height-1) 
-     * %} {@link getPixelGridLineSpacing() 
-     * getPixelGridLineSpacing()}{@code )/2.0}.
-     * 
-     * @param height The height of the area to fill with the pixel grid effect.
-     * @return The offset for the y-coordinate of the pixel grid effect.
-     * @see #getPixelGridOffsetY
-     * @see #getPixelGrid 
-     * @see #paintPixelGrid
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     */
-    protected double getPixelGridOffsetY(double height){
-        return getPixelGridOffset(height);
-    }
-    /**
-     * This returns the Path2D object used to render the pixel grid effect. The 
-     * pixel grid effect is a set of horizontal and vertical lines that span the 
-     * whole image. The horizontal lines are offset by {@link 
-     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
-     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The horizontal and 
-     * vertical lines are spaced out by {@link getPixelGridLineSpacing 
-     * getPixelGridLineSpacing}.
-     * @param x The x-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
-     * @param y The y-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
-     * @param w The width of the area to fill with the pixel grid effect.
-     * @param h The height of the area to fill with the pixel grid effect.
-     * @param path A Path2D object to store the results in, or null.
-     * @return The Path2D object to use to render the pixel grid effect.
-     * @see getPixelGridOffsetX
-     * @see getPixelGridOffsetY
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     * @see #paintPixelGrid
-     */
-    protected Path2D getPixelGrid(double x, double y, double w, double h, 
-            Path2D path){
-            // If the given Path2D object is null
-        if (path == null)
-            path = new Path2D.Double();
-        else    // Reset the given Path2D object
-            path.reset();
-            // Get the maximum x-coordinate for the pixel grid
-        double x2 = x+w;
-            // Get the maximum y-coordinate for the pixel grid
-        double y2 = y+h;
-            // Go through and generate the vertical lines, starting at the 
-            // offset for the y-coordinate of the pixel grid and spacing them 
-            // out by the pixel grid spacing
-        for (double y1 = getPixelGridOffsetY(h); y1 <= h; 
-                y1+=getPixelGridLineSpacing()){
-            path.moveTo(x, y1+y);
-            path.lineTo(x2, y1+y);
-        }   // Go through and generate the horizontal lines, starting at the 
-            // offset for the x-coordinate of the pixel grid and spacing them 
-            // out by the pixel grid spacing
-        for (double x1 = getPixelGridOffsetX(w); x1 <= w; 
-                x1+=getPixelGridLineSpacing()){
-            path.moveTo(x1+x, y);
-            path.lineTo(x1+x, y2);
-        }
-        return path;
-    }
-    /**
      * This is used to render the pixel grid effect over the area. The pixel 
-     * grid effect is drawn without antialiasing and in a {@link 
-     * PIXEL_GRID_COLOR transparent black} color. The pixel grid effect is 
-     * rendered as a grid of horizontal and vertical lines that cover the area, 
-     * with the spacing between the lines being {@link getPixelGridLineSpacing 
-     * getPixelGridLineSpacing}. The horizontal lines are offset by {@link 
-     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
-     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The path used to 
-     * draw the pixel grid effect is generated by the {@link #getPixelGrid 
-     * getPixelGrid} methodand will have a line thickness 
-     * of {@link #getPixelGridLineThickness getPixelGridLineThickness}. The 
-     * pixel grid effect is rendered as a grid of horizontal and vertical lines 
-     * that cover the area, with the spacing between the lines being {@link 
-     * getPixelGridLineSpacing getPixelGridLineSpacing}. The horizontal lines 
-     * are offset by {@link #getPixelGridOffsetX getPixelGridOffsetX} and 
-     * vertical lines are offset by {@link #getPixelGridOffsetY 
-     * getPixelGridOffsetY}. The path used to draw the pixel grid effect is 
-     * generated by the {@link #getPixelGrid getPixelGrid} method. This renders 
+     * grid effect is drawn using the {@link #getPixelGridPainter() 
+     * pixel grid painter}. This renders 
      * to a copy of the given graphics context, so as to protect the rest of the 
      * paint code from changes made to the graphics context while rendering the 
      * pixel grid effect.
      * @param g The graphics context to render to.
-     * @param x The x-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
-     * @param y The y-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
+     * @param c A {@code Component} to get useful properties for painting.
      * @param w The width of the area to fill with the pixel grid effect.
      * @param h The height of the area to fill with the pixel grid effect.
      * @see #paint 
@@ -2722,21 +2578,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #getPixelGridOffsetX 
      * @see #getPixelGridOffsetY 
      */
-    protected void paintPixelGrid(Graphics2D g,int x,int y,int w,int h){
-            // Create a copy of the given graphics context over the given area
-        g = (Graphics2D) g.create(x, y, w, h);
-            // Set the color to the pixel grid color
-        g.setColor(PIXEL_GRID_COLOR);
-            // Set the stroke to use to draw the pixel grid to use the set line 
-            // thickness
-        g.setStroke(new BasicStroke(getPixelGridLineThickness()));
-            // Turn off antialiasing for the pixel grid
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                RenderingHints.VALUE_ANTIALIAS_OFF);
-            // Generate the pixel grid
-        pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
-            // Render the pixel grid
-        g.draw(pixelGrid);
+    protected void paintPixelGrid(Graphics2D g,Component c,int w,int h){
+            // Create a copy of the given graphics context
+        g = (Graphics2D) g.create();
+            // Paint the pixel grid effect using the pixel grid painter
+        getPixelGridPainter().paint(g, c, w, h);
             // Dispose of the copy of the graphics context
         g.dispose();
     }
@@ -5919,12 +5765,27 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return "flags="+getFlags()+
                 ",dotSize="+getBackgroundDotSize()+
                 ",dotSpacing="+getBackgroundDotSpacing()+
-                ",gridSpacing="+getPixelGridLineSpacing()+
-                ",gridThickness="+getPixelGridLineThickness()+
+                ",pixelGridPainter="+getPixelGridPainter()+
                 ",rightEye=("+getRambleyRightEyeX()+","+getRambleyRightEyeY()+")"+
                 ",leftEye=("+getRambleyLeftEyeX()+","+getRambleyLeftEyeY()+")"+
                 ",mouthOpen="+getRambleyOpenMouthWidth()+"x"+
                     getRambleyOpenMouthHeight();
+    }
+    /**
+     * This is a handler to listen to the delegate painters for RambleyPainter 
+     * and forward their property changes to listeners of this RambleyPainter.
+     */
+    private class Handler implements PropertyChangeListener{
+        /**
+         * {@inheritDoc }
+         */
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+                // If the source is the pixel grid painter
+            if (evt.getSource() == pixelGridPainter)
+                firePropertyChange(evt.getPropertyName(),evt.getOldValue(),
+                        evt.getNewValue());
+        }
     }
     
     

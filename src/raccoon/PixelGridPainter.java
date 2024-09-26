@@ -43,6 +43,11 @@ public class PixelGridPainter extends ListenedPainter<Component>{
     public static final String LINE_THICKNESS_PROPERTY_CHANGED = 
             "PixelGridThicknessPropertyChanged";
     /**
+     * This is the width and height at which the pixel grid is drawn at 
+     * internally.
+     */
+    private static final double INTERNAL_RENDER_SIZE = 256;
+    /**
      * This is the spacing between the lines in the pixel grid. For the vertical 
      * lines, this is the horizontal spacing. For the horizontal lines, this is 
      * the vertical spacing.
@@ -52,12 +57,6 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * This is the thickness of the lines in the pixel grid.
      */
     private float gridThickness;
-    /**
-     * A BasicStroke object used to draw the pixel grid. This is initially null 
-     * and is initialized the first time it is used. This is also replaced 
-     * whenever the pixel grid thickness changes.
-     */
-    private BasicStroke gridStroke = null;
     /**
      * A Path2D object used to render the pixel grid. This is initially null and
      * is initialized the first time it is used.
@@ -89,17 +88,16 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * this is the vertical spacing.
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code PixelGridPainter}.
-     * @throws IllegalArgumentException If the given line spacing is less than 
-     * one.
+     * @throws IllegalArgumentException If the given line spacing is negative.
      * @see #getLineSpacing 
      * @see #getLineThickness 
      * @see #setLineThickness 
      */
     public PixelGridPainter setLineSpacing(double spacing){
-            // If the new spacing is less than 1
-        if (spacing < 1)
+            // If the new spacing is less than zero
+        if (spacing < 0)
             throw new IllegalArgumentException("Pixel grid line spacing cannot "
-                    + "be less than 1 ("+spacing + " < 1)");
+                    + "be negative ("+spacing + " < 0)");
             // If the new spacing is different from the old spacing
         if (spacing != gridSpacing){
                 // Get the old line spacing
@@ -143,16 +141,38 @@ public class PixelGridPainter extends ListenedPainter<Component>{
         return this;
     }
     /**
+     * 
+     * @param size
+     * @return 
+     */
+    protected double getScale(double size){
+        return size / INTERNAL_RENDER_SIZE;
+    }
+    /**
+     * 
+     * @param width
+     * @param height
+     * @return 
+     */
+    protected double getScaledLineSpacing(double width, double height){
+        return getLineSpacing() * getScale(Math.min(width, height));
+    }
+    
+    protected float getScaledLineThickness(double width, double height){
+        return (float) (getLineThickness() * getScale(Math.min(width, height)));
+    }
+    /**
      * This is used to calculate the offset for the pixel grid effect using the 
      * given size value.
+     * @param spacing
      * @param size The value to use to get the offset.
      * @return The offset for the pixel grid effect.
      * @see getPixelGridOffsetX
      * @see getPixelGridOffsetY
      * @see getLineSpacing
      */
-    private double getPixelGridOffset(double size){
-        return ((size-1)%getLineSpacing())/2.0;
+    private double getPixelGridOffset(double spacing, double size){
+        return ((size-1)%spacing)/2.0;
     }
     /**
      * This returns the x offset to use for the horizontal lines of the pixel 
@@ -161,6 +181,7 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * @implSpec The default implementation is equivalent to {@code ((width-1) 
      * %} {@link getLineSpacing() getLineSpacing()}{@code )/2.0}.
      * 
+     * @param spacing
      * @param width The width of the area to fill with the pixel grid effect.
      * @return The offset for the x-coordinate of the pixel grid effect.
      * @see #getPixelGridOffsetY
@@ -169,8 +190,8 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * @see getLineSpacing
      * @see setLineSpacing
      */
-    protected double getPixelGridOffsetX(double width){
-        return getPixelGridOffset(width);
+    protected double getPixelGridOffsetX(double spacing, double width){
+        return getPixelGridOffset(spacing, width);
     }
     /**
      * This returns the y offset to use for the vertical lines of the pixel grid 
@@ -179,6 +200,7 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * @implSpec The default implementation is equivalent to {@code ((height-1) 
      * %} {@link getLineSpacing() getLineSpacing()}{@code )/2.0}.
      * 
+     * @param spacing
      * @param height The height of the area to fill with the pixel grid effect.
      * @return The offset for the y-coordinate of the pixel grid effect.
      * @see #getPixelGridOffsetY
@@ -187,8 +209,8 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * @see getLineSpacing
      * @see setLineSpacing
      */
-    protected double getPixelGridOffsetY(double height){
-        return getPixelGridOffset(height);
+    protected double getPixelGridOffsetY(double spacing, double height){
+        return getPixelGridOffset(spacing, height);
     }
     /**
      * This returns the Path2D object used to render the pixel grid effect. The 
@@ -222,26 +244,26 @@ public class PixelGridPainter extends ListenedPainter<Component>{
         double x2 = x+w;
             // Get the maximum y-coordinate for the pixel grid
         double y2 = y+h;
+            // Get the spacing for the lines.
+        double spacing = getScaledLineSpacing(w,h);
             // Go through and generate the vertical lines, starting at the 
             // offset for the y-coordinate of the pixel grid and spacing them 
             // out by the pixel grid spacing
-        for (double y1 = getPixelGridOffsetY(h); y1 <= h; y1+=getLineSpacing()){
+        for (double y1 = getPixelGridOffsetY(spacing,h); y1 <= h; y1+=spacing){
             path.moveTo(x, y1+y);
             path.lineTo(x2, y1+y);
         }   // Go through and generate the horizontal lines, starting at the 
             // offset for the x-coordinate of the pixel grid and spacing them 
             // out by the pixel grid spacing
-        for (double x1 = getPixelGridOffsetX(w); x1 <= w; x1+=getLineSpacing()){
+        for (double x1 = getPixelGridOffsetX(spacing,w); x1 <= w; x1+=spacing){
             path.moveTo(x1+x, y);
             path.lineTo(x1+x, y2);
         }
         return path;
     }
     
-    protected BasicStroke getPixelGridStroke(){
-        if (gridStroke == null || gridStroke.getLineWidth()!=getLineThickness())
-            gridStroke = new BasicStroke(getLineThickness());
-        return gridStroke;
+    protected BasicStroke getPixelGridStroke(double width, double height){
+        return new BasicStroke(getScaledLineThickness(width,height));
     }
 
     @Override
@@ -330,13 +352,21 @@ public class PixelGridPainter extends ListenedPainter<Component>{
     protected void paintPixelGrid(Graphics2D g,int x,int y,int w,int h){
             // Set the color to the pixel grid color
         g.setColor(PIXEL_GRID_COLOR);
-            // Set the stroke to use to draw the pixel grid to use the set line 
-            // thickness
-        g.setStroke(getPixelGridStroke());
-            // Generate the pixel grid
-        pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
-            // Render the pixel grid
-        g.draw(pixelGrid);
+            // If the line spacing is greater than zero
+        if (getLineSpacing() > 0){
+                // Set the stroke to use to draw the pixel grid to use the set line 
+                // thickness
+            g.setStroke(getPixelGridStroke(w,h));
+                // Generate the pixel grid
+            pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
+                // Render the pixel grid
+            g.draw(pixelGrid);
+        } else {
+                // Fill a rectangle with the pixel grid color, since there is 
+                // literally no space between the lines. Draw it a little 
+                // oversized as the clipping will keep it in range.
+            g.fillRect(x, y, w+1, h+1);
+        }
     }
     /**
      * {@inheritDoc }
