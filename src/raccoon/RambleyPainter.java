@@ -825,16 +825,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private int dotShape;
     /**
-     * This is the spacing between the lines in the pixel grid. For the vertical 
-     * lines, this is the horizontal spacing. For the horizontal lines, this is 
-     * the vertical spacing.
-     */
-    private double gridSpacing;
-    /**
-     * This is the thickness of the lines in the pixel grid.
-     */
-    private float gridThickness;
-    /**
      * This is a PixelGridPainter used to paint the pixel grid effect.
      */
     private PixelGridPainter pixelGridPainter;
@@ -1146,8 +1136,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
         handler = new Handler();
         dotSize = DEFAULT_BACKGROUND_DOT_SIZE;
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
-        gridSpacing = PixelGridPainter.DEFAULT_LINE_SPACING;
-        gridThickness = PixelGridPainter.DEFAULT_LINE_THICKNESS;
         pixelGridPainter = new PixelGridPainter();
         pixelGridPainter.addPropertyChangeListener(handler);
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.0;
@@ -1806,7 +1794,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public double getPixelGridLineSpacing(){
-        return gridSpacing;
+        return getPixelGridPainter().getLineSpacing();
     }
     /**
      * This sets the spacing between the lines in the pixel grid. For the 
@@ -1823,17 +1811,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public RambleyPainter setPixelGridLineSpacing(double spacing){
-            // If the new spacing is less than 1
-        if (spacing < 1)
-            throw new IllegalArgumentException("Pixel grid line spacing cannot "
-                    + "be less than 1 ("+spacing + " < 1)");
-            // If the new spacing is different from the old spacing
-        if (spacing != gridSpacing){
-                // Get the old line spacing
-            double old = gridSpacing;
-            gridSpacing = spacing;
-            firePropertyChange(PixelGridPainter.LINE_SPACING_PROPERTY_CHANGED,old,spacing);
-        }
+        getPixelGridPainter().setLineSpacing(spacing);
         return this;
     }
     /**
@@ -1846,7 +1824,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public float getPixelGridLineThickness(){
-        return gridThickness;
+        return getPixelGridPainter().getLineThickness();
     }
     /**
      * This sets the thickness of the lines in the pixel grid.
@@ -1860,16 +1838,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * @see #setPixelGridPainted 
      */
     public RambleyPainter setPixelGridLineThickness(float thickness){
-        if (thickness < 0.0f)
-            throw new IllegalArgumentException("Pixel Grid line thickness must "
-                    + "be greater than or equal to zero ("+thickness+ " < 0)");
-            // If the new thickness is different from the old thickness
-        if (thickness != gridThickness){
-                // Get the old line thickness
-            float old = gridThickness;
-            gridThickness = thickness;
-            firePropertyChange(PixelGridPainter.LINE_THICKNESS_PROPERTY_CHANGED,old,thickness);
-        }
+        getPixelGridPainter().setLineThickness(thickness);
         return this;
     }
     /**
@@ -5916,8 +5885,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return "flags="+getFlags()+
                 ",dotSize="+getBackgroundDotSize()+
                 ",dotSpacing="+getBackgroundDotSpacing()+
-                ",gridSpacing="+getPixelGridLineSpacing()+
-                ",gridThickness="+getPixelGridLineThickness()+
+                ",pixelGridPainter="+getPixelGridPainter()+
                 ",rightEye=("+getRambleyRightEyeX()+","+getRambleyRightEyeY()+")"+
                 ",leftEye=("+getRambleyLeftEyeX()+","+getRambleyLeftEyeY()+")"+
                 ",mouthOpen="+getRambleyOpenMouthWidth()+"x"+
