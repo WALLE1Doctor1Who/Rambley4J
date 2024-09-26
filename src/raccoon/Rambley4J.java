@@ -58,7 +58,7 @@ public class Rambley4J extends JFrame {
      * This is an array containing the widths and heights for the icon images 
      * for this program. The icon images are generated on the fly.
      */
-    private static final int[] ICON_SIZES = {16, 24, 32, 48, 64, 128, 256, 512};
+    private static final int[] ICON_SIZES = {16, 24, 32, 48, 64, 96, 128, 256, 512};
     /**
      * This is the name of the preference node used to store the settings for 
      * this program.
