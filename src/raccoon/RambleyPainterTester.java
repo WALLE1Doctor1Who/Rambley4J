@@ -1010,31 +1010,30 @@ public class RambleyPainterTester extends javax.swing.JFrame {
     }//GEN-LAST:event_shadowToggleActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        rambley.setFlags(RambleyPainter.PAINT_BACKGROUND_FLAG | 
-            RambleyPainter.PAINT_PIXEL_GRID_FLAG | 
-                RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
-                RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG | 
-                RambleyPainter.PAINT_RAMBLEY_BANDANA_FLAG);
+        reset = true;
+        rambley.reset();
         widthSpinner.setValue(256);
         heightSpinner.setValue(256);
         linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), 
                 heightSpinner.getValue()));
-        bgDotSizeSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SIZE);
-        bgDotSpacingSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SPACING);
-        pGridSpinner.setValue(PixelGridPainter.DEFAULT_LINE_SPACING);
+        bgDotSizeSpinner.setValue(rambley.getBackgroundDotSize());
+        bgDotSpacingSpinner.setValue(rambley.getBackgroundDotSpacing());
+        pGridSpinner.setValue(rambley.getPixelGridLineSpacing());
+        gridThickSpinner.setValue(rambley.getPixelGridLineThickness());
         linkEyesToggle.setSelected(true);
-        rightEyeControl.setValueX(0);
-        rightEyeControl.setValueY(0);
-        leftEyeControl.setValueX(0);
-        leftEyeControl.setValueY(0);
-        mouthSpinnerX.setValue(100.0);
-        mouthSpinnerY.setValue(0.0);
+        rightEyeControl.setValueX((int)rambley.getRambleyRightEyeX()*100);
+        rightEyeControl.setValueY((int)rambley.getRambleyRightEyeY()*100);
+        leftEyeControl.setValueX((int)rambley.getRambleyLeftEyeX()*100);
+        leftEyeControl.setValueY((int)rambley.getRambleyLeftEyeY()*100);
+        mouthSpinnerX.setValue(rambley.getRambleyOpenMouthWidth()*100);
+        mouthSpinnerY.setValue(rambley.getRambleyOpenMouthHeight()*100);
         updateConfigFlags();
         updateSettings();
         if (config != null){
             config.putBoolean(LINK_PAINTER_SIZE_KEY, linkSizeToggle.isSelected());
             config.putBoolean(LINK_RAMBLEY_EYES_KEY, linkEyesToggle.isSelected());
         }
+        reset = false;
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void bgDotSizeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_bgDotSizeSpinnerStateChanged
@@ -1115,6 +1114,8 @@ public class RambleyPainterTester extends javax.swing.JFrame {
     }//GEN-LAST:event_hatToggleActionPerformed
 
     private void rightEyeControlStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rightEyeControlStateChanged
+        if (reset)
+            return;
         double x = rightEyeControl.getValueX()/1000.0;
         double y = rightEyeControl.getValueY()/1000.0;
         if (linkEyesToggle.isSelected()){
@@ -1127,7 +1128,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
     }//GEN-LAST:event_rightEyeControlStateChanged
 
     private void leftEyeControlStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_leftEyeControlStateChanged
-        if (linkEyesToggle.isSelected())
+        if (linkEyesToggle.isSelected() || reset)
             return;
         rambley.setRambleyLeftEye(leftEyeControl.getValueX()/1000.0, 
                 leftEyeControl.getValueY()/1000.0);
@@ -1181,6 +1182,7 @@ public class RambleyPainterTester extends javax.swing.JFrame {
      * This is a preference node to store the settings for this program.
      */
     private Preferences config;
+    private boolean reset = false;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox abTestingToggle;
     private javax.swing.JCheckBox backgroundToggle;

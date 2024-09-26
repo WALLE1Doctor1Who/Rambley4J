@@ -145,13 +145,6 @@ public class Rambley4J extends JFrame {
     
     private static final int DEFAULT_RAMBLEY_HEIGHT = 256;
     
-    private static final int DEFAULT_RAMBLEY_FLAGS = 
-            RambleyPainter.PAINT_BACKGROUND_FLAG | 
-            RambleyPainter.PAINT_PIXEL_GRID_FLAG | 
-            RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
-            RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG | 
-            RambleyPainter.PAINT_RAMBLEY_BANDANA_FLAG;
-    
     private static final int ICON_IMAGES_RAMBLEY_FLAGS = 
             RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
             RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG;
@@ -198,7 +191,7 @@ public class Rambley4J extends JFrame {
             eyeCtrlL.setValueX((int)(eyeLX*100));
             eyeCtrlL.setValueY((int)(eyeLY*100));
             linkEyesToggle.setSelected(config.getBoolean(LINK_RAMBLEY_EYES_KEY,
-                    linkEyesToggle.isSelected()));
+                    eyeRX == eyeLX && eyeRY == eyeLY));
             double mouthW = config.getDouble(RAMBLEY_MOUTH_WIDTH_KEY, 
                     rambleyPainter.getRambleyOpenMouthWidth());
             double mouthH = config.getDouble(RAMBLEY_MOUTH_HEIGHT_KEY, 
@@ -687,7 +680,6 @@ public class Rambley4J extends JFrame {
 
         centerSidePanel.setLayout(new java.awt.GridBagLayout());
 
-        linkEyesToggle.setSelected(true);
         linkEyesToggle.setText("Link Eyes");
         linkEyesToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1187,20 +1179,29 @@ public class Rambley4J extends JFrame {
     }//GEN-LAST:event_linkSizeToggleActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        rambleyPainter.setFlags(DEFAULT_RAMBLEY_FLAGS);
+            // Reset the RambleyPainter
+        rambleyPainter.reset();
         widthSpinner.setValue(DEFAULT_RAMBLEY_WIDTH);
         heightSpinner.setValue(DEFAULT_RAMBLEY_HEIGHT);
         linkSizeToggle.setSelected(Objects.equals(widthSpinner.getValue(), 
                 heightSpinner.getValue()));
-        bgDotSizeSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SIZE);
-        bgDotSpacingSpinner.setValue(RambleyPainter.DEFAULT_BACKGROUND_DOT_SPACING);
-        gridSpacingSpinner.setValue(PixelGridPainter.DEFAULT_LINE_SPACING);
-        gridThicknessSpinner.setValue(PixelGridPainter.DEFAULT_LINE_THICKNESS);
-        linkEyesToggle.setSelected(true);
-        eyeCtrlR.setValueX(0);
-        eyeCtrlR.setValueY(0);
-        mouthCtrl.setValueX(100);
-        mouthCtrl.setValueY(0);
+        bgDotSizeSpinner.setValue(rambleyPainter.getBackgroundDotSize());
+        bgDotSpacingSpinner.setValue(rambleyPainter.getBackgroundDotSpacing());
+        gridSpacingSpinner.setValue(rambleyPainter.getPixelGridLineSpacing());
+        gridThicknessSpinner.setValue(rambleyPainter.getPixelGridLineThickness());
+        double eyeRX = rambleyPainter.getRambleyRightEyeX() * 100;
+        double eyeRY = rambleyPainter.getRambleyRightEyeY() * 100;
+        double eyeLX = rambleyPainter.getRambleyLeftEyeX() * 100;
+        double eyeLY = rambleyPainter.getRambleyLeftEyeY() * 100;
+        double mouthW = rambleyPainter.getRambleyOpenMouthWidth() * 100;
+        double mouthH = rambleyPainter.getRambleyOpenMouthHeight() * 100;
+        eyeCtrlR.setValueX((int)eyeRX);
+        eyeCtrlR.setValueY((int)eyeRY);
+        eyeCtrlL.setValueX((int)eyeLX);
+        eyeCtrlL.setValueY((int)eyeLY);
+        linkEyesToggle.setSelected(eyeRX == eyeLX && eyeRY == eyeLY);
+        mouthCtrl.setValueX((int)mouthW);
+        mouthCtrl.setValueY((int)mouthH);
         updateToggleSettings();
         updateStateInSettings();
         updateConfigBoolean(LINK_RAMBLEY_EYES_KEY,linkEyesToggle);

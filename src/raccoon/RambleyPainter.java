@@ -5772,6 +5772,20 @@ public class RambleyPainter extends ListenedPainter<Component>{
                     getRambleyOpenMouthHeight();
     }
     /**
+     * This resets this RambleyPainter, setting it's values to their defaults.
+     * @return This {@code RambleyPainter}.
+     */
+    public RambleyPainter reset(){
+            // Reset the pixel grid painter
+        getPixelGridPainter().reset();
+        return setFlags(DEFAULT_FLAG_SETTINGS)
+                .setRambleyEyes(0.0, 0.0)
+                .setRambleyOpenMouthHeight(0.0)
+                .setRambleyOpenMouthWidth(1.0)
+                .setBackgroundDotSize(DEFAULT_BACKGROUND_DOT_SIZE)
+                .setBackgroundDotSpacing(DEFAULT_BACKGROUND_DOT_SPACING);
+    }
+    /**
      * This is a handler to listen to the delegate painters for RambleyPainter 
      * and forward their property changes to listeners of this RambleyPainter.
      */

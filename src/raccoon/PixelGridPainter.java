@@ -376,4 +376,12 @@ public class PixelGridPainter extends ListenedPainter<Component>{
         return "gridSpacing="+getLineSpacing()+
                 ",gridThickness="+getLineThickness();
     }
+    /**
+     * This resets this PixelGridPainter, setting it's values to their defaults.
+     * @return This {@code PixelGridPainter}.
+     */
+    public PixelGridPainter reset(){
+        return setLineSpacing(DEFAULT_LINE_SPACING).
+                setLineThickness(DEFAULT_LINE_THICKNESS);
+    }
 }

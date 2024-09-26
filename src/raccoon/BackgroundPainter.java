@@ -134,4 +134,13 @@ public class BackgroundPainter extends ListenedPainter<Component>{
 //        }   // Dispose of the copy of the graphics context
 //        g.dispose();
 //    }
+    /**
+     * This resets this BackgroundPainter, setting it's values to their 
+     * defaults.
+     * @return This {@code BackgroundPainter}.
+     */
+    public BackgroundPainter reset(){
+        // TODO: Reset the fields to their default values.
+        return this;
+    }
 }
