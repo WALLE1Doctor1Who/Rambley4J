@@ -834,7 +834,9 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * This is the thickness of the lines in the pixel grid.
      */
     private float gridThickness;
-    
+    /**
+     * This is a PixelGridPainter used to paint the pixel grid effect.
+     */
     private PixelGridPainter pixelGridPainter;
     /**
      * The x component for the location of the center of Rambley's right iris and 
@@ -1146,6 +1148,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
         gridSpacing = PixelGridPainter.DEFAULT_LINE_SPACING;
         gridThickness = PixelGridPainter.DEFAULT_LINE_THICKNESS;
+        pixelGridPainter = new PixelGridPainter();
+        pixelGridPainter.addPropertyChangeListener(handler);
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.0;
         mouthOpenWidth = 1.0;
         mouthOpenHeight = 0.0;
@@ -1781,6 +1785,14 @@ public class RambleyPainter extends ListenedPainter<Component>{
             firePropertyChange(BACKGROUND_DOT_SPACING_PROPERTY_CHANGED,old,spacing);
         }
         return this;
+    }
+    /**
+     * This returns the {@code PixelGridPainter} used to draw the pixel grid 
+     * effect over Rambley.
+     * @return The {@code PixelGridPainter}.
+     */
+    public PixelGridPainter getPixelGridPainter(){
+        return pixelGridPainter;
     }
     /**
      * This returns the spacing between the lines in the pixel grid. For the 
@@ -5921,6 +5933,10 @@ public class RambleyPainter extends ListenedPainter<Component>{
          */
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
+                // If the source is the pixel grid painter
+            if (evt.getSource() == pixelGridPainter)
+                firePropertyChange(evt.getPropertyName(),evt.getOldValue(),
+                        evt.getNewValue());
         }
     }
     
