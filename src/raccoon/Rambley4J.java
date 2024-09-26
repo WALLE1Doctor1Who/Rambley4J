@@ -802,7 +802,7 @@ public class Rambley4J extends JFrame {
         pixelGridPanel.add(gridSpacingLabel);
         pixelGridPanel.add(filler1);
 
-        gridSpacingSpinner.setModel(new javax.swing.SpinnerNumberModel(5.0d, 1.0d, null, 1.0d));
+        gridSpacingSpinner.setModel(new javax.swing.SpinnerNumberModel(5.0d, 0.0d, null, 1.0d));
         gridSpacingSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 gridSpacingSpinnerStateChanged(evt);

@@ -94,17 +94,16 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * this is the vertical spacing.
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code PixelGridPainter}.
-     * @throws IllegalArgumentException If the given line spacing is less than 
-     * one.
+     * @throws IllegalArgumentException If the given line spacing is negative.
      * @see #getLineSpacing 
      * @see #getLineThickness 
      * @see #setLineThickness 
      */
     public PixelGridPainter setLineSpacing(double spacing){
-            // If the new spacing is less than 1
-        if (spacing < 1)
+            // If the new spacing is less than zero
+        if (spacing < 0)
             throw new IllegalArgumentException("Pixel grid line spacing cannot "
-                    + "be less than 1 ("+spacing + " < 1)");
+                    + "be negative ("+spacing + " < 0)");
             // If the new spacing is different from the old spacing
         if (spacing != gridSpacing){
                 // Get the old line spacing

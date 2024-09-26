@@ -1797,8 +1797,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * this is the vertical spacing.
      * @param spacing The spacing between the lines in the pixel grid.
      * @return This {@code RambleyPainter}.
-     * @throws IllegalArgumentException If the given line spacing is less than 
-     * one.
+     * @throws IllegalArgumentException If the given line spacing is negative.
      * @see #getPixelGridLineSpacing 
      * @see #getPixelGridLineThickness 
      * @see #setPixelGridLineThickness 
