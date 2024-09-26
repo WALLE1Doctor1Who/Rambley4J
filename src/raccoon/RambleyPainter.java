@@ -42,11 +42,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
     protected static final Color BACKGROUND_GRADIENT_COLOR_2 = 
             new Color(BACKGROUND_GRADIENT_COLOR.getRGB()&0x00FFFFFF,true);
     /**
-     * This is the color used to render the pixel grid effect that goes over 
-     * Rambley. This color is a translucent black.
-     */
-    public static final Color PIXEL_GRID_COLOR = new Color(0x60000000,true);
-    /**
      * This is the main color of Rambley the Raccoon. That is to say, this is 
      * the color which most of Rambley's body is comprised of.
      */
@@ -262,12 +257,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * depth description on the background polka dot spacing.
      */
     protected static final double DEFAULT_BACKGROUND_DOT_SPACING = 12.0;
-    /**
-     * This is the default spacing between the lines in the pixel grid. For the 
-     * vertical lines, this is the horizontal spacing. For the horizontal lines, 
-     * this is the vertical spacing.
-     */
-    protected static final double DEFAULT_PIXEL_GRID_LINE_SPACING = 5;
     /**
      * This is the angle of elevation for Rambley's cheeks.
      */
@@ -772,18 +761,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
     public static final String BACKGROUND_DOT_SPACING_PROPERTY_CHANGED = 
             "BackgroundDotSpacingPropertyChanged"; 
     /**
-     * This identifies that a change has been made to the spacing of the lines 
-     * in the pixel grid.
-     */
-    public static final String PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED = 
-            "PixelGridSpacingPropertyChanged"; 
-    /**
-     * This identifies that a change has been made to the thickness of the lines 
-     * in the pixel grid.
-     */
-    public static final String PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED = 
-            "PixelGridThicknessPropertyChanged"; 
-    /**
      * 
      */
     public static final String RAMBLEY_RIGHT_EYE_X_PROPERTY_CHANGED = 
@@ -1159,8 +1136,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
         flags = DEFAULT_FLAG_SETTINGS;
         dotSize = DEFAULT_BACKGROUND_DOT_SIZE;
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
-        gridSpacing = DEFAULT_PIXEL_GRID_LINE_SPACING;
-        gridThickness = 1.0f;
+        gridSpacing = PixelGridPainter.DEFAULT_LINE_SPACING;
+        gridThickness = PixelGridPainter.DEFAULT_LINE_THICKNESS;
         eyeRightX = eyeRightY = eyeLeftX = eyeLeftY = 0.0;
         mouthOpenWidth = 1.0;
         mouthOpenHeight = 0.0;
@@ -1835,7 +1812,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
                 // Get the old line spacing
             double old = gridSpacing;
             gridSpacing = spacing;
-            firePropertyChange(PIXEL_GRID_LINE_SPACING_PROPERTY_CHANGED,old,spacing);
+            firePropertyChange(PixelGridPainter.LINE_SPACING_PROPERTY_CHANGED,old,spacing);
         }
         return this;
     }
@@ -1871,7 +1848,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
                 // Get the old line thickness
             float old = gridThickness;
             gridThickness = thickness;
-            firePropertyChange(PIXEL_GRID_LINE_THICKNESS_PROPERTY_CHANGED,old,thickness);
+            firePropertyChange(PixelGridPainter.LINE_THICKNESS_PROPERTY_CHANGED,old,thickness);
         }
         return this;
     }
@@ -2726,7 +2703,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Create a copy of the given graphics context over the given area
         g = (Graphics2D) g.create(x, y, w, h);
             // Set the color to the pixel grid color
-        g.setColor(PIXEL_GRID_COLOR);
+        g.setColor(PixelGridPainter.PIXEL_GRID_COLOR);
             // Set the stroke to use to draw the pixel grid to use the set line 
             // thickness
         g.setStroke(new BasicStroke(getPixelGridLineThickness()));
