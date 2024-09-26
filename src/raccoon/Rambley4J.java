@@ -25,7 +25,7 @@ import javax.swing.*;
 /**
  * This is a program that renders Rambley the Raccoon.
  * @author WALLE1Doctor1Who
- * @version 0.5.0
+ * @version 0.6.0
  */
 public class Rambley4J extends JFrame {
     /**
@@ -35,7 +35,7 @@ public class Rambley4J extends JFrame {
     /**
      * This is the version of the program.
      */
-    public static final String PROGRAM_VERSION = "0.5.0";
+    public static final String PROGRAM_VERSION = "0.6.0";
     /**
      * This is the credits for the program. This is currently private as I plan 
      * to rework it.
@@ -140,11 +140,18 @@ public class Rambley4J extends JFrame {
      */
     private static final String SAVE_FILE_CHOOSER_DIRECTORY_KEY = 
             "SaveCurrentDirectory";
-    
-    private static final int DEFAULT_RAMBLEY_WIDTH = 256;
-    
-    private static final int DEFAULT_RAMBLEY_HEIGHT = 256;
-    
+    /**
+     * The default width for the image of Rambley.
+     */
+    private static final int DEFAULT_RAMBLEY_WIDTH = 1024;
+    /**
+     * The default height for the image of Rambley.
+     */
+    private static final int DEFAULT_RAMBLEY_HEIGHT = 1024;
+    /**
+     * The flags for the RambleyPainter that is used to create the images used 
+     * as the icon for this program.
+     */
     private static final int ICON_IMAGES_RAMBLEY_FLAGS = 
             RambleyPainter.PAINT_RAMBLEY_OUTLINE_FLAG | 
             RambleyPainter.PAINT_RAMBLEY_SHADOW_FLAG;
