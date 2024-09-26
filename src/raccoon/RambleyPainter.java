@@ -260,6 +260,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     protected static final double DEFAULT_BACKGROUND_DOT_SPACING = 12.0;
     /**
+     * This is the width and height at which the background dots are drawn at 
+     * internally.
+     */
+    private static final double INTERNAL_BG_DOT_RENDER_SIZE = 256;
+    /**
      * This is the angle of elevation for Rambley's cheeks.
      */
     protected static final double RAMBLEY_CHEEK_ANGLE = 26.57;
@@ -2508,6 +2513,15 @@ public class RambleyPainter extends ListenedPainter<Component>{
     protected void paintBackgroundDots(Graphics2D g, int x, int y, int w, int h){
             // Create a copy of the given graphics context over the given area
         g = (Graphics2D) g.create(x, y, w, h);
+        // Lazy way to implement the scaling of the background dots, but it works
+            // Get the scale for the background dots
+        double scale = Math.min(w, h) / INTERNAL_BG_DOT_RENDER_SIZE;
+            // Scale the background dots
+        g.scale(scale, scale);
+            // Scale the width
+        w /= scale;
+            // Scale the height
+        h /= scale;
             // Set the color to the background polka dot color
         g.setColor(BACKGROUND_DOT_COLOR);
             // If the background scratch Ellipse2D object has not been 
