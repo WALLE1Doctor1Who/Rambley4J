@@ -58,12 +58,6 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      */
     private float gridThickness;
     /**
-     * A BasicStroke object used to draw the pixel grid. This is initially null 
-     * and is initialized the first time it is used. This is also replaced 
-     * whenever the pixel grid thickness changes.
-     */
-    private BasicStroke gridStroke = null;
-    /**
      * A Path2D object used to render the pixel grid. This is initially null and
      * is initialized the first time it is used.
      */
@@ -162,6 +156,10 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      */
     protected double getScaledLineSpacing(double width, double height){
         return getLineSpacing() * getScale(Math.min(width, height));
+    }
+    
+    protected float getScaledLineThickness(double width, double height){
+        return (float) (getLineThickness() * getScale(Math.min(width, height)));
     }
     /**
      * This is used to calculate the offset for the pixel grid effect using the 
@@ -264,10 +262,8 @@ public class PixelGridPainter extends ListenedPainter<Component>{
         return path;
     }
     
-    protected BasicStroke getPixelGridStroke(){
-        if (gridStroke == null || gridStroke.getLineWidth()!=getLineThickness())
-            gridStroke = new BasicStroke(getLineThickness());
-        return gridStroke;
+    protected BasicStroke getPixelGridStroke(double width, double height){
+        return new BasicStroke(getScaledLineThickness(width,height));
     }
 
     @Override
@@ -360,7 +356,7 @@ public class PixelGridPainter extends ListenedPainter<Component>{
         if (getLineSpacing() > 0){
                 // Set the stroke to use to draw the pixel grid to use the set line 
                 // thickness
-            g.setStroke(getPixelGridStroke());
+            g.setStroke(getPixelGridStroke(w,h));
                 // Generate the pixel grid
             pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
                 // Render the pixel grid
