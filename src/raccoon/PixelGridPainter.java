@@ -46,7 +46,7 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * This is the width and height at which the pixel grid is drawn at 
      * internally.
      */
-    private static final double INTERNAL_SIZE = 256;
+    private static final double INTERNAL_RENDER_SIZE = 256;
     /**
      * This is the spacing between the lines in the pixel grid. For the vertical 
      * lines, this is the horizontal spacing. For the horizontal lines, this is 
@@ -146,7 +146,7 @@ public class PixelGridPainter extends ListenedPainter<Component>{
      * @return 
      */
     protected double getScale(double size){
-        return size / INTERNAL_SIZE;
+        return size / INTERNAL_RENDER_SIZE;
     }
     /**
      * 
