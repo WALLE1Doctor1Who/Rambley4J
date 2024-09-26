@@ -356,13 +356,21 @@ public class PixelGridPainter extends ListenedPainter<Component>{
     protected void paintPixelGrid(Graphics2D g,int x,int y,int w,int h){
             // Set the color to the pixel grid color
         g.setColor(PIXEL_GRID_COLOR);
-            // Set the stroke to use to draw the pixel grid to use the set line 
-            // thickness
-        g.setStroke(getPixelGridStroke());
-            // Generate the pixel grid
-        pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
-            // Render the pixel grid
-        g.draw(pixelGrid);
+            // If the line spacing is greater than zero
+        if (getLineSpacing() > 0){
+                // Set the stroke to use to draw the pixel grid to use the set line 
+                // thickness
+            g.setStroke(getPixelGridStroke());
+                // Generate the pixel grid
+            pixelGrid = getPixelGrid(0,0,w,h,pixelGrid);
+                // Render the pixel grid
+            g.draw(pixelGrid);
+        } else {
+                // Fill a rectangle with the pixel grid color, since there is 
+                // literally no space between the lines. Draw it a little 
+                // oversized as the clipping will keep it in range.
+            g.fillRect(x, y, w+1, h+1);
+        }
     }
     /**
      * {@inheritDoc }
