@@ -7,6 +7,8 @@ package raccoon;
 import geom.*;
 import java.awt.*;
 import java.awt.geom.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import swing.ListenedPainter;
@@ -803,6 +805,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private int flags;
     /**
+     * A handler to use to listen to the painters RambleyPainter delegates tasks 
+     * to.
+     */
+    private Handler handler;
+    /**
      * The width and height of the background polka dots.
      */
     private double dotSize;
@@ -1134,6 +1141,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     public RambleyPainter(){
         flags = DEFAULT_FLAG_SETTINGS;
+        handler = new Handler();
         dotSize = DEFAULT_BACKGROUND_DOT_SIZE;
         dotSpacing = DEFAULT_BACKGROUND_DOT_SPACING;
         gridSpacing = PixelGridPainter.DEFAULT_LINE_SPACING;
@@ -5902,6 +5910,18 @@ public class RambleyPainter extends ListenedPainter<Component>{
                 ",leftEye=("+getRambleyLeftEyeX()+","+getRambleyLeftEyeY()+")"+
                 ",mouthOpen="+getRambleyOpenMouthWidth()+"x"+
                     getRambleyOpenMouthHeight();
+    }
+    /**
+     * This is a handler to listen to the delegate painters for RambleyPainter 
+     * and forward their property changes to listeners of this RambleyPainter.
+     */
+    private class Handler implements PropertyChangeListener{
+        /**
+         * {@inheritDoc }
+         */
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+        }
     }
     
     
