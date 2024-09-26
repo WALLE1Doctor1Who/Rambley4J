@@ -919,11 +919,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
     */
     
     /**
-     * A Path2D object used to render the pixel grid effect. This is initially 
-     * null and is initialized the first time it is used.
-     */
-    private Path2D pixelGrid = null;
-    /**
      * A Rhombus2D object used to draw the background polka dots. This is 
      * initially null and is initialized the first time it is used.
      */
@@ -2548,106 +2543,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
     
     
     
-    /**
-     * This is used to calculate the offset for the pixel grid effect using the 
-     * given size value.
-     * @param size The value to use to get the offset.
-     * @return The offset for the pixel grid effect.
-     * @see getPixelGridOffsetX
-     * @see getPixelGridOffsetY
-     * @see getPixelGridLineSpacing
-     */
-    private double getPixelGridOffset(double size){
-        return ((size-1)%getPixelGridLineSpacing())/2.0;
-    }
-    /**
-     * This returns the x offset to use for the horizontal lines of the pixel 
-     * grid effect.
-     * 
-     * @implSpec The default implementation is equivalent to {@code ((width-1) 
-     * %} {@link getPixelGridLineSpacing() 
-     * getPixelGridLineSpacing()}{@code )/2.0}.
-     * 
-     * @param width The width of the area to fill with the pixel grid effect.
-     * @return The offset for the x-coordinate of the pixel grid effect.
-     * @see #getPixelGridOffsetY
-     * @see #getPixelGrid 
-     * @see #paintPixelGrid
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     */
-    protected double getPixelGridOffsetX(double width){
-        return getPixelGridOffset(width);
-    }
-    /**
-     * This returns the y offset to use for the vertical lines of the pixel grid 
-     * effect. 
-     * 
-     * @implSpec The default implementation is equivalent to {@code ((height-1) 
-     * %} {@link getPixelGridLineSpacing() 
-     * getPixelGridLineSpacing()}{@code )/2.0}.
-     * 
-     * @param height The height of the area to fill with the pixel grid effect.
-     * @return The offset for the y-coordinate of the pixel grid effect.
-     * @see #getPixelGridOffsetY
-     * @see #getPixelGrid 
-     * @see #paintPixelGrid
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     */
-    protected double getPixelGridOffsetY(double height){
-        return getPixelGridOffset(height);
-    }
-    /**
-     * This returns the Path2D object used to render the pixel grid effect. The 
-     * pixel grid effect is a set of horizontal and vertical lines that span the 
-     * whole image. The horizontal lines are offset by {@link 
-     * #getPixelGridOffsetX getPixelGridOffsetX} and vertical lines are offset 
-     * by {@link #getPixelGridOffsetY getPixelGridOffsetY}. The horizontal and 
-     * vertical lines are spaced out by {@link getPixelGridLineSpacing 
-     * getPixelGridLineSpacing}.
-     * @param x The x-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
-     * @param y The y-coordinate of the top-left corner of the area to fill with 
-     * the pixel grid effect.
-     * @param w The width of the area to fill with the pixel grid effect.
-     * @param h The height of the area to fill with the pixel grid effect.
-     * @param path A Path2D object to store the results in, or null.
-     * @return The Path2D object to use to render the pixel grid effect.
-     * @see getPixelGridOffsetX
-     * @see getPixelGridOffsetY
-     * @see getPixelGridLineSpacing
-     * @see setPixelGridLineSpacing
-     * @see #paintPixelGrid
-     */
-    protected Path2D getPixelGrid(double x, double y, double w, double h, 
-            Path2D path){
-            // If the given Path2D object is null
-        if (path == null)
-            path = new Path2D.Double();
-        else    // Reset the given Path2D object
-            path.reset();
-            // Get the maximum x-coordinate for the pixel grid
-        double x2 = x+w;
-            // Get the maximum y-coordinate for the pixel grid
-        double y2 = y+h;
-            // Go through and generate the vertical lines, starting at the 
-            // offset for the y-coordinate of the pixel grid and spacing them 
-            // out by the pixel grid spacing
-        for (double y1 = getPixelGridOffsetY(h); y1 <= h; 
-                y1+=getPixelGridLineSpacing()){
-            path.moveTo(x, y1+y);
-            path.lineTo(x2, y1+y);
-        }   // Go through and generate the horizontal lines, starting at the 
-            // offset for the x-coordinate of the pixel grid and spacing them 
-            // out by the pixel grid spacing
-        for (double x1 = getPixelGridOffsetX(w); x1 <= w; 
-                x1+=getPixelGridLineSpacing()){
-            path.moveTo(x1+x, y);
-            path.lineTo(x1+x, y2);
-        }
-        return path;
-    }
     /**
      * This is used to render the pixel grid effect over the area. The pixel 
      * grid effect is drawn using the {@link #getPixelGridPainter() 
