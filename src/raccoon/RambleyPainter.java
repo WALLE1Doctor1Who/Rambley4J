@@ -2568,7 +2568,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Create a copy of the given graphics context
         g = (Graphics2D) g.create();
             // Paint the pixel grid effect using the pixel grid painter
-        getPixelGridPainter().paint(g, c, h, h);
+        getPixelGridPainter().paint(g, c, w, h);
             // Dispose of the copy of the graphics context
         g.dispose();
     }
