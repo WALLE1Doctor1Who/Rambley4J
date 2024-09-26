@@ -198,7 +198,7 @@ public class Rambley4J extends JFrame {
             eyeCtrlL.setValueX((int)(eyeLX*100));
             eyeCtrlL.setValueY((int)(eyeLY*100));
             linkEyesToggle.setSelected(config.getBoolean(LINK_RAMBLEY_EYES_KEY,
-                    linkEyesToggle.isSelected()));
+                    eyeRX == eyeLX && eyeRY == eyeLY));
             double mouthW = config.getDouble(RAMBLEY_MOUTH_WIDTH_KEY, 
                     rambleyPainter.getRambleyOpenMouthWidth());
             double mouthH = config.getDouble(RAMBLEY_MOUTH_HEIGHT_KEY, 
@@ -687,7 +687,6 @@ public class Rambley4J extends JFrame {
 
         centerSidePanel.setLayout(new java.awt.GridBagLayout());
 
-        linkEyesToggle.setSelected(true);
         linkEyesToggle.setText("Link Eyes");
         linkEyesToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -337,7 +337,6 @@
               <SubComponents>
                 <Component class="javax.swing.JCheckBox" name="linkEyesToggle">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Link Eyes"/>
                   </Properties>
                   <Events>
