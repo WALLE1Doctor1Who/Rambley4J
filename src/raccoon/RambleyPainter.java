@@ -3430,6 +3430,12 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // right part of it being a horizontally flipped version of this 
             // ellipse 
         ellipse2.setFrame(ellipse1.getMinX(),ellipse1.getMinY()+17,56,32);
+            // Set the frame for the third ellipse from the center so as to be 
+            // horizontally centered in the markings, with the top being 24 
+            // pixels above the first ellipse, and should be 28 x 36. This will 
+            // form the little notch between the eyes at the top of the markings
+        ellipse3.setFrameFromCenter(ellipse1.getCenterX(), ellipse1.getMinY()-6, 
+                ellipse1.getCenterX()+14, ellipse1.getMinY()-24);
             // Create an area with the second ellipse, which will be used to 
             // create the mask for the facial markings
         Area mask = new Area(ellipse2);
@@ -3458,12 +3464,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
                 ellipse1.getMaxX(), ellipse2.getCenterY());
             // Add the rectangle to the mask to form the top part of the mask
         mask.add(new Area(rect));
-            // Set the frame for the third ellipse from the center so as to be 
-            // horizontally centered in the markings, with the top being 24 
-            // pixels above the first ellipse, and should be 28 x 36. This will 
-            // form the little notch between the eyes at the top of the markings
-        ellipse3.setFrameFromCenter(ellipse1.getCenterX(), ellipse1.getMinY()-6, 
-                ellipse1.getCenterX()+14, ellipse1.getMinY()-24);
             // Remove the third ellipse from the mask so that it gets removed 
             // from the facial markings
         mask.subtract(new Area(ellipse3));
