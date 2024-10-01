@@ -3393,6 +3393,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * Rambley's facial markings in between his eyes, or null.
      * @param rect A Rectangle2D object to use to calculate the area for 
      * Rambley's facial markings, or null.
+     * @param path
      * @return The area of Rambley's mask-like facial markings.
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
@@ -3402,7 +3403,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private Area getRambleyMaskFaceMarkings(RectangularShape headBounds, 
             Ellipse2D ellipse1, Ellipse2D ellipse2, Ellipse2D ellipse3, 
-            Rectangle2D rect){
+            Rectangle2D rect, Path2D path){
             // If the given Rectangle is null
         if (rect == null)
             rect = new Rectangle2D.Double();
@@ -5328,7 +5329,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Create and fill the shape of Rambley's mask-like facial markings
         g.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
         g.fill(getRambleyMaskFaceMarkings(headBounds,ellipse1,ellipse2,ellipse3,
-                rect));
+                rect,path));
             // Set the color to use to Rambley's secondary body color
         g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
             // Fill in the inner portion of Rambley's ears
