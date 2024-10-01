@@ -608,7 +608,6 @@ public class Rambley4J extends JFrame {
         });
 
         glitchyToggle.setText("Glitchy");
-        glitchyToggle.setEnabled(false);
         glitchyToggle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 glitchyToggleActionPerformed(evt);
