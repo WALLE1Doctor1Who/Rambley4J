@@ -3437,7 +3437,29 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // form the little notch between the eyes at the top of the markings
         ellipse3.setFrameFromCenter(ellipse1.getCenterX(), ellipse1.getMinY()-6, 
                 ellipse1.getCenterX()+14, ellipse1.getMinY()-24);
-            // Create an area with the second ellipse, which will be used to 
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // If the given Path2D object is null
+            if (path == null)
+                path = new Path2D.Double();
+            else    // Reset the given Path2D object
+                path.reset();
+                // TODO: Explain this
+            path.moveTo(headBounds.getCenterX(), ellipse2.getMaxY()-1);
+            path.lineTo(ellipse2.getCenterX()-4, ellipse2.getMaxY()-1);
+            path.lineTo(ellipse2.getMinX()+7, ellipse2.getMaxY()-3);
+            path.lineTo(ellipse2.getMinX(), ellipse2.getMaxY()-19);
+            path.lineTo(ellipse3.getMinX()-20, ellipse3.getCenterY());
+            path.lineTo(headBounds.getCenterX(), ellipse3.getMaxY()-6);
+                // Close the path
+            path.closePath();
+                // Flip the path (which holds the right side of the mask) 
+                // horizontally to form the left side of the mask and then add 
+                // the left side of the mask to the path.
+            path = mirrorPathHorizontally(path,headBounds.getCenterX());
+                // Return an area of the path
+            return new Area(path);
+        }   // Create an area with the second ellipse, which will be used to 
             // create the mask for the facial markings
         Area mask = new Area(ellipse2);
             // Flip the second ellipse horizontally to form the right part of 
