@@ -2204,6 +2204,96 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return path;
     }
     /**
+     * This returns an AffineTransform object that flips shapes vertically and 
+     * translates it by {@code dy}.
+     * @param dy The dy value by which to translate stuff, relative to the 
+     * original coordinate space.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to flip things vertically.
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
+     */
+    protected AffineTransform getVerticalFlipTransform(double dy, 
+            AffineTransform tx){
+            // If the given AffineTransform is null
+        if (tx == null)
+                // Get a transform that will flip things vertically
+            tx = AffineTransform.getScaleInstance(1, -1);
+        else    // Set the transform to one that will flip things vertically
+            tx.setToScale(1, -1);
+            // Translate everything by dy
+        tx.translate(0, -dy);
+        return tx;
+    }
+    /**
+     * This returns an AffineTransform object that flips shapes vertically and 
+     * translates it by {@code dy} plus the maximum y-coordinate of the given 
+     * shape. If the given shape is null, then this is equivalent to calling 
+     * {@link #getVerticalFlipTransform(double, AffineTransform) 
+     * getVerticalFlipTransform(dy, tx)}. If the given shape is not null, then 
+     * this is equivalent to calling {@link getVerticalFlipTransform(double, 
+     * AffineTransform) getVerticalFlipTransform(dy + 
+     * shape.getBounds2D().getMaxY(), tx)}. 
+     * @param dy The dy value by which to translate stuff, relative to the top 
+     * side of the image.
+     * @param shape The shape for which to get the y-coordinate to use to shift 
+     * stuff back into the image, or null.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to flip things vertically.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
+     */
+    protected AffineTransform getVerticalFlipTransform(double dy,Shape shape, 
+            AffineTransform tx){
+            // If the given shape is null
+        if (shape == null)
+                // Return a regular vertical flip transform
+            return getVerticalFlipTransform(dy,tx);
+            // Return a vertical flip transform that translates shapes by the 
+            // given shape's maximum y-coordinate to put it back on the image, 
+            // and then translated again by the given y offset
+        return getVerticalFlipTransform(dy+getBoundsOfShape(shape).getMaxY(),
+                tx);
+    }
+    /**
+     * This returns an AffineTransform object that flips shapes vertically and 
+     * translates it in such a way to appear as though it was mirrored over the 
+     * horizontal line at the given y-coordinate. If the given shape is null, then 
+     * this is equivalent to calling {@link #getVerticalFlipTransform(double, 
+     * AffineTransform) getVerticalFlipTransform(y, tx)}.
+     * @param y The y-coordinate of the line to mirror shapes over.
+     * @param shape The shape to use to calculate the y component of the 
+     * translation.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to mirror things vertically over the 
+     * horizontal line at the given y-coordinate.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
+     */
+    protected AffineTransform getVerticalMirrorTransform(double y,Shape shape,
+            AffineTransform tx){
+            // If the given shape is null
+        if (shape == null)
+            return getVerticalFlipTransform(y,tx);
+            // Get the bounds of the shape
+        RectangularShape bounds = getBoundsOfShape(shape);
+            // Return a vertical flip transform that translates shapes by the 
+            // given shape's maximum y-coordinate to put it back on the image, 
+            // and then translate it again in a way that appears as if the shape 
+            // was mirrored over the horizontal line at the given y-coordinate
+        return getVerticalFlipTransform(bounds.getMaxY()+(y-bounds.getMaxY())*2,
+                bounds,tx);
+    }
+    /**
      * This returns an AffineTransform object that scales shapes by the given 
      * {@code scale} value and positions it in the center of the given shape 
      * object. 
