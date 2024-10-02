@@ -1108,13 +1108,13 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * a known state before being used.
      */
     private CubicCurve2D cubicCurve2 = null;
-    /**
-     * This is a scratch Rhombus2D object used for rendering Rambley. This is 
-     * initialized the first time it is used. This scratch object may change at 
-     * any time during the rendering process, and should not be assumed to be in 
-     * a known state before being used.
-     */
-    private Rhombus2D rhombus = null;
+//    /**
+//     * This is a scratch Rhombus2D object used for rendering Rambley. This is 
+//     * initialized the first time it is used. This scratch object may change at 
+//     * any time during the rendering process, and should not be assumed to be in 
+//     * a known state before being used.
+//     */
+//    private Rhombus2D rhombus = null;
     /**
      * This is a scratch AffineTransform used to transform shapes. This is 
      * initially null and is initialized the first time it is used. This scratch 
@@ -5200,9 +5200,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // If the second CubicCurve2D scratch object has not been 
         if (cubicCurve2 == null)     // initialized yet
             cubicCurve2 = new CubicCurve2D.Double();
-            // If the Rhombus2D scratch object has not been initialized yet
-        if (rhombus == null)
-            rhombus = new Rhombus2D.Double();
             // If the head Ellipse2D scratch object has not been initialized yet
         if (headEllipse == null)
             headEllipse = new Ellipse2D.Double();
