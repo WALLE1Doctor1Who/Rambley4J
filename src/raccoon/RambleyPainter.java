@@ -4984,17 +4984,35 @@ public class RambleyPainter extends ListenedPainter<Component>{
         point2.setLocation(x+tempX,y+getRambleyLowerBandanaTopY(tempX));
             // Get the point at the end of the upper curve
         point3.setLocation(x, y+getRambleyLowerBandanaTopY(0));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point1, point2, and point3, and add that curve to the path
-        point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
-            // Calculate the offset for the x-coordinate when 47% of the way 
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // Get the control point for the curve
+            point4 = GeometryMath.getQuadBezierControlPoint(point1,point2,point3,point4);
+            point4 = GeometryMath.getQuadBezierPoint(point1, point4, point3, 0.5, point4);
+            path.lineTo(point4.getX(), point4.getY());
+            path.lineTo(point3.getX(), point3.getY());
+        } else {
+                // Calculate the quadratic bezier curve that passes through 
+                // points point1, point2, and point3, and add that curve to the 
+                // path
+            point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
+        }   // Calculate the offset for the x-coordinate when 47% of the way 
         tempX = RAMBLEY_BANDANA_LOWER_END_WIDTH * 0.47;    // to the right
             // Get the point on the lower curve when 47% of the way right
         point2.setLocation(x+tempX,y+getRambleyLowerBandanaBottomY(tempX));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point3, point2, and point1, and add that curve to the path
-        addQuadBezierCurve(point3,point2,point1,point4,path);
-            // Close the path
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // Get the control point for the curve
+            point4 = GeometryMath.getQuadBezierControlPoint(point3,point2,point1,point4);
+            point4 = GeometryMath.getQuadBezierPoint(point3, point4, point1, 0.5, point4);
+            path.lineTo(point4.getX(), point4.getY());
+            path.lineTo(point1.getX(), point1.getY());
+        } else {
+                // Calculate the quadratic bezier curve that passes through 
+                // points point3, point2, and point1, and add that curve to the 
+                // path
+            addQuadBezierCurve(point3,point2,point1,point4,path);
+        }   // Close the path
         path.closePath();
             // Create and return an area with the bandana end
         return new Area(path);
