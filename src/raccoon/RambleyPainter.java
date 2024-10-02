@@ -5073,8 +5073,13 @@ public class RambleyPainter extends ListenedPainter<Component>{
         quadCurve = GeometryMath.getQuadBezierCurveSegment(
                 quadCurve.getX1(), quadCurve.getY1(), point.getX(),point.getY(), 
                 quadCurve, quadCurve);
-            // Add the curve to the path
-        path.append(quadCurve, false);
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+            path.moveTo(quadCurve.getX1(), quadCurve.getY1());
+            path.lineTo(quadCurve.getX2(), quadCurve.getY2());
+        } else 
+                // Add the curve to the path
+            path.append(quadCurve, false);
         return path;
     }
     /**
