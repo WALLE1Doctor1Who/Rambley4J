@@ -4885,7 +4885,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * knot.
      */
     private Area getRambleyBandanaFront(double x, double y, 
-            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
+            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path, 
+            Point2D point){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -5336,7 +5337,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Otherwise, the bandana will be offset two pixels to the left
         Area bandana1 = getRambleyBandanaFront(
                 headBounds.getCenterX()+(isRambleyFlipped()?2:-2),
-                headEllipse.getMaxY()+6,bandanaCurve,cubicCurve1,path);
+                headEllipse.getMaxY()+6,bandanaCurve,cubicCurve1,path,point5);
             // Create the knot part of Rambley's bandana.
         Area bandana2 = getRambleyBandanaKnot(bandanaCurve.getX1()+15,
                 bandanaCurve.getY1()+2,ellipse1);
