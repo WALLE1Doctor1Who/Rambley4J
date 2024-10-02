@@ -2204,6 +2204,96 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return path;
     }
     /**
+     * This returns an AffineTransform object that flips shapes vertically and 
+     * translates it by {@code dy}.
+     * @param dy The dy value by which to translate stuff, relative to the 
+     * original coordinate space.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to flip things vertically.
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
+     */
+    protected AffineTransform getVerticalFlipTransform(double dy, 
+            AffineTransform tx){
+            // If the given AffineTransform is null
+        if (tx == null)
+                // Get a transform that will flip things vertically
+            tx = AffineTransform.getScaleInstance(1, -1);
+        else    // Set the transform to one that will flip things vertically
+            tx.setToScale(1, -1);
+            // Translate everything by dy
+        tx.translate(0, -dy);
+        return tx;
+    }
+    /**
+     * This returns an AffineTransform object that flips shapes vertically and 
+     * translates it by {@code dy} plus the maximum y-coordinate of the given 
+     * shape. If the given shape is null, then this is equivalent to calling 
+     * {@link #getVerticalFlipTransform(double, AffineTransform) 
+     * getVerticalFlipTransform(dy, tx)}. If the given shape is not null, then 
+     * this is equivalent to calling {@link getVerticalFlipTransform(double, 
+     * AffineTransform) getVerticalFlipTransform(dy + 
+     * shape.getBounds2D().getMaxY(), tx)}. 
+     * @param dy The dy value by which to translate stuff, relative to the top 
+     * side of the image.
+     * @param shape The shape for which to get the y-coordinate to use to shift 
+     * stuff back into the image, or null.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to flip things vertically.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalMirrorTransform 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
+     */
+    protected AffineTransform getVerticalFlipTransform(double dy,Shape shape, 
+            AffineTransform tx){
+            // If the given shape is null
+        if (shape == null)
+                // Return a regular vertical flip transform
+            return getVerticalFlipTransform(dy,tx);
+            // Return a vertical flip transform that translates shapes by the 
+            // given shape's maximum y-coordinate to put it back on the image, 
+            // and then translated again by the given y offset
+        return getVerticalFlipTransform(dy+getBoundsOfShape(shape).getMaxY(),
+                tx);
+    }
+    /**
+     * This returns an AffineTransform object that flips shapes vertically and 
+     * translates it in such a way to appear as though it was mirrored over the 
+     * horizontal line at the given y-coordinate. If the given shape is null, then 
+     * this is equivalent to calling {@link #getVerticalFlipTransform(double, 
+     * AffineTransform) getVerticalFlipTransform(y, tx)}.
+     * @param y The y-coordinate of the line to mirror shapes over.
+     * @param shape The shape to use to calculate the y component of the 
+     * translation.
+     * @param tx An AffineTransform to store the results in, or null.
+     * @return An AffineTransform used to mirror things vertically over the 
+     * horizontal line at the given y-coordinate.
+     * @see #getHorizontalFlipTransform(double, AffineTransform) 
+     * @see #getHorizontalFlipTransform(double, Shape, AffineTransform) 
+     * @see #createHorizontallyMirroredArea 
+     * @see #mirrorPathHorizontally 
+     * @see #flipPathHorizontally 
+     */
+    protected AffineTransform getVerticalMirrorTransform(double y,Shape shape,
+            AffineTransform tx){
+            // If the given shape is null
+        if (shape == null)
+            return getVerticalFlipTransform(y,tx);
+            // Get the bounds of the shape
+        RectangularShape bounds = getBoundsOfShape(shape);
+            // Return a vertical flip transform that translates shapes by the 
+            // given shape's maximum y-coordinate to put it back on the image, 
+            // and then translate it again in a way that appears as if the shape 
+            // was mirrored over the horizontal line at the given y-coordinate
+        return getVerticalFlipTransform(bounds.getMaxY()+(y-bounds.getMaxY())*2,
+                bounds,tx);
+    }
+    /**
      * This returns an AffineTransform object that scales shapes by the given 
      * {@code scale} value and positions it in the center of the given shape 
      * object. 
@@ -3393,6 +3483,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * Rambley's facial markings in between his eyes, or null.
      * @param rect A Rectangle2D object to use to calculate the area for 
      * Rambley's facial markings, or null.
+     * @param path
      * @return The area of Rambley's mask-like facial markings.
      * @see #paintRambley 
      * @see #getRambleyEarlessHead
@@ -3402,7 +3493,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
      */
     private Area getRambleyMaskFaceMarkings(RectangularShape headBounds, 
             Ellipse2D ellipse1, Ellipse2D ellipse2, Ellipse2D ellipse3, 
-            Rectangle2D rect){
+            Rectangle2D rect, Path2D path){
             // If the given Rectangle is null
         if (rect == null)
             rect = new Rectangle2D.Double();
@@ -3430,7 +3521,35 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // right part of it being a horizontally flipped version of this 
             // ellipse 
         ellipse2.setFrame(ellipse1.getMinX(),ellipse1.getMinY()+17,56,32);
-            // Create an area with the second ellipse, which will be used to 
+            // Set the frame for the third ellipse from the center so as to be 
+            // horizontally centered in the markings, with the top being 24 
+            // pixels above the first ellipse, and should be 28 x 36. This will 
+            // form the little notch between the eyes at the top of the markings
+        ellipse3.setFrameFromCenter(ellipse1.getCenterX(), ellipse1.getMinY()-6, 
+                ellipse1.getCenterX()+14, ellipse1.getMinY()-24);
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // If the given Path2D object is null
+            if (path == null)
+                path = new Path2D.Double();
+            else    // Reset the given Path2D object
+                path.reset();
+                // TODO: Explain this
+            path.moveTo(headBounds.getCenterX(), ellipse2.getMaxY()-1);
+            path.lineTo(ellipse2.getCenterX()-4, ellipse2.getMaxY()-1);
+            path.lineTo(ellipse2.getMinX()+7, ellipse2.getMaxY()-3);
+            path.lineTo(ellipse2.getMinX(), ellipse2.getMaxY()-19);
+            path.lineTo(ellipse3.getMinX()-20, ellipse3.getCenterY());
+            path.lineTo(headBounds.getCenterX(), ellipse3.getMaxY()-6);
+                // Close the path
+            path.closePath();
+                // Flip the path (which holds the right side of the mask) 
+                // horizontally to form the left side of the mask and then add 
+                // the left side of the mask to the path.
+            path = mirrorPathHorizontally(path,headBounds.getCenterX());
+                // Return an area of the path
+            return new Area(path);
+        }   // Create an area with the second ellipse, which will be used to 
             // create the mask for the facial markings
         Area mask = new Area(ellipse2);
             // Flip the second ellipse horizontally to form the right part of 
@@ -3458,12 +3577,6 @@ public class RambleyPainter extends ListenedPainter<Component>{
                 ellipse1.getMaxX(), ellipse2.getCenterY());
             // Add the rectangle to the mask to form the top part of the mask
         mask.add(new Area(rect));
-            // Set the frame for the third ellipse from the center so as to be 
-            // horizontally centered in the markings, with the top being 24 
-            // pixels above the first ellipse, and should be 28 x 36. This will 
-            // form the little notch between the eyes at the top of the markings
-        ellipse3.setFrameFromCenter(ellipse1.getCenterX(), ellipse1.getMinY()-6, 
-                ellipse1.getCenterX()+14, ellipse1.getMinY()-24);
             // Remove the third ellipse from the mask so that it gets removed 
             // from the facial markings
         mask.subtract(new Area(ellipse3));
@@ -4737,6 +4850,23 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return path;
     }
     /**
+     * 
+     * @param afTx
+     * @return 
+     */
+    private AffineTransform getRambleyBandanaTranslateTransform(AffineTransform afTx){
+            // If the scratch AffineTransform is null
+        if (afTx == null)
+                // Create a translation transform to move the top of the bandana 
+                // down to form the bottom of the bandana
+            return AffineTransform.getTranslateInstance(0, 
+                    RAMBLEY_BANDANA_FRONT_Y_OFFSET);
+        else    // Set the transform to be a translation transform to move the 
+                // top of the bandana down to form the bottom of the bandana
+            afTx.setToTranslation(0, RAMBLEY_BANDANA_FRONT_Y_OFFSET);
+        return afTx;
+    }
+    /**
      * This creates and returns the Area that forms Rambley's bandana without 
      * the knot at the back. That is to say, this returns the area that forms 
      * the neck portion of Rambley's bandana.
@@ -4755,7 +4885,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * knot.
      */
     private Area getRambleyBandanaFront(double x, double y, 
-            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
+            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path, 
+            Point2D point){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -4789,27 +4920,34 @@ public class RambleyPainter extends ListenedPainter<Component>{
                 cubicCurve1.getCtrlX2(), y1-(cubicCurve1.getCtrlY2()-y1), 
                 cubicCurve1.getCtrlX1(), y1-(cubicCurve1.getCtrlY1()-y1), 
                 cubicCurve1.getX1(), cubicCurve1.getY1());
-            // Append the top-left curve to the path
-        path.append(cubicCurve2, false);
-            // Append the bottom-left curve to the path
-        path.append(cubicCurve1, true);
-            // Close the path
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+            path.moveTo(cubicCurve2.getX1(), cubicCurve2.getY1());
+            path.lineTo(cubicCurve2.getX2(), cubicCurve2.getY2());
+            path.lineTo(cubicCurve1.getX1(), cubicCurve1.getY1());
+            point = GeometryMath.getCubicBezierPoint(cubicCurve1,0.6, point);
+            path.lineTo(point.getX(), cubicCurve1.getY2());
+            path.lineTo(cubicCurve1.getX2(), cubicCurve1.getY2());
+        } else {
+                // Append the top-left curve to the path
+            path.append(cubicCurve2, false);
+                // Append the bottom-left curve to the path
+            path.append(cubicCurve1, true);
+        }   // Close the path
         path.closePath();
             // Mirror the path horizontally to get the other side of the top of 
             // the bandana
         path = mirrorPathHorizontally(path,x);
             // Create an area with the path to get the neck portion of the 
         Area bandana = new Area(path);    // bandana
-            // If the scratch AffineTransform is null
-        if (afTx == null)
-                // Create a translation transform to move the top of the bandana 
-                // down to form the bottom of the bandana
-            afTx = AffineTransform.getTranslateInstance(0, 
-                    RAMBLEY_BANDANA_FRONT_Y_OFFSET);
-        else    // Set the transform to be a translation transform to move the 
+        if (isRambleyGlitchy()){
+            afTx = getVerticalFlipTransform(
+                    cubicCurve2.getY1()+RAMBLEY_BANDANA_FRONT_Y_OFFSET,path,afTx);
+        } else {
+                // Set the transform to be a translation transform to move the 
                 // top of the bandana down to form the bottom of the bandana
-            afTx.setToTranslation(0, RAMBLEY_BANDANA_FRONT_Y_OFFSET);
-            // Add a version of the bandana area that has been translated 
+            afTx = getRambleyBandanaTranslateTransform(afTx);
+        }   // Add a version of the bandana area that has been translated 
             // downwards to form the bottom part of the bandana
         bandana.add(bandana.createTransformedArea(afTx));
         return bandana;
@@ -4835,7 +4973,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * without the knot.
      */
     private Path2D getRambleyBandanaFrontDetail(CubicCurve2D bandanaCurve, 
-            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
+            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path, 
+            Point2D point){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -4849,21 +4988,35 @@ public class RambleyPainter extends ListenedPainter<Component>{
             cubicCurve2 = new CubicCurve2D.Double();
             // Divide the curve
         bandanaCurve.subdivide(cubicCurve1, cubicCurve2);
-            // Add the left side of the curve to the path
-        path.append(cubicCurve1, false);
+            // If Rambley is not glitchy
+        if (!isRambleyGlitchy())
+                // Add the left side of the curve to the path
+            path.append(cubicCurve1, false);
             // Divide the right side of the curve
         cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
             // Divide the left side of the right side of the curve
         cubicCurve1.subdivide(cubicCurve1, cubicCurve2);
-            // Add the left side of the curve to the path
-        path.append(cubicCurve1, true);
+            // If Rambley is not glitchy
+        if (!isRambleyGlitchy())
+                // Add the left side of the curve to the path
+            path.append(cubicCurve1, true);
             // Divide the right side of the curve
         cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
-            // Add the left side of the curve to the path
-        path.append(cubicCurve1, true);
-            // Add a line that goes down and to the left
-        path.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
-            // Mirror the path to get the other side
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+            point = GeometryMath.getCubicBezierPoint(bandanaCurve,0.6, point);
+            path.moveTo(bandanaCurve.getX1(), bandanaCurve.getY1());
+            point = GeometryMath.getLinePointForY(
+                    bandanaCurve.getX1(), bandanaCurve.getY1(), 
+                    point.getX(), bandanaCurve.getY2(), cubicCurve1.getY2()+2.5, 
+                    point);
+            path.lineTo(point.getX(), point.getY());
+        } else {
+                // Add the left side of the curve to the path
+            path.append(cubicCurve1, true);
+                // Add a line that goes down and to the left
+            path.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
+        }   // Mirror the path to get the other side
         path = mirrorPathHorizontally(path,bandanaCurve.getX2());
         return path;
     }
@@ -4961,17 +5114,35 @@ public class RambleyPainter extends ListenedPainter<Component>{
         point2.setLocation(x+tempX,y+getRambleyLowerBandanaTopY(tempX));
             // Get the point at the end of the upper curve
         point3.setLocation(x, y+getRambleyLowerBandanaTopY(0));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point1, point2, and point3, and add that curve to the path
-        point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
-            // Calculate the offset for the x-coordinate when 47% of the way 
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // Get the control point for the curve
+            point4 = GeometryMath.getQuadBezierControlPoint(point1,point2,point3,point4);
+            point4 = GeometryMath.getQuadBezierPoint(point1, point4, point3, 0.5, point4);
+            path.lineTo(point4.getX(), point4.getY());
+            path.lineTo(point3.getX(), point3.getY());
+        } else {
+                // Calculate the quadratic bezier curve that passes through 
+                // points point1, point2, and point3, and add that curve to the 
+                // path
+            point4 = addQuadBezierCurve(point1,point2,point3,point4,path);
+        }   // Calculate the offset for the x-coordinate when 47% of the way 
         tempX = RAMBLEY_BANDANA_LOWER_END_WIDTH * 0.47;    // to the right
             // Get the point on the lower curve when 47% of the way right
         point2.setLocation(x+tempX,y+getRambleyLowerBandanaBottomY(tempX));
-            // Calculate the quadratic bezier curve that passes through points 
-            // point3, point2, and point1, and add that curve to the path
-        addQuadBezierCurve(point3,point2,point1,point4,path);
-            // Close the path
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+                // Get the control point for the curve
+            point4 = GeometryMath.getQuadBezierControlPoint(point3,point2,point1,point4);
+            point4 = GeometryMath.getQuadBezierPoint(point3, point4, point1, 0.5, point4);
+            path.lineTo(point4.getX(), point4.getY());
+            path.lineTo(point1.getX(), point1.getY());
+        } else {
+                // Calculate the quadratic bezier curve that passes through 
+                // points point3, point2, and point1, and add that curve to the 
+                // path
+            addQuadBezierCurve(point3,point2,point1,point4,path);
+        }   // Close the path
         path.closePath();
             // Create and return an area with the bandana end
         return new Area(path);
@@ -5032,8 +5203,13 @@ public class RambleyPainter extends ListenedPainter<Component>{
         quadCurve = GeometryMath.getQuadBezierCurveSegment(
                 quadCurve.getX1(), quadCurve.getY1(), point.getX(),point.getY(), 
                 quadCurve, quadCurve);
-            // Add the curve to the path
-        path.append(quadCurve, false);
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+            path.moveTo(quadCurve.getX1(), quadCurve.getY1());
+            path.lineTo(quadCurve.getX2(), quadCurve.getY2());
+        } else 
+                // Add the curve to the path
+            path.append(quadCurve, false);
         return path;
     }
     /**
@@ -5049,12 +5225,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
         double x = point.getX()+40;
             // The y-coordinate of the anchor point for the rotation
         double y = point.getY()-6;
-            // If the scratch affine transform is null
-        if (afTx == null)
-                // Create a rotation transform
-            afTx = AffineTransform.getRotateInstance(theta,x,y);
-        else    // Set it to be a rotation transform
-            afTx.rotate(theta,x,y);
+            // Set the transform to be a translation transform to move the 
+            // top of the bandana down to form the bottom of the bandana
+        afTx = getRambleyBandanaTranslateTransform(afTx);
+            // Rotate the transform
+        afTx.rotate(theta,x,y);
         return lowerBandana.createTransformedArea(afTx);
     }
     /**
@@ -5190,7 +5365,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Otherwise, the bandana will be offset two pixels to the left
         Area bandana1 = getRambleyBandanaFront(
                 headBounds.getCenterX()+(isRambleyFlipped()?2:-2),
-                headEllipse.getMaxY()+6,bandanaCurve,cubicCurve1,path);
+                headEllipse.getMaxY()+6,bandanaCurve,cubicCurve1,path,point5);
             // Create the knot part of Rambley's bandana.
         Area bandana2 = getRambleyBandanaKnot(bandanaCurve.getX1()+15,
                 bandanaCurve.getY1()+2,ellipse1);
@@ -5328,7 +5503,7 @@ public class RambleyPainter extends ListenedPainter<Component>{
             // Create and fill the shape of Rambley's mask-like facial markings
         g.setColor(RAMBLEY_FACE_MARKINGS_COLOR);
         g.fill(getRambleyMaskFaceMarkings(headBounds,ellipse1,ellipse2,ellipse3,
-                rect));
+                rect,path));
             // Set the color to use to Rambley's secondary body color
         g.setColor(RAMBLEY_SECONDARY_BODY_COLOR);
             // Fill in the inner portion of Rambley's ears
@@ -5563,8 +5738,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
     protected void paintRambleyBandanaFront(Graphics2D g, Area bandanaArea, 
             CubicCurve2D bandanaCurve){
             // Calculate the path containing the details of the bandana
-        path = getRambleyBandanaFrontDetail(bandanaCurve,cubicCurve1,cubicCurve2,
-                path);
+        path = getRambleyBandanaFrontDetail(bandanaCurve,cubicCurve1,
+                cubicCurve2,path,point5);
             // Create a copy of the graphics context to draw the bandana
         g = (Graphics2D) g.create();
             // Set the color to be the color for Rambley's bandana

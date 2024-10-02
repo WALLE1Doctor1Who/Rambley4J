@@ -815,6 +815,77 @@ public final class GeometryMath {
         return curve;
     }
     /**
+     * This is used to calculate a point on a cubic Bezier curve 
+     * @param p0 The starting point of the curve.
+     * @param p1 The first control point for the curve.
+     * @param p2 The second control point for the curve.
+     * @param p3 The end point of the curve.
+     * @param t The t value of the point to get on the curve.
+     * @return The point on the curve at the given t.
+     */
+    private static double getCubicBezierPoint(double p0, double p1, double p2, 
+            double p3, double t){
+        double temp = 1-t;
+        return (Math.pow(temp,3)*p0)+(3*t*Math.pow(temp,2)*p1)+
+                (3*Math.pow(t,2)*temp*p2)+(Math.pow(t, 3)*p3);
+    }
+    /**
+     * This calculates and returns 
+     * @param x1 The x-coordinate of the starting point of the curve.
+     * @param y1 The y-coordinate of the starting point of the curve.
+     * @param xC1 The x-coordinate of the first control point for the curve.
+     * @param yC1 The y-coordinate of the first control point for the curve.
+     * @param xC2 The x-coordinate of the second control point for the curve.
+     * @param yC2 The y-coordinate of the second control point for the curve.
+     * @param x2 The x-coordinate of the end point of the curve.
+     * @param y2 The y-coordinate of the end point of the curve.
+     * @param t A value between 0 and 1, inclusive, 
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the cubic Bezier curve that corresponds to the 
+     * given value of {@code t}.
+     */
+    public static Point2D getCubicBezierPoint(double x1, double y1, 
+            double xC1, double yC1, double xC2, double yC2, double x2,double y2,
+            double t, Point2D point){
+            // If the given Point2D object is null
+        if (point == null)
+            point = new Point2D.Double();
+        point.setLocation(getCubicBezierPoint(x1,xC1,xC2,x2,t),
+                getCubicBezierPoint(y1,yC1,yC2,y2,t));
+        return point;
+    }
+    /**
+     * 
+     * @param p1 The starting point of the curve.
+     * @param pC1 The first control point for the curve.
+     * @param pC2 The second control point for the curve.
+     * @param p2 The end point of the curve.
+     * @param t A value between 0 and 1, inclusive, 
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the cubic Bezier curve that corresponds to the 
+     * given value of {@code t}.
+     */
+    public static Point2D getCubicBezierPoint(Point2D p1, Point2D pC1, 
+            Point2D pC2, Point2D p2, double t, Point2D point){
+        return getCubicBezierPoint(p1.getX(),p1.getY(),pC1.getX(),pC1.getY(),
+                pC2.getX(),pC2.getY(),p2.getX(),p2.getY(),t,point);
+    }
+    /**
+     * 
+     * @param curve The curve to get the point on.
+     * @param t A value between 0 and 1, inclusive, 
+     * @param point A Point2D object to store the results in, or null.
+     * @return The point on the cubic Bezier curve that corresponds to the 
+     * given value of {@code t}.
+     */
+    public static Point2D getCubicBezierPoint(CubicCurve2D curve, double t, 
+            Point2D point){
+        return getCubicBezierPoint(curve.getX1(),curve.getY1(),
+                curve.getCtrlX1(),curve.getCtrlY1(),
+                curve.getCtrlX2(),curve.getCtrlY2(),
+                curve.getX2(),curve.getY2(),t,point);
+    }
+    /**
      * https://www.codeproject.com/Articles/31859/Draw-a-Smooth-Curve-through-a-Set-of-2D-Points-wit
      * 
      * @todo Make this reuse any points in the two control point arrays
