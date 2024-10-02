@@ -5196,12 +5196,11 @@ public class RambleyPainter extends ListenedPainter<Component>{
         double x = point.getX()+40;
             // The y-coordinate of the anchor point for the rotation
         double y = point.getY()-6;
-            // If the scratch affine transform is null
-        if (afTx == null)
-                // Create a rotation transform
-            afTx = AffineTransform.getRotateInstance(theta,x,y);
-        else    // Set it to be a rotation transform
-            afTx.rotate(theta,x,y);
+            // Set the transform to be a translation transform to move the 
+            // top of the bandana down to form the bottom of the bandana
+        afTx = getRambleyBandanaTranslateTransform(afTx);
+            // Rotate the transform
+        afTx.rotate(theta,x,y);
         return lowerBandana.createTransformedArea(afTx);
     }
     /**
