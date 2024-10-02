@@ -4850,6 +4850,23 @@ public class RambleyPainter extends ListenedPainter<Component>{
         return path;
     }
     /**
+     * 
+     * @param afTx
+     * @return 
+     */
+    private AffineTransform getRambleyBandanaTranslateTransform(AffineTransform afTx){
+            // If the scratch AffineTransform is null
+        if (afTx == null)
+                // Create a translation transform to move the top of the bandana 
+                // down to form the bottom of the bandana
+            return AffineTransform.getTranslateInstance(0, 
+                    RAMBLEY_BANDANA_FRONT_Y_OFFSET);
+        else    // Set the transform to be a translation transform to move the 
+                // top of the bandana down to form the bottom of the bandana
+            afTx.setToTranslation(0, RAMBLEY_BANDANA_FRONT_Y_OFFSET);
+        return afTx;
+    }
+    /**
      * This creates and returns the Area that forms Rambley's bandana without 
      * the knot at the back. That is to say, this returns the area that forms 
      * the neck portion of Rambley's bandana.
@@ -4913,15 +4930,9 @@ public class RambleyPainter extends ListenedPainter<Component>{
         path = mirrorPathHorizontally(path,x);
             // Create an area with the path to get the neck portion of the 
         Area bandana = new Area(path);    // bandana
-            // If the scratch AffineTransform is null
-        if (afTx == null)
-                // Create a translation transform to move the top of the bandana 
-                // down to form the bottom of the bandana
-            afTx = AffineTransform.getTranslateInstance(0, 
-                    RAMBLEY_BANDANA_FRONT_Y_OFFSET);
-        else    // Set the transform to be a translation transform to move the 
+                // Set the transform to be a translation transform to move the 
                 // top of the bandana down to form the bottom of the bandana
-            afTx.setToTranslation(0, RAMBLEY_BANDANA_FRONT_Y_OFFSET);
+            afTx = getRambleyBandanaTranslateTransform(afTx);
             // Add a version of the bandana area that has been translated 
             // downwards to form the bottom part of the bandana
         bandana.add(bandana.createTransformedArea(afTx));
