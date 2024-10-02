@@ -4973,7 +4973,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
      * without the knot.
      */
     private Path2D getRambleyBandanaFrontDetail(CubicCurve2D bandanaCurve, 
-            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path){
+            CubicCurve2D cubicCurve1, CubicCurve2D cubicCurve2, Path2D path, 
+            Point2D point){
             // If the given Path2D object is null
         if (path == null)
             path = new Path2D.Double();
@@ -4987,21 +4988,35 @@ public class RambleyPainter extends ListenedPainter<Component>{
             cubicCurve2 = new CubicCurve2D.Double();
             // Divide the curve
         bandanaCurve.subdivide(cubicCurve1, cubicCurve2);
-            // Add the left side of the curve to the path
-        path.append(cubicCurve1, false);
+            // If Rambley is not glitchy
+        if (!isRambleyGlitchy())
+                // Add the left side of the curve to the path
+            path.append(cubicCurve1, false);
             // Divide the right side of the curve
         cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
             // Divide the left side of the right side of the curve
         cubicCurve1.subdivide(cubicCurve1, cubicCurve2);
-            // Add the left side of the curve to the path
-        path.append(cubicCurve1, true);
+            // If Rambley is not glitchy
+        if (!isRambleyGlitchy())
+                // Add the left side of the curve to the path
+            path.append(cubicCurve1, true);
             // Divide the right side of the curve
         cubicCurve2.subdivide(cubicCurve1, cubicCurve2);
-            // Add the left side of the curve to the path
-        path.append(cubicCurve1, true);
-            // Add a line that goes down and to the left
-        path.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
-            // Mirror the path to get the other side
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+            point = GeometryMath.getCubicBezierPoint(bandanaCurve,0.6, point);
+            path.moveTo(bandanaCurve.getX1(), bandanaCurve.getY1());
+            point = GeometryMath.getLinePointForY(
+                    bandanaCurve.getX1(), bandanaCurve.getY1(), 
+                    point.getX(), bandanaCurve.getY2(), cubicCurve1.getY2()+2.5, 
+                    point);
+            path.lineTo(point.getX(), point.getY());
+        } else {
+                // Add the left side of the curve to the path
+            path.append(cubicCurve1, true);
+                // Add a line that goes down and to the left
+            path.lineTo(cubicCurve1.getX2()-7, cubicCurve1.getY2()+4);
+        }   // Mirror the path to get the other side
         path = mirrorPathHorizontally(path,bandanaCurve.getX2());
         return path;
     }
@@ -5723,8 +5738,8 @@ public class RambleyPainter extends ListenedPainter<Component>{
     protected void paintRambleyBandanaFront(Graphics2D g, Area bandanaArea, 
             CubicCurve2D bandanaCurve){
             // Calculate the path containing the details of the bandana
-        path = getRambleyBandanaFrontDetail(bandanaCurve,cubicCurve1,cubicCurve2,
-                path);
+        path = getRambleyBandanaFrontDetail(bandanaCurve,cubicCurve1,
+                cubicCurve2,path,point5);
             // Create a copy of the graphics context to draw the bandana
         g = (Graphics2D) g.create();
             // Set the color to be the color for Rambley's bandana
