@@ -4920,21 +4920,34 @@ public class RambleyPainter extends ListenedPainter<Component>{
                 cubicCurve1.getCtrlX2(), y1-(cubicCurve1.getCtrlY2()-y1), 
                 cubicCurve1.getCtrlX1(), y1-(cubicCurve1.getCtrlY1()-y1), 
                 cubicCurve1.getX1(), cubicCurve1.getY1());
-            // Append the top-left curve to the path
-        path.append(cubicCurve2, false);
-            // Append the bottom-left curve to the path
-        path.append(cubicCurve1, true);
-            // Close the path
+            // If Rambley is glitchy
+        if (isRambleyGlitchy()){
+            path.moveTo(cubicCurve2.getX1(), cubicCurve2.getY1());
+            path.lineTo(cubicCurve2.getX2(), cubicCurve2.getY2());
+            path.lineTo(cubicCurve1.getX1(), cubicCurve1.getY1());
+            point = GeometryMath.getCubicBezierPoint(cubicCurve1,0.6, point);
+            path.lineTo(point.getX(), cubicCurve1.getY2());
+            path.lineTo(cubicCurve1.getX2(), cubicCurve1.getY2());
+        } else {
+                // Append the top-left curve to the path
+            path.append(cubicCurve2, false);
+                // Append the bottom-left curve to the path
+            path.append(cubicCurve1, true);
+        }   // Close the path
         path.closePath();
             // Mirror the path horizontally to get the other side of the top of 
             // the bandana
         path = mirrorPathHorizontally(path,x);
             // Create an area with the path to get the neck portion of the 
         Area bandana = new Area(path);    // bandana
+        if (isRambleyGlitchy()){
+            afTx = getVerticalFlipTransform(
+                    cubicCurve2.getY1()+RAMBLEY_BANDANA_FRONT_Y_OFFSET,path,afTx);
+        } else {
                 // Set the transform to be a translation transform to move the 
                 // top of the bandana down to form the bottom of the bandana
             afTx = getRambleyBandanaTranslateTransform(afTx);
-            // Add a version of the bandana area that has been translated 
+        }   // Add a version of the bandana area that has been translated 
             // downwards to form the bottom part of the bandana
         bandana.add(bandana.createTransformedArea(afTx));
         return bandana;
